@@ -1,0 +1,20 @@
+* {
+    margin: 0;
+    border: 0;
+    text-align: center;
+}
+
+body {
+    color: purple;
+    background-color: #b8bacd
+}
+
+ul {
+    list-style-type: none;
+}
+
+h2 {
+    color: darkblue;
+    margin: 10px;
+    border: 5px blue;
+}
