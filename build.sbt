@@ -69,4 +69,3 @@ lazy val sharedJs = shared.js
 
 // loads the server project at sbt startup
 onLoad in Global := (Command.process("project timetoteach_ui_server", _: State)) compose (onLoad in Global).value
-
