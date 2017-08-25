@@ -8,7 +8,7 @@ version := "0.0.1-SNAPSHOT"
 
 val scalaV = "2.11.11"
 
-lazy val server = (project in file("server")).settings(
+lazy val timetoteach_ui_server = (project in file("server")).settings(
   scalaVersion := scalaV,
   scalaJSProjects := Seq(client),
   pipelineStages in Assets := Seq(scalaJSPipeline),
@@ -60,7 +60,7 @@ lazy val sharedJvm = shared.jvm
 lazy val sharedJs = shared.js
 
 // loads the server project at sbt startup
-onLoad in Global := (Command.process("project server", _: State)) compose (onLoad in Global).value
+onLoad in Global := (Command.process("project timetoteach_ui_server", _: State)) compose (onLoad in Global).value
 
 dockerExposedPorts := Seq(9000)
 dockerRepository := Some("eu.gcr.io/time-to-teach")
