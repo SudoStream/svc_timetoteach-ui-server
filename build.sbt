@@ -63,7 +63,7 @@ lazy val sharedJs = shared.js
 onLoad in Global := (Command.process("project timetoteach_ui_server", _: State)) compose (onLoad in Global).value
 
 dockerExposedPorts := Seq(9000)
-dockerRepository := Some("eu.gcr.io/time-to-teach")
+dockerRepository := Some("gcr.io/qwerty-time-to-teach")
 dockerUpdateLatest := true
 
 //version in Docker := version.value + "-" + java.util.UUID.randomUUID.toString
