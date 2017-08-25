@@ -1,12 +1,16 @@
+enablePlugins(JavaAppPackaging)
+enablePlugins(UniversalPlugin)
+enablePlugins(DockerPlugin)
+
 name := "timetoteach"
 
 version := "0.0.1-SNAPSHOT"
 
 val scalaV = "2.11.11"
 
-lazy val server = (project in file("server")).settings(
+lazy val ui_ttt_server = (project in file("ui_ttt_server")).settings(
   scalaVersion := scalaV,
-  scalaJSProjects := Seq(client),
+  scalaJSProjects := Seq(ui_ttt_client),
   pipelineStages in Assets := Seq(scalaJSPipeline),
   pipelineStages := Seq(digest, gzip),
   // triggers scalaJSPipeline when using compile or continuous compilation
@@ -20,7 +24,7 @@ lazy val server = (project in file("server")).settings(
 ).enablePlugins(PlayScala).
   dependsOn(sharedJvm)
 
-lazy val client = (project in file("client")).settings(
+lazy val ui_ttt_client = (project in file("ui_ttt_client")).settings(
   scalaVersion := scalaV,
   scalaJSUseMainModuleInitializer := true,
   libraryDependencies ++= Seq(
@@ -56,4 +60,10 @@ lazy val sharedJvm = shared.jvm
 lazy val sharedJs = shared.js
 
 // loads the server project at sbt startup
-onLoad in Global := (Command.process("project server", _: State)) compose (onLoad in Global).value
+onLoad in Global := (Command.process("project ui_ttt_server", _: State)) compose (onLoad in Global).value
+
+dockerExposedPorts := Seq(9000)
+dockerRepository := Some("eu.gcr.io/time-to-teach")
+dockerUpdateLatest := true
+
+//version in Docker := version.value + "-" + java.util.UUID.randomUUID.toString
