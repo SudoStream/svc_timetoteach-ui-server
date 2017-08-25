@@ -1,3 +1,5 @@
+import com.typesafe.sbt.packager.docker.DockerPlugin.autoImport.{dockerRepository, dockerUpdateLatest}
+
 enablePlugins(JavaAppPackaging)
 enablePlugins(UniversalPlugin)
 enablePlugins(DockerPlugin)
@@ -13,7 +15,13 @@ lazy val timetoteach_ui_server = (project in file("server")).settings(
   scalaJSProjects := Seq(client),
   pipelineStages in Assets := Seq(scalaJSPipeline),
   pipelineStages := Seq(digest, gzip),
-  // triggers scalaJSPipeline when using compile or continuous compilation
+  dockerExposedPorts := Seq(9000),
+  dockerRepository := Some("eu.gcr.io/time-to-teach"),
+  dockerUpdateLatest := true,
+  //version in Docker := version.value + "-" + java.util.UUID.randomUUID.toString
+  packageName in Docker := "time-to-teach/api",
+
+// triggers scalaJSPipeline when using compile or continuous compilation
   compile in Compile := ((compile in Compile) dependsOn scalaJSPipeline).value,
   libraryDependencies ++= Seq(
     "com.vmunier" %% "scalajs-scripts" % "1.0.0",
@@ -62,8 +70,3 @@ lazy val sharedJs = shared.js
 // loads the server project at sbt startup
 onLoad in Global := (Command.process("project timetoteach_ui_server", _: State)) compose (onLoad in Global).value
 
-dockerExposedPorts := Seq(9000)
-dockerRepository := Some("gcr.io/qwerty-time-to-teach")
-dockerUpdateLatest := true
-
-//version in Docker := version.value + "-" + java.util.UUID.randomUUID.toString
