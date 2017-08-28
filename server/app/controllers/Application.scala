@@ -9,4 +9,8 @@ class Application extends Controller {
     Ok(views.html.index(SharedMessages.itWorks))
   }
 
+  def health = Action {
+    Ok
+  }
+
 }
