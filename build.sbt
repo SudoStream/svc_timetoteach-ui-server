@@ -6,8 +6,6 @@ enablePlugins(DockerPlugin)
 
 name := "timetoteach"
 
-version := "0.0.1"
-
 val scalaV = "2.11.11"
 
 lazy val timetoteach_ui_server = (project in file("server")).settings(
@@ -15,6 +13,7 @@ lazy val timetoteach_ui_server = (project in file("server")).settings(
   scalaJSProjects := Seq(client),
   pipelineStages in Assets := Seq(scalaJSPipeline),
   pipelineStages := Seq(digest, gzip),
+  version := "0.0.1",
   dockerExposedPorts := Seq(9000),
   dockerRepository := Some("eu.gcr.io/time-to-teach"),
   dockerUpdateLatest := true,
