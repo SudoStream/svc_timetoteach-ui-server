@@ -6,7 +6,7 @@ enablePlugins(DockerPlugin)
 
 name := "timetoteach"
 
-version := "0.0.1-SNAPSHOT"
+version := "0.0.1"
 
 val scalaV = "2.11.11"
 
