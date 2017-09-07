@@ -14,6 +14,7 @@ lazy val timetoteach_ui_server = (project in file("server")).settings(
   pipelineStages in Assets := Seq(scalaJSPipeline),
   pipelineStages := Seq(digest, gzip),
   version := "0.0.1",
+  dockerBaseImage := "anapsix/alpine-java:8_server-jre"
   dockerExposedPorts := Seq(9000),
   dockerRepository := Some("eu.gcr.io/time-to-teach"),
   dockerUpdateLatest := true,
