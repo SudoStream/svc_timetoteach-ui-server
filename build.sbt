@@ -24,7 +24,8 @@ lazy val timetoteach_ui_server = (project in file("server")).settings(
 // triggers scalaJSPipeline when using compile or continuous compilation
   compile in Compile := ((compile in Compile) dependsOn scalaJSPipeline).value,
   libraryDependencies ++= Seq(
-    "com.vmunier" %% "scalajs-scripts" % "1.0.0",
+    guice,
+    "com.vmunier" %% "scalajs-scripts" % "1.1.0",
     specs2 % Test
   ),
   // Compile the project before generating Eclipse files, so that generated .scala or .class files for views and routes are present
