@@ -20,11 +20,14 @@ lazy val timetoteach_ui_server = (project in file("server")).settings(
   dockerUpdateLatest := true,
   //version in Docker := version.value + "-" + java.util.UUID.randomUUID.toString
   packageName in Docker := "time-to-teach/api",
+  resolvers += Resolver.sonatypeRepo("snapshots"),
 
 // triggers scalaJSPipeline when using compile or continuous compilation
   compile in Compile := ((compile in Compile) dependsOn scalaJSPipeline).value,
   libraryDependencies ++= Seq(
     guice,
+    ws,
+    "be.objectify" %% "deadbolt-scala" % "2.6.0",
     "com.vmunier" %% "scalajs-scripts" % "1.1.0",
     specs2 % Test
   ),
