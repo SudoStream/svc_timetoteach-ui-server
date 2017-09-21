@@ -2,7 +2,6 @@ package security
 
 import be.objectify.deadbolt.scala.models.Subject
 import be.objectify.deadbolt.scala.{AuthenticatedRequest, DeadboltHandler, DynamicResourceHandler}
-import models.User
 import play.api.Logger
 import play.api.mvc.{Request, Result, Results}
 
@@ -25,26 +24,30 @@ class MyDeadboltHandler(dynamicResourceHandler: Option[DynamicResourceHandler] =
 
   override def getSubject[A](request: AuthenticatedRequest[A]): Future[Option[Subject]] = {
     val timetoteachIdCookieOption = request.cookies.get("timetoteachid")
-    if (timetoteachIdCookieOption.isDefined) {
-      val timetoteachIdCookie = timetoteachIdCookieOption.get
-      val timetoteachId = timetoteachIdCookie.value
 
-      // TODO: Check timetoteachId exists in database
-      // If yes then subject exists else not
-      // In NOT case need to redirect to signup page in UI
+    timetoteachIdCookieOption match {
+      case Some(timetoteachIdCookie) =>
+        val timetoteachId = timetoteachIdCookie.value
 
-      Future(Some(new User("steve")))
-    } else {
-      logger.warn("Subject not found in request")
+        // TODO: Check timetoteachId exists in database
+        // If yes then subject exists else not
+        // In NOT case need to redirect to signup page in UI
+
+        //      Future(Some(new User("steve")))
+        Future {
+          None
+        }
+
+      case None =>
+        logger.warn("Subject not found in request")
+        Future {
+          None
+        }
+    }
+
+    def onAuthFailure[A](request: AuthenticatedRequest[A]): Future[Result] = {
       Future {
-        None
+        Results.Forbidden(views.html.accessFailed())
       }
     }
   }
-
-  def onAuthFailure[A](request: AuthenticatedRequest[A]): Future[Result] = {
-    Future {
-      Results.Forbidden(views.html.accessFailed())
-    }
-  }
-}
