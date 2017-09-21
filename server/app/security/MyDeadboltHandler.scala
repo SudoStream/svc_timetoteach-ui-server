@@ -29,7 +29,9 @@ class MyDeadboltHandler(dynamicResourceHandler: Option[DynamicResourceHandler] =
       val timetoteachIdCookie = timetoteachIdCookieOption.get
       val timetoteachId = timetoteachIdCookie.value
 
-      // Check timetoteachId exists in database
+      // TODO: Check timetoteachId exists in database
+      // If yes then subject exists else not
+      // In NOT case need to redirect to signup page in UI
 
       Future(Some(new User("steve")))
     } else {
