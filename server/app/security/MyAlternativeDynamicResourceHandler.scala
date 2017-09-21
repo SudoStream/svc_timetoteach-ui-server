@@ -1,6 +1,5 @@
 package security
 
-import play.api.mvc.Request
 import be.objectify.deadbolt.scala.{AuthenticatedRequest, DeadboltHandler, DynamicResourceHandler}
 
 import scala.concurrent.ExecutionContext.Implicits.global

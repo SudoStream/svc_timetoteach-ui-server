@@ -30,6 +30,17 @@
           // The ID token you need to pass to your backend:
           var id_token = googleUser.getAuthResponse().id_token;
           console.log("ID Token: " + id_token);
+
+          var xhr = new XMLHttpRequest();
+          // TODO: Need to change localhost here to relative url I guess
+          xhr.open('POST', '/tokensignin');
+          xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+          xhr.setRequestHeader('X-Requested-With', 'Accept');
+          xhr.onload = function() {
+              console.log('Signed in as: ' + xhr.responseText);
+          };
+          xhr.send('idtoken=' + id_token);
+
       };
     </script>
 

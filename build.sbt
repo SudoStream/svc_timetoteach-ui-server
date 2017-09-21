@@ -27,6 +27,7 @@ lazy val timetoteach_ui_server = (project in file("server")).settings(
   libraryDependencies ++= Seq(
     guice,
     ws,
+    "com.google.api-client" % "google-api-client" % "1.22.0",
     "be.objectify" %% "deadbolt-scala" % "2.6.0",
     "com.vmunier" %% "scalajs-scripts" % "1.1.0",
     specs2 % Test
