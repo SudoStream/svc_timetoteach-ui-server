@@ -3,3 +3,4 @@ project/project/
 .js
 .jvm
 target
+generated.keystore
