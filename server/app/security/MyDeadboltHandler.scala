@@ -34,7 +34,10 @@ class MyDeadboltHandler(dynamicResourceHandler: Option[DynamicResourceHandler] =
       // If yes then subject exists else not
       // In NOT case need to redirect to signup page in UI
 
-      Future(Some(new User("steve")))
+//      Future(Some(new User("steve")))
+      Future {
+        None
+      }
     } else {
       logger.warn("Subject not found in request")
       Future {
