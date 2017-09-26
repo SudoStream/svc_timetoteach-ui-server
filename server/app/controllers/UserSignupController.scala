@@ -5,13 +5,11 @@ import javax.inject.Inject
 import be.objectify.deadbolt.scala.cache.HandlerCache
 import be.objectify.deadbolt.scala.{ActionBuilders, DeadboltActions}
 import controllers.UserSignupController.UserData
+import controllers.serviceproxies.UserWriterServiceProxyImpl
 import models.timetoteach.TimeToTeachUser
 import play.api.Logger
 import play.api.data.Form
 import play.api.mvc._
-
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
 object UserSignupController {
 
@@ -44,36 +42,31 @@ object UserSignupController {
 class UserSignupController @Inject()(deadbolt: DeadboltActions,
                                      handlers: HandlerCache,
                                      actionBuilder: ActionBuilders,
-                                     cc: MessagesControllerComponents) extends MessagesAbstractController(cc) {
+                                     cc: MessagesControllerComponents,
+                                     userWriterServiceProxy: UserWriterServiceProxyImpl
+                                    ) extends MessagesAbstractController(cc) {
 
-  val logger = Logger
-  private val postUrl = routes.UserSignupController.createUser()
+  val logger: Logger = Logger
+  private val postUrl = routes.UserSignupController.userCreated()
 
-  //  def signup = deadbolt.WithAuthRequest()() { authRequest =>
   def signup = Action { implicit request: MessagesRequest[AnyContent] =>
-    //    Future {
-    val cookies = for {
-      cookie <- request.cookies
-      line = "name: '" + cookie.name + "',   value: '" + cookie.value + "'\n"
-    } yield line
 
-    logger.debug(s"-------------------------------\nrequest to signup: $cookies")
+    request.cookies foreach (cookie => logger.debug("name: '" + cookie.name + "',   value: '" + cookie.value + "'"))
+    val defaultValuesFromCookies: UserData = createUserDefaultValues(request)
 
-    val defaultValuesFromCookies = UserData(
-      firstName = request.cookies.get("socialNetworkGivenName").get.value,
-      familyName = request.cookies.get("socialNetworkFamilyName").get.value,
-      emailAddress = request.cookies.get("socialNetworkEmail").get.value,
-      picture = request.cookies.get("socialNetworkPicture").get.value,
-      socialNetworkName = request.cookies.get("socialNetworkName").get.value,
-      socialNetworkUserId = request.cookies.get("socialNetworkUserId").get.value
-    )
+    val initialForm = UserSignupController.userForm.bindFromRequest.fill(defaultValuesFromCookies)
+    Ok(views.html.signup(initialForm, postUrl, defaultValuesFromCookies))
+  }
+
+
+  def userCreated = Action { implicit request: MessagesRequest[AnyContent] =>
+    val defaultValuesFromCookies: UserData = createUserDefaultValues(request)
 
     val errorFunction = { formWithErrors: Form[UserData] =>
       BadRequest(views.html.signup(formWithErrors, postUrl, defaultValuesFromCookies))
     }
 
     val successFunction = { data: UserData =>
-      // This is the good case, where the form was successfully parsed as a Data.
       val theUser = TimeToTeachUser(
         firstName = data.firstName,
         familyName = data.familyName,
@@ -84,21 +77,36 @@ class UserSignupController @Inject()(deadbolt: DeadboltActions,
         //        school = data.school
       )
 
-      // TODO NEXT: send new user details to backend and get back timetoteachid
+      logger.debug(s"Creating a new user with values : ${theUser.toString}")
 
-      Redirect(routes.Application.profile())
+      val timeToTeachUserId = userWriterServiceProxy.createNewUser(theUser)
+
+      Redirect(routes.UserSignupController.signedUpCongrats())
+        .withCookies(
+          Cookie("timetoteachId", timeToTeachUserId.value))
+        .bakeCookies()
     }
 
-    val formValidationResult = UserSignupController.userForm.bindFromRequest.fill(defaultValuesFromCookies)
+    val formValidationResult = UserSignupController.userForm.bindFromRequest
     formValidationResult.fold(errorFunction, successFunction)
   }
-  //  }
 
-
-  def createUser = deadbolt.SubjectPresent()() { authrequest =>
-    Future {
-      Ok(views.html.signedupcongrats())
-    }
+  def signedUpCongrats = Action { implicit request: MessagesRequest[AnyContent] =>
+    logger.debug(s"userCreated: ${request.attrs}")
+    Ok(views.html.signedupcongrats())
   }
+
+  private def createUserDefaultValues(request: MessagesRequest[AnyContent]) = {
+    val defaultValuesFromCookies = UserData(
+      firstName = request.cookies.get("socialNetworkGivenName").get.value,
+      familyName = request.cookies.get("socialNetworkFamilyName").get.value,
+      emailAddress = request.cookies.get("socialNetworkEmail").get.value,
+      picture = request.cookies.get("socialNetworkPicture").get.value,
+      socialNetworkName = request.cookies.get("socialNetworkName").get.value,
+      socialNetworkUserId = request.cookies.get("socialNetworkUserId").get.value
+    )
+    defaultValuesFromCookies
+  }
+
 }
 
