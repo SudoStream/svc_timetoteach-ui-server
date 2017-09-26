@@ -10,6 +10,9 @@ import play.api.Logger
 import play.api.data.Form
 import play.api.mvc._
 
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+
 object UserSignupController {
 
   import play.api.data.Form
@@ -44,7 +47,7 @@ class UserSignupController @Inject()(deadbolt: DeadboltActions,
                                      cc: MessagesControllerComponents) extends MessagesAbstractController(cc) {
 
   val logger = Logger
-  private val postUrl = routes.UserSignupController.signup()
+  private val postUrl = routes.UserSignupController.createUser()
 
   //  def signup = deadbolt.WithAuthRequest()() { authRequest =>
   def signup = Action { implicit request: MessagesRequest[AnyContent] =>
@@ -80,12 +83,22 @@ class UserSignupController @Inject()(deadbolt: DeadboltActions,
         socialNetworkUserId = data.socialNetworkUserId
         //        school = data.school
       )
-      Redirect(routes.Application.profile()).flashing("info" -> "Signed Up!")
+
+      // TODO NEXT: send new user details to backend and get back timetoteachid
+
+      Redirect(routes.Application.profile())
     }
 
     val formValidationResult = UserSignupController.userForm.bindFromRequest.fill(defaultValuesFromCookies)
     formValidationResult.fold(errorFunction, successFunction)
   }
   //  }
+
+
+  def createUser = deadbolt.SubjectPresent()() { authrequest =>
+    Future {
+      Ok(views.html.signedupcongrats())
+    }
+  }
 }
 

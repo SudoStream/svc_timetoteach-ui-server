@@ -4,20 +4,17 @@
 
 # Home page
 GET         /                    @controllers.Application.index
-
 GET         /health              controllers.Application.health
-
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file        controllers.Assets.versioned(path="/public", file: Asset)
 
-GET         /profile             controllers.Application.profile
-#GET     /view/:foo/:bar             controllers.Application.view(foo: String, bar: String)
-
-#GET     /twitter/homeTimeline controllers.Twitter.homeTimeline()
-GET         /twitter/auth        controllers.Twitter.authenticate()
-
 GET         /login               controllers.Application.login
-
-GET         /signup               controllers.UserSignupController.signup
-
+GET         /signup              controllers.UserSignupController.signup
+POST        /signup              controllers.UserSignupController.createUser
+GET         /profile             controllers.Application.profile
 POST        /tokensignin         controllers.SecurityController.tokensignin
+
+
+#########################
+GET         /twitter/auth        controllers.Twitter.authenticate()
+#GET     /view/:foo/:bar             controllers.Application.view(foo: String, bar: String)
