@@ -18,4 +18,6 @@ GET         /twitter/auth        controllers.Twitter.authenticate()
 
 GET         /login               controllers.Application.login
 
+GET         /signup               controllers.UserSignupController.signup
+
 POST        /tokensignin         controllers.SecurityController.tokensignin

@@ -1,19 +1,46 @@
 package controllers
 
+import java.io.{ByteArrayInputStream, InputStream}
 import java.util.Collections
 import javax.inject.Inject
 
+import akka.actor.ActorSystem
+import akka.http.scaladsl.Http
+import akka.http.scaladsl.model.HttpMethods._
+import akka.http.scaladsl.model._
+import akka.stream.ActorMaterializer
+import akka.util.{ByteString, Timeout}
 import be.objectify.deadbolt.scala.cache.HandlerCache
 import be.objectify.deadbolt.scala.{ActionBuilders, DeadboltActions}
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload
 import com.google.api.client.googleapis.auth.oauth2.{GoogleIdToken, GoogleIdTokenVerifier}
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.jackson2.JacksonFactory
+import com.typesafe.config.ConfigFactory
+import io.sudostream.timetoteach.messages.systemwide.model.User
+import org.apache.avro.io.{Decoder, DecoderFactory}
+import org.apache.avro.specific.SpecificDatumReader
+import play.api.Logger
 import play.api.data.Forms._
 import play.api.data._
-import play.api.mvc.{Action, Controller, Cookie}
+import play.api.mvc._
 
-class SecurityController @Inject()(deadbolt: DeadboltActions, handlers: HandlerCache, actionBuilder: ActionBuilders) extends Controller {
+import scala.concurrent.duration._
+import scala.concurrent.{ExecutionContextExecutor, Future}
+
+class SecurityController @Inject()(deadbolt: DeadboltActions,
+                                   handlers: HandlerCache,
+                                   actionBuilder: ActionBuilders
+                                  ) extends Controller {
+
+  implicit val system: ActorSystem = ActorSystem()
+  implicit val executor: ExecutionContextExecutor = system.dispatcher
+  implicit val materializer: ActorMaterializer = ActorMaterializer()
+  implicit val timeout: Timeout = Timeout(5 seconds)
+  private val config = ConfigFactory.load()
+  private val userServiceHostname = config.getString("services.user-service-host")
+  private val userServicePort = config.getString("services.user-service-port")
+  val logger = Logger
 
   val userForm = Form(
     mapping(
@@ -21,41 +48,113 @@ class SecurityController @Inject()(deadbolt: DeadboltActions, handlers: HandlerC
     )(TokenId.apply)(TokenId.unapply)
   )
 
-  def tokensignin = Action { implicit request =>
+  def tokensignin = Action.async { implicit request =>
     val tokenId = userForm.bindFromRequest.get
-    println(s"\n\nOkay dokes ... Token Id = ${tokenId.value}\n\n")
+    logger.debug(s"Token Id = ${tokenId.value}")
 
+    val idToken: GoogleIdToken = verifyToken(tokenId)
+    if (idToken != null) {
+      checkTokenAgainstUserService(idToken)
+    } else {
+      invalidToken
+    }
+  }
+
+  private def invalidToken: Future[Status] = {
+    logger.warn("Token was null after being processed by google verified. Invalid ID token.")
+    Future {
+      Unauthorized
+    }
+  }
+
+  private def checkTokenAgainstUserService(idToken: GoogleIdToken): Future[Result] = {
+    val payload: Payload = idToken.getPayload
+    printDebugInfo(payload)
+
+    val protocol = if (userServicePort.toInt > 9000) "http" else "https"
+    val userServiceUri =
+      Uri(s"$protocol://$userServiceHostname:$userServicePort/api/user?" +
+        s"socialNetworkName=GOOGLE&socialNetworkUserId=${payload.getSubject}")
+    val req = HttpRequest(GET, uri = userServiceUri)
+    val responseFuture: Future[HttpResponse] = Http().singleRequest(req)
+    val eventualFuture: Future[Future[Result]] = responseFuture map {
+      resp => processHttpResponse(resp, payload)
+    }
+
+    eventualFuture.flatMap {
+      res => res
+    }
+  }
+  private def verifyToken(tokenId: TokenId) = {
     val verifier: GoogleIdTokenVerifier =
       new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), JacksonFactory.getDefaultInstance)
         .setAudience(Collections.singletonList("19438371353-1gljfancidnfrtjdt2ic22hd3ib4fab0.apps.googleusercontent.com"))
         .build()
-
-    // (Receive idTokenString by HTTPS POST)
-
     val idToken: GoogleIdToken = verifier.verify(tokenId.value)
-    if (idToken != null) {
-      val payload: Payload = idToken.getPayload
+    idToken
+  }
+  private def printDebugInfo(payload: Payload) = {
+    logger.debug("User ID: " + payload.getSubject)
+    logger.debug(s"email: ${payload.getEmail}")
+    logger.debug(s"email verified: ${payload.getEmailVerified.booleanValue}")
+    logger.debug(s"name:  ${payload.get("name").toString}")
+    logger.debug(s"picture: ${payload.get("picture").toString}")
+    logger.debug(s"locale:  ${payload.get("locale").toString}")
+    logger.debug(s"family name: ${payload.get("family_name").toString}")
+    logger.debug(s"given name: ${payload.get("given_name").toString}")
+  }
+  private[controllers] def processHttpResponse(resp: HttpResponse,
+                                               payload: Payload): Future[Result] = {
+    if (resp.status.isSuccess()) {
 
-      // Print user identifier
-      val userId = payload.getSubject
-      System.out.println("User ID: " + userId)
+      val smallTimeout = 3000.millis
+      //            val dataFuture: Future[ByteString] = resp.entity.toStrict(smallTimeout).map {
+      val dataFuture = resp.entity.toStrict(smallTimeout) map {
+        httpEntity =>
+          httpEntity.getData()
+      }
+      val userExtractedFuture = dataFuture map {
+        databytes =>
+          deserialiseUser(databytes)
+      }
 
-      // Get profile information from payload
-      println(s"email: ${payload.getEmail}")
-      println(s"email verified: ${payload.getEmailVerified.booleanValue}")
-      println(s"name:  ${payload.get("name").toString}")
-      println(s"picture: ${payload.get("picture").toString}")
-      println(s"locale:  ${payload.get("locale").toString}")
-      println(s"family name: ${payload.get("family_name").toString}")
-      println(s"given name: ${payload.get("given_name").toString}")
-
-      // Use or store profile information
-      // ...
-      Ok(payload.get("name").toString).withCookies(Cookie("timetoteachid","1234567")).bakeCookies()
+      userExtractedFuture map {
+        user =>
+          Ok(payload.get("name").toString)
+            .withCookies(
+              Cookie("timetoteachId", user.timeToTeachId),
+              Cookie("socialNetworkName", "GOOGLE"),
+              Cookie("socialNetworkUserId", payload.getSubject),
+              Cookie("socialNetworkEmail", payload.getEmail),
+              Cookie("socialNetworkPicture", payload.get("picture").toString)
+            )
+            .bakeCookies()
+      }
     } else {
-      System.out.println("Invalid ID token.")
-      Unauthorized
+      logger.warn(s"Couldn't find user in time to teach : ${resp.toString()}")
+      Future {
+        NotFound(payload.get("name").toString)
+          .withCookies(
+            Cookie("socialNetworkFamilyName", payload.get("family_name").toString),
+            Cookie("socialNetworkGivenName", payload.get("given_name").toString),
+            Cookie("socialNetworkName", "GOOGLE"),
+            Cookie("socialNetworkUserId", payload.getSubject),
+            Cookie("socialNetworkEmail", payload.getEmail),
+            Cookie("socialNetworkPicture", payload.get("picture").toString)
+          )
+          .bakeCookies()
+      }
     }
+  }
+  private def deserialiseUser(databytes: ByteString) = {
+    logger.debug("Deserialise User data bytes")
+    val data = databytes.toList.toArray
+    val reader = new SpecificDatumReader[User](User.SCHEMA$)
+    val in: InputStream = new ByteArrayInputStream(data)
+    val decoder: Decoder = new DecoderFactory().binaryDecoder(in, null)
+    val user = new User()
+    reader.read(user, decoder)
+    user
   }
 }
 

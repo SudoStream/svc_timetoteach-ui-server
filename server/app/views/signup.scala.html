@@ -1,0 +1,39 @@
+@(userForm: Form[controllers.UserSignupController.UserData], postUrl: Call, defaultValues: controllers.UserSignupController.UserData)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+
+<html>
+    <head>
+        <title>Signup to TimeToTeach</title>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
+    </head>
+    <body>
+
+        <h2>Hi @defaultValues.firstName!</h2>
+        <h3>Sign up to Time To Teach</h3>
+
+    </body>
+
+    @* Global errors are not tied to any particular form field *@
+    @if(userForm.hasGlobalErrors) {
+        @userForm.globalErrors.map { error: FormError =>
+            <div>
+                @error.key: @error.message
+            </div>
+        }
+    }
+
+    <div>
+        <picture>
+            <source media="(min-width: 50px)" srcset="@defaultValues.picture">
+            <img class="img-circle" src="@defaultValues.picture" alt="" style="width: auto;">
+        </picture>
+    </div>
+
+    @helper.form(postUrl) {
+        @helper.CSRF.formField
+        @helper.inputText(userForm("firstName"))
+        @helper.inputText(userForm("familyName"))
+        @helper.inputText(userForm("emailAddress"))
+        <button>Signup</button>
+    }
+
+</html>

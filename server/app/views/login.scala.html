@@ -11,7 +11,7 @@
 
         <div>OK</div>
 
-    <button onclick='sayHi();'>Lets say hello?</button>
+        <button onclick='sayHi();'>Lets say hello?</button>
 
         <div>Now</div>
 
@@ -36,12 +36,20 @@
           xhr.open('POST', '/tokensignin');
           xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
           xhr.setRequestHeader('X-Requested-With', 'Accept');
-          xhr.onload = function() {
+          xhr.onload = function () {
               console.log('Signed in as: ' + xhr.responseText);
+          };
+          xhr.onloadend = function () {
+              if (xhr.status === 404) {
+                  if (confirm("\nIt looks like you have not yet signed up to Time To Teach.\n\n" +
+                          "Would you like to sign up now?\n\n")) {
+                      window.location.href = "/signup";
+                  }
+              }
           };
           xhr.send('idtoken=' + id_token);
 
-      };
+      }
     </script>
 
         <a href="#" onclick="signOut();">Sign out</a>
