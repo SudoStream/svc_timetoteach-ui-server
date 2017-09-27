@@ -4,3 +4,4 @@ project/project/
 .jvm
 target
 generated.keystore
+logs
