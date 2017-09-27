@@ -23,9 +23,9 @@ object UserSignupController {
 
   val userForm = Form(
     mapping(
-      "firstName" -> text,
-      "familyName" -> text,
-      "emailAddress" -> email
+      "First Name" -> text,
+      "Family Name" -> text,
+      "Email Address" -> email
       //      "school" -> of[School]
     )(UserData.apply)(UserData.unapply)
   )
