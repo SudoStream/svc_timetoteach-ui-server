@@ -6,7 +6,7 @@ import be.objectify.deadbolt.scala.cache.HandlerCache
 import be.objectify.deadbolt.scala.{ActionBuilders, DeadboltActions}
 import controllers.UserSignupController.UserData
 import controllers.serviceproxies.UserWriterServiceProxyImpl
-import models.timetoteach.TimeToTeachUser
+import models.timetoteach.{CookieNames, TimeToTeachUser}
 import play.api.Logger
 import play.api.data.Form
 import play.api.mvc._
@@ -18,20 +18,14 @@ object UserSignupController {
 
   case class UserData(firstName: String,
                       familyName: String,
-                      emailAddress: String,
-                      picture: String,
-                      socialNetworkName: String,
-                      socialNetworkUserId: String
+                      emailAddress: String
                      )
 
   val userForm = Form(
     mapping(
       "firstName" -> text,
       "familyName" -> text,
-      "emailAddress" -> email,
-      "picture" -> text,
-      "socialNetworkName" -> text,
-      "socialNetworkUserId" -> text
+      "emailAddress" -> email
       //      "school" -> of[School]
     )(UserData.apply)(UserData.unapply)
   )
@@ -50,30 +44,58 @@ class UserSignupController @Inject()(deadbolt: DeadboltActions,
   private val postUrl = routes.UserSignupController.userCreated()
 
   def signup = Action { implicit request: MessagesRequest[AnyContent] =>
+    request.cookies foreach (cookie => logger.debug("SU name: '" + cookie.name + "',   value: '" + cookie.value + "'"))
 
-    request.cookies foreach (cookie => logger.debug("name: '" + cookie.name + "',   value: '" + cookie.value + "'"))
     val defaultValuesFromCookies: UserData = createUserDefaultValues(request)
-
     val initialForm = UserSignupController.userForm.bindFromRequest.fill(defaultValuesFromCookies)
-    Ok(views.html.signup(initialForm, postUrl, defaultValuesFromCookies))
+    val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, request)
+    val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, request)
+
+    Ok(views.html.signup(initialForm, postUrl, userPictureUri, userFirstName))
   }
 
+  private def getCookieStringFromRequest(cookieKey: String, request: MessagesRequest[AnyContent]) : String = {
+    request.cookies.get(cookieKey) match {
+      case Some(cookie) => cookie.value
+      case None => ""
+    }
+  }
 
   def userCreated = Action { implicit request: MessagesRequest[AnyContent] =>
-    val defaultValuesFromCookies: UserData = createUserDefaultValues(request)
+    request.cookies foreach (cookie => logger.debug("UC name: '" + cookie.name + "',   value: '" + cookie.value + "'"))
+
+    val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, request)
+    val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, request)
 
     val errorFunction = { formWithErrors: Form[UserData] =>
-      BadRequest(views.html.signup(formWithErrors, postUrl, defaultValuesFromCookies))
+      BadRequest(views.html.signup(formWithErrors, postUrl, userPictureUri, userFirstName))
     }
 
     val successFunction = { data: UserData =>
+      val cookies = request.cookies
+
+      val theUserPictureUri = cookies.get(CookieNames.socialNetworkPicture) match {
+        case Some(pictureCookie) => pictureCookie.value
+        case None => ""
+      }
+
+      val theSocialNetwork = cookies.get(CookieNames.socialNetworkName) match {
+        case Some(socialNetworkCookie) => socialNetworkCookie.value
+        case None => ""
+      }
+
+      val theSocialNetworkUserId = cookies.get(CookieNames.socialNetworkUserId) match {
+        case Some(socialUserIdCookie) => socialUserIdCookie.value
+        case None => ""
+      }
+
       val theUser = TimeToTeachUser(
         firstName = data.firstName,
         familyName = data.familyName,
         emailAddress = data.emailAddress,
-        picture = data.picture,
-        socialNetworkName = data.socialNetworkName,
-        socialNetworkUserId = data.socialNetworkUserId
+        picture = theUserPictureUri,
+        socialNetworkName = theSocialNetwork,
+        socialNetworkUserId = theSocialNetworkUserId
         //        school = data.school
       )
 
@@ -83,7 +105,7 @@ class UserSignupController @Inject()(deadbolt: DeadboltActions,
 
       Redirect(routes.UserSignupController.signedUpCongrats())
         .withCookies(
-          Cookie("timetoteachId", timeToTeachUserId.value))
+          Cookie(CookieNames.timetoteachId, timeToTeachUserId.value))
         .bakeCookies()
     }
 
@@ -96,16 +118,12 @@ class UserSignupController @Inject()(deadbolt: DeadboltActions,
     Ok(views.html.signedupcongrats())
   }
 
-  private def createUserDefaultValues(request: MessagesRequest[AnyContent]) = {
-    val defaultValuesFromCookies = UserData(
-      firstName = request.cookies.get("socialNetworkGivenName").get.value,
-      familyName = request.cookies.get("socialNetworkFamilyName").get.value,
-      emailAddress = request.cookies.get("socialNetworkEmail").get.value,
-      picture = request.cookies.get("socialNetworkPicture").get.value,
-      socialNetworkName = request.cookies.get("socialNetworkName").get.value,
-      socialNetworkUserId = request.cookies.get("socialNetworkUserId").get.value
+  private def createUserDefaultValues(request: MessagesRequest[AnyContent]): UserData = {
+    UserData(
+      firstName = request.cookies.get(CookieNames.socialNetworkGivenName).get.value,
+      familyName = request.cookies.get(CookieNames.socialNetworkFamilyName).get.value,
+      emailAddress = request.cookies.get(CookieNames.socialNetworkEmail).get.value
     )
-    defaultValuesFromCookies
   }
 
 }

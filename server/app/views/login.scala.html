@@ -9,12 +9,6 @@
     </head>
     <body>
 
-        <div>OK</div>
-
-        <button onclick='sayHi();'>Lets say hello?</button>
-
-        <div>Now</div>
-
         <div class="g-signin2" data-onsuccess="onSignIn" data-theme="dark"></div>
         <script>
       function onSignIn(googleUser) {
@@ -32,7 +26,6 @@
           console.log("ID Token: " + id_token);
 
           var xhr = new XMLHttpRequest();
-          // TODO: Need to change localhost here to relative url I guess
           xhr.open('POST', '/tokensignin');
           xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
           xhr.setRequestHeader('X-Requested-With', 'Accept');
@@ -45,6 +38,8 @@
                           "Would you like to sign up now?\n\n")) {
                       window.location.href = "/signup";
                   }
+              } else {
+                  console.log("ERROR status " + xhr.status)
               }
           };
           xhr.send('idtoken=' + id_token);

@@ -18,6 +18,8 @@ import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.jackson2.JacksonFactory
 import com.typesafe.config.ConfigFactory
 import io.sudostream.timetoteach.messages.systemwide.model.User
+import models.timetoteach
+import models.timetoteach.CookieNames
 import org.apache.avro.io.{Decoder, DecoderFactory}
 import org.apache.avro.specific.SpecificDatumReader
 import play.api.Logger
@@ -85,6 +87,7 @@ class SecurityController @Inject()(deadbolt: DeadboltActions,
       res => res
     }
   }
+
   private def verifyToken(tokenId: TokenId) = {
     val verifier: GoogleIdTokenVerifier =
       new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), JacksonFactory.getDefaultInstance)
@@ -93,7 +96,8 @@ class SecurityController @Inject()(deadbolt: DeadboltActions,
     val idToken: GoogleIdToken = verifier.verify(tokenId.value)
     idToken
   }
-  private def printDebugInfo(payload: Payload) = {
+
+  private def printDebugInfo(payload: Payload) {
     logger.debug("User ID: " + payload.getSubject)
     logger.debug(s"email: ${payload.getEmail}")
     logger.debug(s"email verified: ${payload.getEmailVerified.booleanValue}")
@@ -103,6 +107,7 @@ class SecurityController @Inject()(deadbolt: DeadboltActions,
     logger.debug(s"family name: ${payload.get("family_name").toString}")
     logger.debug(s"given name: ${payload.get("given_name").toString}")
   }
+
   private[controllers] def processHttpResponse(resp: HttpResponse,
                                                payload: Payload): Future[Result] = {
     if (resp.status.isSuccess()) {
@@ -122,11 +127,11 @@ class SecurityController @Inject()(deadbolt: DeadboltActions,
         user =>
           Ok(payload.get("name").toString)
             .withCookies(
-              Cookie("timetoteachId", user.timeToTeachId),
-              Cookie("socialNetworkName", "GOOGLE"),
-              Cookie("socialNetworkUserId", payload.getSubject),
-              Cookie("socialNetworkEmail", payload.getEmail),
-              Cookie("socialNetworkPicture", payload.get("picture").toString)
+              Cookie(CookieNames.timetoteachId, user.timeToTeachId),
+              Cookie(CookieNames.socialNetworkName, "GOOGLE"),
+              Cookie(CookieNames.socialNetworkUserId, payload.getSubject),
+              Cookie(CookieNames.socialNetworkEmail, payload.getEmail),
+              Cookie(CookieNames.socialNetworkPicture, payload.get("picture").toString)
             )
             .bakeCookies()
       }
@@ -134,18 +139,20 @@ class SecurityController @Inject()(deadbolt: DeadboltActions,
       logger.warn(s"Couldn't find user in time to teach : ${resp.toString()}")
       Future {
         NotFound(payload.get("name").toString)
+          .discardingCookies(DiscardingCookie(CookieNames.timetoteachId))
           .withCookies(
-            Cookie("socialNetworkFamilyName", payload.get("family_name").toString),
-            Cookie("socialNetworkGivenName", payload.get("given_name").toString),
-            Cookie("socialNetworkName", "GOOGLE"),
-            Cookie("socialNetworkUserId", payload.getSubject),
-            Cookie("socialNetworkEmail", payload.getEmail),
-            Cookie("socialNetworkPicture", payload.get("picture").toString)
+            Cookie(CookieNames.socialNetworkFamilyName, payload.get("family_name").toString),
+            Cookie(CookieNames.socialNetworkGivenName, payload.get("given_name").toString),
+            Cookie(CookieNames.socialNetworkName, "GOOGLE"),
+            Cookie(CookieNames.socialNetworkUserId, payload.getSubject),
+            Cookie(CookieNames.socialNetworkEmail, payload.getEmail),
+            Cookie(CookieNames.socialNetworkPicture, payload.get("picture").toString)
           )
           .bakeCookies()
       }
     }
   }
+
   private def deserialiseUser(databytes: ByteString) = {
     logger.debug("Deserialise User data bytes")
     val data = databytes.toList.toArray

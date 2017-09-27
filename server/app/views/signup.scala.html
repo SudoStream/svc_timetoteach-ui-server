@@ -1,4 +1,4 @@
-@(userForm: Form[controllers.UserSignupController.UserData], postUrl: Call, defaultValues: controllers.UserSignupController.UserData)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+@(userForm: Form[controllers.UserSignupController.UserData], postUrl: Call, userPictureUri: String, userFirstName: String)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
 <html>
     <head>
@@ -7,7 +7,7 @@
     </head>
     <body>
 
-        <h2>Hi @defaultValues.firstName!</h2>
+        <h2>Hi @userFirstName!</h2>
         <h3>Sign up to Time To Teach</h3>
 
     </body>
@@ -22,8 +22,8 @@
     }
 
     <picture>
-        <source media="(min-width: 50px)" srcset="@defaultValues.picture">
-        <img class="img-circle" src="@defaultValues.picture" alt="" style="width: auto;">
+        <source media="(min-width: 50px)" srcset="@userPictureUri">
+        <img class="img-circle" src="@userPictureUri" alt="" style="width: auto;">
     </picture>
 
     @helper.form(postUrl) {
@@ -31,10 +31,6 @@
         @helper.inputText(userForm("firstName"))
         @helper.inputText(userForm("familyName"))
         @helper.inputText(userForm("emailAddress"))
-        @helper.inputText(userForm("picture"))
-        @helper.inputText(userForm("socialNetworkName"))
-        @helper.inputText(userForm("socialNetworkUserId"))
-
         <button>Signup</button>
     }
 
