@@ -8,16 +8,3 @@ case class TimeToTeachUser(
                             socialNetworkName: String,
                             socialNetworkUserId: String
                           )
-
-//                            ,
-//                            school: School
-//                          )
-//
-//case class School(
-//                   name: String,
-//                   address: String,
-//                   postCode: String,
-//                   telephone: String,
-//                   localAuthority: String,
-//                   country: String
-//                 )

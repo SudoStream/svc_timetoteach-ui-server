@@ -5,8 +5,8 @@ import javax.inject.Inject
 import be.objectify.deadbolt.scala.cache.HandlerCache
 import be.objectify.deadbolt.scala.{ActionBuilders, DeadboltActions}
 import controllers.UserSignupController.UserData
-import controllers.serviceproxies.UserWriterServiceProxyImpl
-import models.timetoteach.{CookieNames, TimeToTeachUser}
+import controllers.serviceproxies.{SchoolReaderServiceProxyImpl, UserWriterServiceProxyImpl}
+import models.timetoteach._
 import play.api.Logger
 import play.api.data.Form
 import play.api.mvc._
@@ -18,30 +18,34 @@ object UserSignupController {
 
   case class UserData(firstName: String,
                       familyName: String,
-                      emailAddress: String
+                      emailAddress: String,
+                      schoolId: String
                      )
 
   val userForm = Form(
     mapping(
       "First Name" -> text,
       "Family Name" -> text,
-      "Email Address" -> email
-      //      "school" -> of[School]
+      "Email Address" -> email,
+      "School Id" -> text
     )(UserData.apply)(UserData.unapply)
   )
 
 
 }
 
+
 class UserSignupController @Inject()(deadbolt: DeadboltActions,
                                      handlers: HandlerCache,
                                      actionBuilder: ActionBuilders,
                                      cc: MessagesControllerComponents,
-                                     userWriterServiceProxy: UserWriterServiceProxyImpl
+                                     userWriterServiceProxy: UserWriterServiceProxyImpl,
+                                     schoolsProxy: SchoolReaderServiceProxyImpl
                                     ) extends MessagesAbstractController(cc) {
 
   val logger: Logger = Logger
   private val postUrl = routes.UserSignupController.userCreated()
+
 
   def signup = Action { implicit request: MessagesRequest[AnyContent] =>
     request.cookies foreach (cookie => logger.debug("SU name: '" + cookie.name + "',   value: '" + cookie.value + "'"))
@@ -50,11 +54,13 @@ class UserSignupController @Inject()(deadbolt: DeadboltActions,
     val initialForm = UserSignupController.userForm.bindFromRequest.fill(defaultValuesFromCookies)
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, request)
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, request)
+    val schools = schoolsProxy.getAllSchoolsAsSeq()
 
-    Ok(views.html.signup(initialForm, postUrl, userPictureUri, userFirstName))
+    Ok(views.html.signup(initialForm, postUrl, userPictureUri, userFirstName, schools))
   }
 
-  private def getCookieStringFromRequest(cookieKey: String, request: MessagesRequest[AnyContent]) : String = {
+
+  private def getCookieStringFromRequest(cookieKey: String, request: MessagesRequest[AnyContent]): String = {
     request.cookies.get(cookieKey) match {
       case Some(cookie) => cookie.value
       case None => ""
@@ -66,9 +72,11 @@ class UserSignupController @Inject()(deadbolt: DeadboltActions,
 
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, request)
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, request)
+    val schools = schoolsProxy.getAllSchoolsAsSeq()
 
     val errorFunction = { formWithErrors: Form[UserData] =>
-      BadRequest(views.html.signup(formWithErrors, postUrl, userPictureUri, userFirstName))
+      logger.error("ERROR : Oh dear ... " + formWithErrors.toString)
+      BadRequest(views.html.signup(formWithErrors, postUrl, userPictureUri, userFirstName, schools))
     }
 
     val successFunction = { data: UserData =>
@@ -122,7 +130,8 @@ class UserSignupController @Inject()(deadbolt: DeadboltActions,
     UserData(
       firstName = request.cookies.get(CookieNames.socialNetworkGivenName).get.value,
       familyName = request.cookies.get(CookieNames.socialNetworkFamilyName).get.value,
-      emailAddress = request.cookies.get(CookieNames.socialNetworkEmail).get.value
+      emailAddress = request.cookies.get(CookieNames.socialNetworkEmail).get.value,
+      schoolId = ""
     )
   }
 

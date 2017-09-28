@@ -1,4 +1,9 @@
-@(userForm: Form[controllers.UserSignupController.UserData], postUrl: Call, userPictureUri: String, userFirstName: String)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+@import models.timetoteach.School
+@(userForm: Form[controllers.UserSignupController.UserData],
+        postUrl: Call,
+        userPictureUri: String,
+        userFirstName: String,
+        schools: Seq[School])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
 <html>
     <head>
@@ -18,6 +23,10 @@
             <div>
                 @error.key: @error.message
             </div>
+
+            <script>
+                    document.getElementById("userSignupButton").disabled = true;
+            </script>
         }
     }
 
@@ -31,7 +40,125 @@
         @helper.inputText(userForm("First Name"))
         @helper.inputText(userForm("Family Name"))
         @helper.inputText(userForm("Email Address"))
-        <button>Signup</button>
+        <dl style="display:none;" id="School Id_field">
+            <dd><input  type="text" name="School Id" id="School Id" value=""></dd>
+        </dl>
+
+        <div id="schoolsearch">
+            <input type="text" id="schoolSearchInput" onkeyup="searchSchools()" name="search" placeholder="Search for your school..">
+            <table id="schoolTable">
+                <tr class="header">
+                    <th style="width: 30%;">School Name</th>
+                    <th style="width: 30%;">Address</th>
+                    <th style="width: 15%;">Local Authority</th>
+                    <th style="width: 15%;">Country</th>
+                </tr>
+                @for(school <- schools) {
+                    <tr>
+                        <td style="display:none;">@java.util.UUID.randomUUID().toString</td>
+                        <td>@school.name</td>
+                        <td>@school.address</td>
+                        <td>@school.localAuthority.value</td>
+                        <td>@school.country.value</td>
+                    </tr>
+                }
+            </table>
+
+            <div id="selectedSchoolDiv">
+                <table id="selectedSchoolTable">
+                    <th>Selected School :</th>
+                    <td style="display:none;" id="selectedSchoolId"></td>
+                    <td id="selectedSchoolName">None</td>
+                    <td id="selectedSchoolAddress"></td>
+                </table>
+            </div>
+
+        </div>
+
+        <br/>
+        <button id="userSignupButton" >Signup</button>
     }
+
+    <script>
+
+    </script>
+
+    <script>
+            function searchSchools() {
+                // Declare variables
+                var input, filter, table, tr, td, i;
+                input = document.getElementById("schoolSearchInput");
+                filter = input.value.toUpperCase();
+                table = document.getElementById("schoolTable");
+                tr = table.getElementsByTagName("tr");
+
+                // Loop through all table rows, and hide those who don't match the search query
+                for (i = 0; i < tr.length; i++) {
+                    td = tr[i].getElementsByTagName("td")[1];
+                    if (td) {
+                        if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                            tr[i].style.display = "";
+                        } else {
+                            tr[i].style.display = "none";
+                        }
+                    }
+                }
+            }
+    </script>
+
+    <script>
+            var table = document.getElementById("schoolTable");
+            if (table != null) {
+                for (var i = 0; i < table.rows.length; i++) {
+                        table.rows[i].onclick = function() {
+                            showSelectedSchool(this);
+                        };
+                }
+            }
+
+            function showSelectedSchool(tableRow) {
+                var selectedSchoolTable = document.getElementById("selectedSchoolTable");
+                selectedSchoolTable.display = true;
+
+                var allCellsInRow = tableRow.cells;
+                var schoolId = allCellsInRow.item(0).innerHTML;
+                removeOtherSchoolsExceptThisId(schoolId);
+                var selectedSchoolIdCell = document.getElementById("selectedSchoolId");
+                selectedSchoolIdCell.innerHTML = schoolId;
+                var selectedSchoolNameCell = document.getElementById("selectedSchoolName");
+                selectedSchoolNameCell.innerHTML = allCellsInRow.item(1).innerHTML;
+                selectedSchoolNameCell.display = true;
+                var selectedSchoolAddressCell = document.getElementById("selectedSchoolAddress");
+                selectedSchoolAddressCell.innerHTML = allCellsInRow.item(2).innerHTML;
+                selectedSchoolAddressCell.display = true;
+
+                var schoolSearchInput = document.getElementById("schoolSearchInput");
+                schoolSearchInput.value = allCellsInRow.item(1).innerHTML;
+
+                document.getElementById("School Id").value = schoolId
+            }
+    </script>
+
+    <script>
+            function removeOtherSchoolsExceptThisId(schoolId) {
+                // Declare variables
+                var table, tr, td, i;
+                table = document.getElementById("schoolTable");
+                tr = table.getElementsByTagName("tr");
+
+                // Loop through all table rows, and hide those who don't match the search query
+                for (i = 0; i < tr.length; i++) {
+                    td = tr[i].getElementsByTagName("td")[0];
+                    if (td) {
+                        var thisSchool = td.innerHTML;
+                        if (thisSchool === schoolId) {
+                            tr[i].style.display = "";
+                        } else {
+                            tr[i].style.display = "none";
+                        }
+                    }
+                }
+            }
+    </script>
 
 </html>
