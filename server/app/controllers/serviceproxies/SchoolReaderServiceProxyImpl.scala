@@ -29,7 +29,7 @@ class SchoolReaderServiceProxyImpl {
   private val userServicePort = config.getString("services.user-service-port")
   val logger: Logger.type = Logger
 
-  def getAllSchoolsAsSeq: Future[Seq[School]] = {
+  def getAllSchoolsFuture: Future[Seq[School]] = {
     val protocol = if (userServicePort.toInt > 9000) "http" else "https"
     val uriString = s"$protocol://$userServiceHostname:$userServicePort/api/schools"
     logger.debug(s"uri string is $uriString")

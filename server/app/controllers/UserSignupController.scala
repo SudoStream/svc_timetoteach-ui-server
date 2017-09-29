@@ -57,7 +57,7 @@ class UserSignupController @Inject()(deadbolt: DeadboltActions,
     val initialForm = UserSignupController.userForm.bindFromRequest.fill(defaultValuesFromCookies)
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, request)
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, request)
-    val schoolsFuture = schoolsProxy.getAllSchoolsAsSeq
+    val schoolsFuture = schoolsProxy.getAllSchoolsFuture
 
     for {
       schools <- schoolsFuture
@@ -79,7 +79,7 @@ class UserSignupController @Inject()(deadbolt: DeadboltActions,
 
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, request)
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, request)
-    val schoolsFuture = schoolsProxy.getAllSchoolsAsSeq
+    val schoolsFuture = schoolsProxy.getAllSchoolsFuture
 
     val errorFunction = { formWithErrors: Form[UserData] =>
       logger.error("ERROR : Oh dear ... " + formWithErrors.toString)
