@@ -18,7 +18,6 @@ import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.jackson2.JacksonFactory
 import com.typesafe.config.ConfigFactory
 import io.sudostream.timetoteach.messages.systemwide.model.User
-import models.timetoteach
 import models.timetoteach.CookieNames
 import org.apache.avro.io.{Decoder, DecoderFactory}
 import org.apache.avro.specific.SpecificDatumReader
@@ -113,7 +112,7 @@ class SecurityController @Inject()(deadbolt: DeadboltActions,
     if (resp.status.isSuccess()) {
 
       val smallTimeout = 3000.millis
-      //            val dataFuture: Future[ByteString] = resp.entity.toStrict(smallTimeout).map {
+      //     val dataFuture: Future[ByteString] = resp.entity.toStrict(smallTimeout).map {
       val dataFuture = resp.entity.toStrict(smallTimeout) map {
         httpEntity =>
           httpEntity.getData()
