@@ -7,7 +7,7 @@ import models.timetoteach.TimeToTeachUser
 class UserWriterServiceProxyImpl {
   def createNewUser(user: TimeToTeachUser): TimeToTeachUserId = {
     // TODO: request user-writer service to add user
-    TimeToTeachUserId("howdydoodlydoo")
+    TimeToTeachUserId("TODO: This should be a real result back from the user writer service")
   }
 }
 
