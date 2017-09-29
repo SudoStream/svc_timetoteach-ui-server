@@ -11,6 +11,9 @@ import play.api.Logger
 import play.api.data.Form
 import play.api.mvc._
 
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+
 object UserSignupController {
 
   import play.api.data.Form
@@ -47,16 +50,20 @@ class UserSignupController @Inject()(deadbolt: DeadboltActions,
   private val postUrl = routes.UserSignupController.userCreated()
 
 
-  def signup = Action { implicit request: MessagesRequest[AnyContent] =>
+  def signup = Action.async { implicit request: MessagesRequest[AnyContent] =>
     request.cookies foreach (cookie => logger.debug("SU name: '" + cookie.name + "',   value: '" + cookie.value + "'"))
 
     val defaultValuesFromCookies: UserData = createUserDefaultValues(request)
     val initialForm = UserSignupController.userForm.bindFromRequest.fill(defaultValuesFromCookies)
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, request)
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, request)
-    val schools = schoolsProxy.getAllSchoolsAsSeq()
+    val schoolsFuture = schoolsProxy.getAllSchoolsAsSeq
 
-    Ok(views.html.signup(initialForm, postUrl, userPictureUri, userFirstName, schools))
+    for {
+      schools <- schoolsFuture
+    } yield {
+      Ok(views.html.signup(initialForm, postUrl, userPictureUri, userFirstName, schools))
+    }
   }
 
 
@@ -67,16 +74,20 @@ class UserSignupController @Inject()(deadbolt: DeadboltActions,
     }
   }
 
-  def userCreated = Action { implicit request: MessagesRequest[AnyContent] =>
+  def userCreated = Action.async { implicit request: MessagesRequest[AnyContent] =>
     request.cookies foreach (cookie => logger.debug("UC name: '" + cookie.name + "',   value: '" + cookie.value + "'"))
 
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, request)
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, request)
-    val schools = schoolsProxy.getAllSchoolsAsSeq()
+    val schoolsFuture = schoolsProxy.getAllSchoolsAsSeq
 
     val errorFunction = { formWithErrors: Form[UserData] =>
       logger.error("ERROR : Oh dear ... " + formWithErrors.toString)
-      BadRequest(views.html.signup(formWithErrors, postUrl, userPictureUri, userFirstName, schools))
+      for {
+        schools <- schoolsFuture
+      } yield {
+        BadRequest(views.html.signup(formWithErrors, postUrl, userPictureUri, userFirstName, schools))
+      }
     }
 
     val successFunction = { data: UserData =>
@@ -111,10 +122,12 @@ class UserSignupController @Inject()(deadbolt: DeadboltActions,
 
       val timeToTeachUserId = userWriterServiceProxy.createNewUser(theUser)
 
-      Redirect(routes.UserSignupController.signedUpCongrats())
-        .withCookies(
-          Cookie(CookieNames.timetoteachId, timeToTeachUserId.value))
-        .bakeCookies()
+      Future {
+        Redirect(routes.UserSignupController.signedUpCongrats())
+          .withCookies(
+            Cookie(CookieNames.timetoteachId, timeToTeachUserId.value))
+          .bakeCookies()
+      }
     }
 
     val formValidationResult = UserSignupController.userForm.bindFromRequest

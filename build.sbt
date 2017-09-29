@@ -27,7 +27,7 @@ lazy val timetoteach_ui_server = (project in file("server")).settings(
   libraryDependencies ++= Seq(
     guice,
     ws,
-    "io.sudostream.timetoteach" %% "messages" % "0.0.11-9",
+    "io.sudostream.timetoteach" %% "messages" % "0.0.11-14",
     "com.google.api-client" % "google-api-client" % "1.22.0",
     "be.objectify" %% "deadbolt-scala" % "2.6.0",
     "com.vmunier" %% "scalajs-scripts" % "1.1.0",

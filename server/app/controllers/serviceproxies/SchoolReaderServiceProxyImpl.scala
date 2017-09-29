@@ -1,12 +1,94 @@
 package controllers.serviceproxies
 
+import akka.actor.ActorSystem
+import akka.http.javadsl.model.HttpEntities
+import akka.http.scaladsl.Http
+import akka.http.scaladsl.model.HttpMethods.GET
+import akka.http.scaladsl.model.headers.Accept
+import akka.http.scaladsl.model._
+import akka.stream.ActorMaterializer
+import akka.util.Timeout
 import com.google.inject.Singleton
+import com.typesafe.config.ConfigFactory
+import io.sudostream.timetoteach.kafka.serializing.systemwide.model.SchoolsDeserializer
+import io.sudostream.timetoteach.messages.systemwide.model.SingleSchoolWrapper
 import models.timetoteach.{Country, LocalAuthority, School}
+import play.api.Logger
+
+import scala.concurrent.{ExecutionContextExecutor, Future}
+import scala.concurrent.duration._
 
 @Singleton
 class SchoolReaderServiceProxyImpl {
+  implicit val system: ActorSystem = ActorSystem()
+  implicit val executor: ExecutionContextExecutor = system.dispatcher
+  implicit val materializer: ActorMaterializer = ActorMaterializer()
+  implicit val timeout: Timeout = Timeout(5 seconds)
 
-  def getAllSchoolsAsSeq(): Seq[School] = {
+  private val config = ConfigFactory.load()
+  private val userServiceHostname = config.getString("services.user-service-host")
+  private val userServicePort = config.getString("services.user-service-port")
+  val logger: Logger.type = Logger
+
+  def getAllSchoolsAsSeq: Future[Seq[School]] = {
+    val protocol = if (userServicePort.toInt > 9000) "http" else "https"
+    val uriString = s"$protocol://$userServiceHostname:$userServicePort/api/schools"
+    logger.debug(s"uri string is $uriString")
+    val userServiceUri = Uri(uriString)
+    val req = HttpRequest(GET, uri = userServiceUri).withHeaders(Accept(mediaRanges = List(MediaRanges.`*/*`)))
+    val allSchoolsResponseFuture: Future[HttpResponse] = Http().singleRequest(req)
+    val allSchoolsEventualFuture: Future[Future[Seq[School]]] = allSchoolsResponseFuture map {
+      httpResponse =>
+        val eventualSchools = extractSchoolsFromHttpResponse(httpResponse)
+        val schoolsConverted = eventualSchools map {
+          schoolsInWrapper =>
+            val schools = schoolsInWrapper map {
+              singleSchoolWrapper =>
+                val theLocalAuthority = singleSchoolWrapper.school.localAuthority.toString.toUpperCase.stripPrefix("SCOTLAND__")
+                val theCountry = singleSchoolWrapper.school.country.toString.toUpperCase
+                School(
+                  name = singleSchoolWrapper.school.name,
+                  address = singleSchoolWrapper.school.address,
+                  postCode = singleSchoolWrapper.school.postCode,
+                  telephone = singleSchoolWrapper.school.telephone,
+                  localAuthority = LocalAuthority(theLocalAuthority),
+                  country = Country(theCountry)
+                )
+            }
+            schools
+        }
+        schoolsConverted
+    }
+
+    allSchoolsEventualFuture.flatMap {
+      res => res
+    }
+  }
+
+  def extractSchoolsFromHttpResponse(httpResponse: HttpResponse): Future[List[SingleSchoolWrapper]] = {
+    if (httpResponse.status.isSuccess()) {
+      val smallTimeout = 3000.millis
+      val dataFuture = httpResponse.entity.toStrict(smallTimeout) map {
+        httpEntity =>
+          httpEntity.getData()
+      }
+      val userExtractedFuture = dataFuture map {
+        databytes =>
+          val bytesAsArray = databytes.toArray
+          val schoolsDeserializer = new SchoolsDeserializer
+          val schools = schoolsDeserializer.deserialize("ignore", bytesAsArray)
+          schools.schools
+      }
+      userExtractedFuture
+    } else {
+      logger.warn(s"Issue finding schools : ${httpResponse.toString()}")
+      Future {
+        List.empty
+      }
+    }
+  }
+
+  def getAllSchoolsAsSeqDummy: Seq[School] = {
     val stNiniansStirling = School(
       name = "Some School",
       address = "Torbrex Rd, Stirling",
