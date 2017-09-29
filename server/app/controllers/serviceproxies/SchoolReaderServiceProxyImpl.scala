@@ -1,11 +1,10 @@
 package controllers.serviceproxies
 
 import akka.actor.ActorSystem
-import akka.http.javadsl.model.HttpEntities
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.HttpMethods.GET
-import akka.http.scaladsl.model.headers.Accept
 import akka.http.scaladsl.model._
+import akka.http.scaladsl.model.headers.Accept
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
 import com.google.inject.Singleton
@@ -15,8 +14,8 @@ import io.sudostream.timetoteach.messages.systemwide.model.SingleSchoolWrapper
 import models.timetoteach.{Country, LocalAuthority, School}
 import play.api.Logger
 
-import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.concurrent.duration._
+import scala.concurrent.{ExecutionContextExecutor, Future}
 
 @Singleton
 class SchoolReaderServiceProxyImpl {
