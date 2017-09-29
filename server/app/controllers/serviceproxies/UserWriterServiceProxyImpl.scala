@@ -13,6 +13,7 @@ import scala.concurrent.{ExecutionContextExecutor, Future}
 
 @Singleton
 class UserWriterServiceProxyImpl {
+
   implicit val system: ActorSystem = ActorSystem()
   implicit val executor: ExecutionContextExecutor = system.dispatcher
   implicit val materializer: ActorMaterializer = ActorMaterializer()
@@ -21,6 +22,8 @@ class UserWriterServiceProxyImpl {
   private val config = ConfigFactory.load()
   private val userServiceHostname = config.getString("services.user-service-host")
   private val userServicePort = config.getString("services.user-service-port")
+
+
   def createNewUser(user: TimeToTeachUser): Future[TimeToTeachUserId] = {
 
     // TODO: request user-writer service to add user
