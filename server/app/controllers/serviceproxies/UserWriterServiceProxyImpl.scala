@@ -32,6 +32,7 @@ class UserWriterServiceProxyImpl {
       TimeToTeachUserId("TODO: This should be a real result back from the user writer service")
     }
   }
+
 }
 
 case class TimeToTeachUserId(value: String)
