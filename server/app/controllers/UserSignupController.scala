@@ -114,8 +114,8 @@ class UserSignupController @Inject()(deadbolt: DeadboltActions,
         emailAddress = data.emailAddress,
         picture = theUserPictureUri,
         socialNetworkName = theSocialNetwork,
-        socialNetworkUserId = theSocialNetworkUserId
-        //        school = data.school
+        socialNetworkUserId = theSocialNetworkUserId,
+        schoolId = data.schoolId
       )
 
       logger.debug(s"Creating a new user with values : ${theUser.toString}")

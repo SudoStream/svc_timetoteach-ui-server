@@ -6,5 +6,6 @@ case class TimeToTeachUser(
                             emailAddress: String,
                             picture: String,
                             socialNetworkName: String,
-                            socialNetworkUserId: String
+                            socialNetworkUserId: String,
+                            schoolId: String
                           )
