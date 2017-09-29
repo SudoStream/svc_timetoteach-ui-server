@@ -12,7 +12,6 @@ import play.api.data.Form
 import play.api.mvc._
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
 object UserSignupController {
 
@@ -120,9 +119,11 @@ class UserSignupController @Inject()(deadbolt: DeadboltActions,
 
       logger.debug(s"Creating a new user with values : ${theUser.toString}")
 
-      val timeToTeachUserId = userWriterServiceProxy.createNewUser(theUser)
+      val timeToTeachUserIdFuture = userWriterServiceProxy.createNewUser(theUser)
 
-      Future {
+      for {
+        timeToTeachUserId <- timeToTeachUserIdFuture
+      } yield {
         Redirect(routes.UserSignupController.signedUpCongrats())
           .withCookies(
             Cookie(CookieNames.timetoteachId, timeToTeachUserId.value))
