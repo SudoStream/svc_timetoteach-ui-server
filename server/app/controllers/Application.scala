@@ -40,4 +40,10 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl, deadbolt: De
     }
   }
 
+  def timeToTeachApp = deadbolt.SubjectPresent()() { authRequest =>
+    Future {
+      Ok(views.html.timetoteach(new MyDeadboltHandler(userReader), SharedMessages.itWorks)(authRequest))
+    }
+  }
+
 }

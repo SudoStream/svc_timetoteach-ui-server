@@ -1,0 +1,11 @@
+@
+import be.objectify.deadbolt.scala.AuthenticatedRequest
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, message: String)(implicit request: AuthenticatedRequest[Any])
+
+@main("Time To Teach") {
+    <h2>Time To Teach</h2>
+    <ul>
+        <li>So Play shouts out: <em>@message</em></li>
+        <li>Scala.js shouts out: <em id="scalajsShoutOut"></em></li>
+    </ul>
+}
