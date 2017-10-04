@@ -55,7 +55,7 @@
                 </tr>
                 @for(school <- schools) {
                     <tr>
-                        <td style="display:none;">@java.util.UUID.randomUUID().toString</td>
+                        <td style="display: none;">@school.id</td>
                         <td>@school.name</td>
                         <td>@school.address</td>
                         <td>@school.localAuthority.value</td>

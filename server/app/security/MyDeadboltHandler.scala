@@ -2,6 +2,8 @@ package security
 
 import be.objectify.deadbolt.scala.models.Subject
 import be.objectify.deadbolt.scala.{AuthenticatedRequest, DeadboltHandler, DynamicResourceHandler}
+import controllers.serviceproxies.{TimeToTeachUserId, UserReaderServiceProxyImpl}
+import models.User
 import play.api.Logger
 import play.api.mvc.{Request, Result, Results}
 
@@ -12,7 +14,7 @@ import scala.concurrent._
   *
   * @author Steve Chaloner (steve@objectify.be)
   */
-class MyDeadboltHandler(dynamicResourceHandler: Option[DynamicResourceHandler] = None) extends DeadboltHandler {
+class MyDeadboltHandler(userReader: UserReaderServiceProxyImpl, dynamicResourceHandler: Option[DynamicResourceHandler] = None) extends DeadboltHandler {
 
   val logger = Logger("timetoteach")
 
@@ -23,10 +25,7 @@ class MyDeadboltHandler(dynamicResourceHandler: Option[DynamicResourceHandler] =
   }
 
   override def getSubject[A](request: AuthenticatedRequest[A]): Future[Option[Subject]] = {
-    // TODO: (1) Is the user valid? .... Actually this is in the LOGIN Part .. So need just ... ==>
-    // TODO: (2) Is the tokenId valid session, time etc?
-    println(s" -- Inside Deadbolt ${request.attrs.toString}")
-
+    logger.debug(s" -- Inside Deadbolt ${request.attrs.toString}")
     val socialNetworkNameCookieOption = request.cookies.get("socialNetworkName")
     val socialNetworkUserIdCookieOption = request.cookies.get("socialNetworkUserId")
 
@@ -36,15 +35,22 @@ class MyDeadboltHandler(dynamicResourceHandler: Option[DynamicResourceHandler] =
       val timetoteachIdCookie = timetoteachIdCookieOption.get
       val timetoteachId = timetoteachIdCookie.value
 
-      println(s"timeToTeachId Cookie $timetoteachId")
-      // TODO: Check timetoteachId exists in database
-      // If yes then subject exists else not
-      // In NOT case need to redirect to signup page in UI
+      logger.debug(s"timeToTeachId Cookie $timetoteachId")
+      val isUserValidFuture = userReader.isUserValid(TimeToTeachUserId(timetoteachId))
+
+      val eventualSubjectOption = isUserValidFuture map {
+        case true => Future {
+          logger.debug("WWWWWWWWWWWWWOOOOOWWWWWW - YES")
+          Some(new User(timetoteachId))
+        }
+        case false => Future {
+          logger.debug("WWWWWWWWWWWWWOOOOOWWWWWW - NO")
+          None
+        }
+      }
 
       //      Future(Some(new User("steve")))
-      Future {
-        None
-      }
+      eventualSubjectOption flatMap { fut => fut }
     } else {
       logger.warn("Subject not found in request")
       Future {

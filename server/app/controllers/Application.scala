@@ -4,6 +4,7 @@ import javax.inject.Inject
 
 import be.objectify.deadbolt.scala.cache.HandlerCache
 import be.objectify.deadbolt.scala.{ActionBuilders, DeadboltActions}
+import controllers.serviceproxies.UserReaderServiceProxyImpl
 import play.api.mvc._
 import security.MyDeadboltHandler
 import shared.SharedMessages
@@ -11,11 +12,11 @@ import shared.SharedMessages
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class Application @Inject()(deadbolt: DeadboltActions, handlers: HandlerCache, actionBuilder: ActionBuilders) extends Controller {
+class Application @Inject()(userReader: UserReaderServiceProxyImpl, deadbolt: DeadboltActions, handlers: HandlerCache, actionBuilder: ActionBuilders) extends Controller {
 
   def index = deadbolt.SubjectPresent()() { authRequest =>
     Future {
-      Ok(views.html.index(new MyDeadboltHandler, SharedMessages.itWorks)(authRequest))
+      Ok(views.html.index(new MyDeadboltHandler(userReader), SharedMessages.itWorks)(authRequest))
     }
   }
 
@@ -25,7 +26,7 @@ class Application @Inject()(deadbolt: DeadboltActions, handlers: HandlerCache, a
 
   def profile = deadbolt.SubjectPresent()() { authRequest =>
     Future {
-      Ok(views.html.index(new MyDeadboltHandler, SharedMessages.itWorks)(authRequest))
+      Ok(views.html.index(new MyDeadboltHandler(userReader), SharedMessages.itWorks)(authRequest))
     }
   }
 

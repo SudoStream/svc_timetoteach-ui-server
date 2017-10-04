@@ -1,21 +1,22 @@
 package security
 
-import javax.inject.Singleton
+import javax.inject.{Inject, Singleton}
 
-import be.objectify.deadbolt.scala.{HandlerKey, DeadboltHandler}
 import be.objectify.deadbolt.scala.cache.HandlerCache
+import be.objectify.deadbolt.scala.{DeadboltHandler, HandlerKey}
+import controllers.serviceproxies.UserReaderServiceProxyImpl
 
 /**
   * @author Steve Chaloner (steve@objectify.be)
   */
 @Singleton
-class MyHandlerCache extends HandlerCache {
+class MyHandlerCache @Inject()(userReader: UserReaderServiceProxyImpl) extends HandlerCache {
 
-  val defaultHandler: DeadboltHandler = new MyDeadboltHandler
+  val defaultHandler: DeadboltHandler = new MyDeadboltHandler(userReader)
 
   val handlers: Map[Any, DeadboltHandler] = Map(HandlerKeys.defaultHandler -> defaultHandler,
-    HandlerKeys.altHandler -> new MyDeadboltHandler(Some(MyAlternativeDynamicResourceHandler)),
-    HandlerKeys.userlessHandler -> new MyUserlessDeadboltHandler)
+    HandlerKeys.altHandler -> new MyDeadboltHandler(userReader, Some(MyAlternativeDynamicResourceHandler)),
+    HandlerKeys.userlessHandler -> new MyUserlessDeadboltHandler(userReader))
 
   override def apply(): DeadboltHandler = defaultHandler
 

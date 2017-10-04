@@ -73,7 +73,7 @@ class UserSignupController @Inject()(deadbolt: DeadboltActions,
     }
   }
 
-  def userCreated = Action.async { implicit request: MessagesRequest[AnyContent] =>
+  def userCreated: Action[AnyContent] = Action.async { implicit request: MessagesRequest[AnyContent] =>
     request.cookies foreach (cookie => logger.debug("UC name: '" + cookie.name + "',   value: '" + cookie.value + "'"))
 
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, request)
@@ -124,6 +124,7 @@ class UserSignupController @Inject()(deadbolt: DeadboltActions,
       for {
         timeToTeachUserId <- timeToTeachUserIdFuture
       } yield {
+        logger.debug(s"Time To Teach Id = '${timeToTeachUserId.value.toString}'")
         Redirect(routes.UserSignupController.signedUpCongrats())
           .withCookies(
             Cookie(CookieNames.timetoteachId, timeToTeachUserId.value))

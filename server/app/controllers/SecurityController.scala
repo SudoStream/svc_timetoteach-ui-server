@@ -61,6 +61,24 @@ class SecurityController @Inject()(deadbolt: DeadboltActions,
     }
   }
 
+  def signout = Action.async { implicit request =>
+    logger.debug("Signing out now!")
+
+    Future {
+      Ok("Signed Out")
+        .discardingCookies(
+          DiscardingCookie(CookieNames.timetoteachId),
+          DiscardingCookie(CookieNames.socialNetworkFamilyName),
+          DiscardingCookie(CookieNames.socialNetworkGivenName),
+          DiscardingCookie(CookieNames.socialNetworkName),
+          DiscardingCookie(CookieNames.socialNetworkUserId),
+          DiscardingCookie(CookieNames.socialNetworkEmail),
+          DiscardingCookie(CookieNames.socialNetworkPicture)
+        ).bakeCookies()
+    }
+
+  }
+
   private def invalidToken: Future[Status] = {
     logger.warn("Token was null after being processed by google verified. Invalid ID token.")
     Future {
@@ -76,6 +94,7 @@ class SecurityController @Inject()(deadbolt: DeadboltActions,
     val userServiceUri =
       Uri(s"$protocol://$userServiceHostname:$userServicePort/api/user?" +
         s"socialNetworkName=GOOGLE&socialNetworkUserId=${payload.getSubject}")
+    logger.debug(s"Sending request to '${userServiceUri.toString()}'")
     val req = HttpRequest(GET, uri = userServiceUri)
     val responseFuture: Future[HttpResponse] = Http().singleRequest(req)
     val eventualFuture: Future[Future[Result]] = responseFuture map {

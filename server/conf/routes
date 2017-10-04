@@ -13,6 +13,7 @@ GET         /signup                  controllers.UserSignupController.signup
 POST        /usercreated             controllers.UserSignupController.userCreated
 GET         /profile                 controllers.Application.profile
 POST        /tokensignin             controllers.SecurityController.tokensignin
+POST        /signout                 controllers.SecurityController.signout
 GET         /signedupcongrats        controllers.UserSignupController.signedUpCongrats
 
 #########################
