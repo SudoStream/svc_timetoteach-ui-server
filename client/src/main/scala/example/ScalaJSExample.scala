@@ -41,12 +41,12 @@ object ScalaJSExample extends js.JSApp {
       <.div("I Am The Main Div",
         <.br,
         <.blockquote(andy,
-          <.blockquote(". What age are you?",
+          <.blockquote("What age are you?",
         <.h2("and h2 here!  " + SharedMessages.timeNow
         )))))
     .build
 
-  val timeFn = () => mainDiv("toodles").renderIntoDOM(dom.document.getElementById("root"))
+  val timeFn = () => mainDiv("toodles").renderIntoDOM(dom.document.getElementById("timetoteachApplicationRoot"))
   ////////////////////////////////////////////////////
 
 

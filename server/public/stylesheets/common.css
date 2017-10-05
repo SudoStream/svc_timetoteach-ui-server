@@ -1,0 +1,150 @@
+* {
+    margin: 0;
+    border: 0;
+    text-align: center;
+}
+
+body {
+    color: seashell;
+    background-color: deepskyblue;
+}
+
+ul {
+    list-style-type: none;
+}
+
+h2 {
+    color: darkblue;
+    margin: 10px;
+    border: 5px blue;
+}
+
+h3 {
+    color: papayawhip;
+    margin: 10px;
+    border: 5px blue;
+}
+
+img {
+    color: #000;
+    margin: 25px;
+    border: 5px blue;
+}
+
+.img-circle {
+    border-radius: 50%;
+}
+
+input {
+    width: auto;
+    padding: 12px 20px;
+    box-sizing: border-box;
+}
+
+dl {
+    margin-bottom: 30px;
+}
+
+dd.error {
+    display: inline-block;
+    color: royalblue;
+    font-size: smaller;
+}
+
+label {
+    color: ghostwhite;
+    font-size: larger;
+    font-weight: bold;
+}
+
+input[type=text] {
+    width: 240px;
+    -webkit-transition: width 0.4s ease-in-out;
+    transition: width 0.4s ease-in-out;
+}
+
+input[type=text]:focus {
+    width: 90%;
+}
+
+select {
+    width: auto;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+}
+
+button {
+    font-size: x-large;
+    color: white;
+    background: green;
+    padding: 15px;
+    margin: 25px;
+    border: 5px white;
+}
+
+#schoolSearchInput {
+    background-image: url('/icons/search-icon32.png'); /* Add a search icon to input */
+    background-position: 10px 12px; /* Position the search icon */
+    background-repeat: no-repeat; /* Do not repeat the icon image */
+    width: 100%; /* Full-width */
+    font-size: 15px; /* Increase font-size */
+    padding: 12px 20px 12px 40px; /* Add some padding */
+    margin-bottom: 12px; /* Add some space below the input */
+}
+
+#schoolTable {
+    border-collapse: collapse; /* Collapse borders */
+    width: 100%; /* Full-width */
+    border: 1px solid royalblue; /* Add a grey border */
+    font-size: 14px; /* Increase font-size */
+}
+
+#schoolTable th, #schoolTable td {
+    text-align: left; /* Left-align text */
+    padding: 12px; /* Add padding */
+}
+
+#schoolTable tr {
+    /* Add a bottom border to all table rows */
+    border-bottom: 1px solid lightskyblue;
+}
+
+#schoolTable tr.header, #schoolTable tr:hover {
+    /* Add a grey background color to the table header and on hover */
+    background-color: dodgerblue;
+}
+
+#schoolTable tr:hover:not(.header) {
+    background-color: lightskyblue; /* Add a hover effect to all links, except for headers */
+}
+
+#schoolsearch {
+    width: 90%;
+    margin: 0 auto;
+}
+
+#selectedSchoolTable {
+    border-collapse: collapse; /* Collapse borders */
+    margin-left:auto;
+    margin-right:auto;
+}
+
+
+#selectedSchoolTable th, #selectedSchoolTable td {
+    text-align: left; /* Left-align text */
+    padding: 12px; /* Add padding */
+}
+
+#selectedSchoolTable td {
+    color: darkblue;
+}
+
+#selectedSchoolDiv {
+    margin-top: 30px;
+}
+
+.info {
+    display: none;
+    color: black;
+}

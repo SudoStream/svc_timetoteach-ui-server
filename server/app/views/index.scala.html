@@ -1,10 +1,12 @@
-@import be.objectify.deadbolt.scala.AuthenticatedRequest
-@(handler: be.objectify.deadbolt.scala.DeadboltHandler, message: String)(implicit request: AuthenticatedRequest[Any])
+@mainNonApp("Time To Teach") {
+    <h2>Time To Teach</h2>
 
-@main("Play with Scala.js") {
-<h2>Play and Scala.js share a same message</h2>
-<ul>
-  <li>Play shouts out: <em>@message</em></li>
-  <li>Scala.js shouts out: <em id="scalajsShoutOut"></em></li>
-</ul>
+    <div class="hidden g-signin2" ></div>
+
+    <div>
+        Hello, and welcome to Time To Teach ...
+    </div>
+    <div>
+        Some stuff here etc etc
+    </div>
 }

@@ -14,10 +14,8 @@ import scala.concurrent.Future
 
 class Application @Inject()(userReader: UserReaderServiceProxyImpl, deadbolt: DeadboltActions, handlers: HandlerCache, actionBuilder: ActionBuilders) extends Controller {
 
-  def index = deadbolt.SubjectPresent()() { authRequest =>
-    Future {
-      Ok(views.html.index(new MyDeadboltHandler(userReader), SharedMessages.itWorks)(authRequest))
-    }
+  def index = Action {
+    Ok(views.html.index())
   }
 
   def health = Action {
@@ -26,7 +24,7 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl, deadbolt: De
 
   def profile = deadbolt.SubjectPresent()() { authRequest =>
     Future {
-      Ok(views.html.index(new MyDeadboltHandler(userReader), SharedMessages.itWorks)(authRequest))
+      Ok(views.html.timetoteach(new MyDeadboltHandler(userReader), SharedMessages.itWorks)(authRequest))
     }
   }
 
