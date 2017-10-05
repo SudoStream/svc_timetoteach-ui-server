@@ -27,8 +27,8 @@ function onSignIn(googleUser) {
                 window.location.href = "/signup";
             }
         } else {
-            console.log("replay status " + xhr.status);
-            window.setTimeout(goHome, 1000);
+            console.log("reply status :- " + xhr.status);
+            window.setTimeout(goHome, 500);
         }
 
     };

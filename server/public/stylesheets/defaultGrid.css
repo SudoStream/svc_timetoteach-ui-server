@@ -1,11 +1,23 @@
+* {
+    margin: 0;
+}
+
 body {
     background-color: white;
     margin: 5px;
 }
 
+div {
+    margin: 0;
+}
+
 a {
     text-decoration: none;
     color: white;
+}
+
+a:hover {
+    text-decoration: none;
 }
 
 .wrapper {
@@ -21,7 +33,7 @@ a {
     background-color: steelblue;
     color: #fff;
     border-radius: 5px;
-    padding: 20px;
+    padding: 6px;
     font-size: 150%;
 }
 
@@ -32,6 +44,7 @@ a {
 
 .sidebar {
     grid-area: sidebar;
+    justify-items: right;
 }
 
 .content {
@@ -42,11 +55,10 @@ a {
     grid-area: footer;
 }
 
-.signinoutbutton {
+.makecenter {
     display: flex;
     justify-content: center;
     align-items: center;
-
 }
 
 .hidden {
@@ -57,3 +69,20 @@ ul {
     list-style-type: none
 }
 
+li {
+    margin: 0;
+}
+
+#main-menu-button {
+    float: right;
+}
+
+#main-menu-button-img {
+    width: 16px !important;
+    height: 16px !important;
+    float: right;
+}
+
+#menuitems {
+    align-content: flex-start;
+}

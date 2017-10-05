@@ -7,4 +7,8 @@
         <li>So Play shouts out: <em>@message</em></li>
         <li>Scala.js shouts out: <em id="scalajsShoutOut"></em></li>
     </ul>
+
+    <div id="timetoteachApplicationRoot"></div>
+    @scalajs.html.scripts("client", routes.Assets.versioned(_).toString, name => getClass.getResource(s"/public/$name") != null)
+
 }
