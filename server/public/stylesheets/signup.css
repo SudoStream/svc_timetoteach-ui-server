@@ -1,0 +1,27 @@
+@import "common.css";
+
+body {
+    background-color: lightskyblue;
+    margin: 5px;
+}
+
+
+h2 {
+    color: ghostwhite;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+h3 {
+    margin: 10px;
+    color: #444444;
+}
+
+#userSignupButton {
+    font-size: x-large;
+    color: red;
+    background: green;
+    padding: 15px;
+    margin: 25px;
+    border: 5px white;
+}

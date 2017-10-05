@@ -5,33 +5,18 @@
 }
 
 body {
-    color: seashell;
-    background-color: deepskyblue;
+    background-color: white;
+    margin: 5px;
 }
 
-ul {
-    list-style-type: none;
-}
-
-h2 {
-    color: darkblue;
-    margin: 10px;
-    border: 5px blue;
-}
-
-h3 {
-    color: papayawhip;
-    margin: 10px;
-    border: 5px blue;
-}
-
-img {
-    color: #000;
-    margin: 25px;
-    border: 5px blue;
+#signup-body {
+    background-color: lightskyblue;
 }
 
 .img-circle {
+    color: #000;
+    margin: 25px;
+    border: 5px blue;
     border-radius: 50%;
 }
 
@@ -39,6 +24,8 @@ input {
     width: auto;
     padding: 12px 20px;
     box-sizing: border-box;
+    font-size: large;
+    color: midnightblue;
 }
 
 dl {
@@ -74,14 +61,6 @@ select {
     box-sizing: border-box;
 }
 
-button {
-    font-size: x-large;
-    color: white;
-    background: green;
-    padding: 15px;
-    margin: 25px;
-    border: 5px white;
-}
 
 #schoolSearchInput {
     background-image: url('/icons/search-icon32.png'); /* Add a search icon to input */
@@ -116,7 +95,7 @@ button {
 }
 
 #schoolTable tr:hover:not(.header) {
-    background-color: lightskyblue; /* Add a hover effect to all links, except for headers */
+    background-color: steelblue; /* Add a hover effect to all links, except for headers */
 }
 
 #schoolsearch {
