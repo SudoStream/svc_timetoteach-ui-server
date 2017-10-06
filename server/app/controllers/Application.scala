@@ -3,14 +3,16 @@ package controllers
 import javax.inject.Inject
 
 import be.objectify.deadbolt.scala.cache.HandlerCache
-import be.objectify.deadbolt.scala.{ActionBuilders, DeadboltActions}
+import be.objectify.deadbolt.scala.{ActionBuilders, AuthenticatedRequest, DeadboltActions}
 import controllers.serviceproxies.UserReaderServiceProxyImpl
+import models.timetoteach.CookieNames
 import play.api.mvc._
 import security.MyDeadboltHandler
 import shared.SharedMessages
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import utils.TemplateUtils.getCookieStringFromRequest
 
 class Application @Inject()(userReader: UserReaderServiceProxyImpl, deadbolt: DeadboltActions, handlers: HandlerCache, actionBuilder: ActionBuilders) extends Controller {
 
@@ -27,8 +29,11 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl, deadbolt: De
   }
 
   def profile = deadbolt.SubjectPresent()() { authRequest =>
+    val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
+    val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
+
     Future {
-      Ok(views.html.timetoteach(new MyDeadboltHandler(userReader), SharedMessages.itWorks)(authRequest))
+      Ok(views.html.timetoteach(new MyDeadboltHandler(userReader), SharedMessages.itWorks, userPictureUri, userFirstName)(authRequest))
     }
   }
 
@@ -43,8 +48,11 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl, deadbolt: De
   }
 
   def timeToTeachApp = deadbolt.SubjectPresent()() { authRequest =>
+    val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
+    val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
+
     Future {
-      Ok(views.html.timetoteach(new MyDeadboltHandler(userReader), SharedMessages.itWorks)(authRequest))
+      Ok(views.html.timetoteach(new MyDeadboltHandler(userReader), SharedMessages.itWorks, userPictureUri, userFirstName)(authRequest))
     }
   }
 

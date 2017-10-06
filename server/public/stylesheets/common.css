@@ -13,11 +13,20 @@ body {
     background-color: lightskyblue;
 }
 
-.img-circle {
+.img-circle-standard {
     color: #000;
     margin: 25px;
     border: 5px blue;
     border-radius: 50%;
+}
+
+.img-circle-small {
+    color: #000;
+    margin: 3px;
+    border: 2px blue;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
 }
 
 input {

@@ -47,6 +47,24 @@ a:hover {
     justify-items: right;
 }
 
+.sidebarwrapper {
+    grid: inherit;
+    display: grid;
+    grid-gap: 2px;
+    grid-template-columns: minmax(0, 1fr) minmax(1fr, 2fr);
+    grid-template-areas: "sidebar-user-icon sidebar-hamburger";
+}
+
+.sidebar-hamburger {
+    grid-area: sidebar-hamburger;
+    justify-items: right;
+}
+
+.sidebar-user-icon {
+    grid-area: sidebar-user-icon;
+    justify-items: right;
+}
+
 .content {
     grid-area: content;
 }

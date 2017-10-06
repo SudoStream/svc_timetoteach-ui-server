@@ -2,6 +2,7 @@ package utils
 
 import be.objectify.deadbolt.scala.models.Subject
 import be.objectify.deadbolt.scala.{AuthenticatedRequest, DeadboltHandler}
+import play.api.mvc.{AnyContent, MessagesRequest, Request}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
@@ -19,4 +20,13 @@ object TemplateUtils {
       case None => Future(None)
     }, Duration(1000, duration.MILLISECONDS))
   }
+
+  def getCookieStringFromRequest(cookieKey: String, request: Request[AnyContent]): Option[String] = {
+    request.cookies.get(cookieKey) match {
+      case Some(cookie) => Some(cookie.value)
+      case None => None
+    }
+  }
+
 }
+

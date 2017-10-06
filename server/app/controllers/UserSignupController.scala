@@ -12,6 +12,7 @@ import play.api.data.Form
 import play.api.mvc._
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import utils.TemplateUtils.getCookieStringFromRequest
 
 object UserSignupController {
 
@@ -61,23 +62,17 @@ class UserSignupController @Inject()(deadbolt: DeadboltActions,
     for {
       schools <- schoolsFuture
     } yield {
-      Ok(views.html.signup(initialForm, postUrl, userPictureUri, userFirstName, schools))
+      Ok(views.html.signup(initialForm, postUrl, userPictureUri.getOrElse(""), userFirstName.getOrElse(""), schools))
     }
   }
 
 
-  private def getCookieStringFromRequest(cookieKey: String, request: MessagesRequest[AnyContent]): String = {
-    request.cookies.get(cookieKey) match {
-      case Some(cookie) => cookie.value
-      case None => ""
-    }
-  }
 
-  def userCreated: Action[AnyContent] = Action.async { implicit request: MessagesRequest[AnyContent] =>
+  def userCreated: Action[AnyContent] = Action.async { implicit request =>
     request.cookies foreach (cookie => logger.debug("UC name: '" + cookie.name + "',   value: '" + cookie.value + "'"))
 
-    val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, request)
-    val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, request)
+    val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, request).getOrElse("")
+    val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, request).getOrElse("")
     val schoolsFuture = schoolsProxy.getAllSchoolsFuture
 
     val errorFunction = { formWithErrors: Form[UserData] =>

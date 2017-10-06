@@ -1,4 +1,4 @@
-@(title: String)(content: Html)
+@(title: String, userPictureUri: Option[String], userFirstName: Option[String])(content: Html)
 <!DOCTYPE html>
 <html>
     <head>
@@ -26,8 +26,15 @@
                 <a href="@routes.Application.index()">Time To Teach</a>
             </div>
 
-            <div class="box sidebar">
-                <button id="main-menu-button" type="button" class="btn btn-default" data-toggle="collapse" data-target="#menuitems">
+            <div class="box sidebar sidebarwrapper">
+                @if(userPictureUri.isDefined) {
+                    <picture class="sidebar-user-icon">
+                        <source media="(min-width: 50px)" srcset="@userPictureUri">
+                        <img class="img-circle-small" src="@userPictureUri" alt="" style="width: auto;">
+                    </picture>
+                }
+
+                <button id="main-menu-button" type="button" class="btn btn-xs btn-default sidebar-hamburger" data-toggle="collapse" data-target="#menuitems">
                     <IMG id="main-menu-button-img" src="@routes.Assets.versioned("icons/hamburger32.png")" border="0" alt="Main Menu">
                 </button>
                 <ul id="menuitems" class="collapse">
@@ -35,6 +42,7 @@
                     <li><a href="#" onclick="signOut();">logout</a></li>
                     <li><a href="@routes.Application.timeToTeachApp()">app</a></li>
                 </ul>
+
             </div>
 
             <div class="box content">@content</div>
