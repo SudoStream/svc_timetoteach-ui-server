@@ -22,8 +22,8 @@ a:hover {
 .wrapper {
     display: grid;
     grid-gap: 2px;
-    grid-template-columns: 2fr 2fr 1fr;
-    grid-template-areas: "header header sidebar" "content content content" "footer  footer  footer";
+    grid-template-columns: 3fr 1fr;
+    grid-template-areas: "header sidebar" "content content" "footer footer";
     background-color: #fff;
     color: #444;
 }
@@ -51,18 +51,16 @@ a:hover {
     grid: inherit;
     display: grid;
     grid-gap: 2px;
-    grid-template-columns: minmax(0, 1fr) minmax(1fr, 2fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0fr, 1fr);
     grid-template-areas: "sidebar-user-icon sidebar-hamburger";
 }
 
 .sidebar-hamburger {
     grid-area: sidebar-hamburger;
-    justify-items: right;
 }
 
 .sidebar-user-icon {
     grid-area: sidebar-user-icon;
-    justify-items: right;
 }
 
 .content {
