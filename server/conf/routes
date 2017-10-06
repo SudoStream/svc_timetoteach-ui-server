@@ -10,6 +10,7 @@ GET         /assets/*file            controllers.Assets.versioned(path="/public"
 
 GET         /login                   controllers.Application.login
 GET         /app                     controllers.Application.timeToTeachApp
+GET         /loggedout               controllers.Application.loggedOutSuccessfully
 GET         /signup                  controllers.UserSignupController.signup
 POST        /usercreated             controllers.UserSignupController.userCreated
 GET         /profile                 controllers.Application.profile

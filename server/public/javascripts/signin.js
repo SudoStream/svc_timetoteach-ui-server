@@ -28,7 +28,7 @@ function onSignIn(googleUser) {
             }
         } else {
             console.log("reply status :- " + xhr.status);
-            window.setTimeout(goHome, 500);
+            window.setTimeout(goToApp, 500);
         }
 
     };
@@ -36,6 +36,3 @@ function onSignIn(googleUser) {
 
 }
 
-function goHome() {
-    window.location.href = "/";
-}

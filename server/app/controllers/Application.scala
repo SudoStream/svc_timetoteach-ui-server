@@ -22,6 +22,10 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl, deadbolt: De
     Ok
   }
 
+  def loggedOutSuccessfully = Action {
+    Ok(views.html.loggedOutSuccessfully())
+  }
+
   def profile = deadbolt.SubjectPresent()() { authRequest =>
     Future {
       Ok(views.html.timetoteach(new MyDeadboltHandler(userReader), SharedMessages.itWorks)(authRequest))

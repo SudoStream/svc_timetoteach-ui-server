@@ -19,7 +19,7 @@ function signOut() {
         xhr.send();
 
         console.log('User signed out.');
-        window.location.href = "/";
+        goToLoggedOut()
     });
 }
 
