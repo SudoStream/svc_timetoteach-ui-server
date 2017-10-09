@@ -1,0 +1,28 @@
+.timetoteachDashboardRoot {
+    display: grid;
+    grid-gap: 20px;
+    grid-template-columns: 1fr 10fr 1fr;
+    grid-template-areas:
+            "dashboard-header dashboard-header dashboard-header"
+            ". dashboard-button1 ."
+            ". dashboard-button2 ."
+            ". dashboard-button3 .";
+    background-color: #fff;
+    border-radius: 5px;
+}
+
+.dashboard-header {
+    grid-area: dashboard-header;
+    margin-top:10px;
+}
+
+.dashboard-button1 {
+    grid-area: dashboard-button1;
+}
+
+.dashboard-button2 {
+    grid-area: dashboard-button2;
+}
+.dashboard-button3 {
+    grid-area: dashboard-button3;
+}

@@ -1,9 +1,14 @@
 @import be.objectify.deadbolt.scala.AuthenticatedRequest
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler, message: String, userPictureUri: Option[String], userFirstName: Option[String])(implicit request: AuthenticatedRequest[Any])
 
-@main("Time To Teach App", userPictureUri, userFirstName) {
-    <div id="timetoteachDashboard" class="timetoteachDashboardRoot"></div>
+    @main("Time To Teach App", userPictureUri, userFirstName) {
 
+        <div class="timetoteachDashboardRoot">
+            <div class="dashboard-header">Dashboard</div>
 
-    @scalajs.html.scripts("client", routes.Assets.versioned(_).toString, name => getClass.getResource(s"/public/$name") != null)
-}
+            <button type="button" class="btn btn-primary dashboard-button1">Class Timetable</button>
+            <button type="button" class="btn btn-primary dashboard-button2">Termly Planning</button>
+            <button type="button" class="btn btn-primary dashboard-button3">Weekly Planning</button>
+
+        </div>
+    }
