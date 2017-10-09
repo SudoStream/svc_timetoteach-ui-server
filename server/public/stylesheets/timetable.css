@@ -1,0 +1,24 @@
+.timetable {
+    display: grid;
+    grid-gap: 20px;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr ;
+    grid-template-areas:
+            ". monday tuesday wednesday thursday friday";
+    border-radius: 5px;
+}
+
+.monday {
+    grid-area: monday;
+}
+.tuesday {
+    grid-area: tuesday;
+}
+.wednesday {
+    grid-area: wednesday;
+}
+.thursday {
+    grid-area: thursday;
+}
+.friday {
+    grid-area: friday;
+}

@@ -56,4 +56,13 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl, deadbolt: De
     }
   }
 
+  def classTimetable = deadbolt.SubjectPresent()() { authRequest =>
+    val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
+    val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
+
+    Future {
+      Ok(views.html.classtimetable(new MyDeadboltHandler(userReader), SharedMessages.itWorks, userPictureUri, userFirstName)(authRequest))
+    }
+  }
+
 }

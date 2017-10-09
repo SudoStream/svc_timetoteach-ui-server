@@ -40,11 +40,11 @@ class MyDeadboltHandler(userReader: UserReaderServiceProxyImpl, dynamicResourceH
 
       val eventualSubjectOption = isUserValidFuture map {
         case true => Future {
-          logger.debug("WWWWWWWWWWWWWOOOOOWWWWWW - YES")
+          logger.debug("user is valid")
           Some(new User(timetoteachId))
         }
         case false => Future {
-          logger.debug("WWWWWWWWWWWWWOOOOOWWWWWW - NO")
+          logger.debug("user is not valid")
           None
         }
       }
