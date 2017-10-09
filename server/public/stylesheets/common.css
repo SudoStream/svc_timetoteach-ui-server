@@ -28,6 +28,10 @@ body {
     height: 32px;
 }
 
+.non-white-link {
+    color: blue;
+}
+
 input {
     width: auto;
     padding: 12px 20px;
