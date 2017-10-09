@@ -2,18 +2,8 @@
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler, message: String, userPictureUri: Option[String], userFirstName: Option[String])(implicit request: AuthenticatedRequest[Any])
 
 @main("Time To Teach App", userPictureUri, userFirstName) {
-    <h2>Application</h2>
-    <p>
-        With our application we aim to give all primary school teachers more 'Time To Teach' ...
-    </p>
-    <br>
-    -------------
-    <ul>
-        <li>So Play shouts out: <em>@message</em></li>
-        <li>Scala.js shouts out: <em id="scalajsShoutOut"></em></li>
-    </ul>
+    <div id="timetoteachDashboard" class="timetoteachDashboardRoot"></div>
 
-    <div id="timetoteachApplicationRoot"></div>
+
     @scalajs.html.scripts("client", routes.Assets.versioned(_).toString, name => getClass.getResource(s"/public/$name") != null)
-
 }
