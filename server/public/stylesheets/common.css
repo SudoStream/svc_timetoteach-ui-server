@@ -73,7 +73,6 @@ select {
     box-sizing: border-box;
 }
 
-
 #schoolSearchInput {
     background-image: url('/icons/search-icon32.png'); /* Add a search icon to input */
     background-position: 10px 12px; /* Position the search icon */
@@ -117,10 +116,9 @@ select {
 
 #selectedSchoolTable {
     border-collapse: collapse; /* Collapse borders */
-    margin-left:auto;
-    margin-right:auto;
+    margin-left: auto;
+    margin-right: auto;
 }
-
 
 #selectedSchoolTable th, #selectedSchoolTable td {
     text-align: left; /* Left-align text */
@@ -138,4 +136,37 @@ select {
 .info {
     display: none;
     color: black;
+}
+
+table {
+    font-size: smaller;
+    border-collapse: separate;
+    border-spacing: 5px;
+    border-radius: 5px;
+}
+
+.table thead th {
+    border: none;
+}
+
+.table td {
+    border: none;
+}
+.timetable-break {
+    border: none;
+    border-bottom: none;
+    border-top: none;
+    background-color: white;
+    margin: 0;
+    padding: 0;
+}
+
+td {
+    text-align: center;
+    text-justify: auto;
+    border-radius: 5px;
+}
+
+thead {
+    border-radius: 5px;
 }

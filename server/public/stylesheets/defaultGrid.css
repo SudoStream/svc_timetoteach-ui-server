@@ -1,8 +1,9 @@
 
 h2 {
-    font-size: large;
-    font-weight: bold;
+    font-size: x-large;
     text-align: center;
+    color: #3071a9;
+    margin-bottom: 20px;
 }
 
 div {
@@ -23,12 +24,9 @@ a:hover {
     grid-gap: 2px;
     grid-template-columns: 1fr;
     grid-template-areas: "main-nav-bar" "app-nav-bar" "content" "footer";
-    /*background-color: #fff;*/
-    /*color: #444;*/
 }
 
 .box {
-    /*color: steelblue;*/
     border-radius: 5px;
     padding: 6px;
     font-size: 90%;

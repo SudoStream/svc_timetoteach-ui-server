@@ -1,8 +1,110 @@
 @import be.objectify.deadbolt.scala.AuthenticatedRequest
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler, message: String, userPictureUri: Option[String], userFirstName: Option[String])(implicit request: AuthenticatedRequest[Any])
 
-    @main("Time To Teach App", userPictureUri, userFirstName) {
+@main("Time To Teach App", userPictureUri, userFirstName) {
 
-    This is a class timetable
+    <h2>Class Timetable</h2>
 
-    }
+    <table class="table table-bordered">
+        <thead class="table-secondary">
+            <tr >
+                <th>
+                </th>
+                <th>
+                    <div class="grid-wrapper-table-head-element">
+                        <div class="lesson-column-title">Lesson 1</div>
+                    </div>
+                </th>
+                <th>
+                    <div class="grid-wrapper-table-head-element">
+                        <div class="lesson-column-title">Lesson 2</div>
+                    </div>
+                </th>
+                <th class="timetable-break">
+                    <div class="grid-wrapper-table-head-element">
+                        <div class="lesson-column-title">B</div>
+                    </div>
+                </th>
+                <th>
+                    <div class="grid-wrapper-table-head-element">
+                        <div class="lesson-column-title">Lesson 3</div>
+                    </div>
+                </th>
+                <th>
+                    <div class="grid-wrapper-table-head-element">
+                        <div class="lesson-column-title">Lesson 4</div>
+                    </div>
+                </th>
+                <th class="timetable-break">
+                    <div class="grid-wrapper-table-head-element">
+                        <div class="lesson-column-title">L</div>
+                    </div>
+                </th>
+                <th>
+                    <div class="grid-wrapper-table-head-element">
+                        <div class="lesson-column-title">Lesson 5</div>
+                    </div>
+                </th>
+                <th>
+                    <div class="grid-wrapper-table-head-element">
+                        <div class="lesson-column-title">Lesson 6</div>
+                    </div>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th class="table-secondary" scope="row">Monday</th>
+                <td class="subject-maths" colspan="2">Maths</td>
+                <td class="timetable-break"></td>
+                <td class="subject-reading">Reading</td>
+                <td class="subject-ict">ICT</td>
+                <td class="timetable-break"></td>
+                <td class="subject-topic" colspan="2">Topic</td>
+            </tr>
+            <tr>
+                <th class="table-secondary" scope="row">Tuesday</th>
+                <td class="subject-maths">Maths</td>
+                <td class="subject-physical-education">P.E.</td>
+                <td class="timetable-break"></td>
+                <td class="subject-writing">Writing</td>
+                <td class="subject-music">Music</td>
+                <td class="timetable-break"></td>
+                <td class="subject-topic" colspan="2">Topic</td>
+            </tr>
+            <tr>
+                <th class="table-secondary" scope="row">Wednesday</th>
+                <td class="subject-reading">Reading</td>
+                <td class="subject-spelling">Spelling</td>
+                <td class="timetable-break"></td>
+                <td class="subject-maths">Maths</td>
+                <td class="subject-drama">Drama</td>
+                <td class="timetable-break"></td>
+                <td class="subject-writing">Writing</td>
+                <td class="subject-health">Health</td>
+            </tr>
+            <tr>
+                <th class="table-secondary" scope="row">Thursday</th>
+                <td class="subject-maths" colspan="2">Maths</td>
+                <td class="timetable-break"></td>
+                <td class="subject-reading">Reading</td>
+                <td class="subject-topic">Topic</td>
+                <td class="timetable-break"></td>
+                <td class="subject-spelling">Spelling</td>
+                <td class="subject-physical-education">P.E.</td>
+            </tr>
+            <tr>
+                <th class="table-secondary" scope="row">Friday</th>
+                <td class="subject-spelling">Spelling</td>
+                <td class="subject-reading">Reading</td>
+                <td class="timetable-break"></td>
+                <td class="subject-maths">Maths</td>
+                <td class="subject-topic">Topic</td>
+                <td class="timetable-break"></td>
+                <td class="subject-assembly">Assembly</td>
+                <td class="subject-golden-time">Golden Time</td>
+            </tr>
+        </tbody>
+    </table>
+
+}

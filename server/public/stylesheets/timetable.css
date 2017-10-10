@@ -1,24 +1,100 @@
-.timetable {
+.table th {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+.grid-wrapper-table-head-element {
     display: grid;
-    grid-gap: 20px;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr ;
-    grid-template-areas:
-            ". monday tuesday wednesday thursday friday";
-    border-radius: 5px;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-areas: "lesson-column-title lesson-column-title lesson-column-title" "lesson-duration lesson-duration lesson-duration" "lesson-time-start lesson-time-start-end-buffer lesson-time-end" ;
 }
 
-.monday {
-    grid-area: monday;
+.lesson-column-title {
+    font-size: larger;
+    grid-area: lesson-column-title;
+    padding-bottom: 10px;
 }
-.tuesday {
-    grid-area: tuesday;
+
+.lesson-time-start {
+    grid-area: lesson-time-start;
+    text-align: left;
+    font-size: x-small;
+    color: #888888;
 }
-.wednesday {
-    grid-area: wednesday;
+
+.lesson-time-end {
+    grid-area: lesson-time-end;
+    text-align: right;
+    font-size: x-small;
+    color: #888888;
 }
-.thursday {
-    grid-area: thursday;
+
+.lesson-time-start-end-buffer {
+    grid-area: lesson-time-start-end-buffer;
+    font-size: x-small;
+    padding-left: 3px;
+    padding-right: 3px;
+    color: #888888;
 }
-.friday {
-    grid-area: friday;
+
+.lesson-duration {
+    grid-area: lesson-duration;
+    text-align: center;
+    font-size: x-small;
+    color: #555555;
+    margin-bottom: 4px;
 }
+.subject-maths {
+    background-color: lightskyblue;
+}
+
+.subject-writing {
+    background-color: #14aa15;
+}
+
+.subject-reading {
+    background-color: #8ae303;
+}
+
+.subject-spelling {
+    background-color: #2fe9a2;
+}
+
+.subject-physical-education {
+    background-color: #ff7f29;
+}
+
+.subject-topic {
+    background-color: #f5ec07;
+}
+
+.subject-ict {
+    background-color: #ff78b3;
+}
+
+.subject-music {
+    background-color: #e2b48c;
+}
+
+.subject-health {
+    background-color: #5050ed;
+    color: white;
+}
+
+.subject-drama {
+    background-color: #b28bff;
+}
+
+.subject-golden-time {
+    background-color: gold;
+}
+
+.subject-teacher-covertime {
+    border: dotted;
+}
+
+.subject-assembly {
+    background-color: red;
+}
+
