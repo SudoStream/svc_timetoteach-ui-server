@@ -5,49 +5,38 @@
 
     <h2>Class Timetable</h2>
 
-    <table class="table table-bordered">
+    <table class="table">
         <thead class="table-secondary">
             <tr >
                 <th>
                 </th>
-                <th>
+                <th colspan="2">
                     <div class="grid-wrapper-table-head-element">
-                        <div class="lesson-column-title">Lesson 1</div>
-                    </div>
-                </th>
-                <th>
-                    <div class="grid-wrapper-table-head-element">
-                        <div class="lesson-column-title">Lesson 2</div>
+                        <div class="lesson-column-title">Early Morning</div>
                     </div>
                 </th>
                 <th class="timetable-break">
                     <div class="grid-wrapper-table-head-element">
-                        <div class="lesson-column-title">B</div>
+                        <div class="lesson-column-title">
+                            <img class="teacher-break-image" src="@routes.Assets.versioned("icons/tea.png")" alt="Break Time!" data-toggle="tooltip" data-placement="right" title="Tooltip on top">
+                        </div>
                     </div>
                 </th>
-                <th>
+                <th colspan="2">
                     <div class="grid-wrapper-table-head-element">
-                        <div class="lesson-column-title">Lesson 3</div>
-                    </div>
-                </th>
-                <th>
-                    <div class="grid-wrapper-table-head-element">
-                        <div class="lesson-column-title">Lesson 4</div>
+                        <div class="lesson-column-title">Late Morning</div>
                     </div>
                 </th>
                 <th class="timetable-break">
                     <div class="grid-wrapper-table-head-element">
-                        <div class="lesson-column-title">L</div>
+                        <div class="lesson-column-title">
+                            <img class="teacher-break-image" src="@routes.Assets.versioned("icons/lunch-sandwich.png")" alt="Lunchtime!">
+                        </div>
                     </div>
                 </th>
-                <th>
+                <th colspan="2">
                     <div class="grid-wrapper-table-head-element">
-                        <div class="lesson-column-title">Lesson 5</div>
-                    </div>
-                </th>
-                <th>
-                    <div class="grid-wrapper-table-head-element">
-                        <div class="lesson-column-title">Lesson 6</div>
+                        <div class="lesson-column-title">Afternoon</div>
                     </div>
                 </th>
             </tr>
@@ -58,7 +47,7 @@
                 <td class="subject-maths" colspan="2">Maths</td>
                 <td class="timetable-break"></td>
                 <td class="subject-reading">Reading</td>
-                <td class="subject-ict">ICT</td>
+                <td class="subject-spelling">Spelling</td>
                 <td class="timetable-break"></td>
                 <td class="subject-topic" colspan="2">Topic</td>
             </tr>
@@ -90,13 +79,22 @@
                 <td class="subject-reading">Reading</td>
                 <td class="subject-topic">Topic</td>
                 <td class="timetable-break"></td>
-                <td class="subject-spelling">Spelling</td>
+                <td class="subject-ict">ICT</td>
                 <td class="subject-physical-education">P.E.</td>
             </tr>
             <tr>
                 <th class="table-secondary" scope="row">Friday</th>
-                <td class="subject-spelling">Spelling</td>
-                <td class="subject-reading">Reading</td>
+                <td colspan="2" class="subject-teacher-covertime">
+                    RCCT
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <td class="subject-spelling">Spelling</td>
+                                <td class="subject-reading">Reading</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
                 <td class="timetable-break"></td>
                 <td class="subject-maths">Maths</td>
                 <td class="subject-topic">Topic</td>
@@ -106,5 +104,6 @@
             </tr>
         </tbody>
     </table>
+
 
 }

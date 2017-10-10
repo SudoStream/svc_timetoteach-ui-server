@@ -141,7 +141,7 @@ select {
 table {
     font-size: smaller;
     border-collapse: separate;
-    border-spacing: 5px;
+    border-spacing: 3px;
     border-radius: 5px;
 }
 
@@ -159,6 +159,7 @@ table {
     background-color: white;
     margin: 0;
     padding: 0;
+    font-size: xx-small;
 }
 
 td {

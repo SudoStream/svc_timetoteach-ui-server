@@ -1,9 +1,23 @@
+div {
+    margin: 0;
+    padding: 0;
+}
+
 .table th {
+    padding-top: 25px;
+    padding-bottom: 25px;
+    padding-left: 0;
+    padding-right: 0;
+    text-align: center;
+}
+
+.table td {
     padding-top: 5px;
     padding-bottom: 5px;
     padding-left: 4px;
     padding-right: 4px;
 }
+
 .grid-wrapper-table-head-element {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -47,34 +61,48 @@
 }
 .subject-maths {
     background-color: lightskyblue;
+    color: black;
 }
 
 .subject-writing {
     background-color: #14aa15;
+    color: black;
 }
 
 .subject-reading {
     background-color: #8ae303;
+    color: black;
 }
 
 .subject-spelling {
     background-color: #2fe9a2;
+    color: black;
 }
 
 .subject-physical-education {
     background-color: #ff7f29;
+    color: black;
 }
 
 .subject-topic {
     background-color: #f5ec07;
+    color: black;
+}
+
+.subject-empty {
+    background-color: lightgrey;
+    font-weight: lighter;
+    color: blue;
 }
 
 .subject-ict {
     background-color: #ff78b3;
+    color: black;
 }
 
 .subject-music {
     background-color: #e2b48c;
+    color: black;
 }
 
 .subject-health {
@@ -84,17 +112,27 @@
 
 .subject-drama {
     background-color: #b28bff;
+    color: black;
 }
 
 .subject-golden-time {
     background-color: gold;
+    color: black;
 }
 
 .subject-teacher-covertime {
-    border: dotted;
+    background-color: #00353c;
+    color: white;
 }
 
 .subject-assembly {
     background-color: red;
+    color: white;
+    font-weight: bolder;
+    text-shadow: 1px 1px #000;
 }
 
+.teacher-break-image {
+    width: 28px !important;
+    height: 28px !important;
+}
