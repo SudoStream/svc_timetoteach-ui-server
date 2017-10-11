@@ -65,4 +65,22 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl, deadbolt: De
     }
   }
 
+  def weeklyPlanning = deadbolt.SubjectPresent()() { authRequest =>
+    val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
+    val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
+
+    Future {
+      Ok(views.html.weeklyplanning(new MyDeadboltHandler(userReader), SharedMessages.itWorks, userPictureUri, userFirstName)(authRequest))
+    }
+  }
+
+  def termlyPlanning = deadbolt.SubjectPresent()() { authRequest =>
+    val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
+    val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
+
+    Future {
+      Ok(views.html.termlyplanning(new MyDeadboltHandler(userReader), SharedMessages.itWorks, userPictureUri, userFirstName)(authRequest))
+    }
+  }
+
 }

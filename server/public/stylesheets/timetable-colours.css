@@ -1,0 +1,88 @@
+/* ================= */
+/*   Colours - START */
+/* ================= */
+.subject-maths {
+    background-color: rgba(135, 206, 250, 0.5);
+    color: black;
+}
+
+.subject-writing {
+    background-color: rgba(20, 171, 20, 0.5);
+    color: black;
+}
+
+.subject-reading {
+    background-color: rgba(138, 227, 3, 0.5);
+    color: black;
+}
+
+.subject-spelling {
+    background-color: rgba(47, 233, 162, 0.5);
+    color: black;
+}
+
+.subject-physical-education {
+    background-color: rgba(255, 127, 41, 0.5);
+    color: black;
+}
+
+.subject-topic {
+    background-color: rgba(233, 225, 8, 0.5);
+    color: black;
+}
+
+.subject-empty {
+    background-color: rgba(211, 211, 211, 0.5);
+    font-weight: lighter;
+    color: blue;
+}
+
+.subject-ict {
+    background-color: rgba(255, 81, 0, 0.8);
+    color: black;
+}
+
+.subject-music {
+    background-color: rgba(226, 180, 140, 0.5);
+    color: black;
+}
+
+.subject-health {
+    background-color: rgba(80, 80, 237, 0.5);
+    color: black;
+    font-size: larger;
+    width: 50%;
+}
+
+.subject-drama {
+    background-color: rgba(218, 129, 255, 0.5);
+    color: black;
+    font-size: larger;
+    width: 50%;
+}
+
+.subject-golden-time {
+    background-color: rgba(203, 148, 0, 0.69);
+    color: black;
+    font-size: larger;
+    width: 50%;
+}
+
+.subject-teacher-covertime {
+    background-color: rgba(0, 53, 60, 0.5);
+    color: white;
+    font-size: larger;
+    width: 50%;
+}
+
+.subject-assembly {
+    background-color: rgba(255, 0, 0, 0.65);
+    color: white;
+    font-weight: bolder;
+    text-shadow: 1px 1px #000;
+    font-size: larger;
+    width: 50%;
+}
+/* ================= */
+/*   Colours - END */
+/* ================= */

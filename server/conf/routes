@@ -19,6 +19,9 @@ GET         /signedupcongrats        controllers.UserSignupController.signedUpCo
 
 GET         /app                     controllers.Application.timeToTeachApp
 GET         /classtimetable          controllers.Application.classTimetable
+GET         /weeklyplanning          controllers.Application.weeklyPlanning
+GET         /termlyplanning          controllers.Application.termlyPlanning
+
 
 #########################
 GET         /twitter/auth            controllers.Twitter.authenticate()

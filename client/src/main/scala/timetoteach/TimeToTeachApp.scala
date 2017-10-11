@@ -10,6 +10,6 @@ object TimeToTeachApp extends js.JSApp {
 
   override def main(): Unit = {
     val dashboardRoot = dom.document.getElementById("timetoteachDashboard")
-    dashboardRoot.textContent = "I'm back ... " + SharedMessages.itWorks
+//    dashboardRoot.textContent = "I'm back ... " + SharedMessages.itWorks
   }
 }

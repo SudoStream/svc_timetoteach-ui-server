@@ -1,3 +1,58 @@
-@import "common.css";
-@import "defaultGrid.css";
-@import "timetable-grid.css";
+/*@import "common.css";*/
+
+/*@import "defaultGrid.css";*/
+/*@import "timetable-grid.css";*/
+
+html, body {
+    height: 100%;
+}
+
+img {
+    max-width: 100%;
+
+}
+
+.hidden {
+    display: none;
+}
+
+#main-navbar-brand {
+    width: 32px;
+    height: 32px;
+}
+
+#cover {
+    background: #222 url('/assets/icons/stars.jpg') center center no-repeat;
+    background-size: cover ;
+    color: white;
+    height: 100%;
+    text-align: center;
+    display: flex;
+    align-items: center;
+}
+
+#cover-caption {
+    width: 100%;
+}
+
+.section-content {
+    padding: 5rem 0;
+}
+
+#about {
+    background: url('/assets/icons/running.jpg') center center no-repeat;
+    background-size: cover;
+}
+
+.about-text {
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 1.875rem;
+}
+
+#footer-main {
+    background: #222;
+    color: white;
+    font-size: 0.8rem;
+    padding: 2.5rem 0;
+}
