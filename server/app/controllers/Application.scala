@@ -3,16 +3,16 @@ package controllers
 import javax.inject.Inject
 
 import be.objectify.deadbolt.scala.cache.HandlerCache
-import be.objectify.deadbolt.scala.{ActionBuilders, AuthenticatedRequest, DeadboltActions}
+import be.objectify.deadbolt.scala.{ActionBuilders, DeadboltActions}
 import controllers.serviceproxies.UserReaderServiceProxyImpl
 import models.timetoteach.CookieNames
 import play.api.mvc._
 import security.MyDeadboltHandler
 import shared.SharedMessages
+import utils.TemplateUtils.getCookieStringFromRequest
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import utils.TemplateUtils.getCookieStringFromRequest
 
 class Application @Inject()(userReader: UserReaderServiceProxyImpl, deadbolt: DeadboltActions, handlers: HandlerCache, actionBuilder: ActionBuilders) extends Controller {
 
@@ -81,6 +81,14 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl, deadbolt: De
     Future {
       Ok(views.html.termlyplanning(new MyDeadboltHandler(userReader), SharedMessages.itWorks, userPictureUri, userFirstName)(authRequest))
     }
+  }
+
+  def zzzBootstrapPractice() = Action {
+    Ok(views.html.zzzBootstrapPractice())
+  }
+
+  def zzzStartup() = Action {
+    Ok(views.html.zzzStartup())
   }
 
 }

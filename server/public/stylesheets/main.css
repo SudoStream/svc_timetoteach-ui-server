@@ -22,7 +22,7 @@ img {
 }
 
 #cover {
-    background: #222 url('/assets/icons/stars.jpg') center center no-repeat;
+    background: #222 url('/assets/images/stars.jpg') center center no-repeat;
     background-size: cover ;
     color: white;
     height: 100%;
@@ -40,7 +40,7 @@ img {
 }
 
 #about {
-    background: url('/assets/icons/running.jpg') center center no-repeat;
+    background: url('/assets/images/running.jpg') center center no-repeat;
     background-size: cover;
 }
 
