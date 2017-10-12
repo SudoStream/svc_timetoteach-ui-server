@@ -7,52 +7,113 @@ html, body {
     height: 100%;
 }
 
+body {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizelegibility;
+    color: #6c6f73
+}
+
+h1,h2,h3,h4,h5 {
+    color: #333;
+}
+
+h6 {
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 0.8rem;
+    letter-spacing: 0.1rem;
+}
+
 img {
     max-width: 100%;
-
 }
 
-.hidden {
-    display: none;
+.blockquote {
+    font-size: 1.6rem;
+    color: #333;
+    border: none;
+    padding: 0;
 }
 
-#main-navbar-brand {
-    width: 32px;
-    height: 32px;
+.blockquote-footer {
+    margin: 1rem 0 0;
 }
 
-#cover {
-    background: #222 url('/assets/images/stars.jpg') center center no-repeat;
-    background-size: cover ;
+#stage {
+    background: url('/assets/images/stage.jpeg') center center no-repeat;
+    background-size: cover;
     color: white;
     height: 100%;
-    text-align: center;
+    width: 100%;
     display: flex;
     align-items: center;
 }
 
-#cover-caption {
-    width: 100%;
+#stage-caption {
+    font-size: 1.4rem;
+    font-weight: 200;
+    max-width: 60rem;
+    margin: 0 auto;
+    text-align: center;
+    background: rgba(0,0,0, 0.3);
+    padding: 2rem;
 }
 
-.section-content {
-    padding: 5rem 0;
-}
-
-#about {
-    background: url('/assets/images/running.jpg') center center no-repeat;
-    background-size: cover;
-}
-
-.about-text {
-    background: rgba(0,0,0,0.8);
+#stage-caption h1 {
     color: white;
-    padding: 1.875rem;
+    font-weight: bold;
+    text-transform: uppercase;
 }
 
-#footer-main {
-    background: #222;
+.feature-content {
+    display: flex;
+    padding: 8rem 0;
+    overflow: hidden;
+}
+
+#feature-two img {
+    margin-bottom: -8rem;
+}
+
+.feature-dark {
+    background: #262F36;
     color: white;
+}
+
+.feature-dark h2 {
+    color: white;
+}
+
+.feature-alt {
+    background: #f0f0f0;
+}
+
+#feature-four .feature-content {
+    padding: 0;
+}
+
+#feature-five img {
+    padding-top: 2rem;
+}
+
+#main-footer {
+    background: #262F36;
+    color: white;
+    padding: 6rem 0;
     font-size: 0.8rem;
-    padding: 2.5rem 0;
+}
+
+#main-footer h6 {
+    color: #718FA9;
+}
+
+#main-footer a {
+    color: #6C6F73;
+}
+
+@media screen and ( min-width: 991px) {
+    .feature-content {
+        display: flex;
+        align-items: center;
+    }
 }
