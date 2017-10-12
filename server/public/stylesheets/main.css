@@ -88,6 +88,64 @@ img {
     background: #f0f0f0;
 }
 
+#pricing {
+    height: 100%;
+    background-image: url('/assets/images/priceBackground.jpeg');
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-color: ghostwhite;
+}
+
+#pricing .feature-content {
+    width: 100%;
+    padding-top: 7rem;
+}
+
+#pricing h1 {
+    padding-top: 3rem;
+}
+
+#pricing p.lead {
+    padding-top: 1rem;
+    padding-bottom: 3rem;
+    margin-bottom: 2rem;
+}
+
+#pricing .card-title {
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+#pricing .card-text {
+    padding: 1rem 0;
+}
+
+#pricing .btn {
+    margin: 2rem 0;
+}
+
+#pricing .card {
+    padding-bottom: 0;
+}
+
+#pricing .card-block {
+    padding-bottom: 0;
+}
+
+.check-icon {
+    color: yellow;
+    padding: 0 1rem;
+}
+
+.card-group li {
+    margin: 0.5em 0;
+    width: 100%;
+}
+
+.card {
+    width: 100%;
+}
+
 #feature-four .feature-content {
     padding: 0;
 }
