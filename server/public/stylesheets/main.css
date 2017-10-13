@@ -69,11 +69,18 @@ img {
     color: white;
 }
 
-
 .feature-content {
     display: flex;
     padding: 8rem 0;
     overflow: hidden;
+}
+
+.signup-form-content {
+    padding: 8rem 0;
+}
+
+#signup-header {
+    margin-top: 6rem;
 }
 
 #feature-two img {

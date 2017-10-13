@@ -62,7 +62,7 @@ class UserSignupController @Inject()(deadbolt: DeadboltActions,
     request.cookies foreach (cookie => logger.debug("SU name: '" + cookie.name + "',   value: '" + cookie.value + "'"))
 
     val defaultValuesFromCookies: UserData = createUserDefaultValues(request)
-    val initialForm = UserSignupController.userForm.bindFromRequest.fill(defaultValuesFromCookies)
+//    val initialForm = UserSignupController.userForm.bindFromRequest.fill(defaultValuesFromCookies)
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, request)
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, request)
     val schoolsFuture = schoolsProxy.getAllSchoolsFuture
@@ -70,7 +70,7 @@ class UserSignupController @Inject()(deadbolt: DeadboltActions,
     for {
       schools <- schoolsFuture
     } yield {
-      Ok(views.html.signupNew(initialForm, postUrl, userPictureUri.getOrElse(""), userFirstName.getOrElse(""), schools))
+      Ok(views.html.signupNew(defaultValuesFromCookies, postUrl, userPictureUri.getOrElse(""), userFirstName.getOrElse(""), schools))
     }
   }
 
