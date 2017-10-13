@@ -152,3 +152,10 @@ img {
         align-items: center;
     }
 }
+
+@media screen and ( min-width: 1200px) {
+    /*#pricing .card {*/
+        /*display: block;*/
+    /*}*/
+}
+
