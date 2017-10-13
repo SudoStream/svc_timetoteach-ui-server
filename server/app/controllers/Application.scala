@@ -83,12 +83,4 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl, deadbolt: De
     }
   }
 
-  def zzzBootstrapPractice() = Action {
-    Ok(views.html.zzzBootstrapPractice())
-  }
-
-  def zzzStartup() = Action {
-    Ok(views.html.zzzStartup())
-  }
-
 }

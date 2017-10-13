@@ -23,10 +23,6 @@ GET         /weeklyplanning          controllers.Application.weeklyPlanning
 GET         /termlyplanning          controllers.Application.termlyPlanning
 
 
-GET         /zzz                     controllers.Application.zzzBootstrapPractice()
-GET         /zzzstart                controllers.Application.zzzStartup()
-
-
 #########################
 GET         /twitter/auth            controllers.Twitter.authenticate()
 #GET     /view/:foo/:bar             controllers.Application.view(foo: String, bar: String)
