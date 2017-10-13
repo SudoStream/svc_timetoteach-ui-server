@@ -75,9 +75,18 @@
                             }
 
                             @if(isInitialSignup) {
-                                <p class="lead">
-                                    Note that this allows you to have one less password to remember.
-                                </p>
+                                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    <p class="lead">
+                                        Note this allows you to have one less password in the world to remember!
+                                    </p>
+                                    <p>
+                                        We only use the social id for identity and nothing more (e.g. access to
+                                        friends, tweets, posts etc)
+                                    </p>
+                                </div>
                             }
 
                             <div class="loginButtonGroup border border-secondary rounded" >
