@@ -24,7 +24,7 @@ import org.apache.avro.specific.SpecificDatumReader
 import play.api.Logger
 import play.api.data.Forms._
 import play.api.data._
-import play.api.mvc._
+import play.api.mvc.{Cookie, _}
 
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContextExecutor, Future}
@@ -149,7 +149,9 @@ class SecurityController @Inject()(deadbolt: DeadboltActions,
               Cookie(CookieNames.socialNetworkName, "GOOGLE"),
               Cookie(CookieNames.socialNetworkUserId, payload.getSubject),
               Cookie(CookieNames.socialNetworkEmail, payload.getEmail),
-              Cookie(CookieNames.socialNetworkPicture, payload.get("picture").toString)
+              Cookie(CookieNames.socialNetworkPicture, payload.get("picture").toString),
+              Cookie(CookieNames.socialNetworkFamilyName, payload.get("family_name").toString),
+              Cookie(CookieNames.socialNetworkGivenName, payload.get("given_name").toString)
             )
             .bakeCookies()
       }

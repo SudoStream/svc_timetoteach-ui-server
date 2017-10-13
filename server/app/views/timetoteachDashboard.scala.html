@@ -1,0 +1,7 @@
+@import be.objectify.deadbolt.scala.AuthenticatedRequest
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, title: String, userPictureUri: Option[String], userFirstName: Option[String])(implicit request: AuthenticatedRequest[Any])
+
+@timetoteachAppMain(handler, title, userPictureUri, userFirstName) {
+    <h1>YES</h1>
+    <h2>Howdy doodly doo .. fun times are here!</h2>
+}

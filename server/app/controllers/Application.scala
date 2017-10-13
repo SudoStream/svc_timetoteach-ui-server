@@ -33,7 +33,7 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl, deadbolt: De
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
 
     Future {
-      Ok(views.html.timetoteach(new MyDeadboltHandler(userReader), SharedMessages.itWorks, userPictureUri, userFirstName)(authRequest))
+      Ok(views.html.timetoteachDashboard(new MyDeadboltHandler(userReader), SharedMessages.itWorks, userPictureUri, userFirstName)(authRequest))
     }
   }
 
@@ -51,8 +51,11 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl, deadbolt: De
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
 
+    println(s"userFirstName =' ${userFirstName.getOrElse("OH DEAR NOT DEFINED")}")
+    println(s"userPictureUri =' ${userPictureUri.getOrElse("OH DEAR NOT DEFINED")}")
+
     Future {
-      Ok(views.html.timetoteach(new MyDeadboltHandler(userReader), SharedMessages.itWorks, userPictureUri, userFirstName)(authRequest))
+      Ok(views.html.timetoteachDashboard(new MyDeadboltHandler(userReader), SharedMessages.itWorks, userPictureUri, userFirstName)(authRequest))
     }
   }
 
