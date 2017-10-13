@@ -43,7 +43,7 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl, deadbolt: De
 
   def login = deadbolt.WithAuthRequest()() { authRequest =>
     Future {
-      Ok(views.html.login())
+      Ok(views.html.login(false))
     }
   }
 

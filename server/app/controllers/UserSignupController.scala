@@ -14,6 +14,8 @@ import play.api.mvc._
 import scala.concurrent.ExecutionContext.Implicits.global
 import utils.TemplateUtils.getCookieStringFromRequest
 
+import scala.concurrent.Future
+
 object UserSignupController {
 
   import play.api.data.Form
@@ -50,7 +52,13 @@ class UserSignupController @Inject()(deadbolt: DeadboltActions,
   private val postUrl = routes.UserSignupController.userCreated()
 
 
-  def signup = Action.async { implicit request: MessagesRequest[AnyContent] =>
+  def signupStep1 = deadbolt.WithAuthRequest()() { authRequest =>
+    Future {
+      Ok(views.html.login(true))
+    }
+  }
+
+  def signupStep2: Action[AnyContent] = Action.async { implicit request: MessagesRequest[AnyContent] =>
     request.cookies foreach (cookie => logger.debug("SU name: '" + cookie.name + "',   value: '" + cookie.value + "'"))
 
     val defaultValuesFromCookies: UserData = createUserDefaultValues(request)
@@ -62,10 +70,9 @@ class UserSignupController @Inject()(deadbolt: DeadboltActions,
     for {
       schools <- schoolsFuture
     } yield {
-      Ok(views.html.signup(initialForm, postUrl, userPictureUri.getOrElse(""), userFirstName.getOrElse(""), schools))
+      Ok(views.html.signupNew(initialForm, postUrl, userPictureUri.getOrElse(""), userFirstName.getOrElse(""), schools))
     }
   }
-
 
 
   def userCreated: Action[AnyContent] = Action.async { implicit request =>

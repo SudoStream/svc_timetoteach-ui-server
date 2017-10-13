@@ -22,10 +22,7 @@ function onSignIn(googleUser) {
     };
     xhr.onloadend = function () {
         if (xhr.status === 404) {
-            if (confirm("\nIt looks like you have not yet signed up to Time To Teach.\n\n" +
-                    "Would you like to sign up now?\n\n")) {
-                window.location.href = "/signup";
-            }
+                window.location.href = "/signupsteptwo";
         } else {
             console.log("reply status :- " + xhr.status);
             window.setTimeout(goToApp, 500);

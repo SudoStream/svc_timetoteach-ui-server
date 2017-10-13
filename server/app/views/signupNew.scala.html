@@ -1,4 +1,10 @@
-@(isInitialSignup: Boolean)
+@import models.timetoteach.School
+@(userForm: Form[controllers.UserSignupController.UserData],
+        postUrl: Call,
+        userPictureUri: String,
+        userFirstName: String,
+        schools: Seq[School])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -18,6 +24,11 @@
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
     </head>
     <body>
+
+        <div class="d-none g-signin2" ></div>
+        <div id="mainAppTopMargin"></div>
+
+        <h1>Let's sign up to Time To Teach</h1>
 
         <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#startupNavbar" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
@@ -58,41 +69,7 @@
             </div>
         </nav>
 
-        <section id="loginSection">
-            <div class="container">
-                <div class="row">
-                    <div class="feature-content">
-                        <div class="col-lg-6 d-none d-md-block">
-                            <img src="@routes.Assets.versioned("images/laptop.jpeg")" alt="">
-                        </div>
-                        <div class="col-lg-5 ml-auto">
-                            <h6>Log in</h6>
 
-                            @if(isInitialSignup) {
-                                <h4>Please sign up to Time To Teach using a social network login.</h4>
-                            } else {
-                                <h4>Please log in to Time To Teach using a social network login.</h4>
-                            }
-
-                            @if(isInitialSignup) {
-                                <p class="lead">
-                                    Note that this allows you to have one less password to remember.
-                                </p>
-                            }
-
-                            <div class="loginButtonGroup border border-secondary rounded" >
-                                <div class="d-flex justify-content-center loginButton">
-                                    <div class="g-signin2"
-                                    data-longtitle="true"
-                                    data-onsuccess="onSignIn"
-                                    data-theme="light"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
 
 
         <footer id="main-footer">
