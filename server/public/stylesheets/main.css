@@ -23,6 +23,10 @@ img {
     max-width: 100%;
 }
 
+.img-circle-standard {
+    border-radius: 50%;
+}
+
 .nav-login-button {
     margin-left: 3rem;
     margin-right: 0.5rem;
@@ -75,12 +79,21 @@ img {
     overflow: hidden;
 }
 
+#signupForm {
+    margin-top: 6rem;
+}
+
 .signup-form-content {
-    padding: 8rem 0;
+    padding: 4rem 0;
+}
+
+.center {
+    display: flex;
+    margin: 0 auto;
 }
 
 #signup-header {
-    margin-top: 6rem;
+    margin-top: 2rem;
 }
 
 #feature-two img {
