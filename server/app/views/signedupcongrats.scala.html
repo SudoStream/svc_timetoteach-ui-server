@@ -19,8 +19,6 @@
     <body>
 
         <div class="d-none g-signin2" ></div>
-        <div id="mainAppTopMargin"></div>
-
 
         <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#startupNavbar" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,7 +47,6 @@
                         <a class="nav-link" href="/#about">About</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link disabled" href="#">Blog</a>
                     </li>
                     <li class="nav-item nav-login-button">
                         <a class="btn btn-outline-primary" href="#" onclick="signOut();">Sign out</a>
@@ -58,13 +55,17 @@
             </div>
         </nav>
 
+        <section id="congratsSection">
+            <div class="container">
+                <div class="jumbotron congratsJumbo text-center">
+                    <h1 class="display-3">Congratulations!</h1>
+                    <p class="lead">You have now signed up to Time Teach</p>
+                    <hr class="my-4">
+                    <p>We hope you have fun here!</p>
+                </div>
+            </div>
+        </section>
 
-        <h2>Congratulations</h2>
-        <h3>You have signed up to Time To Teach</h3>
-
-        <script>
-            window.setTimeout(goToApp, 1000);
-        </script>
 
         <footer id="main-footer">
             <div class="container">
@@ -105,7 +106,9 @@
             </div>
         </footer>
 
-
+        <script>
+        window.setTimeout(goToApp, 4000);
+        </script>
         @* ========================================================================================================*@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"

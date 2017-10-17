@@ -121,6 +121,24 @@ img {
     background-color: ghostwhite;
 }
 
+#congratsSection {
+    background: url('/assets/images/congrats.jpeg') center center no-repeat;
+    background-size: cover;
+    height: 100%;
+    display: flex;
+    width: 100%;
+}
+
+.congratsJumbo h1 {
+    color: white;
+}
+
+.congratsJumbo {
+    margin-top: 12rem;
+    color: white;
+    background: rgba(0, 0, 0, 0.45);
+}
+
 .pricing-btn {
     width: 50%;
     margin-bottom: 2rem;
@@ -205,7 +223,7 @@ img {
 
 @media screen and ( min-width: 1200px) {
     /*#pricing .card {*/
-        /*display: block;*/
+    /*display: block;*/
     /*}*/
 }
 
