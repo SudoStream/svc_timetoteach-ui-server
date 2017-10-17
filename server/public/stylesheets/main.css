@@ -242,6 +242,13 @@ img {
     border-radius: 5%;
 }
 
+.dashboard-button {
+    margin-top: 2rem;
+    margin-right: 0.5rem;
+    margin-left: 0.5rem;
+    min-width: 12rem;
+}
+
 @media screen and ( min-width: 991px) {
     .feature-content {
         display: flex;
