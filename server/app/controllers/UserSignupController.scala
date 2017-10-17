@@ -5,11 +5,13 @@ import javax.inject.Inject
 import be.objectify.deadbolt.scala.cache.HandlerCache
 import be.objectify.deadbolt.scala.{ActionBuilders, DeadboltActions}
 import controllers.UserSignupController.UserData
-import controllers.serviceproxies.{SchoolReaderServiceProxyImpl, UserWriterServiceProxyImpl}
+import controllers.serviceproxies.{SchoolReaderServiceProxyImpl, UserReaderServiceProxyImpl, UserWriterServiceProxyImpl}
 import models.timetoteach._
 import play.api.Logger
 import play.api.data.Form
 import play.api.mvc._
+import security.MyDeadboltHandler
+import shared.SharedMessages
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import utils.TemplateUtils.getCookieStringFromRequest
@@ -45,7 +47,8 @@ class UserSignupController @Inject()(deadbolt: DeadboltActions,
                                      actionBuilder: ActionBuilders,
                                      cc: MessagesControllerComponents,
                                      userWriterServiceProxy: UserWriterServiceProxyImpl,
-                                     schoolsProxy: SchoolReaderServiceProxyImpl
+                                     schoolsProxy: SchoolReaderServiceProxyImpl,
+                                     userReader: UserReaderServiceProxyImpl
                                     ) extends MessagesAbstractController(cc) {
 
   val logger: Logger = Logger
@@ -62,7 +65,6 @@ class UserSignupController @Inject()(deadbolt: DeadboltActions,
     request.cookies foreach (cookie => logger.debug("SU name: '" + cookie.name + "',   value: '" + cookie.value + "'"))
 
     val defaultValuesFromCookies: UserData = createUserDefaultValues(request)
-//    val initialForm = UserSignupController.userForm.bindFromRequest.fill(defaultValuesFromCookies)
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, request)
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, request)
     val schoolsFuture = schoolsProxy.getAllSchoolsFuture
@@ -74,10 +76,10 @@ class UserSignupController @Inject()(deadbolt: DeadboltActions,
     }
   }
 
-
   def userCreated: Action[AnyContent] = Action.async { implicit request =>
     request.cookies foreach (cookie => logger.debug("UC name: '" + cookie.name + "',   value: '" + cookie.value + "'"))
 
+    val defaultValuesFromCookies: UserData = createUserDefaultValues(request)
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, request).getOrElse("")
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, request).getOrElse("")
     val schoolsFuture = schoolsProxy.getAllSchoolsFuture
@@ -87,7 +89,7 @@ class UserSignupController @Inject()(deadbolt: DeadboltActions,
       for {
         schools <- schoolsFuture
       } yield {
-        BadRequest(views.html.signup(formWithErrors, postUrl, userPictureUri, userFirstName, schools))
+        BadRequest(views.html.signupNew(defaultValuesFromCookies, postUrl, userPictureUri, userFirstName, schools))
       }
     }
 

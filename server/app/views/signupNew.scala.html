@@ -75,60 +75,92 @@
                 <div class="row">
                     <div id="signup-header" class="col-lg-12 text-center">
                         <h3> Hi @userData.firstName</h3>
-                        <h4>Please fill in the details below</h4>
+                        <h3>Create a new account</h3>
                     </div>
                 </div>
                 <div class="row">
                     <div class="signup-form-content col-lg-12">
-                        <form>
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label for="First Name">First Name</label>
-                                        <input type="text" class="form-control" id="inputFormFirstName" aria-describedby="emailHelp" placeholder="Enter First Name" value="@userData.firstName">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="Family Name" >Surname Name</label>
-                                        <input type="text" class="form-control" id="inputFormFirstName" aria-describedby="emailHelp" placeholder="Enter First Name" value="@userData.familyName">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="exampleInputEmail1">Email address</label>
-                                        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Email" value="@userData.emailAddress">
-                                        <small id="emailHelp" class="form-text text-muted">
-                                            We'll never share your email with anyone else.</small>
-                                    </div>
+                    @helper.form(postUrl) {
+                        @helper.CSRF.formField
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="form-group">
+                                    <label for="First Name">First Name</label>
+                                    <input type="text" class="form-control" id="First Name" name="First Name" aria-describedby="emailHelp" placeholder="Enter First Name" value="@userData.firstName">
                                 </div>
-                                <div class="col-lg-6">
-                                    <div class="form-check">
-                                        <label class="form-check-label">
-                                            <input type="checkbox" class="form-check-input">
-                                            Maybe some terms and conditions here!?
-                                        </label>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                <div class="form-group">
+                                    <label for="Family Name" >Surname Name</label>
+                                    <input type="text" class="form-control" id="Family Name" name="Family Name" aria-describedby="emailHelp" placeholder="Enter First Name" value="@userData.familyName">
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Email address</label>
+                                    <input type="email" class="form-control" id="Email Address" name="Email Address" aria-describedby="emailHelp" placeholder="Enter Email" value="@userData.emailAddress">
+                                    <small id="emailHelp" class="form-text text-muted">
+                                        We'll never share your email with anyone else.</small>
                                 </div>
                             </div>
+                            <div class="col-lg-8">
+                                <dl style="display: none;" id="School Id_field">
+                                    <dd><input type="text" name="School Id" id="School Id" value=""></dd>
+                                </dl>
 
-                            <div class="row mx-auto">
-                                <div class="form-check">
-                                    <label class="form-check-label">
-                                        <input type="checkbox" class="form-check-input">
-                                        Subscribe to newsletter
-                                    </label>
+                                <div id="schoolsearch">
+                                    <div class="form-group">
+                                        <label for="First Name">Search for your school and select it.</label>
+                                        <input type="text" class="form-control" id="schoolSearchInput" onkeyup="searchSchools()" name="search" placeholder="School Name">
+                                    </div>
+                                    <table id="schoolTable" class="table table-hover">
+                                        <tr class="header">
+                                            <th style="width: 30%;">School Name</th>
+                                            <th style="width: 30%;">Address</th>
+                                            <th style="width: 15%;">Local Authority</th>
+                                            <th style="width: 15%;">Country</th>
+                                        </tr>
+                                        @for(school <- schools) {
+                                            <tr>
+                                                <td style="display: none;">@school.id</td>
+                                                <td>@school.name</td>
+                                                <td>@school.address</td>
+                                                <td>@school.localAuthority.value</td>
+                                                <td>@school.country.value</td>
+                                            </tr>
+                                        }
+                                    </table>
+
+                                    <div id="selectedSchoolDiv" class="d-none">
+                                        <table id="selectedSchoolTable">
+                                            <th>Selected School :</th>
+                                            <td style="display: none;" id="selectedSchoolId"></td>
+                                            <td id="selectedSchoolName">None</td>
+                                            <td id="selectedSchoolAddress"></td>
+                                        </table>
+                                    </div>
+
                                 </div>
+
                             </div>
-                            <div class="row mx-auto">
-                                <div class="form-check">
-                                    <label class="form-check-label">
-                                        <input type="checkbox" class="form-check-input">
-                                        I have read the <a href="#">terms and conditions</a> and agree to them.
-                                    </label>
-                                </div>
+                        </div>
+
+                        <div class="row mx-auto">
+                            <div class="form-check">
+                                <label class="form-check-label">
+                                    <input type="checkbox" class="form-check-input">
+                                    Subscribe to newsletter
+                                </label>
                             </div>
-                            <div class="row justify-content-center">
-                                <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                        <div class="row mx-auto">
+                            <div class="form-check">
+                                <label class="form-check-label">
+                                    <input type="checkbox" class="form-check-input">
+                                    I have read the <a href="#">terms and conditions</a> and agree to them.
+                                </label>
                             </div>
-                        </form>
+                        </div>
+                        <div id="userSignupButton" class="row justify-content-center">
+                            <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+                        </div>
+                    }
                     </div>
                 </div>
             </div>
@@ -172,6 +204,87 @@
                 </div>
             </div>
         </footer>
+
+
+        <script>
+                function searchSchools() {
+                    // Declare variables
+                    var input, filter, table, tr, td, i;
+                    input = document.getElementById("schoolSearchInput");
+                    filter = input.value.toUpperCase();
+                    table = document.getElementById("schoolTable");
+                    tr = table.getElementsByTagName("tr");
+
+                    // Loop through all table rows, and hide those who don't match the search query
+                    for (i = 0; i < tr.length; i++) {
+                        td = tr[i].getElementsByTagName("td")[1];
+                        if (td) {
+                            if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                                tr[i].style.display = "";
+                            } else {
+                                tr[i].style.display = "none";
+                            }
+                        }
+                    }
+                }
+        </script>
+
+        <script>
+                var table = document.getElementById("schoolTable");
+                if (table != null) {
+                    for (var i = 0; i < table.rows.length; i++) {
+                        table.rows[i].onclick = function () {
+                            showSelectedSchool(this);
+                        };
+                    }
+                }
+
+                function showSelectedSchool(tableRow) {
+                    var selectedSchoolTable = document.getElementById("selectedSchoolTable");
+                    selectedSchoolTable.display = true;
+
+                    var allCellsInRow = tableRow.cells;
+                    var schoolId = allCellsInRow.item(0).innerHTML;
+                    removeOtherSchoolsExceptThisId(schoolId);
+                    var selectedSchoolIdCell = document.getElementById("selectedSchoolId");
+                    selectedSchoolIdCell.innerHTML = schoolId;
+                    var selectedSchoolNameCell = document.getElementById("selectedSchoolName");
+                    selectedSchoolNameCell.innerHTML = allCellsInRow.item(1).innerHTML;
+                    selectedSchoolNameCell.display = true;
+                    var selectedSchoolAddressCell = document.getElementById("selectedSchoolAddress");
+                    selectedSchoolAddressCell.innerHTML = allCellsInRow.item(2).innerHTML;
+                    selectedSchoolAddressCell.display = true;
+
+                    var schoolSearchInput = document.getElementById("schoolSearchInput");
+                    schoolSearchInput.value = allCellsInRow.item(1).innerHTML;
+
+                    document.getElementById("School Id").value = schoolId
+                }
+        </script>
+
+        <script>
+                function removeOtherSchoolsExceptThisId(schoolId) {
+                    // Declare variables
+                    var table, tr, td, i;
+                    table = document.getElementById("schoolTable");
+                    tr = table.getElementsByTagName("tr");
+
+                    // Loop through all table rows, and hide those who don't match the search query
+                    for (i = 0; i < tr.length; i++) {
+                        td = tr[i].getElementsByTagName("td")[0];
+                        if (td) {
+                            var thisSchool = td.innerHTML;
+                            if (thisSchool === schoolId) {
+                                tr[i].style.display = "";
+                            } else {
+                                tr[i].style.display = "none";
+                            }
+                        }
+                    }
+                }
+        </script>
+
+
         @* ========================================================================================================*@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"

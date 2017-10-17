@@ -18,10 +18,5 @@ h3 {
 }
 
 #userSignupButton {
-    font-size: x-large;
-    color: red;
-    background: green;
-    padding: 15px;
     margin: 25px;
-    border: 5px white;
 }

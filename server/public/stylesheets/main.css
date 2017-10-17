@@ -184,6 +184,18 @@ img {
     margin-top: 4rem;
 }
 
+#userSignupButton {
+    margin: 25px;
+}
+
+#selectedSchoolTable td {
+    color: blue;
+}
+
+#selectedSchoolDiv {
+    margin-top: 30px;
+}
+
 @media screen and ( min-width: 991px) {
     .feature-content {
         display: flex;
