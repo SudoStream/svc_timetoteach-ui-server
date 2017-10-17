@@ -238,7 +238,7 @@ img {
 .dashboardFadedBackground {
     min-height: 22rem;
     margin: 0 auto;
-    background: rgba(0, 0, 0, 0.10);
+    background: rgba(0, 0, 0, 0.20);
     border-radius: 5%;
 }
 
@@ -247,6 +247,13 @@ img {
     margin-right: 0.5rem;
     margin-left: 0.5rem;
     min-width: 12rem;
+}
+
+#dashboardContent .col-lg-1 {
+    width: 1px !important;
+    max-width: 1px !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
 }
 
 @media screen and ( min-width: 991px) {
