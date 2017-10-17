@@ -9,7 +9,7 @@ body {
 }
 
 h1, h2, h3, h4, h5 {
-    color: #333;
+    color: #555;
 }
 
 h6 {
@@ -17,6 +17,14 @@ h6 {
     font-weight: bold;
     font-size: 0.8rem;
     letter-spacing: 0.1rem;
+}
+
+.header-highlight {
+    text-shadow: 1px 1px #eee;
+}
+
+#dashboardContent {
+    margin-top: 2rem;
 }
 
 img {
@@ -129,6 +137,14 @@ img {
     width: 100%;
 }
 
+#appBackground {
+    margin-top: 3rem;
+    background: url('/assets/images/appBackground.jpeg') center center no-repeat;
+    background-size: cover;
+    height: 100%;
+    width: 100%;
+}
+
 .congratsJumbo h1 {
     color: white;
 }
@@ -199,8 +215,9 @@ img {
 }
 
 #mainAppTopMargin {
-    margin-top: 4rem;
+    padding-top: 2rem;
 }
+
 
 #userSignupButton {
     margin: 25px;
