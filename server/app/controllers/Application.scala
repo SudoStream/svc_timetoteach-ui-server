@@ -33,7 +33,7 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl, deadbolt: De
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
 
     Future {
-      Ok(views.html.timetoteachDashboard(new MyDeadboltHandler(userReader), SharedMessages.itWorks, userPictureUri, userFirstName)(authRequest))
+      Ok(views.html.timetoteachDashboard(new MyDeadboltHandler(userReader), SharedMessages.httpMainTitle, userPictureUri, userFirstName)(authRequest))
     }
   }
 
@@ -55,7 +55,7 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl, deadbolt: De
     println(s"userPictureUri =' ${userPictureUri.getOrElse("OH DEAR NOT DEFINED")}")
 
     Future {
-      Ok(views.html.timetoteachDashboard(new MyDeadboltHandler(userReader), SharedMessages.itWorks, userPictureUri, userFirstName)(authRequest))
+      Ok(views.html.timetoteachDashboard(new MyDeadboltHandler(userReader), SharedMessages.httpMainTitle, userPictureUri, userFirstName)(authRequest))
     }
   }
 
@@ -64,7 +64,7 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl, deadbolt: De
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
 
     Future {
-      Ok(views.html.classtimetable(new MyDeadboltHandler(userReader), SharedMessages.itWorks, userPictureUri, userFirstName)(authRequest))
+      Ok(views.html.classtimetable(new MyDeadboltHandler(userReader), SharedMessages.httpMainTitle, userPictureUri, userFirstName)(authRequest))
     }
   }
 
@@ -73,7 +73,7 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl, deadbolt: De
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
 
     Future {
-      Ok(views.html.weeklyplanning(new MyDeadboltHandler(userReader), SharedMessages.itWorks, userPictureUri, userFirstName)(authRequest))
+      Ok(views.html.weeklyplanning(new MyDeadboltHandler(userReader), SharedMessages.httpMainTitle, userPictureUri, userFirstName)(authRequest))
     }
   }
 
@@ -82,7 +82,7 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl, deadbolt: De
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
 
     Future {
-      Ok(views.html.termlyplanning(new MyDeadboltHandler(userReader), SharedMessages.itWorks, userPictureUri, userFirstName)(authRequest))
+      Ok(views.html.termlyplanning(new MyDeadboltHandler(userReader), SharedMessages.httpMainTitle, userPictureUri, userFirstName)(authRequest))
     }
   }
 

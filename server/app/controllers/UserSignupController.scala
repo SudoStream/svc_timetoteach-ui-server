@@ -10,8 +10,6 @@ import models.timetoteach._
 import play.api.Logger
 import play.api.data.Form
 import play.api.mvc._
-import security.MyDeadboltHandler
-import shared.SharedMessages
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import utils.TemplateUtils.getCookieStringFromRequest
