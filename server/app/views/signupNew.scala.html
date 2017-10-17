@@ -75,92 +75,104 @@
                 <div class="row">
                     <div id="signup-header" class="col-lg-12 text-center">
                         <h3> Hi @userData.firstName</h3>
-                        <h3>Create a new account</h3>
+                        <h3>Create a new Time To Teach account</h3>
                     </div>
                 </div>
                 <div class="row">
                     <div class="signup-form-content col-lg-12">
-                    @helper.form(postUrl) {
-                        @helper.CSRF.formField
-                        <div class="row">
-                            <div class="col-lg-4">
-                                <div class="form-group">
-                                    <label for="First Name">First Name</label>
-                                    <input type="text" class="form-control" id="First Name" name="First Name" aria-describedby="emailHelp" placeholder="Enter First Name" value="@userData.firstName">
-                                </div>
-                                <div class="form-group">
-                                    <label for="Family Name" >Surname Name</label>
-                                    <input type="text" class="form-control" id="Family Name" name="Family Name" aria-describedby="emailHelp" placeholder="Enter First Name" value="@userData.familyName">
-                                </div>
-                                <div class="form-group">
-                                    <label for="exampleInputEmail1">Email address</label>
-                                    <input type="email" class="form-control" id="Email Address" name="Email Address" aria-describedby="emailHelp" placeholder="Enter Email" value="@userData.emailAddress">
-                                    <small id="emailHelp" class="form-text text-muted">
-                                        We'll never share your email with anyone else.</small>
-                                </div>
-                            </div>
-                            <div class="col-lg-8">
-                                <dl style="display: none;" id="School Id_field">
-                                    <dd><input type="text" name="School Id" id="School Id" value=""></dd>
-                                </dl>
-
-                                <div id="schoolsearch">
+                        <form action="@postUrl.url" method="post" id="needs-validation" novalidate>
+                            @helper.CSRF.formField
+                            <div class="row">
+                                <div class="col-lg-4">
                                     <div class="form-group">
-                                        <label for="First Name">Search for your school and select it.</label>
-                                        <input type="text" class="form-control" id="schoolSearchInput" onkeyup="searchSchools()" name="search" placeholder="School Name">
+                                        <label for="First Name">First Name</label>
+                                        <input type="text" class="form-control" id="First Name" name="First Name" aria-describedby="emailHelp" placeholder="Enter First Name" value="@userData.firstName" required>
+                                        <div class="invalid-feedback">
+                                            Please enter your first name
+                                        </div>
                                     </div>
-                                    <table id="schoolTable" class="table table-hover">
-                                        <tr class="header">
-                                            <th style="width: 30%;">School Name</th>
-                                            <th style="width: 30%;">Address</th>
-                                            <th style="width: 15%;">Local Authority</th>
-                                            <th style="width: 15%;">Country</th>
-                                        </tr>
-                                        @for(school <- schools) {
-                                            <tr>
-                                                <td style="display: none;">@school.id</td>
-                                                <td>@school.name</td>
-                                                <td>@school.address</td>
-                                                <td>@school.localAuthority.value</td>
-                                                <td>@school.country.value</td>
-                                            </tr>
-                                        }
-                                    </table>
+                                    <div class="form-group">
+                                        <label for="Family Name" >Surname Name</label>
+                                        <input type="text" class="form-control" id="Family Name" name="Family Name" aria-describedby="emailHelp" placeholder="Enter First Name" value="@userData.familyName">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Email address</label>
+                                        <input type="email" class="form-control" id="Email Address" name="Email Address" aria-describedby="emailHelp" placeholder="Enter Email" value="@userData.emailAddress" required>
+                                        <div class="invalid-feedback">
+                                            Please enter a valid email address
+                                        </div>
+                                        <small id="emailHelp" class="form-text text-muted">
+                                            We'll never share your email with anyone else.</small>
+                                    </div>
+                                </div>
+                                <div class="col-lg-8">
+                                    <dl style="display: none;" id="School Id_field">
+                                        <dd><input type="text" name="School Id" id="School Id" value=""></dd>
+                                    </dl>
 
-                                    <div id="selectedSchoolDiv" class="d-none">
-                                        <table id="selectedSchoolTable">
-                                            <th>Selected School :</th>
-                                            <td style="display: none;" id="selectedSchoolId"></td>
-                                            <td id="selectedSchoolName">None</td>
-                                            <td id="selectedSchoolAddress"></td>
+                                    <div id="schoolsearch">
+                                        <div class="form-group">
+                                            <label for="First Name">Search for your school and select it.</label>
+                                            <input type="text" class="form-control" id="schoolSearchInput" onkeyup="searchSchools()" name="search" placeholder="School Name" required>
+                                            <div class="invalid-feedback">
+                                                Please select a valid school
+                                            </div>
+                                        </div>
+                                        <table id="schoolTable" class="table table-hover d-none">
+                                            <tr class="header">
+                                                <th style="width: 30%;">School Name</th>
+                                                <th style="width: 30%;">Address</th>
+                                                <th style="width: 15%;">Local Authority</th>
+                                                <th style="width: 15%;">Country</th>
+                                            </tr>
+                                            @for(school <- schools) {
+                                                <tr>
+                                                    <td style="display: none;">@school.id</td>
+                                                    <td>@school.name</td>
+                                                    <td>@school.address</td>
+                                                    <td>@school.localAuthority.value</td>
+                                                    <td>@school.country.value</td>
+                                                </tr>
+                                            }
                                         </table>
+
+                                        <div id="selectedSchoolDiv" class="d-none">
+                                            <table id="selectedSchoolTable">
+                                                <th>Selected School :</th>
+                                                <td style="display: none;" id="selectedSchoolId"></td>
+                                                <td id="selectedSchoolName">None</td>
+                                                <td id="selectedSchoolAddress"></td>
+                                            </table>
+                                        </div>
+
                                     </div>
 
                                 </div>
-
                             </div>
-                        </div>
 
-                        <div class="row mx-auto">
-                            <div class="form-check">
-                                <label class="form-check-label">
-                                    <input type="checkbox" class="form-check-input">
-                                    Subscribe to newsletter
+                            <br>
+
+                            <div class="form-group">
+                                <label class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input">
+                                    <span class="custom-control-indicator"></span>
+                                    <span class="custom-control-description"> Subscribe to newsletter and updates</span>
                                 </label>
                             </div>
-                        </div>
-                        <div class="row mx-auto">
-                            <div class="form-check">
-                                <label class="form-check-label">
-                                    <input type="checkbox" class="form-check-input">
-                                    I have read the <a href="#">terms and conditions</a> and agree to them.
+
+                            <div class="form-group">
+                                <label class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" required>
+                                    <span class="custom-control-indicator"></span>
+                                    <span class="custom-control-description"> have read the <a href="#">terms and
+                                        conditions</a> and agree to them.</span>
                                 </label>
                             </div>
-                        </div>
-                        <div id="userSignupButton" class="row justify-content-center">
-                            <button type="submit" class="btn btn-primary btn-lg">Submit</button>
-                        </div>
-                    }
+
+                            <div id="userSignupButton" class="row justify-content-center" >
+                                <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -213,6 +225,7 @@
                     input = document.getElementById("schoolSearchInput");
                     filter = input.value.toUpperCase();
                     table = document.getElementById("schoolTable");
+                    table.classList.remove("d-none");
                     tr = table.getElementsByTagName("tr");
 
                     // Loop through all table rows, and hide those who don't match the search query
@@ -284,6 +297,22 @@
                 }
         </script>
 
+        <script>
+                // Example starter JavaScript for disabling form submissions if there are invalid fields
+                (function () {
+                    "use strict";
+                    window.addEventListener("load", function () {
+                        var form = document.getElementById("needs-validation");
+                        form.addEventListener("submit", function (event) {
+                            if (form.checkValidity() === false) {
+                                event.preventDefault();
+                                event.stopPropagation();
+                            }
+                            form.classList.add("was-validated");
+                        }, false);
+                    }, false);
+                }());
+        </script>
 
         @* ========================================================================================================*@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" crossorigin="anonymous"></script>
