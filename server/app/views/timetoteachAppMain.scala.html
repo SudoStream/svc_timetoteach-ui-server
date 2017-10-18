@@ -17,20 +17,20 @@
         <script type="text/javascript" src="@routes.Assets.versioned("javascripts/signout.js")"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
         <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
-        <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("icons/SudoStream_icon.png")">
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("icons/ttt_owl.png")">
     </head>
     <body>
         <div class="d-none g-signin2" ></div>
 
-        <nav id="appMainNavbar" class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+        <nav id="appMainNavbar" class="navbar navbar-expand-lg navbar-white bg-white fixed-top">
             <button class="navbar-toggler" type="button" data-toggle="collapse"
             data-target="#startupNavbar" aria-controls="navbarTogglerDemo03"
             aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <a class="navbar-brand" href="/">
-                <img src="@routes.Assets.versioned("icons/SudoStream_icon.png")" alt="logo" height="26">
-                <span class="display-5">Time To Teach</span>
+                <img src="@routes.Assets.versioned("icons/ttt_owl.png")" alt="logo" height="26">
+                <span class="ttt-icon-writing display-5">Time to TEACH</span>
             </a>
 
             <div class="collapse navbar-collapse" id="startupNavbar">
@@ -39,7 +39,7 @@
                         <a class="nav-link" href="@routes.Application.timeToTeachApp()">Dashboard</a>
                     </li>
 
-                    @if(userPictureUri.isDefined){
+                    @if(userPictureUri.isDefined) {
                         <li class="nav-item">
                             <a class="nav-link" href="#">@userFirstName.getOrElse("") @userFamilyName.getOrElse("")</a>
                         </li>

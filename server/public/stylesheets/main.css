@@ -1,6 +1,11 @@
 @import "timetable-colours.css";
 @import "timetable.css";
 
+@font-face {
+    font-family: 'simplifica';
+    src: url('/assets/fonts/simplifica.ttf') format('truetype');
+}
+
 html, body {
     height: 100%;
 }
@@ -28,7 +33,7 @@ h6 {
 }
 
 .andy {
-     float: left;
+    float: left;
     text-align: center;
     width: 100%;
 }
@@ -79,6 +84,15 @@ img {
     display: flex;
     align-items: center;
 }
+
+#ttt-logo-front-page {
+    margin-bottom: 2.5rem;
+}
+
+.ttt-icon-writing {
+ font-family: 'simplifica', sans-serif;
+}
+
 
 #stage-caption {
     font-size: 1.4rem;
@@ -237,7 +251,6 @@ img {
     padding-top: 1rem;
 }
 
-
 #userSignupButton {
     margin: 25px;
 }
@@ -270,8 +283,6 @@ img {
     padding-left: 0 !important;
     padding-right: 0 !important;
 }
-
-
 
 @media screen and ( min-width: 991px) {
     .feature-content {
