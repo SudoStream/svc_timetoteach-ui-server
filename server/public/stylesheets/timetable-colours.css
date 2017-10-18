@@ -1,6 +1,7 @@
 /* ================= */
 /*   Colours - START */
 /* ================= */
+
 .subject-maths {
     background-color: rgba(135, 206, 250, 0.5);
     color: black;
@@ -50,28 +51,24 @@
 .subject-health {
     background-color: rgba(80, 80, 237, 0.5);
     color: black;
-    font-size: larger;
     width: 50%;
 }
 
 .subject-drama {
     background-color: rgba(218, 129, 255, 0.5);
     color: black;
-    font-size: larger;
     width: 50%;
 }
 
 .subject-golden-time {
     background-color: rgba(203, 148, 0, 0.69);
     color: black;
-    font-size: larger;
     width: 50%;
 }
 
 .subject-teacher-covertime {
     background-color: rgba(0, 53, 60, 0.5);
     color: white;
-    font-size: larger;
     width: 50%;
 }
 

@@ -3,17 +3,20 @@
     /*max-width: 20px !important;*/
     /*padding-left: 0 !important;*/
     /*padding-right: 0 !important;*/
+    font-size: smaller;
 }
 
 .timetable-header {
     font-size: larger;
-    text-shadow: 1px 1px #ffb01d;
+    text-shadow: 1px 1px #ccc;
 }
 
 .timetable-dayofweek-header {
-    text-shadow: 1px 1px #ffb01d;
+    background: none;
+    text-shadow: 1px 1px #ccc;
 }
 #class-timetable-section .dayoftheweek-row {
+    background: rgba(0, 0, 0, 0.05);
     text-align: center;
     min-height: 6rem;
 }
@@ -29,3 +32,7 @@
     float: none;
 }
 
+.subject {
+    min-height: 4rem;
+    border-style: groove;
+}
