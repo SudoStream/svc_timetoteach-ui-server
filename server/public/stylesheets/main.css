@@ -1,3 +1,6 @@
+@import "timetable-colours.css";
+@import "timetable.css";
+
 html, body {
     height: 100%;
 }
@@ -266,6 +269,8 @@ img {
     padding-left: 0 !important;
     padding-right: 0 !important;
 }
+
+
 
 @media screen and ( min-width: 991px) {
     .feature-content {

@@ -1,93 +1,31 @@
-div {
-    margin: 0;
-    padding: 0;
+#class-timetable-section .small-column  {
+    /*width: 10px !important;*/
+    /*max-width: 20px !important;*/
+    /*padding-left: 0 !important;*/
+    /*padding-right: 0 !important;*/
 }
 
-.table {
-    margin:0;
-    padding: 0;
-}
-
-.table th {
-    padding: 0;
-    text-align: center;
-    vertical-align: middle;
-}
-
-.table td {
-    padding: 0;
-    vertical-align: middle;
-}
-
-.table td {
-    padding: 0;
-    vertical-align: middle;
-}
-
-.inner-cell td {
-    padding: 3.5em 0;
-}
-
-#tuesday-subject-maths-with-note {
-    padding: 1em 0;
-}
-
-#friday-subject-teacher-covertime {
-    padding: 0;
-}
-.grid-wrapper-table-head-element {
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-areas: "lesson-column-title" ;
-}
-
-.lesson-column-title {
+.timetable-header {
     font-size: larger;
-    grid-area: lesson-column-title;
+    text-shadow: 1px 1px #ffb01d;
 }
 
-.lesson-time-start {
-    grid-area: lesson-time-start;
-    text-align: left;
-    font-size: x-small;
-    color: #888888;
+.timetable-dayofweek-header {
+    text-shadow: 1px 1px #ffb01d;
 }
-
-.lesson-time-end {
-    grid-area: lesson-time-end;
-    text-align: right;
-    font-size: x-small;
-    color: #888888;
-}
-
-.lesson-time-start-end-buffer {
-    grid-area: lesson-time-start-end-buffer;
-    font-size: x-small;
-    color: #888888;
-}
-
-.lesson-duration {
-    grid-area: lesson-duration;
+#class-timetable-section .dayoftheweek-row {
     text-align: center;
-    font-size: x-small;
-    color: #555555;
+    min-height: 6rem;
 }
 
-
-
-
-.teacher-break-image {
-    width: 28px !important;
-    height: 28px !important;
+#class-timetable-section .headline-row {
+    text-align: center;
+    min-height: 3rem;
 }
 
-.subject-level-note {
-    border: double;
-    border-color: white;
-    background-color: #b3b3b3;
-    color: white;
-    font-style: italic;
-    font-weight: lighter;
-    text-shadow: 1px 1px #999;
+.vcenter {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
 }
 
