@@ -23,6 +23,12 @@ h6 {
     text-shadow: 1px 1px #eee;
 }
 
+.andy {
+     float: left;
+    text-align: center;
+    width: 100%;
+}
+
 #dashboardContent {
     margin-top: 1.5rem;
 }
@@ -45,7 +51,7 @@ img {
 }
 
 .nav-login-button {
-    margin-left: 3rem;
+    margin-left: 1rem;
     margin-right: 0.5rem;
 }
 
@@ -224,7 +230,7 @@ img {
 }
 
 #mainAppTopMargin {
-    padding-top: 2rem;
+    padding-top: 1rem;
 }
 
 

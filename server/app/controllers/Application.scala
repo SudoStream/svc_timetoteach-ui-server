@@ -31,9 +31,14 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl, deadbolt: De
   def profile = deadbolt.SubjectPresent()() { authRequest =>
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
+    val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
 
     Future {
-      Ok(views.html.timetoteachDashboard(new MyDeadboltHandler(userReader), SharedMessages.httpMainTitle, userPictureUri, userFirstName)(authRequest))
+      Ok(views.html.timetoteachDashboard(new MyDeadboltHandler(userReader),
+        SharedMessages.httpMainTitle,
+        userPictureUri,
+        userFirstName,
+        userFamilyName)(authRequest))
     }
   }
 
@@ -50,21 +55,31 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl, deadbolt: De
   def timeToTeachApp = deadbolt.SubjectPresent()() { authRequest =>
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
+    val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
 
     println(s"userFirstName =' ${userFirstName.getOrElse("OH DEAR NOT DEFINED")}")
     println(s"userPictureUri =' ${userPictureUri.getOrElse("OH DEAR NOT DEFINED")}")
 
     Future {
-      Ok(views.html.timetoteachDashboard(new MyDeadboltHandler(userReader), SharedMessages.httpMainTitle, userPictureUri, userFirstName)(authRequest))
+      Ok(views.html.timetoteachDashboard(new MyDeadboltHandler(userReader),
+        SharedMessages.httpMainTitle,
+        userPictureUri,
+        userFirstName,
+        userFamilyName)(authRequest))
     }
   }
 
   def classTimetable = deadbolt.SubjectPresent()() { authRequest =>
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
+    val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
 
     Future {
-      Ok(views.html.classtimetable(new MyDeadboltHandler(userReader), SharedMessages.httpMainTitle, userPictureUri, userFirstName)(authRequest))
+      Ok(views.html.classtimetable(new MyDeadboltHandler(userReader),
+        SharedMessages.httpMainTitle,
+        userPictureUri,
+        userFirstName,
+        userFamilyName)(authRequest))
     }
   }
 

@@ -1,5 +1,6 @@
 @import be.objectify.deadbolt.scala.AuthenticatedRequest
-@(handler: be.objectify.deadbolt.scala.DeadboltHandler, title: String, userPictureUri: Option[String], userFirstName: Option[String])(content: Html)(implicit request: AuthenticatedRequest[Any])
+@import models.timetoteach.School
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, title: String, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String])(content: Html)(implicit request: AuthenticatedRequest[Any])
 <!DOCTYPE html>
 <html>
     <head>
@@ -27,31 +28,25 @@
             aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" href="/">
                 <img src="@routes.Assets.versioned("icons/SudoStream_icon.png")" alt="logo" height="26">
                 <span class="display-5">Time To Teach</span>
             </a>
 
             <div class="collapse navbar-collapse" id="startupNavbar">
                 <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
-                    <li class="nav-item active">
-                        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-                    </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#feature-one">Features</a>
+                        <a class="nav-link" href="@routes.Application.timeToTeachApp()">Dashboard</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#pricing">Pricing</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#news">News</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#about">About</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link disabled" href="#">Blog</a>
-                    </li>
+
+                    @if(userPictureUri.isDefined){
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">@userFirstName.getOrElse("") @userFamilyName.getOrElse("")</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#"><img class="center img-circle-standard" src="@userPictureUri" height="32px"></a>
+                        </li>
+                    }
                     <li class="nav-item nav-login-button">
                     @if(userFirstName.isDefined) {
                         <a class="btn btn-outline-primary" href="#" onclick="signOut();">Sign out</a>
