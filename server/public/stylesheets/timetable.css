@@ -36,3 +36,8 @@
     min-height: 4rem;
     border-style: groove;
 }
+
+.teacher-cover {
+    max-height: 2rem;
+    border-style: groove;
+}
