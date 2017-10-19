@@ -166,16 +166,17 @@ img {
 #congratsSection {
     background: url('/assets/images/congrats.jpeg') center center no-repeat;
     background-size: cover;
-    height: 100%;
+    min-height: 100%;
     display: flex;
     width: 100%;
 }
 
 #appBackground {
     margin-top: 3rem;
-    background: url('/assets/images/appBackgroundAlt.jpeg') center center no-repeat;
-    background-size: cover;
-    height: 100%;
+    background-image: url('/assets/images/appBackgroundAlt.jpeg');
+    background-repeat:  repeat-y;
+    background-size: 100% 100%;
+    min-height: 100%;
     width: 100%;
 }
 
