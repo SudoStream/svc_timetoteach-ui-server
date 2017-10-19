@@ -1,4 +1,4 @@
-#class-timetable-section .small-column  {
+#class-timetable-section .small-column {
     /*width: 10px !important;*/
     /*max-width: 20px !important;*/
     /*padding-left: 0 !important;*/
@@ -16,6 +16,7 @@
     background: none;
     text-shadow: 1px 1px #ccc;
 }
+
 #class-timetable-section .dayoftheweek-row {
     background: rgba(0, 0, 0, 0.05);
     text-align: center;
@@ -41,4 +42,26 @@
 .teacher-cover {
     max-height: 2rem;
     border-style: groove;
+}
+
+.timetable-time-row .col-sm-1,
+.timetable-time-row .col-sm-2,
+.timetable-time-row.col-sm-3,
+.timetable-time-row .col-sm-4,
+.timetable-time-row .col-sm-5,
+.timetable-time-row.col-sm-6,
+.timetable-time-row .col-sm-7,
+.timetable-time-row .col-sm-8,
+.timetable-time-row.col-sm-9,
+.timetable-time-row .col-sm-10,
+.timetable-time-row .col-sm-11,
+.timetable-time-row.col-sm-12 {
+    padding-left: 0;
+!important;
+    padding-right: 0;
+!important;
+}
+
+.timetable-time {
+    font-size: smaller;
 }
