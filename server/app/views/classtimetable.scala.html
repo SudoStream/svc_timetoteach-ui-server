@@ -1,13 +1,14 @@
 @import be.objectify.deadbolt.scala.AuthenticatedRequest
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String])(implicit request: AuthenticatedRequest[Any])
 
-@timetoteachAppMain(handler, "Class Timetable", userPictureUri, userFirstName, userFamilyName) {
+@timetoteachAppMain(handler, "Class Timetable  ---  Class: P4B --- TODO: Make nicer etc",
+    userPictureUri, userFirstName, userFamilyName) {
 
     <aside id="class-timetable-subject-nav">
         <div class="container text-center class-timetable-subject-nav-background justify-content-center">
             <h4>Subjects</h4>
 
-            <div class="row justify-content-center">
+            <div class="row justify-content-center class-timetable-subject-row">
                 <div class="col-sm-2">
                     <div class="btn rounded subject-golden-time class-timetable-button" type="button">Golden Time</div>
                 </div>
@@ -16,9 +17,7 @@
                 </div>
             </div>
 
-            <div class="row"><br></div>
-
-            <div class="row justify-content-center">
+            <div class="row justify-content-center class-timetable-subject-row">
                 <div class="col-sm-2">
                     <div class="btn rounded subject-ict class-timetable-button" type="button">ICT</div>
                 </div>
@@ -35,13 +34,11 @@
                     <div class="btn rounded subject-teacher-covertime class-timetable-button" type="button">RCCT</div>
                 </div>
                 <div class="col-sm-2">
-                    <div class="btn rounded subject-assembly class-timetable-button" type="button">Assembly</div>
+                    <div class="btn rounded subject-assembly-button class-timetable-button" type="button">Assembly</div>
                 </div>
             </div>
 
-            <div class="row"><br></div>
-
-            <div class="row justify-content-center">
+            <div class="row justify-content-center class-timetable-subject-row">
                 <div class="col-sm-2">
                     <div class="btn rounded subject-reading class-timetable-button" type="button">Reading</div>
                 </div>
@@ -68,7 +65,6 @@
 
     <section id="class-timetable-section">
         <div class="container">
-
             <div class="row headline-row text-primary">
                 <div class="col-sm-1"></div>
                 <div class="col-sm-3 timetable-header">Early Morning</div>
@@ -76,11 +72,6 @@
                 <div class="col-sm-3 timetable-header">Late Morning</div>
                 <div class="col-sm-1 small-column text-center">Lunch</div>
                 <div class="col-sm-3 order timetable-header">Afternoon</div>
-            </div>
-
-            <div class="row">
-                <div class="col-sm-1 small-column"></div>
-                <div class=""></div>
             </div>
 
             <div class="row timetable-time-row">

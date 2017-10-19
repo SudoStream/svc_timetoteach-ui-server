@@ -7,7 +7,7 @@
 }
 
 #class-timetable-subject-nav h4 {
-    color: white;
+    color: rgba(104, 102, 255, 0.66);
     text-shadow: 1px 1px #444;
     margin-bottom: 1rem;
 }
@@ -43,7 +43,7 @@
 
 #class-timetable-section .headline-row {
     text-align: center;
-    min-height: 3rem;
+    min-height: 1.5rem;
 }
 
 .vcenter {
@@ -86,4 +86,8 @@
 
 .class-timetable-button {
     min-width: 100%;
+}
+
+.class-timetable-subject-row {
+    margin-bottom: 0.25rem;
 }

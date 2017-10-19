@@ -4,6 +4,7 @@ object ClassTimetable {
 
 
 
+
   def loadClassTimetableJavascript(): Unit = {
 
   }

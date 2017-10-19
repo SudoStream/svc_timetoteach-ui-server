@@ -283,14 +283,14 @@ img {
 }
 
 #app-main-screen-title {
-    display: block;
-    text-align:center;
-    float: none;
-    vertical-align: top;
+    margin-left: 2rem;
+    clear: both;
+    display: inline-block;
+    white-space: nowrap;
 }
 
 #startupNavbar{
-    max-width: 46%;
+
 }
 
 @media screen and ( min-width: 991px) {
