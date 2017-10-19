@@ -51,25 +51,26 @@
 .subject-health {
     background-color: rgba(80, 80, 237, 0.5);
     color: black;
-    width: 50%;
 }
 
 .subject-drama {
     background-color: rgba(218, 129, 255, 0.5);
     color: black;
-    width: 50%;
 }
 
 .subject-golden-time {
     background-color: rgba(203, 148, 0, 0.69);
     color: black;
-    width: 50%;
+}
+
+.subject-other {
+    background-color: rgba(233, 233, 233, 1);
+    color: black;
 }
 
 .subject-teacher-covertime {
     background-color: rgba(0, 53, 60, 0.5);
     color: white;
-    width: 50%;
 }
 
 .subject-assembly {
@@ -78,7 +79,6 @@
     font-weight: bolder;
     text-shadow: 1px 1px #000;
     font-size: larger;
-    width: 50%;
 }
 /* ================= */
 /*   Colours - END */

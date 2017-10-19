@@ -5,6 +5,70 @@
 
     <h3 class="header-highlight display-4 text-center">Class Timetable</h3>
 
+
+    <aside id="class-timetable-subject-nav">
+        <div class="container text-center class-timetable-subject-nav-background justify-content-center">
+            <h4>Subjects</h4>
+
+            <div class="row justify-content-center">
+                <div class="col-sm-2">
+                    <div class="btn rounded subject-golden-time class-timetable-button" type="button">Golden Time</div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="btn rounded subject-other class-timetable-button" type="button">Other</div>
+                </div>
+            </div>
+
+            <div class="row"><br></div>
+
+            <div class="row justify-content-center">
+                <div class="col-sm-2">
+                    <div class="btn rounded subject-ict class-timetable-button" type="button">ICT</div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="btn rounded subject-music class-timetable-button" type="button">Music</div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="btn rounded subject-drama class-timetable-button" type="button">Drama</div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="btn rounded subject-health class-timetable-button" type="button">Health</div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="btn rounded subject-teacher-covertime class-timetable-button" type="button">RCCT</div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="btn rounded subject-assembly class-timetable-button" type="button">Assembly</div>
+                </div>
+            </div>
+
+            <div class="row"><br></div>
+
+            <div class="row justify-content-center">
+                <div class="col-sm-2">
+                    <div class="btn rounded subject-reading class-timetable-button" type="button">Reading</div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="btn rounded subject-spelling class-timetable-button" type="button">Spelling</div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="btn rounded subject-writing class-timetable-button" type="button">Writing</div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="btn rounded subject-maths class-timetable-button" type="button">Maths</div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="btn rounded subject-topic class-timetable-button" type="button">IDL</div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="btn rounded subject-physical-education class-timetable-button" type="button">P.E.</div>
+                </div>
+            </div>
+
+        </div>
+    </aside>
+
+
     <section id="class-timetable-section">
         <div class="container">
 
@@ -61,20 +125,21 @@
                 <div class="col-sm-1 text-primary timetable-dayofweek-header align-self-center" >Mon</div>
                 <div class="col-sm-3 ">
                     <div class="row">
-                        <button class="col-12 rounded subject subject-empty">Select Lesson(s)</button>
+                        <button class="col-12 rounded subject subject-empty" data-toggle="modal"
+                        data-target="#addLessonsModal">EMPTY</button>
                     </div>
                 </div>
                 <div class="col-sm-1 small-column "></div>
                 <div class="col-sm-3">
                     <div class="row">
-                        <button class="col-12 rounded subject subject-empty">Select Lesson(s)</button>
+                        <button class="col-12 rounded subject subject-empty">EMPTY</button>
                     </div>
                 </div>
                 <div class="col-sm-1 small-column"></div>
 
                 <div class="col-sm-3">
                     <div class="row">
-                        <button class="col-12 rounded subject subject-empty">Select Lesson(s)</button>
+                        <button class="col-12 rounded subject subject-empty">EMPTY</button>
                     </div>
                 </div>
             </div>
@@ -85,20 +150,20 @@
                 <div class="col-sm-1 text-primary timetable-dayofweek-header align-self-center" >Tue</div>
                 <div class="col-sm-3 ">
                     <div class="row">
-                        <button class="col-12 rounded subject subject-empty">Select Lesson(s)</button>
+                        <button class="col-12 rounded subject subject-empty">EMPTY</button>
                     </div>
                 </div>
                 <div class="col-sm-1 small-column "></div>
                 <div class="col-sm-3">
                     <div class="row">
-                        <button class="col-12 rounded subject subject-empty">Select Lesson(s)</button>
+                        <button class="col-12 rounded subject subject-empty">EMPTY</button>
                     </div>
                 </div>
                 <div class="col-sm-1 small-column"></div>
 
                 <div class="col-sm-3">
                     <div class="row">
-                        <button class="col-12 rounded subject subject-empty">Select Lesson(s)</button>
+                        <button class="col-12 rounded subject subject-empty">EMPTY</button>
                     </div>
                 </div>
             </div>
@@ -109,20 +174,20 @@
                 <div class="col-sm-1 text-primary timetable-dayofweek-header align-self-center" >Wed</div>
                 <div class="col-sm-3 ">
                     <div class="row">
-                        <button class="col-12 rounded subject subject-empty">Select Lesson(s)</button>
+                        <button class="col-12 rounded subject subject-empty">EMPTY</button>
                     </div>
                 </div>
                 <div class="col-sm-1 small-column "></div>
                 <div class="col-sm-3">
                     <div class="row">
-                        <button class="col-12 rounded subject subject-empty">Select Lesson(s)</button>
+                        <button class="col-12 rounded subject subject-empty">EMPTY</button>
                     </div>
                 </div>
                 <div class="col-sm-1 small-column"></div>
 
                 <div class="col-sm-3">
                     <div class="row">
-                        <button class="col-12 rounded subject subject-empty">Select Lesson(s)</button>
+                        <button class="col-12 rounded subject subject-empty">EMPTY</button>
                     </div>
                 </div>
             </div>
@@ -133,20 +198,20 @@
                 <div class="col-sm-1 text-primary timetable-dayofweek-header align-self-center" >Thu</div>
                 <div class="col-sm-3 ">
                     <div class="row">
-                        <button class="col-12 rounded subject subject-empty">Select Lesson(s)</button>
+                        <button class="col-12 rounded subject subject-empty">EMPTY</button>
                     </div>
                 </div>
                 <div class="col-sm-1 small-column "></div>
                 <div class="col-sm-3">
                     <div class="row">
-                        <button class="col-12 rounded subject subject-empty">Select Lesson(s)</button>
+                        <button class="col-12 rounded subject subject-empty">EMPTY</button>
                     </div>
                 </div>
                 <div class="col-sm-1 small-column"></div>
 
                 <div class="col-sm-3">
                     <div class="row">
-                        <button class="col-12 rounded subject subject-empty">Select Lesson(s)</button>
+                        <button class="col-12 rounded subject subject-empty">EMPTY</button>
                     </div>
                 </div>
             </div>
@@ -157,30 +222,32 @@
                 <div class="col-sm-1 text-primary timetable-dayofweek-header align-self-center" >Fri</div>
                 <div class="col-sm-3 ">
                     <div class="row">
-                        <button class="col-12 rounded subject subject-empty">Select Lesson(s)</button>
+                        <button class="col-12 rounded subject subject-empty">EMPTY</button>
                     </div>
                 </div>
                 <div class="col-sm-1 small-column "></div>
                 <div class="col-sm-3">
                     <div class="row">
-                        <button class="col-12 rounded subject subject-empty">Select Lesson(s)</button>
+                        <button class="col-12 rounded subject subject-empty">EMPTY</button>
                     </div>
                 </div>
                 <div class="col-sm-1 small-column"></div>
 
                 <div class="col-sm-3">
                     <div class="row">
-                        <button class="col-12 rounded subject subject-empty">Select Lesson(s)</button>
+                        <button class="col-12 rounded subject subject-empty">EMPTY</button>
                     </div>
                 </div>
             </div>
 
         </div>
-    </section>
 
-    <section id="class-timetable-section">
+        <br>
+        <br>
+        <br>
+        <br>
+
         <div class="container">
-
             <div class="row headline-row text-primary">
                 <div class="col-sm-1"></div>
                 <div class="col-sm-3 timetable-header">Early Morning</div>
@@ -375,6 +442,74 @@
 
         </div>
 
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
     </section>
 
+    <div class="modal fade" id="addLessonsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addLessonsModalLabel">Add Lesson to Timetable</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="selectLessonInputButton">Lesson To Add:</label>
+                            <input type="button" class="form-control" id="selectLessonInputButton"
+                            aria-describedby="selectLessonHelp" placeholder="Select Lesson" value="Choose Lesson - This will be grid">
+                        </div>
+
+                        <div id="andy">Hello</div>
+
+                        <hr>
+
+                        <div class="form-group">
+                            <label>Days to add lesson:</label>
+                            <div id="inputToAddLessonMonday-wrapper" class="form-check">
+                                <label class="form-check-label">
+                                    <input id="inputToAddLessonMonday" class="form-check-input" type="checkbox" value="">
+                                    Monday
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <label class="form-check-label">
+                                    <input id="inputToAddLessonTuesday" class="form-check-input" type="checkbox" value="">
+                                    Tuesday
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <label class="form-check-label">
+                                    <input id="inputToAddLessonWednesday" class="form-check-input" type="checkbox" value="">
+                                    Wednesday
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <label class="form-check-label">
+                                    <input id="inputToAddLessonThursday" class="form-check-input" type="checkbox" value="">
+                                    Thursday
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <label class="form-check-label">
+                                    <input id="inputToAddLessonFriday" class="form-check-input" type="checkbox" value="">
+                                    Friday
+                                </label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Add To Timetable</button>
+                </div>
+            </div>
+        </div>
+    </div>
 }

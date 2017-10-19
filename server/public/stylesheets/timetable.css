@@ -1,8 +1,22 @@
+#class-timetable-section {
+    margin-top: 2rem;
+}
+
+#class-timetable-subject-nav h4 {
+    color: white;
+    text-shadow: 1px 1px #444;
+    margin-bottom: 1rem;
+}
+
+.class-timetable-subject-nav-background {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    background: rgba(0, 0, 0, 0.15);
+    text-align: center;
+    min-height: 6rem;
+}
+
 #class-timetable-section .small-column {
-    /*width: 10px !important;*/
-    /*max-width: 20px !important;*/
-    /*padding-left: 0 !important;*/
-    /*padding-right: 0 !important;*/
     font-size: smaller;
     color: #999;
 }
@@ -64,4 +78,8 @@
 
 .timetable-time {
     font-size: smaller;
+}
+
+.class-timetable-button {
+    min-width: 100%;
 }
