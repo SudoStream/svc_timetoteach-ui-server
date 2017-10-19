@@ -172,7 +172,7 @@ img {
 
 #appBackground {
     margin-top: 3rem;
-    background: url('/assets/images/appBackground.jpeg') center center no-repeat;
+    background: url('/assets/images/appBackgroundAlt.jpeg') center center no-repeat;
     background-size: cover;
     height: 100%;
     width: 100%;
