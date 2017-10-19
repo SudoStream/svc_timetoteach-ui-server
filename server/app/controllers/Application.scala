@@ -76,7 +76,6 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl, deadbolt: De
 
     Future {
       Ok(views.html.classtimetable(new MyDeadboltHandler(userReader),
-        SharedMessages.httpMainTitle,
         userPictureUri,
         userFirstName,
         userFamilyName)(authRequest))

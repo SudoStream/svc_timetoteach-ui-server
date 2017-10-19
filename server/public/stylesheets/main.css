@@ -282,6 +282,17 @@ img {
     padding-right: 0 !important;
 }
 
+#app-main-screen-title {
+    display: block;
+    text-align:center;
+    float: none;
+    vertical-align: top;
+}
+
+#startupNavbar{
+    max-width: 46%;
+}
+
 @media screen and ( min-width: 991px) {
     .feature-content {
         display: flex;
