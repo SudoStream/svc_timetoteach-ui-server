@@ -45,7 +45,9 @@ class UserWriterServiceProxyImpl @Inject()(schoolReader: SchoolReaderServiceProx
     case Failure(t) =>
       logger.error("Failed to get schools on loadup")
   }
+
   private var theSchools: Map[String, io.sudostream.timetoteach.messages.systemwide.model.School] = Map.empty
+
   def createNewUser(user: TimeToTeachUser): Future[TimeToTeachUserId] = {
     val userMessage = convertUserToMessage(user)
     val protocol = if (userWriterServicePort.toInt > 9000) "http" else "https"
