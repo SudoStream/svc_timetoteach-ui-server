@@ -7,15 +7,16 @@
 }
 
 #class-timetable-subject-nav h4 {
-    color: rgba(104, 102, 255, 0.66);
-    text-shadow: 1px 1px #444;
+    color: rgba(104, 102, 255, 1);
+    text-shadow: 1px 1px #fff;
     margin-bottom: 1rem;
 }
 
 .class-timetable-subject-nav-background {
     padding-top: 1rem;
-    padding-bottom: 1rem;
-    background: rgba(0, 0, 0, 0.15);
+    padding-bottom: 0.2rem;
+    background: rgba(0, 0, 0, 0);
+    border: 1px solid lightgrey;
     text-align: center;
     min-height: 6rem;
 }

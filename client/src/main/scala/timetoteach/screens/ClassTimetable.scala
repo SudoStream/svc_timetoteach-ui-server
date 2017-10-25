@@ -1,13 +1,28 @@
 package timetoteach.screens
 
 import org.scalajs.dom
-import org.scalajs.dom.raw.HTMLDivElement
+import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement, NodeList}
 import timetoteach.model.{Subject, Subjects}
 
 object ClassTimetable {
 
   var currentlySelectSubject: Option[Subject] = None
   var orginalColour = ""
+
+  def addListenerToModalTitle(): Unit = {
+    //    subjectElement.addEventListener("addLessonsModalLabel")
+  }
+
+  def setDisableValueOnAllTimetableButtonsTo(isDisabled: Boolean): Unit = {
+    val timetableButtons: NodeList = dom.document.getElementsByClassName("subject")
+    val nodeListSize = timetableButtons.length
+    var index = 0
+    while ( index < nodeListSize ) {
+      val button = timetableButtons(index).asInstanceOf[HTMLButtonElement]
+      button.disabled = isDisabled
+      index = index + 1
+    }
+  }
 
   def addListenerToAllSubjectButtons(): Unit = {
     for (subject <- Subjects.values) {
@@ -32,6 +47,12 @@ object ClassTimetable {
             }
 
           case _ =>
+        }
+
+        if (currentlySelectSubject.isEmpty) {
+          setDisableValueOnAllTimetableButtonsTo(true)
+        } else {
+          setDisableValueOnAllTimetableButtonsTo(false)
         }
 
       })
