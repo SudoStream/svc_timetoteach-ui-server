@@ -16,6 +16,7 @@ object ClassTimetable {
     val timetableSubjectButtons = dom.document.getElementsByClassName("subject")
     val nodeListSize = timetableSubjectButtons.length
     var index = 0
+
     while (index < nodeListSize) {
       val button = timetableSubjectButtons(index).asInstanceOf[HTMLButtonElement]
 
@@ -33,10 +34,9 @@ object ClassTimetable {
         }
 
       })
-
-
       index = index + 1
     }
+
   }
 
   def addEventListenerToDragstart(): Unit = {
