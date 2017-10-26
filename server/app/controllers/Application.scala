@@ -1,11 +1,13 @@
 package controllers
 
+import java.time.LocalTime
 import javax.inject.Inject
 
 import be.objectify.deadbolt.scala.cache.HandlerCache
 import be.objectify.deadbolt.scala.{ActionBuilders, DeadboltActions}
 import controllers.serviceproxies.UserReaderServiceProxyImpl
 import models.timetoteach.CookieNames
+import models.timetoteach.classtimetable.SchoolDayTimes
 import play.api.mvc._
 import security.MyDeadboltHandler
 import shared.SharedMessages
@@ -15,6 +17,15 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class Application @Inject()(userReader: UserReaderServiceProxyImpl, deadbolt: DeadboltActions, handlers: HandlerCache, actionBuilder: ActionBuilders) extends Controller {
+
+  val defaultSchoolDayTimes = SchoolDayTimes(
+    schoolDayStarts = LocalTime.of(9, 0),
+    morningBreakStarts = LocalTime.of(10, 0),
+    morningBreakEnds = LocalTime.of(10, 45),
+    lunchStarts = LocalTime.of(12, 0),
+    lunchEnds = LocalTime.of(13, 0),
+    schoolDayEnds = LocalTime.of(15, 0)
+  )
 
   def index = Action {
     Ok(views.html.index())
@@ -78,7 +89,8 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl, deadbolt: De
       Ok(views.html.classtimetable(new MyDeadboltHandler(userReader),
         userPictureUri,
         userFirstName,
-        userFamilyName)(authRequest))
+        userFamilyName,
+        defaultSchoolDayTimes )(authRequest))
     }
   }
 

@@ -1,11 +1,12 @@
 @import be.objectify.deadbolt.scala.AuthenticatedRequest
-@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String])(implicit request: AuthenticatedRequest[Any])
+@import models.timetoteach.classtimetable.SchoolDayTimes
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], schoolDayTimes: SchoolDayTimes)(implicit request: AuthenticatedRequest[Any])
 
 @timetoteachAppMain(handler, "",
     userPictureUri, userFirstName, userFamilyName) {
 
     <div class="conatiner">
-        <h1 class="text-center">Timetable : Class P4B</h1>
+        <h1 class="text-center">Timetable : Class P4B<em> TODO</em></h1>
     </div>
 
     <div class="container">
@@ -114,33 +115,33 @@
                 <div class="col-sm-1"></div>
                 <div class="col-sm-3">
                     <div class="row">
-                        <div class="col-sm-1 timetable-time">09:00</div>
+                        <div class="col-sm-1 timetable-time">@schoolDayTimes.schoolDayStarts.toString</div>
                         <div class="col-sm-11"></div>
                     </div>
                 </div>
                 <div class="col-sm-1">
                     <div class="row">
-                        <div class="col-sm-1 timetable-time">10:30</div>
+                        <div class="col-sm-1 timetable-time">@schoolDayTimes.morningBreakStarts.toString</div>
                         <div class="col-sm-11"></div>
                     </div>
                 </div>
                 <div class="col-sm-3">
                     <div class="row">
-                        <div class="col-sm-1 timetable-time">10:45</div>
+                        <div class="col-sm-1 timetable-time">@schoolDayTimes.morningBreakEnds.toString</div>
                         <div class="col-sm-11"></div>
                     </div>
                 </div>
                 <div class="col-sm-1">
                     <div class="row">
-                        <div class="col-sm-1 timetable-time">12:15</div>
+                        <div class="col-sm-1 timetable-time">@schoolDayTimes.lunchStarts.toString</div>
                         <div class="col-sm-11"></div>
                     </div>
                 </div>
                 <div class="col-sm-3">
                     <div class="row">
-                        <div class="col-sm-1 timetable-time">1:15</div>
+                        <div class="col-sm-1 timetable-time">@schoolDayTimes.lunchEnds.toString</div>
                         <div class="col-sm-10"></div>
-                        <div class="col-sm-1 timetable-time">3:00</div>
+                        <div class="col-sm-1 timetable-time">@schoolDayTimes.schoolDayEnds.toString</div>
                     </div>
                 </div>
             </div>
