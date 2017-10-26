@@ -42,8 +42,7 @@ lazy val client = (project in file("client")).settings(
   scalaVersion := scalaV,
   scalaJSUseMainModuleInitializer := true,
   libraryDependencies ++= Seq(
-    "org.scala-js" %%% "scalajs-dom" % "0.9.1",
-    "com.github.japgolly.scalajs-react" %%% "core" % "1.1.0"
+    "org.scala-js" %%% "scalajs-dom" % "0.9.1"
   ),
   jsDependencies ++= Seq(
     "org.webjars.bower" % "react" % "15.6.1"

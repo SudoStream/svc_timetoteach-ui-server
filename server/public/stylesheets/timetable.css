@@ -3,7 +3,7 @@
 }
 
 #class-timetable-subject-nav {
-    margin-top: 1rem;
+    margin-top: 2rem;
 }
 
 #class-timetable-subject-nav h4 {
@@ -13,9 +13,10 @@
 }
 
 .class-timetable-subject-nav-background {
-    padding-top: 1rem;
+    padding-top: 0.5rem;
     padding-bottom: 0.2rem;
-    background: rgba(0, 0, 0, 0);
+    /*background: rgba(0, 0, 0, 0);*/
+    background-color: #dcdcdc;
     border: 1px solid lightgrey;
     text-align: center;
     min-height: 6rem;
@@ -58,6 +59,7 @@
 .subject {
     min-height: 4rem;
     border-style: groove;
+    border-color: lightgrey;
 }
 
 .teacher-cover {
@@ -92,7 +94,7 @@
 }
 
 .class-timetable-subject-row {
-    margin-bottom: 1rem;
+    margin-bottom: 0.25rem;
 }
 
 #addLessonsModalFooter {

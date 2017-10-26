@@ -1,25 +1,73 @@
 package timetoteach.screens
 
 import org.scalajs.dom
-import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement, NodeList}
+import org.scalajs.dom.Event
+import org.scalajs.dom.raw._
 import timetoteach.model.{Subject, Subjects}
+
+import scala.scalajs.js
 
 object ClassTimetable {
 
   var currentlySelectSubject: Option[Subject] = None
   var orginalColour = ""
 
-  def addListenerToModalTitle(): Unit = {
-    //    subjectElement.addEventListener("addLessonsModalLabel")
+  def addEventListenerToDragDrop(): Unit = {
+    val timetableSubjectButtons = dom.document.getElementsByClassName("subject")
+    val nodeListSize = timetableSubjectButtons.length
+    var index = 0
+    while (index < nodeListSize) {
+      val button = timetableSubjectButtons(index).asInstanceOf[HTMLButtonElement]
+
+      button.addEventListener("dragover", (e: dom.Event) => {
+        e.preventDefault()
+      })
+
+      button.addEventListener("drop", (e: dom.Event) => {
+        e.preventDefault()
+        e.currentTarget match {
+          case subjectDiv: HTMLButtonElement =>
+            val $ = js.Dynamic.global.$
+            $("#addLessonsModal").modal("show")
+          case _ =>
+        }
+
+      })
+
+
+      index = index + 1
+    }
   }
 
-  def setDisableValueOnAllTimetableButtonsTo(isDisabled: Boolean): Unit = {
-    val timetableButtons: NodeList = dom.document.getElementsByClassName("subject")
-    val nodeListSize = timetableButtons.length
+  def addEventListenerToDragstart(): Unit = {
+    val timetableSubjectButtons = dom.document.getElementsByClassName("class-timetable-button")
+    val nodeListSize = timetableSubjectButtons.length
     var index = 0
-    while ( index < nodeListSize ) {
-      val button = timetableButtons(index).asInstanceOf[HTMLButtonElement]
+    while (index < nodeListSize) {
+      val button = timetableSubjectButtons(index).asInstanceOf[HTMLButtonElement]
+      button.addEventListener("dragstart", (e: dom.Event) => {
+        setTheCurrentlySelectedSubject(e)
+        setDisableValueOnAllTimetableButtonsTo(false)
+      })
+
+      button.addEventListener("dragend", (e: dom.Event) => {
+        setTheCurrentlySelectedSubject(e)
+        setDisableValueOnAllTimetableButtonsTo(true)
+      })
+
+      index = index + 1
+    }
+  }
+
+
+  def setDisableValueOnAllTimetableButtonsTo(isDisabled: Boolean): Unit = {
+    val timetableSlotButtons: NodeList = dom.document.getElementsByClassName("subject")
+    val nodeListSize = timetableSlotButtons.length
+    var index = 0
+    while (index < nodeListSize) {
+      val button = timetableSlotButtons(index).asInstanceOf[HTMLButtonElement]
       button.disabled = isDisabled
+      button.style.borderColor = if (isDisabled) "lightgrey" else "yellow"
       index = index + 1
     }
   }
@@ -29,25 +77,7 @@ object ClassTimetable {
       val subjectElement = dom.document.getElementById(subject.value)
       subjectElement.addEventListener("click", (e: dom.Event) => {
 
-        e.currentTarget match {
-          case subjectDiv: HTMLDivElement =>
-            val justSelectedSubject = Subject(subjectDiv.id)
-            if (currentlySelectSubject.isDefined) {
-              if (currentlySelectSubject.get == justSelectedSubject) {
-                resetDiv(subjectDiv)
-                currentlySelectSubject = None
-              } else {
-                val currentlySelectedDiv =
-                  dom.document.getElementById(currentlySelectSubject.get.value).asInstanceOf[HTMLDivElement]
-                resetDiv(currentlySelectedDiv)
-                selectThisElement(subjectDiv, justSelectedSubject)
-              }
-            } else {
-              selectThisElement(subjectDiv, justSelectedSubject)
-            }
-
-          case _ =>
-        }
+        setTheCurrentlySelectedSubject(e)
 
         if (currentlySelectSubject.isEmpty) {
           setDisableValueOnAllTimetableButtonsTo(true)
@@ -60,6 +90,27 @@ object ClassTimetable {
 
   }
 
+  private def setTheCurrentlySelectedSubject(e: Event): Unit = {
+    e.currentTarget match {
+      case subjectDiv: HTMLDivElement =>
+        val justSelectedSubject = Subject(subjectDiv.id)
+        if (currentlySelectSubject.isDefined) {
+          if (currentlySelectSubject.get == justSelectedSubject) {
+            resetDiv(subjectDiv)
+            currentlySelectSubject = None
+          } else {
+            val currentlySelectedDiv =
+              dom.document.getElementById(currentlySelectSubject.get.value).asInstanceOf[HTMLDivElement]
+            resetDiv(currentlySelectedDiv)
+            selectThisElement(subjectDiv, justSelectedSubject)
+          }
+        } else {
+          selectThisElement(subjectDiv, justSelectedSubject)
+        }
+
+      case _ =>
+    }
+  }
   private def resetDiv(subjectDiv: HTMLDivElement) = {
     val parent = subjectDiv.parentNode.asInstanceOf[HTMLDivElement]
     parent.style.border = ""
@@ -74,7 +125,8 @@ object ClassTimetable {
   private def selectThisElement(subjectDiv: HTMLDivElement, justSelectedSubject: Subject) = {
 
     val parent = subjectDiv.parentNode.asInstanceOf[HTMLDivElement]
-    parent.style.border = "5px solid white"
+    parent.style.borderLeft = "5px solid #fcfc00"
+    parent.style.borderRight = "5px solid #fcfc00"
     parent.style.paddingLeft = "0"
     parent.style.paddingRight = "0"
 
@@ -86,6 +138,8 @@ object ClassTimetable {
     currentlySelectSubject = Some(justSelectedSubject)
   }
   def loadClassTimetableJavascript(): Unit = {
+    addEventListenerToDragstart()
+    addEventListenerToDragDrop()
     addListenerToAllSubjectButtons()
   }
 
