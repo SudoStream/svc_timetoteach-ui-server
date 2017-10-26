@@ -10,7 +10,7 @@ import scala.scalajs.js
 object ClassTimetable {
 
   var currentlySelectSubject: Option[Subject] = None
-  var orginalColour = ""
+  var originalColour = ""
 
   def addEventListenerToDragDrop(): Unit = {
     val timetableSubjectButtons = dom.document.getElementsByClassName("subject")
@@ -118,7 +118,7 @@ object ClassTimetable {
     parent.style.paddingRight = "15px"
 
     subjectDiv.style.textShadow = ""
-    subjectDiv.style.color = orginalColour
+    subjectDiv.style.color = originalColour
     subjectDiv.style.fontWeight = "normal"
     subjectDiv.style.fontSize = "medium"
   }
@@ -131,7 +131,7 @@ object ClassTimetable {
     parent.style.paddingRight = "0"
 
     subjectDiv.style.textShadow = "1px 1px #222"
-    orginalColour = subjectDiv.style.color
+    originalColour = subjectDiv.style.color
     subjectDiv.style.color = "white"
     subjectDiv.style.fontWeight = "bold"
     subjectDiv.style.fontSize = "largest"
