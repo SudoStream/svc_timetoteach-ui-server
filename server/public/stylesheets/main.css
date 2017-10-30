@@ -1,9 +1,16 @@
 @import "timetable-colours.css";
 @import "timetable.css";
+@import "input-range.css";
 
 @font-face {
     font-family: 'simplifica';
     src: url('/assets/fonts/simplifica.ttf') format('truetype');
+}
+
+label {
+    padding: 0;
+    vertical-align: middle;
+    margin: 0;
 }
 
 html, body {
@@ -37,6 +44,11 @@ h6 {
     float: left;
     text-align: center;
     width: 100%;
+}
+
+#submit-lesson-duration {
+    margin-top: 0.75rem;
+    /*float: right;*/
 }
 
 #dashboardContent {
@@ -268,6 +280,7 @@ img {
     border-radius: 5%;
 }
 
+
 .dashboard-button {
     margin-top: 2rem;
     margin-right: 0.5rem;
@@ -292,6 +305,22 @@ img {
 #startupNavbar{
 
 }
+
+#precise-time-button {
+    margin-top: 1rem;
+}
+#precise-lesson-timing-body {
+    display: none;
+}
+.precise-lesson-timing-group {
+    /*border: 1px solid lightgrey;*/
+    padding: 0.5rem;
+}
+.precise-lesson-timing-div {
+    margin-top: 1.7rem;
+    margin-bottom: 1.7rem;
+}
+
 
 @media screen and ( min-width: 991px) {
     .feature-content {

@@ -6,12 +6,29 @@ import org.scalajs.dom.raw._
 import timetoteach.model.{Subject, Subjects}
 
 import scala.scalajs.js
-import scalatags.JsDom.all._
 
 object ClassTimetable {
 
   var currentlySelectSubject: Option[Subject] = None
   var originalColour = ""
+
+  def currentlyHidden(displayValue: String): Boolean = {
+    displayValue match {
+      case "block" => false
+      case _ => true
+    }
+  }
+
+  def preciseTimeToggler(): Unit = {
+    val preciseTimeButton = dom.document.getElementById("precise-time-button").asInstanceOf[HTMLButtonElement]
+    preciseTimeButton.addEventListener("click", (e: dom.Event) => {
+      val preciseLessonTimeBody = dom.document.getElementById("precise-lesson-timing-body").asInstanceOf[HTMLDivElement]
+      val currentDisplay = preciseLessonTimeBody.style.display
+      preciseTimeButton.innerHTML = if (currentlyHidden(currentDisplay)) "Hide Precise Times" else "Choose Precise Times"
+      preciseLessonTimeBody.style.display = if (currentlyHidden(currentDisplay)) "block" else "none"
+    })
+
+  }
 
   def addEventListenerToDragDrop(): Unit = {
     val timetableSubjectButtons = dom.document.getElementsByClassName("subject")
@@ -139,6 +156,7 @@ object ClassTimetable {
     currentlySelectSubject = Some(justSelectedSubject)
   }
   def loadClassTimetableJavascript(): Unit = {
+    preciseTimeToggler()
     addEventListenerToDragstart()
     addEventListenerToDragDrop()
     addListenerToAllSubjectButtons()
