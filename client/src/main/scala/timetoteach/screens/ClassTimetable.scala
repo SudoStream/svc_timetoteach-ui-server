@@ -6,6 +6,7 @@ import org.scalajs.dom.raw._
 import timetoteach.model.{Subject, Subjects}
 
 import scala.scalajs.js
+import scalatags.JsDom.all._
 
 object ClassTimetable {
 
@@ -29,7 +30,7 @@ object ClassTimetable {
         e.currentTarget match {
           case subjectDiv: HTMLButtonElement =>
             val $ = js.Dynamic.global.$
-            $("#addLessonsModal").modal("show")
+            $("#addLessonsModal").modal("show", "backdrop: static", "keyboard : false")
           case _ =>
         }
 

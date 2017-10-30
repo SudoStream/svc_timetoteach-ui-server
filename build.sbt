@@ -22,7 +22,7 @@ lazy val timetoteach_ui_server = (project in file("server")).settings(
   packageName in Docker := "time-to-teach/api",
   resolvers += Resolver.sonatypeRepo("snapshots"),
 
-// triggers scalaJSPipeline when using compile or continuous compilation
+  // triggers scalaJSPipeline when using compile or continuous compilation
   compile in Compile := ((compile in Compile) dependsOn scalaJSPipeline).value,
   libraryDependencies ++= Seq(
     guice,
@@ -42,7 +42,8 @@ lazy val client = (project in file("client")).settings(
   scalaVersion := scalaV,
   scalaJSUseMainModuleInitializer := true,
   libraryDependencies ++= Seq(
-    "org.scala-js" %%% "scalajs-dom" % "0.9.1"
+    "org.scala-js" %%% "scalajs-dom" % "0.9.1",
+    "com.lihaoyi" %% "scalatags" % "0.6.7"
   ),
   jsDependencies ++= Seq(
     "org.webjars.bower" % "react" % "15.6.1"
