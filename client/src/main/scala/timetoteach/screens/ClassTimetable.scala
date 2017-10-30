@@ -24,10 +24,9 @@ object ClassTimetable {
     preciseTimeButton.addEventListener("click", (e: dom.Event) => {
       val preciseLessonTimeBody = dom.document.getElementById("precise-lesson-timing-body").asInstanceOf[HTMLDivElement]
       val currentDisplay = preciseLessonTimeBody.style.display
-      preciseTimeButton.innerHTML = if (currentlyHidden(currentDisplay)) "Hide Precise Times" else "Choose Precise Times"
+      preciseTimeButton.innerHTML = if (currentlyHidden(currentDisplay)) "Hide Precise Times" else "... Or Choose Precise Times"
       preciseLessonTimeBody.style.display = if (currentlyHidden(currentDisplay)) "block" else "none"
     })
-
   }
 
   def addEventListenerToDragDrop(): Unit = {
@@ -155,7 +154,47 @@ object ClassTimetable {
     subjectDiv.style.fontSize = "largest"
     currentlySelectSubject = Some(justSelectedSubject)
   }
+
+  def extractTotalMinutes(timeAsString: String): Int = {
+    val indexOfColon = timeAsString.indexOf(':')
+    if (indexOfColon > 0) {
+      val hours = Integer.parseInt(timeAsString.substring(0, indexOfColon))
+      val minutes = Integer.parseInt(timeAsString.substring(indexOfColon + 1, indexOfColon + 3))
+      val isAm = if ((timeAsString takeRight 2).toLowerCase == "am") true else false
+      val hoursInTotal = if (isAm) hours else hours + 12
+      (hoursInTotal * 60) + minutes
+    } else 0
+  }
+
+  def addMinutesToMinutesAndGetHoursAndMinutes(minutesOne: Int, minutesTwo: Int): (Int, Int) = {
+    val totalMinutes = minutesOne + minutesTwo
+    val hours = totalMinutes / 60
+    val remainingMinutes = totalMinutes % 60
+    (hours, remainingMinutes)
+  }
+
+
+  def addMinutesToTime(minutesToAdd: Int, currentTime: String): String = {
+    val currentTotalMinutes = extractTotalMinutes(currentTime)
+    val newTotalHoursAndMinutes = addMinutesToMinutesAndGetHoursAndMinutes(minutesToAdd, currentTotalMinutes)
+    val hoursDisplay = if (newTotalHoursAndMinutes._1 > 12) newTotalHoursAndMinutes._1 - 12 else newTotalHoursAndMinutes._1
+    val minutesDisplay = if (newTotalHoursAndMinutes._2 >= 10) newTotalHoursAndMinutes._2 else "0" + newTotalHoursAndMinutes._2
+    val amOrPm = if (newTotalHoursAndMinutes._1 >= 12) "PM" else "AM"
+    s"${hoursDisplay}:${minutesDisplay} ${amOrPm}"
+  }
+
+  def calculateEndTimeFromDuration(): Unit = {
+    val durationRangeInput = dom.document.getElementById("lesson-duration").asInstanceOf[HTMLInputElement]
+    durationRangeInput.addEventListener("change", (e: dom.Event) => {
+      val lessonStartTime = dom.document.getElementById("timepicker1").asInstanceOf[HTMLInputElement].value
+      val lessonDurationInMinutes = Integer.parseInt(durationRangeInput.value.stripMargin)
+      val lessonEndTime = addMinutesToTime(lessonDurationInMinutes, lessonStartTime)
+      dom.document.getElementById("timepicker2").asInstanceOf[HTMLInputElement].value = lessonEndTime
+    })
+  }
+
   def loadClassTimetableJavascript(): Unit = {
+    calculateEndTimeFromDuration()
     preciseTimeToggler()
     addEventListenerToDragstart()
     addEventListenerToDragDrop()
