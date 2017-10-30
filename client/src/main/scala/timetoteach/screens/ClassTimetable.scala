@@ -173,6 +173,13 @@ object ClassTimetable {
     (hours, remainingMinutes)
   }
 
+  def subtractMinutesToMinutesAndGetHoursAndMinutes(minutesToSubract: Int, minutesTwo: Int): (Int, Int) = {
+    val totalMinutes = minutesTwo - minutesToSubract
+    val hours = totalMinutes / 60
+    val remainingMinutes = totalMinutes % 60
+    (hours, remainingMinutes)
+  }
+
 
   def addMinutesToTime(minutesToAdd: Int, currentTime: String): String = {
     val currentTotalMinutes = extractTotalMinutes(currentTime)
@@ -182,6 +189,16 @@ object ClassTimetable {
     val amOrPm = if (newTotalHoursAndMinutes._1 >= 12) "PM" else "AM"
     s"${hoursDisplay}:${minutesDisplay} ${amOrPm}"
   }
+
+  def subtractMinutesToTime(minutesToSubtract: Int, currentTime: String): String = {
+    val currentTotalMinutes = extractTotalMinutes(currentTime)
+    val newTotalHoursAndMinutes = subtractMinutesToMinutesAndGetHoursAndMinutes(minutesToSubtract, currentTotalMinutes)
+    val hoursDisplay = if (newTotalHoursAndMinutes._1 > 12) newTotalHoursAndMinutes._1 - 12 else newTotalHoursAndMinutes._1
+    val minutesDisplay = if (newTotalHoursAndMinutes._2 >= 10) newTotalHoursAndMinutes._2 else "0" + newTotalHoursAndMinutes._2
+    val amOrPm = if (newTotalHoursAndMinutes._1 >= 12) "PM" else "AM"
+    s"${hoursDisplay}:${minutesDisplay} ${amOrPm}"
+  }
+
 
   def calculateEndTimeFromDuration(): Unit = {
     val durationRangeInput = dom.document.getElementById("lesson-duration").asInstanceOf[HTMLInputElement]
@@ -193,7 +210,49 @@ object ClassTimetable {
     })
   }
 
+  def calculateEndTimeFromNewStartTime(): Unit = {
+    def updateTheEndTimeWhenStartChanges(lessonStartTimeInput: Element): Unit = {
+      val lessonDuration = dom.document.getElementById("lesson-duration").asInstanceOf[HTMLInputElement].value
+      val lessonDurationInMinutes = Integer.parseInt(lessonDuration.stripMargin)
+      val lessonEndTime = addMinutesToTime(lessonDurationInMinutes, lessonStartTimeInput.asInstanceOf[HTMLInputElement].value)
+      dom.document.getElementById("timepicker2").asInstanceOf[HTMLInputElement].value = lessonEndTime
+    }
+
+    val lessonStartTimeInput = dom.document.getElementById("timepicker1")
+    lessonStartTimeInput.addEventListener("input", (e: dom.Event) => {
+      updateTheEndTimeWhenStartChanges(lessonStartTimeInput)
+    })
+    lessonStartTimeInput.addEventListener("keydown", (e: dom.Event) => {
+      updateTheEndTimeWhenStartChanges(lessonStartTimeInput)
+    })
+    lessonStartTimeInput.addEventListener("keyup", (e: dom.Event) => {
+      updateTheEndTimeWhenStartChanges(lessonStartTimeInput)
+    })
+  }
+
+  def calculateEndTimeFromNewEndTime(): Unit = {
+    def updateTheEndTimeWhenEndChanges(lessonStartTimeInput: Element): Unit = {
+      val lessonDuration = dom.document.getElementById("lesson-duration").asInstanceOf[HTMLInputElement].value
+      val lessonDurationInMinutes = Integer.parseInt(lessonDuration.stripMargin)
+      val lessonEndTime = addMinutesToTime(lessonDurationInMinutes, lessonStartTimeInput.asInstanceOf[HTMLInputElement].value)
+      dom.document.getElementById("timepicker1").asInstanceOf[HTMLInputElement].value = lessonEndTime
+    }
+
+    val lessonEndTimeInput = dom.document.getElementById("timepicker2")
+    lessonEndTimeInput.addEventListener("input", (e: dom.Event) => {
+      updateTheEndTimeWhenEndChanges(lessonEndTimeInput)
+    })
+    lessonEndTimeInput.addEventListener("keydown", (e: dom.Event) => {
+      updateTheEndTimeWhenEndChanges(lessonEndTimeInput)
+    })
+    lessonEndTimeInput.addEventListener("keyup", (e: dom.Event) => {
+      updateTheEndTimeWhenEndChanges(lessonEndTimeInput)
+    })
+  }
+
   def loadClassTimetableJavascript(): Unit = {
+    calculateEndTimeFromNewEndTime()
+    calculateEndTimeFromNewStartTime()
     calculateEndTimeFromDuration()
     preciseTimeToggler()
     addEventListenerToDragstart()
