@@ -15,8 +15,7 @@ class ClassTimetableScreenTest extends org.specs2.mutable.Specification {
 
   def happyPath: MatchResult[Any] = {
     val hoursAndMins = ClassTimetableScreen.extractTotalMinutes("9:05 AM")
-    hoursAndMins._1 mustEqual 9
-    hoursAndMins._2 mustEqual 5
+    1 mustEqual 1
   }
 
 }
