@@ -55,6 +55,7 @@ lazy val shared = (crossProject.crossType(CrossType.Pure) in file("shared")).
   settings(
     scalaVersion := scalaV,
     libraryDependencies ++= Seq(
+      "org.scalatest" %%% "scalatest" % "3.0.0" % "test",
       specs2 % Test
     )
   ).
