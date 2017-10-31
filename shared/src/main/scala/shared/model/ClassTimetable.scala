@@ -15,6 +15,13 @@ case class ClassTimetable(private val schoolDayTimesOption: Option[Dictionary[St
           s"${dictionary.keys.mkString(" ")}'"
         throw new RuntimeException(errorMsg)
       }
+      dictionary.keys.foreach(
+        keyname => if (!allowedDictionaryEntries.contains(keyname)) {
+          val errorMsg = "Require ${allowedDictionaryEntries.size} entries for dictionary, specifically '" +
+            s"${allowedDictionaryEntries.mkString(" ")}', but there was an erroneous entry = '$keyname'"
+          throw new RuntimeException(errorMsg)
+        }
+      )
       dictionary
 
     case _ =>

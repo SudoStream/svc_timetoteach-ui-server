@@ -57,16 +57,33 @@ class ClassTimetableTest extends FunSpec {
 
   describe("Class Timetable created with school times passed in that have 1 less entry") {
     it("should throw a runtime exception") {
-      val schoolDayTimesWithTwoExtraEntries = Dictionary[String]()
-      schoolDayTimesWithTwoExtraEntries.update("schoolDayStarts", "09:00")
-      schoolDayTimesWithTwoExtraEntries.update("morningBreakStarts", "10:30")
-      schoolDayTimesWithTwoExtraEntries.update("lunchStarts", "12:00")
-      schoolDayTimesWithTwoExtraEntries.update("lunchEnds", "13:00")
-      schoolDayTimesWithTwoExtraEntries.update("schoolDayEnds", "15:00")
+      val schoolDayTimesWithOneLessEntry = Dictionary[String]()
+      schoolDayTimesWithOneLessEntry.update("schoolDayStarts", "09:00")
+      schoolDayTimesWithOneLessEntry.update("morningBreakStarts", "10:30")
+      schoolDayTimesWithOneLessEntry.update("lunchStarts", "12:00")
+      schoolDayTimesWithOneLessEntry.update("lunchEnds", "13:00")
+      schoolDayTimesWithOneLessEntry.update("schoolDayEnds", "15:00")
 
       assertThrows[RuntimeException] {
-        val classTimetable: ClassTimetable = ClassTimetable(Some(schoolDayTimesWithTwoExtraEntries))
+        val classTimetable: ClassTimetable = ClassTimetable(Some(schoolDayTimesWithOneLessEntry))
       }
     }
   }
+
+  describe("Class Timetable created with school times passed in that has erroneous keyname") {
+    it("should throw a runtime exception") {
+      val schoolDayTimesWithErrorKey = Dictionary[String]()
+      schoolDayTimesWithErrorKey.update("schoolDayStarts", "09:00")
+      schoolDayTimesWithErrorKey.update("morningBreakStarts", "10:30")
+      schoolDayTimesWithErrorKey.update("morningBreakEnds", "10:45")
+      schoolDayTimesWithErrorKey.update("thisIsWrong", "12:00")
+      schoolDayTimesWithErrorKey.update("lunchEnds", "13:00")
+      schoolDayTimesWithErrorKey.update("schoolDayEnds", "15:00")
+
+      assertThrows[RuntimeException] {
+        val classTimetable: ClassTimetable = ClassTimetable(Some(schoolDayTimesWithErrorKey))
+      }
+    }
+  }
+
 }
