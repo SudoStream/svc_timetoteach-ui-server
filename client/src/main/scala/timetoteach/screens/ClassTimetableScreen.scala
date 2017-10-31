@@ -7,7 +7,7 @@ import shared.model._
 
 import scala.scalajs.js
 
-object ClassTimetable {
+object ClassTimetableScreen {
 
   var currentlySelectedSession: Option[Session] = None
   var currentlySelectedSubject: Option[Subject] = None

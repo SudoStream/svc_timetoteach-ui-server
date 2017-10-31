@@ -73,16 +73,9 @@
     color: black;
 }
 
-.subject-assembly-button {
-    background-color: rgba(255, 0, 0, 0.65);
-    color: black;
-}
 .subject-assembly {
     background-color: rgba(255, 0, 0, 0.65);
-    color: white;
-    font-weight: bolder;
-    text-shadow: 1px 1px #000;
-    font-size: larger;
+    color: black;
 }
 /* ================= */
 /*   Colours - END */

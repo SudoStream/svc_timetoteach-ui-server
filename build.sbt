@@ -52,7 +52,12 @@ lazy val client = (project in file("client")).settings(
   dependsOn(sharedJs)
 
 lazy val shared = (crossProject.crossType(CrossType.Pure) in file("shared")).
-  settings(scalaVersion := scalaV).
+  settings(
+    scalaVersion := scalaV,
+    libraryDependencies ++= Seq(
+      specs2 % Test
+    )
+  ).
   enablePlugins(ScalaJSPlugin).
   jsConfigure(_ enablePlugins ScalaJSWeb)
 

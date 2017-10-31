@@ -9,7 +9,7 @@ object Subjects {
     Subject("subject-drama"),
     Subject("subject-health"),
     Subject("subject-teacher-covertime"),
-    Subject("subject-assembly-button"),
+    Subject("subject-assembly"),
     Subject("subject-reading"),
     Subject("subject-spelling"),
     Subject("subject-writing"),

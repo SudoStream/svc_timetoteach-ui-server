@@ -20,7 +20,7 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl, deadbolt: De
 
   val defaultSchoolDayTimes = SchoolDayTimes(
     schoolDayStarts = LocalTime.of(9, 0),
-    morningBreakStarts = LocalTime.of(10, 0),
+    morningBreakStarts = LocalTime.of(10, 30),
     morningBreakEnds = LocalTime.of(10, 45),
     lunchStarts = LocalTime.of(12, 0),
     lunchEnds = LocalTime.of(13, 0),
