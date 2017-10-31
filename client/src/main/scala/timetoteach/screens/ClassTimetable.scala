@@ -3,7 +3,7 @@ package timetoteach.screens
 import org.scalajs.dom
 import org.scalajs.dom.Event
 import org.scalajs.dom.raw._
-import timetoteach.model._
+import shared.model._
 
 import scala.scalajs.js
 

@@ -1,4 +1,4 @@
-package timetoteach.model
+package shared.model
 
 object Subjects {
   val values = Set(
