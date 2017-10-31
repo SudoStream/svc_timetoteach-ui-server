@@ -36,6 +36,53 @@ object ClassTimetable {
     val nodeListSize = timetableSubjectButtons.length
     var index = 0
 
+    def popupSubjectTimesModal(e: Event) = {
+      e.preventDefault()
+      e.currentTarget match {
+        case buttonTarget: HTMLButtonElement =>
+
+          val buttonTargetText = dom.document.getElementById("addLessonsModalLabel").innerHTML
+
+          val timetableSession = buttonTarget.getAttribute("data-timetable-session")
+
+          currentlySelectedSession = timetableSession match {
+            case sessionName: String => if (Sessions.values.contains(Session(sessionName))) Some(Session(sessionName)) else None
+            case _ => None
+          }
+
+          val dayOfTheWeek = buttonTarget.getAttribute("data-day-of-the-week")
+          currentlySelectedDayOfWeek = dayOfTheWeek match {
+            case dayName: String => if (DaysOfWeek.values.contains(DayOfWeek(dayName))) Some(DayOfWeek(dayName)) else None
+            case _ => None
+          }
+
+          val subjectSessionDayOption = for {
+            subjectSelected <- currentlySelectedSubject
+            sessionSelected <- currentlySelectedSession
+            dayOfWeekSelected <- currentlySelectedDayOfWeek
+            subjectNice = subjectSelected.value.replace("subject-", "").replaceAll("-", " ").split(' ').map(_.capitalize).mkString(" ")
+            sessionNice = sessionSelected.value.replaceAll("-", " ").split(' ').map(_.capitalize).mkString(" ")
+          } yield {
+            (subjectNice, sessionNice, dayOfWeekSelected.value)
+          }
+
+          if (subjectSessionDayOption.isDefined) {
+            val $ = js.Dynamic.global.$
+            $("#addLessonsModal").modal("show", "backdrop: static", "keyboard : false")
+            dom.document.getElementById("addLessonsModalLabel").innerHTML
+              = s"Add <strong>${subjectSessionDayOption.get._1}</strong>" +
+              s"<br>To ${subjectSessionDayOption.get._3} ${subjectSessionDayOption.get._2}"
+          } else {
+            scala.scalajs.js.Dynamic.global.alert("There was an error selecting subject and session.\n\n" +
+              s"Subjected Selected = '${currentlySelectedSubject.getOrElse("NO SUBJECT SELECTED")}'\n" +
+              s"Session Selected = '${currentlySelectedSession.getOrElse("NO SESSION SELECTED")}'\n"
+            )
+          }
+
+        case _ =>
+      }
+    }
+
     while (index < nodeListSize) {
       val button = timetableSubjectButtons(index).asInstanceOf[HTMLButtonElement]
 
@@ -44,48 +91,13 @@ object ClassTimetable {
       })
 
       button.addEventListener("drop", (e: dom.Event) => {
-        e.preventDefault()
-        e.currentTarget match {
-          case buttonTarget: HTMLButtonElement =>
-            val buttonTargetText = dom.document.getElementById("addLessonsModalLabel").innerHTML
-
-            val timetableSession = buttonTarget.getAttribute("data-timetable-session")
-            currentlySelectedSession = timetableSession match {
-              case sessionName: String => if (Sessions.values.contains(Session(sessionName))) Some(Session(sessionName)) else None
-              case _ => None
-            }
-
-            val dayOfTheWeek = buttonTarget.getAttribute("data-day-of-the-week")
-            currentlySelectedDayOfWeek = dayOfTheWeek match {
-              case dayName: String => if (DaysOfWeek.values.contains(DayOfWeek(dayName))) Some(DayOfWeek(dayName)) else None
-              case _ => None
-            }
-
-            val subjectSessionDayOption = for {
-              subjectSelected <- currentlySelectedSubject
-              sessionSelected <- currentlySelectedSession
-              dayOfWeekSelected <- currentlySelectedDayOfWeek
-              subjectNice = subjectSelected.value.replace("subject-","").replaceAll("-"," ").split(' ').map( _.capitalize).mkString(" ")
-              sessionNice = sessionSelected.value.replaceAll("-"," ")
-            } yield {
-              (subjectNice, sessionNice, dayOfWeekSelected.value)
-            }
-
-            if (subjectSessionDayOption.isDefined) {
-              val $ = js.Dynamic.global.$
-              $("#addLessonsModal").modal("show", "backdrop: static", "keyboard : false")
-              dom.document.getElementById("addLessonsModalLabel").innerHTML
-                = s"Add <strong>${subjectSessionDayOption.get._1}</strong> to ${subjectSessionDayOption.get._3} ${subjectSessionDayOption.get._2}"
-            } else {
-              scala.scalajs.js.Dynamic.global.alert("There was an error selecting subject and session.\n\n" +
-                s"Subjected Selected = '${currentlySelectedSubject.getOrElse("NO SUBJECT SELECTED")}'\n" +
-                s"Session Selected = '${currentlySelectedSession.getOrElse("NO SESSION SELECTED")}'\n"
-              )
-            }
-          case _ =>
-        }
-
+        popupSubjectTimesModal(e)
       })
+
+      button.addEventListener("click", (e: dom.Event) => {
+        popupSubjectTimesModal(e)
+      })
+
       index = index + 1
     }
 
