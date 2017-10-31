@@ -4,6 +4,10 @@ import scala.scalajs.js.Dictionary
 
 case class ClassTimetable(private val schoolDayTimesOption: Option[Dictionary[String]]) {
 
+
+  /**
+    *
+    */
   private val allowedDictionaryEntries = Set(
     "schoolDayStarts", "morningBreakStarts", "morningBreakEnds", "lunchStarts", "lunchEnds", "schoolDayEnds")
 
@@ -35,11 +39,19 @@ case class ClassTimetable(private val schoolDayTimesOption: Option[Dictionary[St
       defaultSchoolDayTimes
   }
 
+
+  /**
+    *
+    */
   private val allowedStateValues = Set(
     "ENTIRELY_EMPTY", "PARTIALLY_COPMLETE", "COMPLETE")
   private var currentState = "ENTIRELY_EMPTY"
   def getCurrentState: String = new String(currentState)
 
+
+  /**
+    *
+    */
   private val beenEdits = false
   def hasBeenEdited: Boolean = beenEdits
 
