@@ -3,13 +3,15 @@ package timetoteach.screens
 import org.scalajs.dom
 import org.scalajs.dom.Event
 import org.scalajs.dom.raw._
-import timetoteach.model.{Subject, Subjects}
+import timetoteach.model._
 
 import scala.scalajs.js
 
 object ClassTimetable {
 
-  var currentlySelectSubject: Option[Subject] = None
+  var currentlySelectedSession: Option[Session] = None
+  var currentlySelectedSubject: Option[Subject] = None
+  var currentlySelectedDayOfWeek: Option[DayOfWeek] = None
   var originalColour = ""
 
   def currentlyHidden(displayValue: String): Boolean = {
@@ -44,9 +46,42 @@ object ClassTimetable {
       button.addEventListener("drop", (e: dom.Event) => {
         e.preventDefault()
         e.currentTarget match {
-          case subjectDiv: HTMLButtonElement =>
-            val $ = js.Dynamic.global.$
-            $("#addLessonsModal").modal("show", "backdrop: static", "keyboard : false")
+          case buttonTarget: HTMLButtonElement =>
+            val buttonTargetText = dom.document.getElementById("addLessonsModalLabel").innerHTML
+
+            val timetableSession = buttonTarget.getAttribute("data-timetable-session")
+            currentlySelectedSession = timetableSession match {
+              case sessionName: String => if (Sessions.values.contains(Session(sessionName))) Some(Session(sessionName)) else None
+              case _ => None
+            }
+
+            val dayOfTheWeek = buttonTarget.getAttribute("data-day-of-the-week")
+            currentlySelectedDayOfWeek = dayOfTheWeek match {
+              case dayName: String => if (DaysOfWeek.values.contains(DayOfWeek(dayName))) Some(DayOfWeek(dayName)) else None
+              case _ => None
+            }
+
+            val subjectSessionDayOption = for {
+              subjectSelected <- currentlySelectedSubject
+              sessionSelected <- currentlySelectedSession
+              dayOfWeekSelected <- currentlySelectedDayOfWeek
+              subjectNice = subjectSelected.value.replace("subject-","").replaceAll("-"," ").split(' ').map( _.capitalize).mkString(" ")
+              sessionNice = sessionSelected.value.replaceAll("-"," ")
+            } yield {
+              (subjectNice, sessionNice, dayOfWeekSelected.value)
+            }
+
+            if (subjectSessionDayOption.isDefined) {
+              val $ = js.Dynamic.global.$
+              $("#addLessonsModal").modal("show", "backdrop: static", "keyboard : false")
+              dom.document.getElementById("addLessonsModalLabel").innerHTML
+                = s"Add <strong>${subjectSessionDayOption.get._1}</strong> to ${subjectSessionDayOption.get._3} ${subjectSessionDayOption.get._2}"
+            } else {
+              scala.scalajs.js.Dynamic.global.alert("There was an error selecting subject and session.\n\n" +
+                s"Subjected Selected = '${currentlySelectedSubject.getOrElse("NO SUBJECT SELECTED")}'\n" +
+                s"Session Selected = '${currentlySelectedSession.getOrElse("NO SESSION SELECTED")}'\n"
+              )
+            }
           case _ =>
         }
 
@@ -96,7 +131,7 @@ object ClassTimetable {
 
         setTheCurrentlySelectedSubject(e)
 
-        if (currentlySelectSubject.isEmpty) {
+        if (currentlySelectedSubject.isEmpty) {
           setDisableValueOnAllTimetableButtonsTo(true)
         } else {
           setDisableValueOnAllTimetableButtonsTo(false)
@@ -111,13 +146,13 @@ object ClassTimetable {
     e.currentTarget match {
       case subjectDiv: HTMLDivElement =>
         val justSelectedSubject = Subject(subjectDiv.id)
-        if (currentlySelectSubject.isDefined) {
-          if (currentlySelectSubject.get == justSelectedSubject) {
+        if (currentlySelectedSubject.isDefined) {
+          if (currentlySelectedSubject.get == justSelectedSubject) {
             resetDiv(subjectDiv)
-            currentlySelectSubject = None
+            currentlySelectedSubject = None
           } else {
             val currentlySelectedDiv =
-              dom.document.getElementById(currentlySelectSubject.get.value).asInstanceOf[HTMLDivElement]
+              dom.document.getElementById(currentlySelectedSubject.get.value).asInstanceOf[HTMLDivElement]
             resetDiv(currentlySelectedDiv)
             selectThisElement(subjectDiv, justSelectedSubject)
           }
@@ -152,7 +187,7 @@ object ClassTimetable {
     subjectDiv.style.color = "white"
     subjectDiv.style.fontWeight = "bold"
     subjectDiv.style.fontSize = "largest"
-    currentlySelectSubject = Some(justSelectedSubject)
+    currentlySelectedSubject = Some(justSelectedSubject)
   }
 
   def extractTotalMinutes(timeAsString: String): Int = {
