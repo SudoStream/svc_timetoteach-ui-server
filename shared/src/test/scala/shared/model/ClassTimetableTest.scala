@@ -86,4 +86,22 @@ class ClassTimetableTest extends FunSpec {
     }
   }
 
+  describe("A new ClassTimetable") {
+    it("should have a current state of 'ENTIRELY_EMPTY'") {
+      val classTimetable: ClassTimetable = ClassTimetable(None)
+      assert(classTimetable.getCurrentState == "ENTIRELY_EMPTY")
+    }
+
+    it("should not have any edits been recorded") {
+      val classTimetable: ClassTimetable = ClassTimetable(None)
+      assert(classTimetable.hasBeenEdited == false)
+    }
+
+    it("should have an state of all EMPTY sessions") {
+      val classTimetable: ClassTimetable = ClassTimetable(None)
+      assert(false)
+    }
+
+  }
+
 }
