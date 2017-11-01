@@ -56,6 +56,7 @@ lazy val shared = (crossProject.crossType(CrossType.Pure) in file("shared")).
     scalaVersion := scalaV,
     libraryDependencies ++= Seq(
       "org.scalatest" %%% "scalatest" % "3.0.0" % "test",
+      "org.scala-js" %%% "scalajs-java-time" % "0.2.2",
       specs2 % Test
     )
   ).

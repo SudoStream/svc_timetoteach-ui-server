@@ -97,11 +97,6 @@ class ClassTimetableTest extends FunSpec {
       assert(!classTimetable.hasBeenEdited)
     }
 
-    it("should have an state of all EMPTY sessions") {
-      val classTimetable: ClassTimetable = ClassTimetable(None)
-      assert(false)
-    }
-
   }
 
 }

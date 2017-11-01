@@ -9,8 +9,10 @@ import scala.scalajs.js
 
 object ClassTimetableScreen {
 
+  var classTimetableState: ClassTimetable = ClassTimetable(None)
+
   var currentlySelectedSession: Option[Session] = None
-  var currentlySelectedSubject: Option[Subject] = None
+  var currentlySelectedSubject: Option[SubjectName] = None
   var currentlySelectedDayOfWeek: Option[DayOfWeek] = None
   var originalColour = ""
 
@@ -157,7 +159,7 @@ object ClassTimetableScreen {
   private def setTheCurrentlySelectedSubject(e: Event): Unit = {
     e.currentTarget match {
       case subjectDiv: HTMLDivElement =>
-        val justSelectedSubject = Subject(subjectDiv.id)
+        val justSelectedSubject = SubjectName(subjectDiv.id)
         if (currentlySelectedSubject.isDefined) {
           if (currentlySelectedSubject.get == justSelectedSubject) {
             resetDiv(subjectDiv)
@@ -186,7 +188,7 @@ object ClassTimetableScreen {
     subjectDiv.style.fontWeight = "normal"
     subjectDiv.style.fontSize = "medium"
   }
-  private def selectThisElement(subjectDiv: HTMLDivElement, justSelectedSubject: Subject) = {
+  private def selectThisElement(subjectDiv: HTMLDivElement, justSelectedSubject: SubjectName) = {
 
     val parent = subjectDiv.parentNode.asInstanceOf[HTMLDivElement]
     parent.style.borderLeft = "5px solid #fcfc00"

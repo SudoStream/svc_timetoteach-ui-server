@@ -1,22 +1,26 @@
 package shared.model
 
 object Subjects {
+  println("AAAAAAAAAAAA")
   val values = Set(
-    Subject("subject-golden-time"),
-    Subject("subject-other"),
-    Subject("subject-ict"),
-    Subject("subject-music"),
-    Subject("subject-drama"),
-    Subject("subject-health"),
-    Subject("subject-teacher-covertime"),
-    Subject("subject-assembly"),
-    Subject("subject-reading"),
-    Subject("subject-spelling"),
-    Subject("subject-writing"),
-    Subject("subject-maths"),
-    Subject("subject-topic"),
-    Subject("subject-physical-education")
+    "subject-golden-time",
+    "subject-other",
+    "subject-ict",
+    "subject-music",
+    "subject-drama",
+    "subject-health",
+    "subject-teacher-covertime",
+    "subject-assembly",
+    "subject-reading",
+    "subject-spelling",
+    "subject-writing",
+    "subject-maths",
+    "subject-topic",
+    "subject-physical-education"
   )
 }
 
-case class Subject(value: String)
+case class SubjectName(value: String) {
+  println(s"OOOOOOOOOOOOO ${Subjects.values}")
+  require(Subjects.values.count(_ == value) == 1)
+}
