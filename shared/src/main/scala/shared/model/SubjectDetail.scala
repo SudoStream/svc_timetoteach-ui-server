@@ -1,5 +1,9 @@
 package shared.model
 
-case class SubjectDetail(subject: SubjectName) {
+import java.time.LocalTime
 
-}
+case class SubjectDetail(
+                          subject: SubjectName,
+                          startTime: LocalTime,
+                          endTime: LocalTime,
+                          lessonSubHeading: String = "")

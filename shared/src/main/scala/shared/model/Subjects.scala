@@ -1,8 +1,8 @@
 package shared.model
 
 object Subjects {
-  println("AAAAAAAAAAAA")
   val values = Set(
+    "subject-empty",
     "subject-golden-time",
     "subject-other",
     "subject-ict",
@@ -21,6 +21,5 @@ object Subjects {
 }
 
 case class SubjectName(value: String) {
-  println(s"OOOOOOOOOOOOO ${Subjects.values}")
   require(Subjects.values.count(_ == value) == 1)
 }
