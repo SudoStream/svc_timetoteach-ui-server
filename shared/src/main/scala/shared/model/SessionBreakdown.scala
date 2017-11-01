@@ -11,7 +11,12 @@ case class SessionBreakdown(startTime: LocalTime, endTime: LocalTime) {
   private val subjectsInSession: mutable.ListBuffer[SubjectDetail] = scala.collection.mutable.ListBuffer()
   private val SUBJECT_EMPTY = "subject-empty"
 
-  def getEmptyTimePeriodsInSession(session: mutable.ListBuffer[SubjectDetail]):
+  def getEmptyTimePeriodsAvailable : List[(LocalTime, LocalTime)] = {
+    val subjectsWithoutEmpty = subjectsInSession.filterNot(_.subject.value == SUBJECT_EMPTY)
+    getEmptyTimePeriodsInGivenSession(subjectsWithoutEmpty)
+  }
+
+  def getEmptyTimePeriodsInGivenSession(session: mutable.ListBuffer[SubjectDetail]):
   List[(LocalTime, LocalTime)] = {
     @tailrec
     def emptyPeriodAccumluator(session: mutable.ListBuffer[SubjectDetail],
@@ -58,7 +63,7 @@ case class SessionBreakdown(startTime: LocalTime, endTime: LocalTime) {
   private def reevaluateEmptySpace(): Unit = {
     if (!isEmpty) {
       val subjectsWithoutEmpty = subjectsInSession.filterNot(_.subject.value == SUBJECT_EMPTY)
-      val emptyTimePeriodsInSession = getEmptyTimePeriodsInSession(subjectsWithoutEmpty)
+      val emptyTimePeriodsInSession = getEmptyTimePeriodsInGivenSession(subjectsWithoutEmpty)
       for (emptyPeriod <- emptyTimePeriodsInSession) {
         subjectsWithoutEmpty += SubjectDetail(SubjectName(SUBJECT_EMPTY), emptyPeriod._1, emptyPeriod._2)
       }
@@ -80,12 +85,31 @@ case class SessionBreakdown(startTime: LocalTime, endTime: LocalTime) {
   }
   def isPartiallyFull: Boolean = !isEmpty && !isFull
 
+  def canAddSubjectWithinRequestedTimes(proposedStartTime: LocalTime, proposedEndTime: LocalTime): Boolean = {
+    val subjectsWithoutEmpty = subjectsInSession.filterNot(_.subject.value == SUBJECT_EMPTY)
+    val emptyTimePeriodsInSession = getEmptyTimePeriodsInGivenSession(subjectsWithoutEmpty)
+
+    val poptentialEmptyPeriodsThatMatch: Seq[Option[(LocalTime, LocalTime)]] = for {
+      emptyPeriod <- emptyTimePeriodsInSession
+      validEmptyPeriod = if ((emptyPeriod._1.isBefore(proposedStartTime) || emptyPeriod._1.eq(proposedStartTime))
+        &&
+        (emptyPeriod._2.isAfter(proposedEndTime) || emptyPeriod._2.eq(proposedEndTime))
+      ) {
+        Some(emptyPeriod)
+      } else None
+    } yield validEmptyPeriod
+
+
+    poptentialEmptyPeriodsThatMatch.count( _.isDefined) == 1
+  }
+
   def addSubjectWithSpecificTimes(subjectDetail: SubjectDetail): Boolean = {
-    //    if (canAddSubjectWithinRequestedTimes(startTime, endTime)) {
-    //      addSubjectToSession(subjectDetail)
-    //    } else {
-    false
-    //    }
+    if (canAddSubjectWithinRequestedTimes(startTime, endTime)) {
+      addSubjectToSession(subjectDetail)
+      true
+    } else {
+      false
+    }
   }
 
 
