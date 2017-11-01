@@ -15,17 +15,14 @@ case class SessionBreakdown(startTime: LocalTime, endTime: LocalTime) {
   List[(LocalTime, LocalTime)] = {
     @tailrec
     def emptyPeriodAccumluator(session: mutable.ListBuffer[SubjectDetail],
-                               earliestStartNotFilled: Option[LocalTime],
+                               earliestStartNotFilled: LocalTime,
                                accEmptyPeriods: List[(LocalTime, LocalTime)]): List[(LocalTime, LocalTime)] = {
-      def extractEmptySpaceBefore = {
+      def extractAnyEmptySpaceBefore = {
         val firstNonEmptySubjectDetail = session.head
-        val maybeEmptyPeriodBeforeFirstSubject: Option[(LocalTime, LocalTime)] = earliestStartNotFilled match {
-          case Some(start) =>
-            if (startTime.isBefore(firstNonEmptySubjectDetail.startTime)) {
-              Some((startTime, firstNonEmptySubjectDetail.startTime))
-            } else None
-          case None => None
-        }
+        val maybeEmptyPeriodBeforeFirstSubject: Option[(LocalTime, LocalTime)] =
+          if (earliestStartNotFilled.isBefore(firstNonEmptySubjectDetail.startTime)) {
+            Some((earliestStartNotFilled, firstNonEmptySubjectDetail.startTime))
+          } else None
 
         val nextAccValue = maybeEmptyPeriodBeforeFirstSubject match {
           case Some(value) => value :: accEmptyPeriods
@@ -38,7 +35,7 @@ case class SessionBreakdown(startTime: LocalTime, endTime: LocalTime) {
         if (accEmptyPeriods.isEmpty) (this.startTime, this.endTime) :: Nil
         else accEmptyPeriods
       } else if (session.size == 1) {
-        val (lastNonEmptySubjectDetail: SubjectDetail, nextAccValue: List[(LocalTime, LocalTime)]) = extractEmptySpaceBefore
+        val (lastNonEmptySubjectDetail: SubjectDetail, nextAccValue: List[(LocalTime, LocalTime)]) = extractAnyEmptySpaceBefore
 
         val maybePeriodAfter = if (lastNonEmptySubjectDetail.endTime.isBefore(this.endTime)) {
           Some(lastNonEmptySubjectDetail.endTime, this.endTime)
@@ -49,13 +46,13 @@ case class SessionBreakdown(startTime: LocalTime, endTime: LocalTime) {
           case None => nextAccValue
         }
       } else {
-        val (firstNonEmptySubjectDetail: SubjectDetail, nextAccValue: List[(LocalTime, LocalTime)]) = extractEmptySpaceBefore
+        val (firstNonEmptySubjectDetail: SubjectDetail, nextAccValue: List[(LocalTime, LocalTime)]) = extractAnyEmptySpaceBefore
 
-        emptyPeriodAccumluator(session.tail, Some(firstNonEmptySubjectDetail.endTime), nextAccValue)
+        emptyPeriodAccumluator(session.tail, firstNonEmptySubjectDetail.endTime, nextAccValue)
       }
     }
 
-    emptyPeriodAccumluator(session, Some(this.startTime), Nil)
+    emptyPeriodAccumluator(session, this.startTime, Nil)
   }
 
   private def reevaluateEmptySpace(): Unit = {

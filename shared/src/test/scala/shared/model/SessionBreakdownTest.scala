@@ -62,8 +62,8 @@ class SessionBreakdownTest extends FunSpec {
       val subjectsInSession: mutable.ListBuffer[SubjectDetail] = scala.collection.mutable.ListBuffer()
       subjectsInSession += SubjectDetail(SubjectName("subject-maths"), LocalTime.of(9, 0), LocalTime.of(9, 30))
       val emptySessions = sessionBreakdown.getEmptyTimePeriodsInSession(subjectsInSession)
-      assert(emptySessions.head._1 == LocalTime.of(9,30))
-      assert(emptySessions.head._2 == LocalTime.of(10,30))
+      assert(emptySessions.head._1 == LocalTime.of(9, 30))
+      assert(emptySessions.head._2 == LocalTime.of(10, 30))
     }
   }
 
@@ -80,8 +80,8 @@ class SessionBreakdownTest extends FunSpec {
       val subjectsInSession: mutable.ListBuffer[SubjectDetail] = scala.collection.mutable.ListBuffer()
       subjectsInSession += SubjectDetail(SubjectName("subject-maths"), LocalTime.of(10, 15), LocalTime.of(10, 30))
       val emptySessions = sessionBreakdown.getEmptyTimePeriodsInSession(subjectsInSession)
-      assert(emptySessions.head._1 == LocalTime.of(9,0))
-      assert(emptySessions.head._2 == LocalTime.of(10,15))
+      assert(emptySessions.head._1 == LocalTime.of(9, 0))
+      assert(emptySessions.head._2 == LocalTime.of(10, 15))
     }
   }
 
@@ -98,10 +98,10 @@ class SessionBreakdownTest extends FunSpec {
       val subjectsInSession: mutable.ListBuffer[SubjectDetail] = scala.collection.mutable.ListBuffer()
       subjectsInSession += SubjectDetail(SubjectName("subject-maths"), LocalTime.of(9, 45), LocalTime.of(10, 10))
       val emptySessions = sessionBreakdown.getEmptyTimePeriodsInSession(subjectsInSession)
-      assert(emptySessions.head._1 == LocalTime.of(10,10))
-      assert(emptySessions.head._2 == LocalTime.of(10,30))
-      assert(emptySessions.tail.head._1 == LocalTime.of(9,0))
-      assert(emptySessions.tail.head._2 == LocalTime.of(9,45))
+      assert(emptySessions.head._1 == LocalTime.of(10, 10))
+      assert(emptySessions.head._2 == LocalTime.of(10, 30))
+      assert(emptySessions.tail.head._1 == LocalTime.of(9, 0))
+      assert(emptySessions.tail.head._2 == LocalTime.of(9, 45))
     }
   }
 
@@ -120,14 +120,36 @@ class SessionBreakdownTest extends FunSpec {
       subjectsInSession += SubjectDetail(SubjectName("subject-maths"), LocalTime.of(9, 30), LocalTime.of(9, 50))
       subjectsInSession += SubjectDetail(SubjectName("subject-reading"), LocalTime.of(9, 50), LocalTime.of(10, 10))
       val emptySessions = sessionBreakdown.getEmptyTimePeriodsInSession(subjectsInSession)
-      assert(emptySessions.head._1 == LocalTime.of(10,10))
-      assert(emptySessions.head._2 == LocalTime.of(10,30))
-      assert(emptySessions.tail.head._1 == LocalTime.of(9,0))
-      assert(emptySessions.tail.head._2 == LocalTime.of(9,30))
+      assert(emptySessions.head._1 == LocalTime.of(10, 10))
+      assert(emptySessions.head._2 == LocalTime.of(10, 30))
+      assert(emptySessions.tail.head._1 == LocalTime.of(9, 0))
+      assert(emptySessions.tail.head._2 == LocalTime.of(9, 30))
     }
-
   }
 
+  describe("Finding empty periods in a session with two subjects beside with space between each other in the middle") {
+    it("should return three empty periods") {
+      val sessionBreakdown = SessionBreakdown(LocalTime.of(9, 0), LocalTime.of(10, 30))
+      val subjectsInSession: mutable.ListBuffer[SubjectDetail] = scala.collection.mutable.ListBuffer()
+      subjectsInSession += SubjectDetail(SubjectName("subject-maths"), LocalTime.of(9, 30), LocalTime.of(9, 50))
+      subjectsInSession += SubjectDetail(SubjectName("subject-reading"), LocalTime.of(10, 10), LocalTime.of(10, 20))
+      val emptySessions = sessionBreakdown.getEmptyTimePeriodsInSession(subjectsInSession)
+      assert(emptySessions.size == 3)
+    }
+    it("should return three empty periods with times [10:20-10:30], [9:50-10:10] and [9:00-9:30]") {
+      val sessionBreakdown = SessionBreakdown(LocalTime.of(9, 0), LocalTime.of(10, 30))
+      val subjectsInSession: mutable.ListBuffer[SubjectDetail] = scala.collection.mutable.ListBuffer()
+      subjectsInSession += SubjectDetail(SubjectName("subject-maths"), LocalTime.of(9, 30), LocalTime.of(9, 50))
+      subjectsInSession += SubjectDetail(SubjectName("subject-reading"), LocalTime.of(10, 10), LocalTime.of(10, 20))
+      val emptySessions = sessionBreakdown.getEmptyTimePeriodsInSession(subjectsInSession)
+      assert(emptySessions.head._1 == LocalTime.of(10, 20))
+      assert(emptySessions.head._2 == LocalTime.of(10, 30))
+      assert(emptySessions.tail.head._1 == LocalTime.of(9, 50))
+      assert(emptySessions.tail.head._2 == LocalTime.of(10, 10))
+      assert(emptySessions.tail.tail.head._1 == LocalTime.of(9, 0))
+      assert(emptySessions.tail.tail.head._2 == LocalTime.of(9, 30))
+    }
+  }
 
   describe("A new SessionBreakdown after subject added that does not take up full session") {
     it("should be partially full") {
