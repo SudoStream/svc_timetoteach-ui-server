@@ -2,6 +2,8 @@ package shared.model
 
 import java.time.LocalTime
 
+import shared.model.session.SessionOfTheWeek
+
 import scala.scalajs.js.Dictionary
 
 case class ClassTimetable(private val schoolDayTimesOption: Option[Dictionary[String]]) {
@@ -156,5 +158,8 @@ case class ClassTimetable(private val schoolDayTimesOption: Option[Dictionary[St
   private val beenEdits = false
   def hasBeenEdited: Boolean = beenEdits
 
+  def addSubject(subjectDetail: SubjectDetail, sessionOfTheWeek: SessionOfTheWeek) : Boolean = {
+    false
+  }
 
 }

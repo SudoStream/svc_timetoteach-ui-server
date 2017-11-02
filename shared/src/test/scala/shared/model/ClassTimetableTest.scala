@@ -96,7 +96,12 @@ class ClassTimetableTest extends FunSpec {
       val classTimetable: ClassTimetable = ClassTimetable(None)
       assert(!classTimetable.hasBeenEdited)
     }
-
   }
 
+  describe("A ClassTimetable with maths added to middle of Monday session") {
+    it("should be partially full") {
+      val classTimetable: ClassTimetable = ClassTimetable(None)
+      assert(false)
+    }
+  }
 }

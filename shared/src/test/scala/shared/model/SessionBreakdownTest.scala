@@ -154,7 +154,7 @@ class SessionBreakdownTest extends FunSpec {
   describe("A new SessionBreakdown after subject added that does not take up full session") {
     it("should be partially full") {
       val sessionBreakdown = SessionBreakdown(LocalTime.of(9, 0), LocalTime.of(10, 30))
-      sessionBreakdown.addSubjectWithSpecificTimes(
+      sessionBreakdown.addSubject(
         SubjectDetail(SubjectName("subject-maths"),
           startTime = LocalTime.of(9, 0),
           endTime = LocalTime.of(10, 0)))
@@ -162,7 +162,7 @@ class SessionBreakdownTest extends FunSpec {
     }
     it("should not be empty") {
       val sessionBreakdown = SessionBreakdown(LocalTime.of(9, 0), LocalTime.of(10, 30))
-      sessionBreakdown.addSubjectWithSpecificTimes(
+      sessionBreakdown.addSubject(
         SubjectDetail(SubjectName("subject-maths"),
           startTime = LocalTime.of(9, 0),
           endTime = LocalTime.of(10, 0)))
@@ -170,7 +170,7 @@ class SessionBreakdownTest extends FunSpec {
     }
     it("should not be full") {
       val sessionBreakdown = SessionBreakdown(LocalTime.of(9, 0), LocalTime.of(10, 30))
-      sessionBreakdown.addSubjectWithSpecificTimes(
+      sessionBreakdown.addSubject(
         SubjectDetail(SubjectName("subject-maths"),
           startTime = LocalTime.of(9, 0),
           endTime = LocalTime.of(10, 0)))
@@ -178,7 +178,7 @@ class SessionBreakdownTest extends FunSpec {
     }
     it("should return one empty period") {
       val sessionBreakdown = SessionBreakdown(LocalTime.of(9, 0), LocalTime.of(10, 30))
-      sessionBreakdown.addSubjectWithSpecificTimes(
+      sessionBreakdown.addSubject(
         SubjectDetail(SubjectName("subject-maths"),
           startTime = LocalTime.of(9, 0),
           endTime = LocalTime.of(10, 0)))
@@ -187,7 +187,7 @@ class SessionBreakdownTest extends FunSpec {
     }
     it("should return one empty period with times 9:00 to 10:15") {
       val sessionBreakdown = SessionBreakdown(LocalTime.of(9, 0), LocalTime.of(10, 30))
-      sessionBreakdown.addSubjectWithSpecificTimes(
+      sessionBreakdown.addSubject(
         SubjectDetail(SubjectName("subject-maths"),
           startTime = LocalTime.of(9, 0),
           endTime = LocalTime.of(10, 0)))

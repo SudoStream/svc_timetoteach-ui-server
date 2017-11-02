@@ -103,7 +103,7 @@ case class SessionBreakdown(startTime: LocalTime, endTime: LocalTime) {
     poptentialEmptyPeriodsThatMatch.count( _.isDefined) == 1
   }
 
-  def addSubjectWithSpecificTimes(subjectDetail: SubjectDetail): Boolean = {
+  def addSubject(subjectDetail: SubjectDetail): Boolean = {
     if (canAddSubjectWithinRequestedTimes(startTime, endTime)) {
       addSubjectToSession(subjectDetail)
       true
