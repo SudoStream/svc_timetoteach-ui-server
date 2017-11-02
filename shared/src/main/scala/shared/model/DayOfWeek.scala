@@ -10,4 +10,6 @@ object DaysOfWeek {
   )
 }
 
-case class DayOfWeek(value: String)
+case class DayOfWeek(value: String) {
+  require(DaysOfWeek.values.count(_ == value) == 1)
+}
