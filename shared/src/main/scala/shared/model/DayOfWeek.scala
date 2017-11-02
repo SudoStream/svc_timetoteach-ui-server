@@ -2,11 +2,11 @@ package shared.model
 
 object DaysOfWeek {
   val values = Set(
-    DayOfWeek("Monday"),
-    DayOfWeek("Tuesday"),
-    DayOfWeek("Wednesday"),
-    DayOfWeek("Thursday"),
-    DayOfWeek("Friday")
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday"
   )
 }
 
