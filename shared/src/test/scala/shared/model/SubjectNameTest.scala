@@ -1,6 +1,7 @@
 package shared.model
 
 import org.scalatest._
+import shared.model.classtimetable.SubjectName
 
 class SubjectNameTest extends FunSpec {
   describe("Subject on creation with valid name") {

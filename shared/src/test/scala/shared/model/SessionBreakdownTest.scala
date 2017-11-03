@@ -3,6 +3,7 @@ package shared.model
 import java.time.LocalTime
 
 import org.scalatest._
+import shared.model.classtimetable.{SessionBreakdown, SubjectDetail, SubjectName}
 
 import scala.collection.mutable
 

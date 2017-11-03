@@ -1,4 +1,4 @@
-package shared.model
+package shared.model.classtimetable
 
 object DaysOfWeek {
   val values = Set(

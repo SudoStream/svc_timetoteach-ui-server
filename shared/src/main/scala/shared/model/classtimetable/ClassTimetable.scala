@@ -1,8 +1,6 @@
-package shared.model
+package shared.model.classtimetable
 
 import java.time.LocalTime
-
-import shared.model.classtimetable._
 
 import scala.scalajs.js.Dictionary
 
