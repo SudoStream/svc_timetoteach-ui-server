@@ -12,9 +12,6 @@ case class ClassTimetable(private val schoolDayTimesOption: Option[Map[SchoolDay
     else PartiallyComplete()
   }
 
-  /**
-    *
-    */
   private val beenEdits = false
   def hasBeenEdited: Boolean = beenEdits
 
