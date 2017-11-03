@@ -2,7 +2,7 @@ package shared.model
 
 import java.time.LocalTime
 
-import shared.model.session._
+import shared.model.classtimetable._
 
 import scala.scalajs.js.Dictionary
 

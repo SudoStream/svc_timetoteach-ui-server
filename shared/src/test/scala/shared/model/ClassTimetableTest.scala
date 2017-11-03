@@ -3,7 +3,7 @@ package shared.model
 import java.time.LocalTime
 
 import org.scalatest._
-import shared.model.session.MondayEarlyMorningSession
+import shared.model.classtimetable.MondayEarlyMorningSession
 
 import scala.scalajs.js.Dictionary
 

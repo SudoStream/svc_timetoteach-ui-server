@@ -1,4 +1,4 @@
-package shared.model.session
+package shared.model.classtimetable
 
 import org.scalatest._
 
