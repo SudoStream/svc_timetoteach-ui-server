@@ -120,12 +120,7 @@ case class SessionBreakdown(startTime: LocalTime, endTime: LocalTime) {
   }
 
   def removeSubject(subjectDetail: SubjectDetail): Boolean = {
-    if (canAddSubjectWithinRequestedTimes(subjectDetail.timeSlot)) {
-      addSubjectToSession(subjectDetail)
-      true
-    } else {
       false
-    }
   }
 
 
