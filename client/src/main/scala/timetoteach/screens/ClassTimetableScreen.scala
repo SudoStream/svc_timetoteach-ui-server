@@ -3,14 +3,13 @@ package timetoteach.screens
 import org.scalajs.dom
 import org.scalajs.dom.Event
 import org.scalajs.dom.raw._
-import shared.model._
 import shared.model.classtimetable._
 
 import scala.scalajs.js
 
 object ClassTimetableScreen {
 
-  var classTimetableState: ClassTimetable = ClassTimetable(None)
+  var classTimetableate: ClassTimetable = ClassTimetable(None)
 
   var currentlySelectedSession: Option[Session] = None
   var currentlySelectedSubject: Option[SubjectName] = None
@@ -49,13 +48,13 @@ object ClassTimetableScreen {
           val timetableSession = buttonTarget.getAttribute("data-timetable-session")
 
           currentlySelectedSession = timetableSession match {
-            case sessionName: String => if (Sessions.values.contains(Session(sessionName))) Some(Session(sessionName)) else None
+            case sessionName: String => if (Sessions.values.contains(sessionName)) Some(Session(sessionName)) else None
             case _ => None
           }
 
           val dayOfTheWeek = buttonTarget.getAttribute("data-day-of-the-week")
           currentlySelectedDayOfWeek = dayOfTheWeek match {
-            case dayName: String => if (DaysOfWeek.values.contains(DayOfWeek(dayName))) Some(DayOfWeek(dayName)) else None
+            case dayName: String => if (DaysOfWeek.values.contains(dayName)) Some(DayOfWeek(dayName)) else None
             case _ => None
           }
 
@@ -141,7 +140,7 @@ object ClassTimetableScreen {
 
   def addListenerToAllSubjectButtons(): Unit = {
     for (subject <- Subjects.values) {
-      val subjectElement = dom.document.getElementById(subject.value)
+      val subjectElement = dom.document.getElementById(subject)
       subjectElement.addEventListener("click", (e: dom.Event) => {
 
         setTheCurrentlySelectedSubject(e)
