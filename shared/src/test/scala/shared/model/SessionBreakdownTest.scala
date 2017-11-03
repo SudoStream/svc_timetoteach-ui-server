@@ -223,7 +223,8 @@ class SessionBreakdownTest extends FunSpec {
   }
 
   describe("A new SessionBreakdown after 2 subjects added and 1 then removed leaving one session in the middle") {
-    it("should be partially full") {
+
+    def addTwoAndRemoveOneSubject(): SessionBreakdown = {
       val sessionBreakdown = SessionBreakdown(LocalTime.of(9, 0), LocalTime.of(10, 30))
       sessionBreakdown.addSubject(
         SubjectDetail(SubjectName("subject-maths"),
@@ -240,25 +241,15 @@ class SessionBreakdownTest extends FunSpec {
           TimeSlot(startTime = LocalTime.of(9, 30),
             endTime = LocalTime.of(10, 0)))
       )
+      sessionBreakdown
+    }
+
+    it("should be partially full") {
+      val sessionBreakdown: SessionBreakdown = addTwoAndRemoveOneSubject()
       assert(sessionBreakdown.isPartiallyFull)
     }
     it("should have one subject") {
-      val sessionBreakdown = SessionBreakdown(LocalTime.of(9, 0), LocalTime.of(10, 30))
-      sessionBreakdown.addSubject(
-        SubjectDetail(SubjectName("subject-maths"),
-          TimeSlot(startTime = LocalTime.of(9, 15),
-            endTime = LocalTime.of(9, 45)))
-      )
-      sessionBreakdown.addSubject(
-        SubjectDetail(SubjectName("subject-reading"),
-          TimeSlot(startTime = LocalTime.of(9, 45),
-            endTime = LocalTime.of(10, 10)))
-      )
-      sessionBreakdown.removeSubject(
-        SubjectDetail(SubjectName("subject-reading"),
-          TimeSlot(startTime = LocalTime.of(9, 45),
-            endTime = LocalTime.of(10, 10)))
-      )
+      val sessionBreakdown: SessionBreakdown = addTwoAndRemoveOneSubject()
       assert(sessionBreakdown.numberOfSubjectsInSession == 1)
     }
   }
