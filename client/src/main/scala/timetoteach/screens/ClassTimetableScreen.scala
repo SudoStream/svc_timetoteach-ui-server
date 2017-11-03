@@ -9,7 +9,7 @@ import scala.scalajs.js
 
 object ClassTimetableScreen {
 
-  var classTimetableate: ClassTimetable = ClassTimetable(None)
+  var classTimetable: ClassTimetable = ClassTimetable(None)
 
   var currentlySelectedSession: Option[Session] = None
   var currentlySelectedSubject: Option[SubjectName] = None
