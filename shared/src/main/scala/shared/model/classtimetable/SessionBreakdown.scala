@@ -128,5 +128,9 @@ case class SessionBreakdown(startTime: LocalTime, endTime: LocalTime) {
     }
   }
 
+  def clear() : Unit = {
+    subjectsInSession = subjectsInSession.filter(_.subject.value == SUBJECT_EMPTY)
+    reevaluateEmptySpace()
+  }
 
 }

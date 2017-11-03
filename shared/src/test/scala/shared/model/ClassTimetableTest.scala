@@ -5,7 +5,7 @@ import java.time.LocalTime
 import org.scalatest._
 import shared.model.classtimetable._
 
-class ClassTimetableTest extends FunSpec {
+class ClassTimetableTest extends FunSpec with ClassTimetableTestHelper {
 
   describe("Class Timetable created with no school times passed in") {
 
@@ -75,12 +75,31 @@ class ClassTimetableTest extends FunSpec {
     }
   }
 
+
   describe("A ClassTimetable with all sessions filled") {
     it("should be full") {
-      val classTimetable: ClassTimetable = ClassTimetable(None)
-      val mathsOnMonday = SubjectDetail(SubjectName("subject-maths"), TimeSlot(LocalTime.of(9, 30), LocalTime.of(9, 50)))
-      classTimetable.addSubject(mathsOnMonday, MondayEarlyMorningSession())
+      val classTimetable: ClassTimetable  = createFullClassTimetable
+      assert(classTimetable.getCurrentState == CompletelyFull())
+    }
+  }
+
+  describe("A ClassTimetable with all sessions filled with one subject then removed") {
+    it("should be partially full") {
+      val classTimetable: ClassTimetable  = createFullClassTimetable
+      classTimetable.removeSubject(SubjectDetail(
+        SubjectName("subject-reading"),
+        TimeSlot(LocalTime.of(13,0), LocalTime.of(15,0))
+      ),
+        WednesdayAfternoonSession())
       assert(classTimetable.getCurrentState == PartiallyComplete())
+    }
+  }
+
+  describe("A ClassTimetable with all sessions filled then cleared") {
+    it("should be empty") {
+      val classTimetable: ClassTimetable  = createFullClassTimetable
+      classTimetable.clearWholeTimetable()
+      assert(classTimetable.getCurrentState == EntirelyEmpty())
     }
   }
 

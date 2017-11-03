@@ -254,4 +254,32 @@ class SessionBreakdownTest extends FunSpec {
     }
   }
 
+  describe("A new SessionBreakdown after 2 subjects added and then cleared") {
+    def addTwoSubjectsThenClear() = {
+      val sessionBreakdown = SessionBreakdown(LocalTime.of(9, 0), LocalTime.of(10, 30))
+      sessionBreakdown.addSubject(
+        SubjectDetail(SubjectName("subject-maths"),
+          TimeSlot(startTime = LocalTime.of(9, 10),
+            endTime = LocalTime.of(9, 30)))
+      )
+      sessionBreakdown.addSubject(
+        SubjectDetail(SubjectName("subject-reading"),
+          TimeSlot(startTime = LocalTime.of(9, 30),
+            endTime = LocalTime.of(10, 0)))
+      )
+      sessionBreakdown.clear()
+      sessionBreakdown
+    }
+
+    it("should be empty") {
+      val sessionBreakdown: SessionBreakdown = addTwoSubjectsThenClear()
+      assert(sessionBreakdown.isEmpty)
+    }
+    it("should have one large empty session") {
+      val sessionBreakdown: SessionBreakdown = addTwoSubjectsThenClear()
+      assert(sessionBreakdown.getEmptyTimePeriodsAvailable.size == 1)
+    }
+
+  }
+
 }

@@ -23,4 +23,18 @@ case class ClassTimetable(private val schoolDayTimesOption: Option[Map[SchoolDay
     }
   }
 
+  def removeSubject(subjectDetail: SubjectDetail, sessionOfTheWeek: SessionOfTheWeek): Boolean = {
+    sessionsOfTheWeek.get(sessionOfTheWeek) match {
+      case Some(sessionBreakdown) =>
+        sessionBreakdown.removeSubject(subjectDetail)
+      case None => false
+    }
+  }
+
+  def clearWholeTimetable(): Unit = {
+    sessionsOfTheWeek.values.foreach{
+      sessionBreakdown => sessionBreakdown.clear()
+    }
+  }
+
 }
