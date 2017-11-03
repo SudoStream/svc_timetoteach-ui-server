@@ -8,10 +8,10 @@ import scala.collection.mutable
 case class SessionBreakdown(startTime: LocalTime, endTime: LocalTime) {
   require(startTime.isBefore(endTime))
 
-  private val subjectsInSession: mutable.ListBuffer[SubjectDetail] = scala.collection.mutable.ListBuffer()
+  private var subjectsInSession: mutable.ListBuffer[SubjectDetail] = scala.collection.mutable.ListBuffer()
   private val SUBJECT_EMPTY = "subject-empty"
 
-  def getEmptyTimePeriodsAvailable : List[(LocalTime, LocalTime)] = {
+  def getEmptyTimePeriodsAvailable: List[(LocalTime, LocalTime)] = {
     val subjectsWithoutEmpty = subjectsInSession.filterNot(_.subject.value == SUBJECT_EMPTY)
     getEmptyTimePeriodsInGivenSession(subjectsWithoutEmpty)
   }
@@ -62,11 +62,12 @@ case class SessionBreakdown(startTime: LocalTime, endTime: LocalTime) {
 
   private def reevaluateEmptySpace(): Unit = {
     if (!isEmpty) {
-      val subjectsWithoutEmpty = subjectsInSession.filterNot(_.subject.value == SUBJECT_EMPTY)
-      val emptyTimePeriodsInSession = getEmptyTimePeriodsInGivenSession(subjectsWithoutEmpty)
+      val subjectsWithoutEmpty: mutable.ListBuffer[SubjectDetail] = subjectsInSession.filterNot(_.subject.value == SUBJECT_EMPTY)
+      val emptyTimePeriodsInSession: List[(LocalTime, LocalTime)] = getEmptyTimePeriodsInGivenSession(subjectsWithoutEmpty)
       for (emptyPeriod <- emptyTimePeriodsInSession) {
         subjectsWithoutEmpty += SubjectDetail(SubjectName(SUBJECT_EMPTY), TimeSlot(emptyPeriod._1, emptyPeriod._2))
       }
+      subjectsInSession = subjectsWithoutEmpty
     }
   }
 
@@ -85,26 +86,41 @@ case class SessionBreakdown(startTime: LocalTime, endTime: LocalTime) {
   }
   def isPartiallyFull: Boolean = !isEmpty && !isFull
 
-  private def canAddSubjectWithinRequestedTimes(proposedStartTime: LocalTime, proposedEndTime: LocalTime): Boolean = {
+  private def canAddSubjectWithinRequestedTimes(proposedTimeSlot: TimeSlot): Boolean = {
     val subjectsWithoutEmpty = subjectsInSession.filterNot(_.subject.value == SUBJECT_EMPTY)
     val emptyTimePeriodsInSession = getEmptyTimePeriodsInGivenSession(subjectsWithoutEmpty)
-
     val poptentialEmptyPeriodsThatMatch: Seq[Option[(LocalTime, LocalTime)]] = for {
       emptyPeriod <- emptyTimePeriodsInSession
-      validEmptyPeriod = if ((emptyPeriod._1.isBefore(proposedStartTime) || emptyPeriod._1.eq(proposedStartTime))
+
+      validEmptyPeriod = if ((emptyPeriod._1.isBefore(proposedTimeSlot.startTime) || emptyPeriod._1.equals(proposedTimeSlot.startTime))
         &&
-        (emptyPeriod._2.isAfter(proposedEndTime) || emptyPeriod._2.eq(proposedEndTime))
+        (emptyPeriod._2.isAfter(proposedTimeSlot.endTime) || emptyPeriod._2.equals(proposedTimeSlot.endTime))
       ) {
         Some(emptyPeriod)
-      } else None
+      } else {
+
+        None
+      }
     } yield validEmptyPeriod
 
+    poptentialEmptyPeriodsThatMatch.count(_.isDefined) == 1
+  }
 
-    poptentialEmptyPeriodsThatMatch.count( _.isDefined) == 1
+  def numberOfSubjectsInSession: Int = {
+    subjectsInSession.filterNot(_.subject.value == SUBJECT_EMPTY).size
   }
 
   def addSubject(subjectDetail: SubjectDetail): Boolean = {
-    if (canAddSubjectWithinRequestedTimes(startTime, endTime)) {
+    if (canAddSubjectWithinRequestedTimes(subjectDetail.timeSlot)) {
+      addSubjectToSession(subjectDetail)
+      true
+    } else {
+      false
+    }
+  }
+
+  def removeSubject(subjectDetail: SubjectDetail): Boolean = {
+    if (canAddSubjectWithinRequestedTimes(subjectDetail.timeSlot)) {
       addSubjectToSession(subjectDetail)
       true
     } else {

@@ -154,11 +154,15 @@ class SessionBreakdownTest extends FunSpec {
 
   describe("A new SessionBreakdown after subject added that does not take up full session") {
     it("should be partially full") {
+
       val sessionBreakdown = SessionBreakdown(LocalTime.of(9, 0), LocalTime.of(10, 30))
-      sessionBreakdown.addSubject(
+
+      assert(sessionBreakdown.addSubject(
         SubjectDetail(SubjectName("subject-maths"),
           TimeSlot(startTime = LocalTime.of(9, 0),
             endTime = LocalTime.of(10, 0))))
+      )
+
       assert(sessionBreakdown.isPartiallyFull)
     }
     it("should not be empty") {
@@ -196,6 +200,67 @@ class SessionBreakdownTest extends FunSpec {
       assert(sessionBreakdown.getEmptyTimePeriodsAvailable.head._2 == LocalTime.of(10, 30))
     }
 
+  }
+
+  describe("A new SessionBreakdown after 2 subjects added") {
+    it("should have 2 subjects") {
+      val sessionBreakdown = SessionBreakdown(LocalTime.of(9, 0), LocalTime.of(10, 30))
+
+      sessionBreakdown.addSubject(
+        SubjectDetail(SubjectName("subject-maths"),
+          TimeSlot(startTime = LocalTime.of(9, 30),
+            endTime = LocalTime.of(10, 0)))
+      )
+
+      sessionBreakdown.addSubject(
+        SubjectDetail(SubjectName("subject-reading"),
+          TimeSlot(startTime = LocalTime.of(10, 0),
+            endTime = LocalTime.of(10, 20)))
+      )
+
+      assert(sessionBreakdown.numberOfSubjectsInSession == 2)
+    }
+  }
+
+  describe("A new SessionBreakdown after 2 subjects added and 1 then removed leaving one session in the middle") {
+    it("should be partially full") {
+      val sessionBreakdown = SessionBreakdown(LocalTime.of(9, 0), LocalTime.of(10, 30))
+      sessionBreakdown.addSubject(
+        SubjectDetail(SubjectName("subject-maths"),
+          TimeSlot(startTime = LocalTime.of(9, 30),
+            endTime = LocalTime.of(10, 0)))
+      )
+      sessionBreakdown.addSubject(
+        SubjectDetail(SubjectName("subject-reading"),
+          TimeSlot(startTime = LocalTime.of(9, 30),
+            endTime = LocalTime.of(10, 0)))
+      )
+      sessionBreakdown.removeSubject(
+        SubjectDetail(SubjectName("subject-reading"),
+          TimeSlot(startTime = LocalTime.of(9, 30),
+            endTime = LocalTime.of(10, 0)))
+      )
+      assert(sessionBreakdown.isPartiallyFull)
+    }
+    it("should have one subject") {
+      val sessionBreakdown = SessionBreakdown(LocalTime.of(9, 0), LocalTime.of(10, 30))
+      sessionBreakdown.addSubject(
+        SubjectDetail(SubjectName("subject-maths"),
+          TimeSlot(startTime = LocalTime.of(9, 30),
+            endTime = LocalTime.of(10, 0)))
+      )
+      sessionBreakdown.addSubject(
+        SubjectDetail(SubjectName("subject-reading"),
+          TimeSlot(startTime = LocalTime.of(9, 30),
+            endTime = LocalTime.of(10, 0)))
+      )
+      sessionBreakdown.removeSubject(
+        SubjectDetail(SubjectName("subject-reading"),
+          TimeSlot(startTime = LocalTime.of(9, 30),
+            endTime = LocalTime.of(10, 0)))
+      )
+      assert(sessionBreakdown.numberOfSubjectsInSession == 1)
+    }
   }
 
 }

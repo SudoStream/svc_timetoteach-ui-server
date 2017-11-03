@@ -5,8 +5,6 @@ import java.time.LocalTime
 import org.scalatest._
 import shared.model.classtimetable._
 
-import scala.scalajs.js.Dictionary
-
 class ClassTimetableTest extends FunSpec {
 
   describe("Class Timetable created with no school times passed in") {
