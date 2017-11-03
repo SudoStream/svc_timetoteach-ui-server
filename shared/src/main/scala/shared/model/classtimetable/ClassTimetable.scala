@@ -2,27 +2,10 @@ package shared.model.classtimetable
 
 import java.time.LocalTime
 
-case class ClassTimetable(private val schoolDayTimesOption: Option[Map[SchoolDayTimeBoundary, String]]) {
+case class ClassTimetable(private val schoolDayTimesOption: Option[Map[SchoolDayTimeBoundary, String]])
+  extends SchoolDayTimes {
 
-  val schoolDayTimes: Map[SchoolDayTimeBoundary, String] = schoolDayTimesOption match {
-    case Some(schoolDayTimesMap) =>
-      if (schoolDayTimesMap.size != 6) {
-        val errorMsg = s"Require 6 entries for dictionary, but there were ${schoolDayTimesMap.size} passed in, specifically '" +
-          s"${schoolDayTimesMap.keys.mkString(" ")}'"
-        throw new RuntimeException(errorMsg)
-      }
-      schoolDayTimesMap
-
-    case None =>
-      Map(
-        SchoolDayStarts() -> "09:00",
-        MorningBreakStarts() -> "10:30",
-        MorningBreakEnds() -> "10:45",
-        LunchStarts() -> "12:00",
-        LunchEnds() -> "13:00",
-        SchoolDayEnds() -> "15:00"
-      )
-  }
+  val schoolDayTimes: Map[SchoolDayTimeBoundary, String] = createSchoolDayTimes(schoolDayTimesOption)
 
   private def getSchoolDayHoursMinutes(key: SchoolDayTimeBoundary): (Int, Int) = {
     val schoolDayTime = schoolDayTimes.get(key)
