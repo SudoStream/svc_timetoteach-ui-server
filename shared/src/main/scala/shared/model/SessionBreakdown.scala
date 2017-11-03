@@ -85,7 +85,7 @@ case class SessionBreakdown(startTime: LocalTime, endTime: LocalTime) {
   }
   def isPartiallyFull: Boolean = !isEmpty && !isFull
 
-  def canAddSubjectWithinRequestedTimes(proposedStartTime: LocalTime, proposedEndTime: LocalTime): Boolean = {
+  private def canAddSubjectWithinRequestedTimes(proposedStartTime: LocalTime, proposedEndTime: LocalTime): Boolean = {
     val subjectsWithoutEmpty = subjectsInSession.filterNot(_.subject.value == SUBJECT_EMPTY)
     val emptyTimePeriodsInSession = getEmptyTimePeriodsInGivenSession(subjectsWithoutEmpty)
 

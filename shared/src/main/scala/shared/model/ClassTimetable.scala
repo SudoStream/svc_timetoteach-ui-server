@@ -2,7 +2,7 @@ package shared.model
 
 import java.time.LocalTime
 
-import shared.model.session.SessionOfTheWeek
+import shared.model.session._
 
 import scala.scalajs.js.Dictionary
 
@@ -60,7 +60,7 @@ case class ClassTimetable(private val schoolDayTimesOption: Option[Dictionary[St
   /**
     *
     */
-  private val sessionsOfTheWeek: scala.collection.mutable.Map[String, SessionBreakdown] = scala.collection.mutable.Map()
+  private val sessionsOfTheWeek: scala.collection.mutable.Map[SessionOfTheWeek, SessionBreakdown] = scala.collection.mutable.Map()
   private lazy val earlyMorningSessionStartsHoursMinutes = getSchoolDayHoursMinutes("schoolDayStarts")
   private lazy val earlyMorningSessionEndsHoursMinutes = getSchoolDayHoursMinutes("morningBreakStarts")
   private lazy val lateMorningSessionStartsHoursMinutes = getSchoolDayHoursMinutes("morningBreakEnds")
@@ -68,88 +68,88 @@ case class ClassTimetable(private val schoolDayTimesOption: Option[Dictionary[St
   private lazy val afternoonSessionStartsHoursMinutes = getSchoolDayHoursMinutes("lunchEnds")
   private lazy val afternoonSessionEndsHoursMinutes = getSchoolDayHoursMinutes("schoolDayEnds")
 
-  sessionsOfTheWeek += ("monday-early-morning-session" ->
+  sessionsOfTheWeek += (MondayEarlyMorningSession() ->
     SessionBreakdown(
       startTime = LocalTime.of(earlyMorningSessionStartsHoursMinutes._1, earlyMorningSessionStartsHoursMinutes._2),
       endTime = LocalTime.of(earlyMorningSessionEndsHoursMinutes._1, earlyMorningSessionEndsHoursMinutes._2)
     ))
-  sessionsOfTheWeek += ("monday-late-morning-session" ->
+  sessionsOfTheWeek += (MondayLateMorningSession() ->
     SessionBreakdown(
       startTime = LocalTime.of(lateMorningSessionStartsHoursMinutes._1, lateMorningSessionStartsHoursMinutes._2),
       endTime = LocalTime.of(lateMorningSessionEndsHoursMinutes._1, lateMorningSessionEndsHoursMinutes._2)
     ))
-  sessionsOfTheWeek += ("monday-afternoon-session" ->
+  sessionsOfTheWeek += (MondayAfternoonSession() ->
     SessionBreakdown(
       startTime = LocalTime.of(afternoonSessionStartsHoursMinutes._1, afternoonSessionStartsHoursMinutes._2),
       endTime = LocalTime.of(afternoonSessionEndsHoursMinutes._1, afternoonSessionEndsHoursMinutes._2)
     ))
-  sessionsOfTheWeek += ("tuesday-early-morning-session" ->
+  sessionsOfTheWeek += (TuesdayEarlyMorningSession() ->
     SessionBreakdown(
       startTime = LocalTime.of(earlyMorningSessionStartsHoursMinutes._1, earlyMorningSessionStartsHoursMinutes._2),
       endTime = LocalTime.of(earlyMorningSessionEndsHoursMinutes._1, earlyMorningSessionEndsHoursMinutes._2)
     ))
-  sessionsOfTheWeek += ("tuesday-late-morning-session" ->
+  sessionsOfTheWeek += (TuesdayLateMorningSession() ->
     SessionBreakdown(
       startTime = LocalTime.of(lateMorningSessionStartsHoursMinutes._1, lateMorningSessionStartsHoursMinutes._2),
       endTime = LocalTime.of(lateMorningSessionEndsHoursMinutes._1, lateMorningSessionEndsHoursMinutes._2)
     ))
-  sessionsOfTheWeek += ("tuesday-afternoon-session" ->
+  sessionsOfTheWeek += (TuesdayAfternoonSession() ->
     SessionBreakdown(
       startTime = LocalTime.of(afternoonSessionStartsHoursMinutes._1, afternoonSessionStartsHoursMinutes._2),
       endTime = LocalTime.of(afternoonSessionEndsHoursMinutes._1, afternoonSessionEndsHoursMinutes._2)
     ))
-  sessionsOfTheWeek += ("wednesday-early-morning-session" ->
+  sessionsOfTheWeek += (WednesdayEarlyMorningSession() ->
     SessionBreakdown(
       startTime = LocalTime.of(earlyMorningSessionStartsHoursMinutes._1, earlyMorningSessionStartsHoursMinutes._2),
       endTime = LocalTime.of(earlyMorningSessionEndsHoursMinutes._1, earlyMorningSessionEndsHoursMinutes._2)
     ))
-  sessionsOfTheWeek += ("wednesday-late-morning-session" ->
+  sessionsOfTheWeek += (WednesdayLateMorningSession() ->
     SessionBreakdown(
       startTime = LocalTime.of(lateMorningSessionStartsHoursMinutes._1, lateMorningSessionStartsHoursMinutes._2),
       endTime = LocalTime.of(lateMorningSessionEndsHoursMinutes._1, lateMorningSessionEndsHoursMinutes._2)
     ))
-  sessionsOfTheWeek += ("wednesday-afternoon-session" ->
+  sessionsOfTheWeek += (WednesdayAfternoonSession() ->
     SessionBreakdown(
       startTime = LocalTime.of(afternoonSessionStartsHoursMinutes._1, afternoonSessionStartsHoursMinutes._2),
       endTime = LocalTime.of(afternoonSessionEndsHoursMinutes._1, afternoonSessionEndsHoursMinutes._2)
     ))
-  sessionsOfTheWeek += ("thursday-early-morning-session" ->
+  sessionsOfTheWeek += (ThursdayEarlyMorningSession() ->
     SessionBreakdown(
       startTime = LocalTime.of(earlyMorningSessionStartsHoursMinutes._1, earlyMorningSessionStartsHoursMinutes._2),
       endTime = LocalTime.of(earlyMorningSessionEndsHoursMinutes._1, earlyMorningSessionEndsHoursMinutes._2)
     ))
-  sessionsOfTheWeek += ("thursday-late-morning-session" ->
+  sessionsOfTheWeek += (ThursdayLateMorningSession() ->
     SessionBreakdown(
       startTime = LocalTime.of(lateMorningSessionStartsHoursMinutes._1, lateMorningSessionStartsHoursMinutes._2),
       endTime = LocalTime.of(lateMorningSessionEndsHoursMinutes._1, lateMorningSessionEndsHoursMinutes._2)
     ))
-  sessionsOfTheWeek += ("thursday-afternoon-session" ->
+  sessionsOfTheWeek += (ThursdayAfternoonSession() ->
     SessionBreakdown(
       startTime = LocalTime.of(afternoonSessionStartsHoursMinutes._1, afternoonSessionStartsHoursMinutes._2),
       endTime = LocalTime.of(afternoonSessionEndsHoursMinutes._1, afternoonSessionEndsHoursMinutes._2)
     ))
-  sessionsOfTheWeek += ("friday-early-morning-session" ->
+  sessionsOfTheWeek += (FridayEarlyMorningSession() ->
     SessionBreakdown(
       startTime = LocalTime.of(earlyMorningSessionStartsHoursMinutes._1, earlyMorningSessionStartsHoursMinutes._2),
       endTime = LocalTime.of(earlyMorningSessionEndsHoursMinutes._1, earlyMorningSessionEndsHoursMinutes._2)
     ))
-  sessionsOfTheWeek += ("friday-late-morning-session" ->
+  sessionsOfTheWeek += (FridayLateMorningSession() ->
     SessionBreakdown(
       startTime = LocalTime.of(lateMorningSessionStartsHoursMinutes._1, lateMorningSessionStartsHoursMinutes._2),
       endTime = LocalTime.of(lateMorningSessionEndsHoursMinutes._1, lateMorningSessionEndsHoursMinutes._2)
     ))
-  sessionsOfTheWeek += ("friday-afternoon-session" ->
+  sessionsOfTheWeek += (FridayAfternoonSession() ->
     SessionBreakdown(
       startTime = LocalTime.of(afternoonSessionStartsHoursMinutes._1, afternoonSessionStartsHoursMinutes._2),
       endTime = LocalTime.of(afternoonSessionEndsHoursMinutes._1, afternoonSessionEndsHoursMinutes._2)
     ))
 
   private val allowedStateValues = Set(
-    "ENTIRELY_EMPTY", "PARTIALLY_COPMLETE", "COMPLETE")
+    "ENTIRELY_EMPTY", "PARTIALLY_COMPLETE", "COMPLETE")
   def getCurrentState: String = {
     if (sessionsOfTheWeek.values.count(_.isFull) == sessionsOfTheWeek.values.size ) "COMPLETE"
     else if (sessionsOfTheWeek.values.count(_.isEmpty) == sessionsOfTheWeek.values.size) "ENTIRELY_EMPTY"
-    else "PARTIALLY_COPMLETE"
+    else "PARTIALLY_COMPLETE"
   }
 
   /**
@@ -159,7 +159,11 @@ case class ClassTimetable(private val schoolDayTimesOption: Option[Dictionary[St
   def hasBeenEdited: Boolean = beenEdits
 
   def addSubject(subjectDetail: SubjectDetail, sessionOfTheWeek: SessionOfTheWeek) : Boolean = {
-    false
+    sessionsOfTheWeek.get(sessionOfTheWeek) match {
+      case Some(sessionBreakdown) =>
+        sessionBreakdown.addSubject(subjectDetail)
+      case None => false
+    }
   }
 
 }

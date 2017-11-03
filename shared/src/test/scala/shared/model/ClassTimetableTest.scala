@@ -1,6 +1,9 @@
 package shared.model
 
+import java.time.LocalTime
+
 import org.scalatest._
+import shared.model.session.MondayEarlyMorningSession
 
 import scala.scalajs.js.Dictionary
 
@@ -101,7 +104,11 @@ class ClassTimetableTest extends FunSpec {
   describe("A ClassTimetable with maths added to middle of Monday session") {
     it("should be partially full") {
       val classTimetable: ClassTimetable = ClassTimetable(None)
-      assert(false)
+      val mathsOnMonday = SubjectDetail(SubjectName("subject-maths"), LocalTime.of(9, 30), LocalTime.of(9, 50))
+      classTimetable.addSubject(mathsOnMonday, MondayEarlyMorningSession())
+      assert(classTimetable.getCurrentState != "ENTIRELY_EMPTY")
+      assert(classTimetable.getCurrentState == "PARTIALLY_COMPLETE")
+      assert(classTimetable.getCurrentState != "COMPLETE")
     }
   }
 }
