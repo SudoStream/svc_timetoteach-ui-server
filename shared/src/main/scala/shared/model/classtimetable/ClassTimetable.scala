@@ -2,45 +2,29 @@ package shared.model.classtimetable
 
 import java.time.LocalTime
 
-import scala.scalajs.js.Dictionary
+case class ClassTimetable(private val schoolDayTimesOption: Option[Map[SchoolDayTimeBoundary, String]]) {
 
-case class ClassTimetable(private val schoolDayTimesOption: Option[Dictionary[String]]) {
-
-  /**
-    *
-    */
-  private val allowedDictionaryEntries = Set(
-    "schoolDayStarts", "morningBreakStarts", "morningBreakEnds", "lunchStarts", "lunchEnds", "schoolDayEnds")
-
-  val schoolDayTimes: Dictionary[String] = schoolDayTimesOption match {
-    case Some(dictionary) =>
-      if (dictionary.size != allowedDictionaryEntries.size) {
-        val errorMsg = s"Require ${allowedDictionaryEntries.size} entries for dictionary, specifically '" +
-          s"${allowedDictionaryEntries.mkString(" ")}' but there were ${dictionary.size} passed in, specifically '" +
-          s"${dictionary.keys.mkString(" ")}'"
+  val schoolDayTimes: Map[SchoolDayTimeBoundary, String] = schoolDayTimesOption match {
+    case Some(schoolDayTimesMap) =>
+      if (schoolDayTimesMap.size != 6) {
+        val errorMsg = s"Require 6 entries for dictionary, but there were ${schoolDayTimesMap.size} passed in, specifically '" +
+          s"${schoolDayTimesMap.keys.mkString(" ")}'"
         throw new RuntimeException(errorMsg)
       }
-      dictionary.keys.foreach(
-        keyname => if (!allowedDictionaryEntries.contains(keyname)) {
-          val errorMsg = "Require ${allowedDictionaryEntries.size} entries for dictionary, specifically '" +
-            s"${allowedDictionaryEntries.mkString(" ")}', but there was an erroneous entry = '$keyname'"
-          throw new RuntimeException(errorMsg)
-        }
-      )
-      dictionary
+      schoolDayTimesMap
 
-    case _ =>
-      val defaultSchoolDayTimes = Dictionary[String]()
-      defaultSchoolDayTimes.update("schoolDayStarts", "09:00")
-      defaultSchoolDayTimes.update("morningBreakStarts", "10:30")
-      defaultSchoolDayTimes.update("morningBreakEnds", "10:45")
-      defaultSchoolDayTimes.update("lunchStarts", "12:00")
-      defaultSchoolDayTimes.update("lunchEnds", "13:00")
-      defaultSchoolDayTimes.update("schoolDayEnds", "15:00")
-      defaultSchoolDayTimes
+    case None =>
+      Map(
+        SchoolDayStarts() -> "09:00",
+        MorningBreakStarts() -> "10:30",
+        MorningBreakEnds() -> "10:45",
+        LunchStarts() -> "12:00",
+        LunchEnds() -> "13:00",
+        SchoolDayEnds() -> "15:00"
+      )
   }
 
-  private def getSchoolDayHoursMinutes(key: String): (Int, Int) = {
+  private def getSchoolDayHoursMinutes(key: SchoolDayTimeBoundary): (Int, Int) = {
     val schoolDayTime = schoolDayTimes.get(key)
     schoolDayTime match {
       case Some(time) =>
@@ -55,16 +39,13 @@ case class ClassTimetable(private val schoolDayTimesOption: Option[Dictionary[St
     }
   }
 
-  /**
-    *
-    */
   private val sessionsOfTheWeek: scala.collection.mutable.Map[SessionOfTheWeek, SessionBreakdown] = scala.collection.mutable.Map()
-  private lazy val earlyMorningSessionStartsHoursMinutes = getSchoolDayHoursMinutes("schoolDayStarts")
-  private lazy val earlyMorningSessionEndsHoursMinutes = getSchoolDayHoursMinutes("morningBreakStarts")
-  private lazy val lateMorningSessionStartsHoursMinutes = getSchoolDayHoursMinutes("morningBreakEnds")
-  private lazy val lateMorningSessionEndsHoursMinutes = getSchoolDayHoursMinutes("lunchStarts")
-  private lazy val afternoonSessionStartsHoursMinutes = getSchoolDayHoursMinutes("lunchEnds")
-  private lazy val afternoonSessionEndsHoursMinutes = getSchoolDayHoursMinutes("schoolDayEnds")
+  private lazy val earlyMorningSessionStartsHoursMinutes = getSchoolDayHoursMinutes(SchoolDayStarts())
+  private lazy val earlyMorningSessionEndsHoursMinutes = getSchoolDayHoursMinutes(MorningBreakStarts())
+  private lazy val lateMorningSessionStartsHoursMinutes = getSchoolDayHoursMinutes(MorningBreakEnds())
+  private lazy val lateMorningSessionEndsHoursMinutes = getSchoolDayHoursMinutes(LunchStarts())
+  private lazy val afternoonSessionStartsHoursMinutes = getSchoolDayHoursMinutes(LunchEnds())
+  private lazy val afternoonSessionEndsHoursMinutes = getSchoolDayHoursMinutes(SchoolDayEnds())
 
   sessionsOfTheWeek += (MondayEarlyMorningSession() ->
     SessionBreakdown(
@@ -145,7 +126,7 @@ case class ClassTimetable(private val schoolDayTimesOption: Option[Dictionary[St
   private val allowedStateValues = Set(
     "ENTIRELY_EMPTY", "PARTIALLY_COMPLETE", "COMPLETE")
   def getCurrentState: String = {
-    if (sessionsOfTheWeek.values.count(_.isFull) == sessionsOfTheWeek.values.size ) "COMPLETE"
+    if (sessionsOfTheWeek.values.count(_.isFull) == sessionsOfTheWeek.values.size) "COMPLETE"
     else if (sessionsOfTheWeek.values.count(_.isEmpty) == sessionsOfTheWeek.values.size) "ENTIRELY_EMPTY"
     else "PARTIALLY_COMPLETE"
   }
@@ -156,7 +137,7 @@ case class ClassTimetable(private val schoolDayTimesOption: Option[Dictionary[St
   private val beenEdits = false
   def hasBeenEdited: Boolean = beenEdits
 
-  def addSubject(subjectDetail: SubjectDetail, sessionOfTheWeek: SessionOfTheWeek) : Boolean = {
+  def addSubject(subjectDetail: SubjectDetail, sessionOfTheWeek: SessionOfTheWeek): Boolean = {
     sessionsOfTheWeek.get(sessionOfTheWeek) match {
       case Some(sessionBreakdown) =>
         sessionBreakdown.addSubject(subjectDetail)
