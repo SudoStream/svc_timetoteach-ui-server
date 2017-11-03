@@ -59,7 +59,7 @@ class ClassTimetableTest extends FunSpec {
   describe("A new ClassTimetable") {
     it("should have a current state of 'ENTIRELY_EMPTY'") {
       val classTimetable: ClassTimetable = ClassTimetable(None)
-      assert(classTimetable.getCurrentState == "ENTIRELY_EMPTY")
+      assert(classTimetable.getCurrentState == EntirelyEmpty())
     }
 
     it("should not have any edits been recorded") {
@@ -73,9 +73,7 @@ class ClassTimetableTest extends FunSpec {
       val classTimetable: ClassTimetable = ClassTimetable(None)
       val mathsOnMonday = SubjectDetail(SubjectName("subject-maths"), TimeSlot(LocalTime.of(9, 30), LocalTime.of(9, 50)))
       classTimetable.addSubject(mathsOnMonday, MondayEarlyMorningSession())
-      assert(classTimetable.getCurrentState != "ENTIRELY_EMPTY")
-      assert(classTimetable.getCurrentState == "PARTIALLY_COMPLETE")
-      assert(classTimetable.getCurrentState != "COMPLETE")
+      assert(classTimetable.getCurrentState == PartiallyComplete())
     }
   }
 }

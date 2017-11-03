@@ -1,19 +1,15 @@
 package shared.model.classtimetable
 
-import java.time.LocalTime
-
 case class ClassTimetable(private val schoolDayTimesOption: Option[Map[SchoolDayTimeBoundary, String]])
   extends AllSessionsOfTheWeek {
 
   lazy val schoolDayTimes: Map[SchoolDayTimeBoundary, String] = createSchoolDayTimes(schoolDayTimesOption)
   override def getSchoolDayTimes: Map[SchoolDayTimeBoundary, String] = schoolDayTimes
 
-  private val allowedStateValues = Set(
-    "ENTIRELY_EMPTY", "PARTIALLY_COMPLETE", "COMPLETE")
-  def getCurrentState: String = {
-    if (sessionsOfTheWeek.values.count(_.isFull) == sessionsOfTheWeek.values.size) "COMPLETE"
-    else if (sessionsOfTheWeek.values.count(_.isEmpty) == sessionsOfTheWeek.values.size) "ENTIRELY_EMPTY"
-    else "PARTIALLY_COMPLETE"
+  def getCurrentState: ClassTimetableState = {
+    if (sessionsOfTheWeek.values.count(_.isFull) == sessionsOfTheWeek.values.size) CompletelyFull()
+    else if (sessionsOfTheWeek.values.count(_.isEmpty) == sessionsOfTheWeek.values.size) EntirelyEmpty()
+    else PartiallyComplete()
   }
 
   /**
