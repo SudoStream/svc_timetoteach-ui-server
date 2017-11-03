@@ -228,8 +228,8 @@ class SessionBreakdownTest extends FunSpec {
       val sessionBreakdown = SessionBreakdown(LocalTime.of(9, 0), LocalTime.of(10, 30))
       sessionBreakdown.addSubject(
         SubjectDetail(SubjectName("subject-maths"),
-          TimeSlot(startTime = LocalTime.of(9, 30),
-            endTime = LocalTime.of(10, 0)))
+          TimeSlot(startTime = LocalTime.of(9, 10),
+            endTime = LocalTime.of(9, 30)))
       )
       sessionBreakdown.addSubject(
         SubjectDetail(SubjectName("subject-reading"),
