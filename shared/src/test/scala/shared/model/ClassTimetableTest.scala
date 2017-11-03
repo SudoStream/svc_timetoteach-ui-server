@@ -74,4 +74,14 @@ class ClassTimetableTest extends FunSpec {
       assert(classTimetable.getCurrentState == PartiallyComplete())
     }
   }
+
+  describe("A ClassTimetable with all sessions filled") {
+    it("should be full") {
+      val classTimetable: ClassTimetable = ClassTimetable(None)
+      val mathsOnMonday = SubjectDetail(SubjectName("subject-maths"), TimeSlot(LocalTime.of(9, 30), LocalTime.of(9, 50)))
+      classTimetable.addSubject(mathsOnMonday, MondayEarlyMorningSession())
+      assert(classTimetable.getCurrentState == PartiallyComplete())
+    }
+  }
+
 }
