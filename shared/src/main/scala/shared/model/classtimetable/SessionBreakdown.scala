@@ -25,8 +25,8 @@ case class SessionBreakdown(startTime: LocalTime, endTime: LocalTime) {
       def extractAnyEmptySpaceBefore = {
         val firstNonEmptySubjectDetail = session.head
         val maybeEmptyPeriodBeforeFirstSubject: Option[(LocalTime, LocalTime)] =
-          if (earliestStartNotFilled.isBefore(firstNonEmptySubjectDetail.startTime)) {
-            Some((earliestStartNotFilled, firstNonEmptySubjectDetail.startTime))
+          if (earliestStartNotFilled.isBefore(firstNonEmptySubjectDetail.timeSlot.startTime)) {
+            Some((earliestStartNotFilled, firstNonEmptySubjectDetail.timeSlot.startTime))
           } else None
 
         val nextAccValue = maybeEmptyPeriodBeforeFirstSubject match {
@@ -42,8 +42,8 @@ case class SessionBreakdown(startTime: LocalTime, endTime: LocalTime) {
       } else if (session.size == 1) {
         val (lastNonEmptySubjectDetail: SubjectDetail, nextAccValue: List[(LocalTime, LocalTime)]) = extractAnyEmptySpaceBefore
 
-        val maybePeriodAfter = if (lastNonEmptySubjectDetail.endTime.isBefore(this.endTime)) {
-          Some(lastNonEmptySubjectDetail.endTime, this.endTime)
+        val maybePeriodAfter = if (lastNonEmptySubjectDetail.timeSlot.endTime.isBefore(this.endTime)) {
+          Some(lastNonEmptySubjectDetail.timeSlot.endTime, this.endTime)
         } else None
 
         maybePeriodAfter match {
@@ -53,7 +53,7 @@ case class SessionBreakdown(startTime: LocalTime, endTime: LocalTime) {
       } else {
         val (firstNonEmptySubjectDetail: SubjectDetail, nextAccValue: List[(LocalTime, LocalTime)]) = extractAnyEmptySpaceBefore
 
-        emptyPeriodAccumluator(session.tail, firstNonEmptySubjectDetail.endTime, nextAccValue)
+        emptyPeriodAccumluator(session.tail, firstNonEmptySubjectDetail.timeSlot.endTime, nextAccValue)
       }
     }
 
@@ -65,7 +65,7 @@ case class SessionBreakdown(startTime: LocalTime, endTime: LocalTime) {
       val subjectsWithoutEmpty = subjectsInSession.filterNot(_.subject.value == SUBJECT_EMPTY)
       val emptyTimePeriodsInSession = getEmptyTimePeriodsInGivenSession(subjectsWithoutEmpty)
       for (emptyPeriod <- emptyTimePeriodsInSession) {
-        subjectsWithoutEmpty += SubjectDetail(SubjectName(SUBJECT_EMPTY), emptyPeriod._1, emptyPeriod._2)
+        subjectsWithoutEmpty += SubjectDetail(SubjectName(SUBJECT_EMPTY), TimeSlot(emptyPeriod._1, emptyPeriod._2))
       }
     }
   }
@@ -75,7 +75,7 @@ case class SessionBreakdown(startTime: LocalTime, endTime: LocalTime) {
     reevaluateEmptySpace()
   }
 
-  addSubjectToSession(SubjectDetail(SubjectName(SUBJECT_EMPTY), this.startTime, this.endTime))
+  addSubjectToSession(SubjectDetail(SubjectName(SUBJECT_EMPTY), TimeSlot(this.startTime, this.endTime)))
 
   def isEmpty: Boolean = {
     subjectsInSession.count(_.subject.value == SUBJECT_EMPTY) == 1 && subjectsInSession.size == 1

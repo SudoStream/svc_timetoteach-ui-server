@@ -4,6 +4,5 @@ import java.time.LocalTime
 
 case class SubjectDetail(
                           subject: SubjectName,
-                          startTime: LocalTime,
-                          endTime: LocalTime,
+                          timeSlot: TimeSlot,
                           lessonSubHeading: String = "")
