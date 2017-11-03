@@ -120,7 +120,12 @@ case class SessionBreakdown(startTime: LocalTime, endTime: LocalTime) {
   }
 
   def removeSubject(subjectDetail: SubjectDetail): Boolean = {
+    if (subjectsInSession.contains(subjectDetail)) {
+      subjectsInSession = subjectsInSession.filterNot(_.equals(subjectDetail))
+      subjectsInSession.contains(subjectDetail)
+    } else {
       false
+    }
   }
 
 
