@@ -277,7 +277,7 @@ object ClassTimetableScreen {
     val hoursDisplay = if (newTotalHoursAndMinutes._1 > 12) newTotalHoursAndMinutes._1 - 12 else newTotalHoursAndMinutes._1
     val minutesDisplay = if (newTotalHoursAndMinutes._2 >= 10) newTotalHoursAndMinutes._2 else "0" + newTotalHoursAndMinutes._2
     val amOrPm = if (newTotalHoursAndMinutes._1 >= 12) "PM" else "AM"
-    s"${hoursDisplay}:${minutesDisplay} ${amOrPm}"
+    s"$hoursDisplay:$minutesDisplay $amOrPm"
   }
 
   def subtractMinutesToTime(minutesToSubtract: Int, currentTime: String): String = {
@@ -286,7 +286,7 @@ object ClassTimetableScreen {
     val hoursDisplay = if (newTotalHoursAndMinutes._1 > 12) newTotalHoursAndMinutes._1 - 12 else newTotalHoursAndMinutes._1
     val minutesDisplay = if (newTotalHoursAndMinutes._2 >= 10) newTotalHoursAndMinutes._2 else "0" + newTotalHoursAndMinutes._2
     val amOrPm = if (newTotalHoursAndMinutes._1 >= 12) "PM" else "AM"
-    s"${hoursDisplay}:${minutesDisplay} ${amOrPm}"
+    s"$hoursDisplay:$minutesDisplay $amOrPm"
   }
 
 
