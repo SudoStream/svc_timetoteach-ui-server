@@ -34,7 +34,7 @@ object ClassTimetableScreen {
     })
   }
 
-  def addSubjectToFullSession(): Unit = {
+  def addSubjectToFillSession(): Unit = {
     val fillSubjectButton = dom.document.getElementById("add-subject-to-fill-session-button").asInstanceOf[HTMLButtonElement]
     fillSubjectButton.addEventListener("click", (e: dom.Event) => {
       global.console.log(
@@ -70,7 +70,7 @@ object ClassTimetableScreen {
   }
 
   def modalButtonsBehaviour(): Unit = {
-    addSubjectToFullSession()
+    addSubjectToFillSession()
   }
 
   def addEventListenerToDragDrop(): Unit = {
