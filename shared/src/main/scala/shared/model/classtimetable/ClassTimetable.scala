@@ -12,6 +12,15 @@ case class ClassTimetable(private val schoolDayTimesOption: Option[Map[SchoolDay
     else PartiallyComplete()
   }
 
+  def getTimeSlotForSession(session: SessionOfTheWeek): Option[TimeSlot] = {
+    val maybeSessionBreakDown = sessionsOfTheWeek.get(session)
+    maybeSessionBreakDown match {
+      case Some(sessionBreakdown) =>
+        Some(TimeSlot(sessionBreakdown.startTime, sessionBreakdown.endTime))
+      case None => None
+    }
+  }
+
   private val beenEdits = false
   def hasBeenEdited: Boolean = beenEdits
 
@@ -32,7 +41,7 @@ case class ClassTimetable(private val schoolDayTimesOption: Option[Map[SchoolDay
   }
 
   def clearWholeTimetable(): Unit = {
-    sessionsOfTheWeek.values.foreach{
+    sessionsOfTheWeek.values.foreach {
       sessionBreakdown => sessionBreakdown.clear()
     }
   }

@@ -6,6 +6,7 @@ import org.scalajs.dom.raw._
 import shared.model.classtimetable._
 
 import scala.scalajs.js
+import scala.scalajs.js.Dynamic.global
 
 object ClassTimetableScreen {
 
@@ -31,6 +32,45 @@ object ClassTimetableScreen {
       preciseTimeButton.innerHTML = if (currentlyHidden(currentDisplay)) "Hide Precise Times" else "... Or Choose Precise Times"
       preciseLessonTimeBody.style.display = if (currentlyHidden(currentDisplay)) "block" else "none"
     })
+  }
+
+  def addSubjectToFullSession(): Unit = {
+    val fillSubjectButton = dom.document.getElementById("add-subject-to-fill-session-button").asInstanceOf[HTMLButtonElement]
+    fillSubjectButton.addEventListener("click", (e: dom.Event) => {
+      global.console.log(
+        s"currentlySelectedDayOfWeek: ${currentlySelectedDayOfWeek.getOrElse("OOOOOPS")}\n" +
+          s"currentlySelectedSession: ${currentlySelectedSession.getOrElse("OOOPS")}\n" +
+          s"currentlySelectedSubject: ${currentlySelectedSubject.getOrElse("oooopppds")}\n\n"
+      )
+
+      val theSessionOfTheWeek = {
+        for {
+          day <- currentlySelectedDayOfWeek
+          session <- currentlySelectedSession
+        } yield SessionOfTheWeek.createSessionOfTheWeek(day, session)
+      }.flatten
+
+      theSessionOfTheWeek match {
+        case Some(sessionOfTheWeek) =>
+          val maybeSessionTimeSlot = classTimetable.getTimeSlotForSession(sessionOfTheWeek)
+          maybeSessionTimeSlot match {
+            case Some(timeSlot) =>
+              currentlySelectedSubject match {
+                case Some(subject) =>
+                  val subjectDetail = SubjectDetail(subject, timeSlot)
+                  classTimetable.addSubject(subjectDetail, sessionOfTheWeek)
+              }
+            case None =>
+              global.console.error(s"No session timeslot for ${sessionOfTheWeek.toString}")
+          }
+        case None =>
+          global.console.error("Couldn't add to Class Timetable")
+      }
+    })
+  }
+
+  def modalButtonsBehaviour(): Unit = {
+    addSubjectToFullSession()
   }
 
   def addEventListenerToDragDrop(): Unit = {
@@ -140,18 +180,20 @@ object ClassTimetableScreen {
 
   def addListenerToAllSubjectButtons(): Unit = {
     for (subject <- Subjects.values) {
-      val subjectElement = dom.document.getElementById(subject)
-      subjectElement.addEventListener("click", (e: dom.Event) => {
+      if (subject != "subject-empty") {
+        val subjectElement = dom.document.getElementById(subject)
+        subjectElement.addEventListener("click", (e: dom.Event) => {
 
-        setTheCurrentlySelectedSubject(e)
+          setTheCurrentlySelectedSubject(e)
 
-        if (currentlySelectedSubject.isEmpty) {
-          setDisableValueOnAllTimetableButtonsTo(true)
-        } else {
-          setDisableValueOnAllTimetableButtonsTo(false)
-        }
+          if (currentlySelectedSubject.isEmpty) {
+            setDisableValueOnAllTimetableButtonsTo(true)
+          } else {
+            setDisableValueOnAllTimetableButtonsTo(false)
+          }
 
-      })
+        })
+      }
     }
 
   }
@@ -163,7 +205,6 @@ object ClassTimetableScreen {
         if (currentlySelectedSubject.isDefined) {
           if (currentlySelectedSubject.get == justSelectedSubject) {
             resetDiv(subjectDiv)
-            currentlySelectedSubject = None
           } else {
             val currentlySelectedDiv =
               dom.document.getElementById(currentlySelectedSubject.get.value).asInstanceOf[HTMLDivElement]
@@ -307,6 +348,7 @@ object ClassTimetableScreen {
     addEventListenerToDragstart()
     addEventListenerToDragDrop()
     addListenerToAllSubjectButtons()
+    modalButtonsBehaviour()
   }
 
 }
