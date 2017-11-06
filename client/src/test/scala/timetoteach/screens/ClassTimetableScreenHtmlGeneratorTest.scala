@@ -17,7 +17,6 @@ class ClassTimetableScreenHtmlGeneratorTest extends org.specs2.mutable.Specifica
   An empty classtimetable should
         |have an HTML generation with 15 empty sessions     $emptyClassTimetable
         |and 2 sessions 50/50 should look as expected       $sessionBreakdownWithMathsAndReadingHalfEach
-        |class timetable with 50/50                         $classTimetableWithMathsAndReadingHalfEach
                                                       """
 
   def emptyClassTimetable: MatchResult[Any] = {
@@ -56,26 +55,26 @@ class ClassTimetableScreenHtmlGeneratorTest extends org.specs2.mutable.Specifica
   }
 
 
-  def classTimetableWithMathsAndReadingHalfEach: MatchResult[Any] = {
-    val classTimetable = ClassTimetable(None)
-
-    val breakdown: SessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(), LocalTime.of(9, 0), LocalTime.of(10, 30))
-    val maths = SubjectDetail(
-      SubjectName("subject-maths"),
-      TimeSlot(LocalTime.of(9, 0), LocalTime.of(9, 45))
-    )
-    val reading = SubjectDetail(
-      SubjectName("subject-reading"),
-      TimeSlot(LocalTime.of(9, 45), LocalTime.of(10, 30))
-    )
-
-    classTimetable.addSubject(maths, MondayEarlyMorningSession())
-    classTimetable.addSubject(reading, MondayEarlyMorningSession())
-
-    val html = ClassTimetableScreenHtmlGenerator.generateHtmlForClassTimetable(classTimetable)
-    html.toString mustEqual
-      "<button class=\"col-6 rounded subject subject-maths\">Maths</button>"+
-        "<button class=\"col-6 rounded subject subject-reading\">Reading</button>"
-  }
+//  def classTimetableWithMathsAndReadingHalfEach: MatchResult[Any] = {
+//    val classTimetable = ClassTimetable(None)
+//
+//    val breakdown: SessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(), LocalTime.of(9, 0), LocalTime.of(10, 30))
+//    val maths = SubjectDetail(
+//      SubjectName("subject-maths"),
+//      TimeSlot(LocalTime.of(9, 0), LocalTime.of(9, 45))
+//    )
+//    val reading = SubjectDetail(
+//      SubjectName("subject-reading"),
+//      TimeSlot(LocalTime.of(9, 45), LocalTime.of(10, 30))
+//    )
+//
+//    classTimetable.addSubject(maths, MondayEarlyMorningSession())
+//    classTimetable.addSubject(reading, MondayEarlyMorningSession())
+//
+//    val html = ClassTimetableScreenHtmlGenerator.generateHtmlForClassTimetable(classTimetable)
+//    html.toString mustEqual
+//      "<button class=\"col-6 rounded subject subject-maths\">Maths</button>"+
+//        "<button class=\"col-6 rounded subject subject-reading\">Reading</button>"
+//  }
 
 }

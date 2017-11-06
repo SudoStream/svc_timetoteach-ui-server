@@ -7,11 +7,12 @@ import scalatags.Text.all._
 
 object ClassTimetableScreenHtmlGenerator {
 
-  def generateSubjectButtons(breakdown: SessionBreakdown): String = {
+  def generateSubjectButtons(breakdown: SessionBreakdown): List[Text.TypedTag[String]] = {
     val buttons = breakdown.subjectsWithTimeFractionInTwelves.map {
-      entry => button(`class`:=s"col-${entry._2} rounded subject ${entry._1.subject.value}")(entry._1.subject.niceValue)
+      entry =>
+        button(`class` := s"col-${entry._2} rounded subject ${entry._1.subject.value}")(entry._1.subject.niceValue)
     }
-    buttons.mkString
+    buttons
   }
 
 
@@ -32,15 +33,26 @@ object ClassTimetableScreenHtmlGenerator {
 
         dayOfTheWeekRowContainer(
           dayOfTheWeekRow,
-          subjectButtonsForEarlyMorning,
+          sessionContainer(
+            sessionRow(
+              subjectButtonsForEarlyMorning
+            )
+          ),
           break,
-          subjectButtonsForLateMorning,
+          sessionContainer(
+            sessionRow(
+              subjectButtonsForLateMorning)
+          ),
           break,
-          subjectButtonsForAfternoon
-        )
+          sessionContainer(
+            sessionRow(
+              subjectButtonsForAfternoon
+            )
+          )
+        ).render
     }
 
-    html.toString()
+    html.mkString
   }
 
 

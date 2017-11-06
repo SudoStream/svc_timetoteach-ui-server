@@ -59,6 +59,12 @@ object ClassTimetableScreen {
                 case Some(subject) =>
                   val subjectDetail = SubjectDetail(subject, timeSlot)
                   classTimetable.addSubject(subjectDetail, sessionOfTheWeek)
+                  renderClassTimetable()
+                  val $ = js.Dynamic.global.$
+                  $("#addLessonsModal").modal("hide")
+                  addEventListenerToDragDrop()
+                  todo
+                  Add this Andy ===> data-timetable-session="early-morning-session" data-day-of-the-week="Monday"
                 case None => global.console.error(s"No currently selected subject for ${sessionOfTheWeek.toString}")
               }
             case None =>
@@ -83,7 +89,7 @@ object ClassTimetableScreen {
       e.preventDefault()
       e.currentTarget match {
         case buttonTarget: HTMLButtonElement =>
-
+          global.console.log("Button CLicked")
           val buttonTargetText = dom.document.getElementById("addLessonsModalLabel").innerHTML
 
           val timetableSession = buttonTarget.getAttribute("data-timetable-session")
@@ -219,6 +225,7 @@ object ClassTimetableScreen {
       case _ =>
     }
   }
+
   private def resetDiv(subjectDiv: HTMLDivElement) = {
     val parent = subjectDiv.parentNode.asInstanceOf[HTMLDivElement]
     parent.style.border = ""
@@ -350,6 +357,12 @@ object ClassTimetableScreen {
     addEventListenerToDragDrop()
     addListenerToAllSubjectButtons()
     modalButtonsBehaviour()
+  }
+
+  def renderClassTimetable(): Unit = {
+    val theDaysSubjectsAsHtml = ClassTimetableScreenHtmlGenerator.generateHtmlForClassTimetable(classTimetable)
+    val allTheDaysDiv = dom.document.getElementById("all-the-days-rows").asInstanceOf[HTMLDivElement]
+    allTheDaysDiv.innerHTML = theDaysSubjectsAsHtml
   }
 
 }

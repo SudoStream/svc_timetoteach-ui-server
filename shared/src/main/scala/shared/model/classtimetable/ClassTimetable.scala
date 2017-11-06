@@ -71,4 +71,6 @@ case class ClassTimetable(private val schoolDayTimesOption: Option[Map[SchoolDay
         sessionBreakdown.prettyStringOfSession
     }.mkString
   }
+
+
 }
