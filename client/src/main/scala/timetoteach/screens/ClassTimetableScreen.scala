@@ -59,6 +59,7 @@ object ClassTimetableScreen {
                 case Some(subject) =>
                   val subjectDetail = SubjectDetail(subject, timeSlot)
                   classTimetable.addSubject(subjectDetail, sessionOfTheWeek)
+                case None => global.console.error(s"No currently selected subject for ${sessionOfTheWeek.toString}")
               }
             case None =>
               global.console.error(s"No session timeslot for ${sessionOfTheWeek.toString}")

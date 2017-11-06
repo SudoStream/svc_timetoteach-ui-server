@@ -78,24 +78,43 @@ class ClassTimetableTest extends FunSpec with ClassTimetableTestHelper {
 
   describe("A ClassTimetable with all sessions filled") {
     it("should be full") {
-      val classTimetable: ClassTimetable  = createFullClassTimetable
+      val classTimetable: ClassTimetable = createFullClassTimetable
       assert(classTimetable.getCurrentState == CompletelyFull())
     }
     it("should be possible to get a pretty print version of the full timetable") {
-      val classTimetable: ClassTimetable  = createFullClassTimetable
-      val timetableAsPrettyString : String = classTimetable.currentTimetablePrettyString
+      val classTimetable: ClassTimetable = createFullClassTimetable
+      val timetableAsPrettyString: String = classTimetable.currentTimetablePrettyString
       println(s"Pretty timetable:-\n$timetableAsPrettyString")
       assert(timetableAsPrettyString.nonEmpty)
     }
-    it("should be possible to get a")
+    it("should be possible to get a sorted list of session breakdowns with 5 days of the week") {
+      val classTimetable: ClassTimetable = createFullClassTimetable
+      val sessions = classTimetable.allSessionsOfTheWeekInOrderByDay
+      assert(sessions.size == 5)
+    }
+    it("should be possible to get a sorted list of session breakdowns with the first session as Monday Early") {
+      val classTimetable: ClassTimetable = createFullClassTimetable
+      val sessions = classTimetable.allSessionsOfTheWeekInOrderByDay
+      assert(sessions.getOrElse(DayOfWeek("Monday"), Nil).head.sessionOfTheWeek == MondayEarlyMorningSession())
+    }
+    it("should be possible to get a sorted list of session breakdowns with the last session as Friday afternoon") {
+      val classTimetable: ClassTimetable = createFullClassTimetable
+      val sessions = classTimetable.allSessionsOfTheWeekInOrderByDay
+      assert(sessions.getOrElse(DayOfWeek("Friday"), Nil).last.sessionOfTheWeek == FridayAfternoonSession())
+    }
+    it("should be possible to get a sorted list of session breakdowns with the middle wednesay session as Wednesday late morning") {
+      val classTimetable: ClassTimetable = createFullClassTimetable
+      val sessions = classTimetable.allSessionsOfTheWeekInOrderByDay
+      assert(sessions.getOrElse(DayOfWeek("Wednesday"), Nil).tail.head.sessionOfTheWeek == WednesdayLateMorningSession())
+    }
   }
 
   describe("A ClassTimetable with all sessions filled with one subject then removed") {
     it("should be partially full") {
-      val classTimetable: ClassTimetable  = createFullClassTimetable
+      val classTimetable: ClassTimetable = createFullClassTimetable
       classTimetable.removeSubject(SubjectDetail(
         SubjectName("subject-reading"),
-        TimeSlot(LocalTime.of(13,0), LocalTime.of(15,0))
+        TimeSlot(LocalTime.of(13, 0), LocalTime.of(15, 0))
       ),
         WednesdayAfternoonSession())
       assert(classTimetable.getCurrentState == PartiallyComplete())
@@ -104,7 +123,7 @@ class ClassTimetableTest extends FunSpec with ClassTimetableTestHelper {
 
   describe("A ClassTimetable with all sessions filled then cleared") {
     it("should be empty") {
-      val classTimetable: ClassTimetable  = createFullClassTimetable
+      val classTimetable: ClassTimetable = createFullClassTimetable
       classTimetable.clearWholeTimetable()
       assert(classTimetable.getCurrentState == EntirelyEmpty())
     }

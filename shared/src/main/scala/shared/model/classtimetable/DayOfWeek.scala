@@ -12,4 +12,5 @@ object DaysOfWeek {
 
 case class DayOfWeek(value: String) {
   require(DaysOfWeek.values.count(_ == value) == 1)
+  def shortValue : String = value.substring(0,3)
 }

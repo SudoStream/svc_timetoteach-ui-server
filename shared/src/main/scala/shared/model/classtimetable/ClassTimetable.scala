@@ -46,6 +46,25 @@ case class ClassTimetable(private val schoolDayTimesOption: Option[Map[SchoolDay
     }
   }
 
+  def allSessionsOfTheWeekInOrderByDay: Map[DayOfWeek, List[SessionBreakdown]] = {
+    def buildDayToSessionsMapAcc(currentMap: Map[DayOfWeek, List[SessionBreakdown]],
+                                 remainingSessionsToAdd: List[SessionBreakdown]): Map[DayOfWeek, List[SessionBreakdown]] = {
+      if (remainingSessionsToAdd.isEmpty) currentMap
+      else {
+        val sessionToAdd = remainingSessionsToAdd.head
+        val currentDayOfWeekList = currentMap.getOrElse(sessionToAdd.sessionOfTheWeek.dayOfTheWeek,Nil)
+        val newDayOfWeekList = (sessionToAdd :: currentDayOfWeekList).
+          sortBy(sessionBreakdown => sessionBreakdown.sessionOfTheWeek.ordinalNumber)
+
+        buildDayToSessionsMapAcc(
+          currentMap + (sessionToAdd.sessionOfTheWeek.dayOfTheWeek -> newDayOfWeekList),
+          remainingSessionsToAdd.tail)
+      }
+    }
+
+    buildDayToSessionsMapAcc(Map(), sessionsOfTheWeek.values.toList)
+  }
+
   def currentTimetablePrettyString: String = {
     sessionsOfTheWeek.values.map {
       sessionBreakdown =>
