@@ -1,6 +1,7 @@
 package shared.model.classtimetable
 
 import java.time.LocalTime
+import java.time.temporal.ChronoUnit.MINUTES
 
 import scala.annotation.tailrec
 import scala.collection.mutable
@@ -133,14 +134,38 @@ case class SessionBreakdown(sessionOfTheWeek: SessionOfTheWeek, startTime: Local
     reevaluateEmptySpace()
   }
 
+  def subjectsWithTimeFractionInTwelves: List[(SubjectDetail, Long)] = {
+    val subjectsSorted = subjectsInSession.toList.sortBy {
+      subjectDetail => subjectDetail.timeSlot.startTime
+    }
+
+    val subjectsToSessionMinutes = subjectsSorted.map {
+      subjectDetail =>
+        (subjectDetail,
+          MINUTES.between(subjectDetail.timeSlot.startTime, subjectDetail.timeSlot.endTime))
+    }
+
+    val subjectsToSessionFractionOfTwelfth = subjectsToSessionMinutes.map {
+      entry =>
+        val fullSessionMinutes = MINUTES.between(this.startTime, this.endTime).toDouble
+        val entrySubjectMinutes = entry._2.toDouble
+        val entrySubjectTwelfthFractionNumerator = ((entrySubjectMinutes / fullSessionMinutes) * 12).toLong
+        (entry._1, entrySubjectTwelfthFractionNumerator)
+    }
+
+    val correctToAddUpToTwelve = -1 * (subjectsToSessionFractionOfTwelfth.map { entry => entry._2 }.sum - 12)
+    val currentLast = subjectsToSessionFractionOfTwelfth.last
+    subjectsToSessionFractionOfTwelfth.filterNot(_ == currentLast) ::: (currentLast._1, currentLast._2 + correctToAddUpToTwelve) :: Nil
+  }
+
   def prettyStringOfSession: String = {
     val startTimeString = s"${sessionOfTheWeek.value}, starts at ${this.startTime.toString}\n"
-    val subjectsString = subjectsInSession.toList.sortBy{
+    val subjectsString = subjectsInSession.toList.sortBy {
       subjectDetail => subjectDetail.timeSlot.startTime
     }.map {
       subject =>
         s"\t${subject.timeSlot.startTime.toString}-${subject.timeSlot.endTime.toString}: " +
-        s"${subject.subject.value.replace("subject-","").capitalize} " +
+          s"${subject.subject.value.replace("subject-", "").capitalize} " +
           (if (subject.lessonSubHeading.nonEmpty) subject.lessonSubHeading else "") + "\n"
     }.mkString
     startTimeString + subjectsString + "------\n"

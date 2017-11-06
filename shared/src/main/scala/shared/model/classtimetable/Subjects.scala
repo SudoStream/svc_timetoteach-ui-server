@@ -22,4 +22,15 @@ object Subjects {
 
 case class SubjectName(value: String) {
   require(Subjects.values.count(_ == value) == 1)
+  def niceValue : String = {
+    val translatedValue = value match {
+      case "subject-teacher-covertime" => "RCCT"
+      case "subject-physical-education" => "PE"
+      case "subject-topic" => "IDL"
+      case "subject-ict" => "ICT"
+      case otherValue: String => otherValue
+    }
+
+    translatedValue.replace("subject-","").replace("-","").capitalize
+  }
 }

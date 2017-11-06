@@ -24,6 +24,18 @@ class SessionBreakdownTest extends FunSpec {
       val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(),LocalTime.of(9, 0), LocalTime.of(10, 30))
       assert(!sessionBreakdown.isPartiallyFull)
     }
+
+    it("should have a list of subjects and fraction time values of twelves: one subject-empty = 12/12") {
+      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(),LocalTime.of(9, 0), LocalTime.of(10, 30))
+      val subjectsAndTwelves = sessionBreakdown.subjectsWithTimeFractionInTwelves
+      assert(subjectsAndTwelves.head._1.subject == SubjectName("subject-empty"))
+      assert(subjectsAndTwelves.head._2 == 12)
+    }
+    it("should have a list of subjects and fraction time values of twelves : should add up to 12/12") {
+      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(),LocalTime.of(9, 0), LocalTime.of(10, 30))
+      val subjectsAndTwelves = sessionBreakdown.subjectsWithTimeFractionInTwelves
+      assert(subjectsAndTwelves.map(entry => entry._2).sum == 12)
+    }
   }
 
   describe("SessionBreakdown on invalid start and end times") {
@@ -150,6 +162,7 @@ class SessionBreakdownTest extends FunSpec {
       assert(emptySessions.tail.tail.head._1 == LocalTime.of(9, 0))
       assert(emptySessions.tail.tail.head._2 == LocalTime.of(9, 30))
     }
+
   }
 
   describe("A new SessionBreakdown after subject added that does not take up full session") {
@@ -231,6 +244,36 @@ class SessionBreakdownTest extends FunSpec {
       println(s"Nice subjects print:-\n $prettyPrintSubjects")
       assert(prettyPrintSubjects.nonEmpty)
     }
+
+    it("should have a list of subjects and fraction time values of twelves: 1st subject-empty = 4/12") {
+      val sessionBreakdown: SessionBreakdown = addTwoSubjects()
+      val subjectsAndTwelves = sessionBreakdown.subjectsWithTimeFractionInTwelves
+      assert(subjectsAndTwelves.head._1.subject == SubjectName("subject-empty"))
+      assert(subjectsAndTwelves.head._2 == 4)
+    }
+    it("should have a list of subjects and fraction time values of twelves: 1st subject-maths = 4/12") {
+      val sessionBreakdown: SessionBreakdown = addTwoSubjects()
+      val subjectsAndTwelves = sessionBreakdown.subjectsWithTimeFractionInTwelves
+      assert(subjectsAndTwelves(1)._1.subject == SubjectName("subject-maths"))
+      assert(subjectsAndTwelves(1)._2 == 4)
+    }
+    it("should have a list of subjects and fraction time values of twelves: 1st subject-reading = 2/12") {
+      val sessionBreakdown: SessionBreakdown = addTwoSubjects()
+      val subjectsAndTwelves = sessionBreakdown.subjectsWithTimeFractionInTwelves
+      assert(subjectsAndTwelves(2)._1.subject == SubjectName("subject-reading"))
+      assert(subjectsAndTwelves(2)._2 == 2)
+    }
+    it("should have a list of subjects and fraction time values of twelves: 2nd subject-empty = 2/12") {
+      val sessionBreakdown: SessionBreakdown = addTwoSubjects()
+      val subjectsAndTwelves = sessionBreakdown.subjectsWithTimeFractionInTwelves
+      assert(subjectsAndTwelves(3)._1.subject == SubjectName("subject-empty"))
+      assert(subjectsAndTwelves(3)._2 == 2)
+    }
+    it("should have a list of subjects and fraction time values of twelves : should add up to 12/12") {
+      val sessionBreakdown: SessionBreakdown = addTwoSubjects()
+      val subjectsAndTwelves = sessionBreakdown.subjectsWithTimeFractionInTwelves
+      assert(subjectsAndTwelves.map(entry => entry._2).sum == 12)
+    }
   }
 
   describe("A new SessionBreakdown after 2 subjects added and 1 then removed leaving one session in the middle") {
@@ -289,6 +332,44 @@ class SessionBreakdownTest extends FunSpec {
     it("should have one large empty session") {
       val sessionBreakdown: SessionBreakdown = addTwoSubjectsThenClear()
       assert(sessionBreakdown.getEmptyTimePeriodsAvailable.size == 1)
+    }
+
+  }
+
+  describe("A new SessionBreakdown after 2 subjects added taking 50/50 space") {
+    def addTwoSubjectsFiftyFifty() = {
+      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(), LocalTime.of(9, 0), LocalTime.of(10, 30))
+
+      sessionBreakdown.addSubject(
+        SubjectDetail(SubjectName("subject-maths"),
+          TimeSlot(startTime = LocalTime.of(9, 0),
+            endTime = LocalTime.of(9, 45)))
+      )
+
+      sessionBreakdown.addSubject(
+        SubjectDetail(SubjectName("subject-reading"),
+          TimeSlot(startTime = LocalTime.of(9, 45),
+            endTime = LocalTime.of(10, 30)))
+      )
+      sessionBreakdown
+    }
+
+    it("should have a list of subjects and fraction time values of twelves: subject-maths = 6/12") {
+      val sessionBreakdown: SessionBreakdown = addTwoSubjectsFiftyFifty()
+      val subjectsAndTwelves = sessionBreakdown.subjectsWithTimeFractionInTwelves
+      assert(subjectsAndTwelves.head._1.subject == SubjectName("subject-maths"))
+      assert(subjectsAndTwelves.head._2 == 6)
+    }
+    it("should have a list of subjects and fraction time values of twelves: subject-reading = 6/12") {
+      val sessionBreakdown: SessionBreakdown = addTwoSubjectsFiftyFifty()
+      val subjectsAndTwelves = sessionBreakdown.subjectsWithTimeFractionInTwelves
+      assert(subjectsAndTwelves(1)._1.subject == SubjectName("subject-reading"))
+      assert(subjectsAndTwelves(1)._2 == 6)
+    }
+    it("should have a list of subjects and fraction time values of twelves : should add up to 12/12") {
+      val sessionBreakdown: SessionBreakdown = addTwoSubjectsFiftyFifty()
+      val subjectsAndTwelves = sessionBreakdown.subjectsWithTimeFractionInTwelves
+      assert(subjectsAndTwelves.map(entry => entry._2).sum == 12)
     }
 
   }
