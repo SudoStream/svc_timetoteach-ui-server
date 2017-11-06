@@ -46,4 +46,10 @@ case class ClassTimetable(private val schoolDayTimesOption: Option[Map[SchoolDay
     }
   }
 
+  def currentTimetablePrettyString: String = {
+    sessionsOfTheWeek.values.map {
+      sessionBreakdown =>
+        sessionBreakdown.prettyStringOfSession
+    }.mkString
+  }
 }

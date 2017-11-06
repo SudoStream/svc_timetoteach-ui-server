@@ -81,6 +81,12 @@ class ClassTimetableTest extends FunSpec with ClassTimetableTestHelper {
       val classTimetable: ClassTimetable  = createFullClassTimetable
       assert(classTimetable.getCurrentState == CompletelyFull())
     }
+    it("should be possible to get a pretty print version of the full timetable") {
+      val classTimetable: ClassTimetable  = createFullClassTimetable
+      val timetableAsPrettyString : String = classTimetable.currentTimetablePrettyString
+      println(s"Pretty timetable:-\n$timetableAsPrettyString")
+      assert(timetableAsPrettyString.nonEmpty)
+    }
   }
 
   describe("A ClassTimetable with all sessions filled with one subject then removed") {

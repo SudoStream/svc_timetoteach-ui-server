@@ -203,7 +203,7 @@ class SessionBreakdownTest extends FunSpec {
   }
 
   describe("A new SessionBreakdown after 2 subjects added") {
-    it("should have 2 subjects") {
+    def addTwoSubjects() = {
       val sessionBreakdown = SessionBreakdown(LocalTime.of(9, 0), LocalTime.of(10, 30))
 
       sessionBreakdown.addSubject(
@@ -217,8 +217,19 @@ class SessionBreakdownTest extends FunSpec {
           TimeSlot(startTime = LocalTime.of(10, 0),
             endTime = LocalTime.of(10, 20)))
       )
+      sessionBreakdown
+    }
 
+    it("should have 2 subjects") {
+      val sessionBreakdown: SessionBreakdown = addTwoSubjects()
       assert(sessionBreakdown.numberOfSubjectsInSession == 2)
+    }
+
+    it("should have a nice pretty print version") {
+      val sessionBreakdown: SessionBreakdown = addTwoSubjects()
+      val prettyPrintSubjects = sessionBreakdown.prettyStringOfSession
+      println(s"Nice subjects print:-\n $prettyPrintSubjects")
+      assert(prettyPrintSubjects.nonEmpty)
     }
   }
 

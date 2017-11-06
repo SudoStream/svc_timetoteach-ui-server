@@ -5,6 +5,7 @@ import java.time.LocalTime
 import scala.annotation.tailrec
 import scala.collection.mutable
 
+//sessionOfTheWeek: SessionOfTheWeek,
 case class SessionBreakdown(startTime: LocalTime, endTime: LocalTime) {
   require(startTime.isBefore(endTime))
 
@@ -128,9 +129,22 @@ case class SessionBreakdown(startTime: LocalTime, endTime: LocalTime) {
     }
   }
 
-  def clear() : Unit = {
+  def clear(): Unit = {
     subjectsInSession = subjectsInSession.filter(_.subject.value == SUBJECT_EMPTY)
     reevaluateEmptySpace()
   }
 
+  def prettyStringOfSession: String = {
+    //s"${sessionOfTheWeek.value},
+    val startTimeString = s"starts at ${this.startTime.toString}\n"
+    val subjectsString = subjectsInSession.toList.sortBy{
+      subjectDetail => subjectDetail.timeSlot.startTime
+    }.map {
+      subject =>
+        s"\t${subject.timeSlot.startTime.toString}-${subject.timeSlot.endTime.toString}: " +
+        s"${subject.subject.value.replace("subject-","").capitalize} " +
+          (if (subject.lessonSubHeading.nonEmpty) subject.lessonSubHeading else "") + "\n"
+    }.mkString
+    startTimeString + subjectsString + "------\n"
+  }
 }
