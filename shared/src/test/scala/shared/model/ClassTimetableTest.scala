@@ -87,6 +87,7 @@ class ClassTimetableTest extends FunSpec with ClassTimetableTestHelper {
       println(s"Pretty timetable:-\n$timetableAsPrettyString")
       assert(timetableAsPrettyString.nonEmpty)
     }
+    it("should be possible to get a")
   }
 
   describe("A ClassTimetable with all sessions filled with one subject then removed") {

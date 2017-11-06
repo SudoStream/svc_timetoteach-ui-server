@@ -5,8 +5,7 @@ import java.time.LocalTime
 import scala.annotation.tailrec
 import scala.collection.mutable
 
-//sessionOfTheWeek: SessionOfTheWeek,
-case class SessionBreakdown(startTime: LocalTime, endTime: LocalTime) {
+case class SessionBreakdown(sessionOfTheWeek: SessionOfTheWeek, startTime: LocalTime, endTime: LocalTime) {
   require(startTime.isBefore(endTime))
 
   private var subjectsInSession: mutable.ListBuffer[SubjectDetail] = scala.collection.mutable.ListBuffer()
@@ -135,8 +134,7 @@ case class SessionBreakdown(startTime: LocalTime, endTime: LocalTime) {
   }
 
   def prettyStringOfSession: String = {
-    //s"${sessionOfTheWeek.value},
-    val startTimeString = s"starts at ${this.startTime.toString}\n"
+    val startTimeString = s"${sessionOfTheWeek.value}, starts at ${this.startTime.toString}\n"
     val subjectsString = subjectsInSession.toList.sortBy{
       subjectDetail => subjectDetail.timeSlot.startTime
     }.map {
