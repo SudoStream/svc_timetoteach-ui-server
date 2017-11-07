@@ -31,6 +31,6 @@ case class SubjectName(value: String) {
       case otherValue: String => otherValue
     }
 
-    translatedValue.replace("subject-","").replace("-","").capitalize
+    translatedValue.replace("subject-","").replace("-"," ").capitalize
   }
 }

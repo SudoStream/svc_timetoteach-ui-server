@@ -99,9 +99,8 @@ img {
 }
 
 .ttt-icon-writing {
- font-family: 'simplifica', sans-serif;
+    font-family: 'simplifica', sans-serif;
 }
-
 
 #stage-caption {
     font-size: 1.4rem;
@@ -182,7 +181,7 @@ img {
 #appBackground {
     margin-top: 3rem;
     background-image: url('/assets/images/appBackgroundAlt.jpeg');
-    background-repeat:  repeat-y;
+    background-repeat: repeat-y;
     background-size: 100% 100%;
     min-height: 100%;
     width: 100%;
@@ -280,7 +279,6 @@ img {
     border-radius: 5%;
 }
 
-
 .dashboard-button {
     margin-top: 2rem;
     margin-right: 0.5rem;
@@ -302,25 +300,33 @@ img {
     white-space: nowrap;
 }
 
-#startupNavbar{
+#startupNavbar {
 
 }
 
 #precise-time-button {
     margin-top: 1rem;
 }
+
 #precise-lesson-timing-body {
     display: none;
 }
+
 .precise-lesson-timing-group {
     /*border: 1px solid lightgrey;*/
     padding: 0.5rem;
 }
+
 .precise-lesson-timing-div {
     margin-top: 1.7rem;
     margin-bottom: 1.7rem;
 }
 
+.col-1, .col-2, .col-3, .col-4, .col-5, .col-6,
+.col-7, .col-8, .col-9, .col-10, .col-11, s .col-12 {
+    padding-left: 0;
+    padding-right: 0;
+}
 
 @media screen and ( min-width: 991px) {
     .feature-content {

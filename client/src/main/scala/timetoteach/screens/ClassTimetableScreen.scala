@@ -56,7 +56,9 @@ object ClassTimetableScreen {
           val $ = js.Dynamic.global.$
           $("#addLessonsModal").modal("hide")
           addEventListenerToDragDrop()
+          lastSelectedSubject = None
         case None =>
+          global.alert("Unable to add subject to session")
           global.console.error(s"Error adding subject to session")
       }
     }
