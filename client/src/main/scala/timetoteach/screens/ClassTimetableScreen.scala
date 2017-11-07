@@ -16,6 +16,7 @@ object ClassTimetableScreen {
   var currentlySelectedSubject: Option[SubjectName] = None
   var lastSelectedSubject: Option[SubjectName] = None
   var currentlySelectedDayOfWeek: Option[DayOfWeek] = None
+  var longerClickSubjectSelected = false
   var originalColour = ""
 
   def currentlyHidden(displayValue: String): Boolean = {
@@ -57,7 +58,11 @@ object ClassTimetableScreen {
           $("#addLessonsModal").modal("hide")
           launchAddSubjectToSessionModalEventListeners()
           lastSelectedSubject = None
-          setDisableValueOnAllTimetableButtonsTo(true)
+          if (longerClickSubjectSelected) {
+            setDisableValueOnAllTimetableButtonsTo(false)
+          } else {
+            setDisableValueOnAllTimetableButtonsTo(true)
+          }
         case None =>
           global.alert("Unable to add subject to session")
           global.console.error(s"Error adding subject to session")
@@ -159,6 +164,7 @@ object ClassTimetableScreen {
       })
 
       button.addEventListener("click", (e: dom.Event) => {
+        longerClickSubjectSelected = true
         popupSubjectTimesModal(e)
       })
 
@@ -228,6 +234,7 @@ object ClassTimetableScreen {
         if (currentlySelectedSubject.isDefined) {
           if (currentlySelectedSubject.get == justSelectedSubject) {
             currentlySelectedSubject = None
+            longerClickSubjectSelected = false
             resetDiv(subjectDiv)
           } else {
             val currentlySelectedDiv =
