@@ -264,7 +264,6 @@ object ClassTimetableScreen {
             currentlySelectedSubject = None
             resetDiv(subjectDiv)
           } else {
-            global.alert("four")
             val currentlySelectedDiv =
               dom.document.getElementById(currentlySelectedSubject.get.value).asInstanceOf[HTMLDivElement]
             resetDiv(currentlySelectedDiv)
