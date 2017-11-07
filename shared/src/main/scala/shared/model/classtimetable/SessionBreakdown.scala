@@ -111,6 +111,32 @@ case class SessionBreakdown(sessionOfTheWeek: SessionOfTheWeek, startTime: Local
     subjectsInSession.filterNot(_.subject.value == SUBJECT_EMPTY).size
   }
 
+  def getFirstAvailableTimeSlot(fractionOfSession: Fraction): Option[TimeSlot] = {
+    val emptyPeriods = getEmptyTimePeriodsAvailable
+
+    val numberOfMinutesForProposedSession =
+      Math.floor(fractionOfSession.multiplier * MINUTES.between(this.startTime, this.endTime))
+
+    val possibleSlots: List[TimeSlot] = for {
+      emptyPeriod <- emptyPeriods
+      maybePeriodThatFits = if (MINUTES.between(emptyPeriod._1, emptyPeriod._2) >= numberOfMinutesForProposedSession) {
+        Some(TimeSlot(emptyPeriod._1, emptyPeriod._2))
+      } else None
+      periodThatFits <- maybePeriodThatFits
+    } yield periodThatFits
+
+    val firstAvailableTimeSlot = possibleSlots.headOption
+    firstAvailableTimeSlot match {
+      case Some(availableTimeSlot) =>
+        val roundedNUmberOfMinutesNearestFive = 5 * Math.round(numberOfMinutesForProposedSession / 5)
+        val endTime = availableTimeSlot.startTime.plusMinutes(roundedNUmberOfMinutesNearestFive)
+        Some(
+          TimeSlot(availableTimeSlot.startTime, endTime)
+        )
+      case None => None
+    }
+  }
+
   def addSubject(subjectDetail: SubjectDetail): Boolean = {
     if (canAddSubjectWithinRequestedTimes(subjectDetail.timeSlot)) {
       addSubjectToSession(subjectDetail)

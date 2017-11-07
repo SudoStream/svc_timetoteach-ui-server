@@ -24,6 +24,14 @@ case class ClassTimetable(private val schoolDayTimesOption: Option[Map[SchoolDay
   private val beenEdits = false
   def hasBeenEdited: Boolean = beenEdits
 
+  def getFirstAvailableTimeSlot(sessionOfTheWeek: SessionOfTheWeek, fractionOfSession: Fraction): Option[TimeSlot] = {
+    sessionsOfTheWeek.get(sessionOfTheWeek) match {
+      case Some(sessionBreakdown) =>
+        sessionBreakdown.getFirstAvailableTimeSlot(fractionOfSession)
+      case None => None
+    }
+  }
+
   def addSubject(subjectDetail: SubjectDetail, sessionOfTheWeek: SessionOfTheWeek): Boolean = {
     sessionsOfTheWeek.get(sessionOfTheWeek) match {
       case Some(sessionBreakdown) =>

@@ -14,6 +14,7 @@ object ClassTimetableScreen {
 
   var currentlySelectedSession: Option[Session] = None
   var currentlySelectedSubject: Option[SubjectName] = None
+  var lastSelectedSubject: Option[SubjectName] = None
   var currentlySelectedDayOfWeek: Option[DayOfWeek] = None
   var originalColour = ""
 
@@ -34,32 +35,73 @@ object ClassTimetableScreen {
     })
   }
 
+  def addSubjectToPartlyFillSession(): Unit = {
+    def fractionBehaviourForButton(fraction: Fraction) = {
+      val maybeSessionOfTheWeek: Option[SessionOfTheWeek] = extractSelectedSessionOfTheWeek
+      val maybeSubjectSession = for {
+        sessionOfTheWeek <- maybeSessionOfTheWeek
+        sessionTimeSlot <- classTimetable.getTimeSlotForSession(sessionOfTheWeek)
+        selectedSubject <- lastSelectedSubject
+        timeSlot <- classTimetable.getFirstAvailableTimeSlot(sessionOfTheWeek, fraction)
+        subjectDetail = SubjectDetail(selectedSubject, timeSlot)
+      } yield (subjectDetail, sessionOfTheWeek)
+
+      maybeSubjectSession match {
+        case Some(subjectSession) =>
+          if (classTimetable.addSubject(subjectSession._1, subjectSession._2)) {
+            renderClassTimetable()
+          } else {
+            global.alert("Not enough space to add subject")
+          }
+          val $ = js.Dynamic.global.$
+          $("#addLessonsModal").modal("hide")
+          addEventListenerToDragDrop()
+        case None =>
+          global.console.error(s"Error adding subject to session")
+      }
+    }
+
+    val oneThirdFillSubjectButton = dom.document.getElementById("add-subject-to-one-third-session-button").asInstanceOf[HTMLButtonElement]
+    oneThirdFillSubjectButton.addEventListener("click", (e: dom.Event) => {
+      fractionBehaviourForButton(OneThird())
+    })
+    val halfFillSubjectButton = dom.document.getElementById("add-subject-to-half-session-button").asInstanceOf[HTMLButtonElement]
+    halfFillSubjectButton.addEventListener("click", (e: dom.Event) => {
+      fractionBehaviourForButton(OneHalf())
+    })
+    val twoThirdsFillSubjectButton = dom.document.getElementById("add-subject-to-two-thirds-session-button").asInstanceOf[HTMLButtonElement]
+    twoThirdsFillSubjectButton.addEventListener("click", (e: dom.Event) => {
+      fractionBehaviourForButton(TwoThirds())
+    })
+  }
+
   def addSubjectToFillSession(): Unit = {
     val fillSubjectButton = dom.document.getElementById("add-subject-to-fill-session-button").asInstanceOf[HTMLButtonElement]
+
     fillSubjectButton.addEventListener("click", (e: dom.Event) => {
+
       global.console.log(
-        s"currentlySelectedDayOfWeek: ${currentlySelectedDayOfWeek.getOrElse("OOOOOPS")}\n" +
-          s"currentlySelectedSession: ${currentlySelectedSession.getOrElse("OOOPS")}\n" +
-          s"currentlySelectedSubject: ${currentlySelectedSubject.getOrElse("oooopppds")}\n\n"
+        s"currentlySelectedDayOfWeek: ${currentlySelectedDayOfWeek.getOrElse("No currently Selected Day Of Week")}\n" +
+          s"currentlySelectedSession: ${currentlySelectedSession.getOrElse("No currently Selected Session")}\n" +
+          s"currentlySelectedSubject: ${currentlySelectedSubject.getOrElse("No currently Selected Subject")}\n\n" +
+          s"lastSelectedSubject: ${lastSelectedSubject.getOrElse("No currently Selected Subject")}\n\n"
       )
 
-      val theSessionOfTheWeek = {
-        for {
-          day <- currentlySelectedDayOfWeek
-          session <- currentlySelectedSession
-        } yield SessionOfTheWeek.createSessionOfTheWeek(day, session)
-      }.flatten
+      val maybeSessionOfTheWeek: Option[SessionOfTheWeek] = extractSelectedSessionOfTheWeek
 
-      theSessionOfTheWeek match {
+      maybeSessionOfTheWeek match {
         case Some(sessionOfTheWeek) =>
           val maybeSessionTimeSlot = classTimetable.getTimeSlotForSession(sessionOfTheWeek)
           maybeSessionTimeSlot match {
             case Some(timeSlot) =>
-              currentlySelectedSubject match {
+              lastSelectedSubject match {
                 case Some(subject) =>
                   val subjectDetail = SubjectDetail(subject, timeSlot)
-                  classTimetable.addSubject(subjectDetail, sessionOfTheWeek)
-                  renderClassTimetable()
+                  if (classTimetable.addSubject(subjectDetail, sessionOfTheWeek)) {
+                    renderClassTimetable()
+                  } else {
+                    global.alert("Not enough space to add subject")
+                  }
                   val $ = js.Dynamic.global.$
                   $("#addLessonsModal").modal("hide")
                   addEventListenerToDragDrop()
@@ -74,8 +116,18 @@ object ClassTimetableScreen {
     })
   }
 
+  private def extractSelectedSessionOfTheWeek = {
+    val theSessionOfTheWeek = {
+      for {
+        day <- currentlySelectedDayOfWeek
+        session <- currentlySelectedSession
+      } yield SessionOfTheWeek.createSessionOfTheWeek(day, session)
+    }.flatten
+    theSessionOfTheWeek
+  }
   def modalButtonsBehaviour(): Unit = {
     addSubjectToFillSession()
+    addSubjectToPartlyFillSession()
   }
 
   def addEventListenerToDragDrop(): Unit = {
@@ -87,7 +139,6 @@ object ClassTimetableScreen {
       e.preventDefault()
       e.currentTarget match {
         case buttonTarget: HTMLButtonElement =>
-          global.console.log("Button CLicked")
           val buttonTargetText = dom.document.getElementById("addLessonsModalLabel").innerHTML
 
           val timetableSession = buttonTarget.getAttribute("data-timetable-session")
@@ -119,6 +170,7 @@ object ClassTimetableScreen {
             dom.document.getElementById("addLessonsModalLabel").innerHTML
               = s"Add <strong>${subjectSessionDayOption.get._1}</strong>" +
               s"<br>To ${subjectSessionDayOption.get._3} ${subjectSessionDayOption.get._2}"
+            this.lastSelectedSubject = currentlySelectedSubject
           } else {
             scala.scalajs.js.Dynamic.global.alert("There was an error selecting subject and session.\n\n" +
               s"Subjected Selected = '${currentlySelectedSubject.getOrElse("NO SUBJECT SELECTED")}'\n" +
@@ -209,8 +261,10 @@ object ClassTimetableScreen {
         val justSelectedSubject = SubjectName(subjectDiv.id)
         if (currentlySelectedSubject.isDefined) {
           if (currentlySelectedSubject.get == justSelectedSubject) {
+            currentlySelectedSubject = None
             resetDiv(subjectDiv)
           } else {
+            global.alert("four")
             val currentlySelectedDiv =
               dom.document.getElementById(currentlySelectedSubject.get.value).asInstanceOf[HTMLDivElement]
             resetDiv(currentlySelectedDiv)

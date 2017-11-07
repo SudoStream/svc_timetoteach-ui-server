@@ -16,45 +16,58 @@ class SessionBreakdownTest extends FunSpec {
     }
 
     it("should not be full") {
-      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(),LocalTime.of(9, 0), LocalTime.of(10, 30))
+      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(), LocalTime.of(9, 0), LocalTime.of(10, 30))
       assert(!sessionBreakdown.isFull)
     }
 
     it("should not be partially full") {
-      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(),LocalTime.of(9, 0), LocalTime.of(10, 30))
+      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(), LocalTime.of(9, 0), LocalTime.of(10, 30))
       assert(!sessionBreakdown.isPartiallyFull)
     }
 
     it("should have a list of subjects and fraction time values of twelves: one subject-empty = 12/12") {
-      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(),LocalTime.of(9, 0), LocalTime.of(10, 30))
+      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(), LocalTime.of(9, 0), LocalTime.of(10, 30))
       val subjectsAndTwelves = sessionBreakdown.subjectsWithTimeFractionInTwelves
       assert(subjectsAndTwelves.head._1.subject == SubjectName("subject-empty"))
       assert(subjectsAndTwelves.head._2 == 12)
     }
     it("should have a list of subjects and fraction time values of twelves : should add up to 12/12") {
-      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(),LocalTime.of(9, 0), LocalTime.of(10, 30))
+      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(), LocalTime.of(9, 0), LocalTime.of(10, 30))
       val subjectsAndTwelves = sessionBreakdown.subjectsWithTimeFractionInTwelves
       assert(subjectsAndTwelves.map(entry => entry._2).sum == 12)
     }
+
+    it("should have a first available timeslot for full session as 9:00 - 10:30") {
+      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(), LocalTime.of(9, 0), LocalTime.of(10, 30))
+      val availableTimeSlot = sessionBreakdown.getFirstAvailableTimeSlot(Whole())
+      assert(availableTimeSlot.get == TimeSlot(LocalTime.of(9, 0), LocalTime.of(10, 30)))
+    }
+
+    it("should have a first available timeslot for half session as 9:00 - 9:45") {
+      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(), LocalTime.of(9, 0), LocalTime.of(10, 30))
+      val availableTimeSlot = sessionBreakdown.getFirstAvailableTimeSlot(OneHalf())
+      assert(availableTimeSlot.get == TimeSlot(LocalTime.of(9, 0), LocalTime.of(9, 45)))
+    }
+
   }
 
   describe("SessionBreakdown on invalid start and end times") {
     it("should throw an runtime exception") {
       assertThrows[RuntimeException] {
-        val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(),LocalTime.of(9, 0), LocalTime.of(8, 30))
+        val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(), LocalTime.of(9, 0), LocalTime.of(8, 30))
       }
     }
   }
 
   describe("Finding empty periods in an empty session") {
     it("should return one empty period") {
-      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(),LocalTime.of(9, 0), LocalTime.of(10, 30))
+      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(), LocalTime.of(9, 0), LocalTime.of(10, 30))
       val subjectsInSession: mutable.ListBuffer[SubjectDetail] = scala.collection.mutable.ListBuffer()
       val emptySessions = sessionBreakdown.getEmptyTimePeriodsInGivenSession(subjectsInSession)
       assert(emptySessions.size == 1)
     }
     it("should return one empty period with starta and end periods for the full session") {
-      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(),LocalTime.of(9, 0), LocalTime.of(10, 30))
+      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(), LocalTime.of(9, 0), LocalTime.of(10, 30))
       val subjectsInSession: mutable.ListBuffer[SubjectDetail] = scala.collection.mutable.ListBuffer()
       val emptySessions = sessionBreakdown.getEmptyTimePeriodsInGivenSession(subjectsInSession)
       assert(emptySessions.head._1 == LocalTime.of(9, 0))
@@ -64,14 +77,14 @@ class SessionBreakdownTest extends FunSpec {
 
   describe("Finding empty periods in a session with a subject for first 30 mins") {
     it("should return one empty period") {
-      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(),LocalTime.of(9, 0), LocalTime.of(10, 30))
+      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(), LocalTime.of(9, 0), LocalTime.of(10, 30))
       val subjectsInSession: mutable.ListBuffer[SubjectDetail] = scala.collection.mutable.ListBuffer()
       subjectsInSession += SubjectDetail(SubjectName("subject-maths"), TimeSlot(LocalTime.of(9, 0), LocalTime.of(9, 30)))
       val emptySessions = sessionBreakdown.getEmptyTimePeriodsInGivenSession(subjectsInSession)
       assert(emptySessions.size == 1)
     }
     it("should return one empty period with times 9:30 to 10:30") {
-      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(),LocalTime.of(9, 0), LocalTime.of(10, 30))
+      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(), LocalTime.of(9, 0), LocalTime.of(10, 30))
       val subjectsInSession: mutable.ListBuffer[SubjectDetail] = scala.collection.mutable.ListBuffer()
       subjectsInSession += SubjectDetail(SubjectName("subject-maths"), TimeSlot(LocalTime.of(9, 0), LocalTime.of(9, 30)))
       val emptySessions = sessionBreakdown.getEmptyTimePeriodsInGivenSession(subjectsInSession)
@@ -82,14 +95,14 @@ class SessionBreakdownTest extends FunSpec {
 
   describe("Finding empty periods in a session with a subject for last 15 mins") {
     it("should return one empty period") {
-      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(),LocalTime.of(9, 0), LocalTime.of(10, 30))
+      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(), LocalTime.of(9, 0), LocalTime.of(10, 30))
       val subjectsInSession: mutable.ListBuffer[SubjectDetail] = scala.collection.mutable.ListBuffer()
       subjectsInSession += SubjectDetail(SubjectName("subject-maths"), TimeSlot(LocalTime.of(10, 15), LocalTime.of(10, 30)))
       val emptySessions = sessionBreakdown.getEmptyTimePeriodsInGivenSession(subjectsInSession)
       assert(emptySessions.size == 1)
     }
     it("should return one empty period with times 9:00 to 10:15") {
-      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(),LocalTime.of(9, 0), LocalTime.of(10, 30))
+      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(), LocalTime.of(9, 0), LocalTime.of(10, 30))
       val subjectsInSession: mutable.ListBuffer[SubjectDetail] = scala.collection.mutable.ListBuffer()
       subjectsInSession += SubjectDetail(SubjectName("subject-maths"), TimeSlot(LocalTime.of(10, 15), LocalTime.of(10, 30)))
       val emptySessions = sessionBreakdown.getEmptyTimePeriodsInGivenSession(subjectsInSession)
@@ -100,14 +113,14 @@ class SessionBreakdownTest extends FunSpec {
 
   describe("Finding empty periods in a session with a subject in the middle") {
     it("should return two empty periods") {
-      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(),LocalTime.of(9, 0), LocalTime.of(10, 30))
+      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(), LocalTime.of(9, 0), LocalTime.of(10, 30))
       val subjectsInSession: mutable.ListBuffer[SubjectDetail] = scala.collection.mutable.ListBuffer()
       subjectsInSession += SubjectDetail(SubjectName("subject-maths"), TimeSlot(LocalTime.of(9, 45), LocalTime.of(10, 10)))
       val emptySessions = sessionBreakdown.getEmptyTimePeriodsInGivenSession(subjectsInSession)
       assert(emptySessions.size == 2)
     }
     it("should return two empty periods with times [9:00-9:45] and [10:10-10:30]") {
-      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(),LocalTime.of(9, 0), LocalTime.of(10, 30))
+      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(), LocalTime.of(9, 0), LocalTime.of(10, 30))
       val subjectsInSession: mutable.ListBuffer[SubjectDetail] = scala.collection.mutable.ListBuffer()
       subjectsInSession += SubjectDetail(SubjectName("subject-maths"), TimeSlot(LocalTime.of(9, 45), LocalTime.of(10, 10)))
       val emptySessions = sessionBreakdown.getEmptyTimePeriodsInGivenSession(subjectsInSession)
@@ -120,7 +133,7 @@ class SessionBreakdownTest extends FunSpec {
 
   describe("Finding empty periods in a session with two subjects beside each other in the middle") {
     it("should return two empty periods") {
-      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(),LocalTime.of(9, 0), LocalTime.of(10, 30))
+      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(), LocalTime.of(9, 0), LocalTime.of(10, 30))
       val subjectsInSession: mutable.ListBuffer[SubjectDetail] = scala.collection.mutable.ListBuffer()
       subjectsInSession += SubjectDetail(SubjectName("subject-maths"), TimeSlot(LocalTime.of(9, 30), LocalTime.of(9, 50)))
       subjectsInSession += SubjectDetail(SubjectName("subject-reading"), TimeSlot(LocalTime.of(9, 50), LocalTime.of(10, 10)))
@@ -128,7 +141,7 @@ class SessionBreakdownTest extends FunSpec {
       assert(emptySessions.size == 2)
     }
     it("should return two empty periods with times [9:00-9:30] and [10:10-10:30]") {
-      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(),LocalTime.of(9, 0), LocalTime.of(10, 30))
+      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(), LocalTime.of(9, 0), LocalTime.of(10, 30))
       val subjectsInSession: mutable.ListBuffer[SubjectDetail] = scala.collection.mutable.ListBuffer()
       subjectsInSession += SubjectDetail(SubjectName("subject-maths"), TimeSlot(LocalTime.of(9, 30), LocalTime.of(9, 50)))
       subjectsInSession += SubjectDetail(SubjectName("subject-reading"), TimeSlot(LocalTime.of(9, 50), LocalTime.of(10, 10)))
@@ -142,7 +155,7 @@ class SessionBreakdownTest extends FunSpec {
 
   describe("Finding empty periods in a session with two subjects beside with space between each other in the middle") {
     it("should return three empty periods") {
-      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(),LocalTime.of(9, 0), LocalTime.of(10, 30))
+      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(), LocalTime.of(9, 0), LocalTime.of(10, 30))
       val subjectsInSession: mutable.ListBuffer[SubjectDetail] = scala.collection.mutable.ListBuffer()
       subjectsInSession += SubjectDetail(SubjectName("subject-maths"), TimeSlot(LocalTime.of(9, 30), LocalTime.of(9, 50)))
       subjectsInSession += SubjectDetail(SubjectName("subject-reading"), TimeSlot(LocalTime.of(10, 10), LocalTime.of(10, 20)))
@@ -150,7 +163,7 @@ class SessionBreakdownTest extends FunSpec {
       assert(emptySessions.size == 3)
     }
     it("should return three empty periods with times [10:20-10:30], [9:50-10:10] and [9:00-9:30]") {
-      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(),LocalTime.of(9, 0), LocalTime.of(10, 30))
+      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(), LocalTime.of(9, 0), LocalTime.of(10, 30))
       val subjectsInSession: mutable.ListBuffer[SubjectDetail] = scala.collection.mutable.ListBuffer()
       subjectsInSession += SubjectDetail(SubjectName("subject-maths"), TimeSlot(LocalTime.of(9, 30), LocalTime.of(9, 50)))
       subjectsInSession += SubjectDetail(SubjectName("subject-reading"), TimeSlot(LocalTime.of(10, 10), LocalTime.of(10, 20)))
@@ -168,7 +181,7 @@ class SessionBreakdownTest extends FunSpec {
   describe("A new SessionBreakdown after subject added that does not take up full session") {
     it("should be partially full") {
 
-      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(),LocalTime.of(9, 0), LocalTime.of(10, 30))
+      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(), LocalTime.of(9, 0), LocalTime.of(10, 30))
 
       assert(sessionBreakdown.addSubject(
         SubjectDetail(SubjectName("subject-maths"),
@@ -179,7 +192,7 @@ class SessionBreakdownTest extends FunSpec {
       assert(sessionBreakdown.isPartiallyFull)
     }
     it("should not be empty") {
-      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(),LocalTime.of(9, 0), LocalTime.of(10, 30))
+      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(), LocalTime.of(9, 0), LocalTime.of(10, 30))
       sessionBreakdown.addSubject(
         SubjectDetail(SubjectName("subject-maths"),
           TimeSlot(startTime = LocalTime.of(9, 0),
@@ -187,7 +200,7 @@ class SessionBreakdownTest extends FunSpec {
       assert(!sessionBreakdown.isEmpty)
     }
     it("should not be full") {
-      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(),LocalTime.of(9, 0), LocalTime.of(10, 30))
+      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(), LocalTime.of(9, 0), LocalTime.of(10, 30))
       sessionBreakdown.addSubject(
         SubjectDetail(SubjectName("subject-maths"),
           TimeSlot(startTime = LocalTime.of(9, 0),
@@ -195,7 +208,7 @@ class SessionBreakdownTest extends FunSpec {
       assert(!sessionBreakdown.isFull)
     }
     it("should return one empty period") {
-      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(),LocalTime.of(9, 0), LocalTime.of(10, 30))
+      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(), LocalTime.of(9, 0), LocalTime.of(10, 30))
       sessionBreakdown.addSubject(
         SubjectDetail(SubjectName("subject-maths"),
           TimeSlot(startTime = LocalTime.of(9, 0),
@@ -204,7 +217,7 @@ class SessionBreakdownTest extends FunSpec {
       assert(sessionBreakdown.getEmptyTimePeriodsAvailable.size == 1)
     }
     it("should return one empty period with times 9:00 to 10:15") {
-      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(),LocalTime.of(9, 0), LocalTime.of(10, 30))
+      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(), LocalTime.of(9, 0), LocalTime.of(10, 30))
       sessionBreakdown.addSubject(
         SubjectDetail(SubjectName("subject-maths"),
           TimeSlot(startTime = LocalTime.of(9, 0),
@@ -213,11 +226,56 @@ class SessionBreakdownTest extends FunSpec {
       assert(sessionBreakdown.getEmptyTimePeriodsAvailable.head._2 == LocalTime.of(10, 30))
     }
 
+    it("should have NO timeslot for full session") {
+      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(), LocalTime.of(9, 0), LocalTime.of(10, 30))
+      sessionBreakdown.addSubject(
+        SubjectDetail(SubjectName("subject-maths"),
+          TimeSlot(startTime = LocalTime.of(9, 0),
+            endTime = LocalTime.of(10, 0))))
+
+      val availableTimeSlot = sessionBreakdown.getFirstAvailableTimeSlot(Whole())
+      assert(availableTimeSlot.isEmpty)
+    }
+
+    it("should have NO timeslot for half session") {
+      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(), LocalTime.of(9, 0), LocalTime.of(10, 30))
+      sessionBreakdown.addSubject(
+        SubjectDetail(SubjectName("subject-maths"),
+          TimeSlot(startTime = LocalTime.of(9, 0),
+            endTime = LocalTime.of(10, 0))))
+
+      val availableTimeSlot = sessionBreakdown.getFirstAvailableTimeSlot(OneHalf())
+      assert(availableTimeSlot.isEmpty)
+    }
+
+    it("should have NO timeslot for two thirds session") {
+      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(), LocalTime.of(9, 0), LocalTime.of(10, 30))
+      sessionBreakdown.addSubject(
+        SubjectDetail(SubjectName("subject-maths"),
+          TimeSlot(startTime = LocalTime.of(9, 0),
+            endTime = LocalTime.of(10, 0))))
+
+      val availableTimeSlot = sessionBreakdown.getFirstAvailableTimeSlot(TwoThirds())
+      assert(availableTimeSlot.isEmpty)
+    }
+
+    it("should have one timeslot for one thirds session: 10:00-10:30") {
+      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(), LocalTime.of(9, 0), LocalTime.of(10, 30))
+      sessionBreakdown.addSubject(
+        SubjectDetail(SubjectName("subject-maths"),
+          TimeSlot(startTime = LocalTime.of(9, 0),
+            endTime = LocalTime.of(10, 0))))
+
+      val availableTimeSlot = sessionBreakdown.getFirstAvailableTimeSlot(OneThird())
+      assert(availableTimeSlot.isDefined)
+      assert(availableTimeSlot.get == TimeSlot(LocalTime.of(10, 0), LocalTime.of(10, 30)))
+    }
+
   }
 
   describe("A new SessionBreakdown after 2 subjects added") {
     def addTwoSubjects() = {
-      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(),LocalTime.of(9, 0), LocalTime.of(10, 30))
+      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(), LocalTime.of(9, 0), LocalTime.of(10, 30))
 
       sessionBreakdown.addSubject(
         SubjectDetail(SubjectName("subject-maths"),
@@ -274,12 +332,20 @@ class SessionBreakdownTest extends FunSpec {
       val subjectsAndTwelves = sessionBreakdown.subjectsWithTimeFractionInTwelves
       assert(subjectsAndTwelves.map(entry => entry._2).sum == 12)
     }
+    it("should have one timeslot for one thirds session: 9:00-9:30") {
+      val sessionBreakdown: SessionBreakdown = addTwoSubjects()
+
+      val availableTimeSlot = sessionBreakdown.getFirstAvailableTimeSlot(OneThird())
+      assert(availableTimeSlot.isDefined)
+      assert(availableTimeSlot.get == TimeSlot(LocalTime.of(9, 0), LocalTime.of(9, 30)))
+    }
+
   }
 
   describe("A new SessionBreakdown after 2 subjects added and 1 then removed leaving one session in the middle") {
 
     def addTwoAndRemoveOneSubject(): SessionBreakdown = {
-      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(),LocalTime.of(9, 0), LocalTime.of(10, 30))
+      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(), LocalTime.of(9, 0), LocalTime.of(10, 30))
       sessionBreakdown.addSubject(
         SubjectDetail(SubjectName("subject-maths"),
           TimeSlot(startTime = LocalTime.of(9, 10),
@@ -310,7 +376,7 @@ class SessionBreakdownTest extends FunSpec {
 
   describe("A new SessionBreakdown after 2 subjects added and then cleared") {
     def addTwoSubjectsThenClear() = {
-      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(),LocalTime.of(9, 0), LocalTime.of(10, 30))
+      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(), LocalTime.of(9, 0), LocalTime.of(10, 30))
       sessionBreakdown.addSubject(
         SubjectDetail(SubjectName("subject-maths"),
           TimeSlot(startTime = LocalTime.of(9, 10),
@@ -372,6 +438,36 @@ class SessionBreakdownTest extends FunSpec {
       assert(subjectsAndTwelves.map(entry => entry._2).sum == 12)
     }
 
+  }
+
+  describe("A new SessionBreakdown after 1 subjects added to first half") {
+    def addOneSubjectToFirstHalf() = {
+      val sessionBreakdown = SessionBreakdown(MondayEarlyMorningSession(), LocalTime.of(10, 45), LocalTime.of(12, 0))
+      val availableSlot = sessionBreakdown.getFirstAvailableTimeSlot(OneHalf()).get
+
+      sessionBreakdown.addSubject(
+        SubjectDetail(SubjectName("subject-maths"), availableSlot)
+      )
+      sessionBreakdown
+    }
+
+    it("should have 1 subject") {
+      val sessionBreakdown: SessionBreakdown = addOneSubjectToFirstHalf()
+      assert(sessionBreakdown.numberOfSubjectsInSession == 1)
+    }
+
+    it("should be possible to add another subject for second half") {
+      println("==============================")
+      val sessionBreakdown: SessionBreakdown = addOneSubjectToFirstHalf()
+      println("- - - - - - - - - - - - - - - - ")
+      val secondAvailableSlot = sessionBreakdown.getFirstAvailableTimeSlot(OneHalf())
+      println("==============================")
+      assert(secondAvailableSlot.isDefined)
+
+      sessionBreakdown.addSubject(
+        SubjectDetail(SubjectName("subject-reading"), secondAvailableSlot.get)
+      )
+    }
   }
 
 }
