@@ -56,7 +56,8 @@ object ClassTimetableScreen {
           }
           val $ = js.Dynamic.global.$
           $("#addLessonsModal").modal("hide")
-          launchAddSubjectToSessionModalEventListeners()
+          launchAddSubjectToEmptySessionModalEventListeners()
+          addEventListenerForSubjectButtonsAddedToTimetable()
           lastSelectedSubject = None
           if (longerClickSubjectSelected) {
             setDisableValueOnAllTimetableButtonsTo(false)
@@ -101,7 +102,7 @@ object ClassTimetableScreen {
     addSubjectToPartlyFillSession()
   }
 
-  def launchAddSubjectToSessionModalEventListeners(): Unit = {
+  def launchAddSubjectToEmptySessionModalEventListeners(): Unit = {
     def popupSubjectTimesModal(e: Event) = {
       e.preventDefault()
       e.currentTarget match {
@@ -149,7 +150,7 @@ object ClassTimetableScreen {
       }
     }
 
-    val timetableSubjectButtons = dom.document.getElementsByClassName("subject")
+    val timetableSubjectButtons = dom.document.getElementsByClassName("subject-empty")
     val nodeListSize = timetableSubjectButtons.length
     var index = 0
     while (index < nodeListSize) {
@@ -166,6 +167,22 @@ object ClassTimetableScreen {
       button.addEventListener("click", (e: dom.Event) => {
         longerClickSubjectSelected = true
         popupSubjectTimesModal(e)
+      })
+
+      index = index + 1
+    }
+
+  }
+
+
+  def addEventListenerForSubjectButtonsAddedToTimetable(): Unit = {
+    val timetableSubjectButtons = dom.document.getElementsByClassName("non-empty-subject")
+    val nodeListSize = timetableSubjectButtons.length
+    var index = 0
+    while (index < nodeListSize) {
+      val button = timetableSubjectButtons(index).asInstanceOf[HTMLButtonElement]
+      button.addEventListener("click", (e: dom.Event) => {
+        global.alert("Yeah heh!")
       })
 
       index = index + 1
@@ -378,7 +395,7 @@ object ClassTimetableScreen {
     calculateEndTimeFromDuration()
     preciseTimeToggler()
     addEventListenerToDragstart()
-    launchAddSubjectToSessionModalEventListeners()
+    launchAddSubjectToEmptySessionModalEventListeners()
     addListenerToAllSubjectButtons()
     modalButtonsBehaviour()
   }
