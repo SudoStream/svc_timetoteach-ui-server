@@ -73,47 +73,11 @@ object ClassTimetableScreen {
     twoThirdsFillSubjectButton.addEventListener("click", (e: dom.Event) => {
       fractionBehaviourForButton(TwoThirds())
     })
-  }
-
-  def addSubjectToFillSession(): Unit = {
     val fillSubjectButton = dom.document.getElementById("add-subject-to-fill-session-button").asInstanceOf[HTMLButtonElement]
-
     fillSubjectButton.addEventListener("click", (e: dom.Event) => {
-
-      global.console.log(
-        s"currentlySelectedDayOfWeek: ${currentlySelectedDayOfWeek.getOrElse("No currently Selected Day Of Week")}\n" +
-          s"currentlySelectedSession: ${currentlySelectedSession.getOrElse("No currently Selected Session")}\n" +
-          s"currentlySelectedSubject: ${currentlySelectedSubject.getOrElse("No currently Selected Subject")}\n\n" +
-          s"lastSelectedSubject: ${lastSelectedSubject.getOrElse("No currently Selected Subject")}\n\n"
-      )
-
-      val maybeSessionOfTheWeek: Option[SessionOfTheWeek] = extractSelectedSessionOfTheWeek
-
-      maybeSessionOfTheWeek match {
-        case Some(sessionOfTheWeek) =>
-          val maybeSessionTimeSlot = classTimetable.getTimeSlotForSession(sessionOfTheWeek)
-          maybeSessionTimeSlot match {
-            case Some(timeSlot) =>
-              lastSelectedSubject match {
-                case Some(subject) =>
-                  val subjectDetail = SubjectDetail(subject, timeSlot)
-                  if (classTimetable.addSubject(subjectDetail, sessionOfTheWeek)) {
-                    renderClassTimetable()
-                  } else {
-                    global.alert("Not enough space to add subject")
-                  }
-                  val $ = js.Dynamic.global.$
-                  $("#addLessonsModal").modal("hide")
-                  addEventListenerToDragDrop()
-                case None => global.console.error(s"No currently selected subject for ${sessionOfTheWeek.toString}")
-              }
-            case None =>
-              global.console.error(s"No session timeslot for ${sessionOfTheWeek.toString}")
-          }
-        case None =>
-          global.console.error("Couldn't add to Class Timetable")
-      }
+      fractionBehaviourForButton(Whole())
     })
+
   }
 
   private def extractSelectedSessionOfTheWeek = {
@@ -126,7 +90,6 @@ object ClassTimetableScreen {
     theSessionOfTheWeek
   }
   def modalButtonsBehaviour(): Unit = {
-    addSubjectToFillSession()
     addSubjectToPartlyFillSession()
   }
 
@@ -224,7 +187,7 @@ object ClassTimetableScreen {
 
 
   def setDisableValueOnAllTimetableButtonsTo(isDisabled: Boolean): Unit = {
-    val timetableSlotButtons: NodeList = dom.document.getElementsByClassName("subject")
+    val timetableSlotButtons: NodeList = dom.document.getElementsByClassName("subject-empty")
     val nodeListSize = timetableSlotButtons.length
     var index = 0
     while (index < nodeListSize) {
