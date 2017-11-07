@@ -55,7 +55,7 @@ object ClassTimetableScreen {
           }
           val $ = js.Dynamic.global.$
           $("#addLessonsModal").modal("hide")
-          addEventListenerToDragDrop()
+          launchAddSubjectToSessionModalEventListeners()
           lastSelectedSubject = None
           setDisableValueOnAllTimetableButtonsTo(true)
         case None =>
@@ -96,7 +96,7 @@ object ClassTimetableScreen {
     addSubjectToPartlyFillSession()
   }
 
-  def addEventListenerToDragDrop(): Unit = {
+  def launchAddSubjectToSessionModalEventListeners(): Unit = {
     def popupSubjectTimesModal(e: Event) = {
       e.preventDefault()
       e.currentTarget match {
@@ -371,7 +371,7 @@ object ClassTimetableScreen {
     calculateEndTimeFromDuration()
     preciseTimeToggler()
     addEventListenerToDragstart()
-    addEventListenerToDragDrop()
+    launchAddSubjectToSessionModalEventListeners()
     addListenerToAllSubjectButtons()
     modalButtonsBehaviour()
   }
