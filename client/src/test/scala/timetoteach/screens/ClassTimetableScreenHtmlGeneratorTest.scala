@@ -50,8 +50,9 @@ class ClassTimetableScreenHtmlGeneratorTest extends org.specs2.mutable.Specifica
 
     val html = ClassTimetableScreenHtmlGenerator.generateSubjectButtons(breakdown)
     html.toString mustEqual
-      "<button class=\"col-6 rounded subject subject-maths\">Maths</button>"+
-      "<button class=\"col-6 rounded subject subject-reading\">Reading</button>"
+      "List(<button class=\"col-6 rounded subject subject-maths data-timetable-session='early-morning-session'" +
+        " data-day-of-the-week='Monday'\">Maths</button>, <button class=\"col-6 rounded subject subject-reading " +
+        "data-timetable-session='early-morning-session' data-day-of-the-week='Monday'\">Reading</button>)"
   }
 
 

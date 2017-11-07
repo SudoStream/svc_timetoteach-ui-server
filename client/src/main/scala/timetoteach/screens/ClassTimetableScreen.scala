@@ -63,8 +63,6 @@ object ClassTimetableScreen {
                   val $ = js.Dynamic.global.$
                   $("#addLessonsModal").modal("hide")
                   addEventListenerToDragDrop()
-                  todo
-                  Add this Andy ===> data-timetable-session="early-morning-session" data-day-of-the-week="Monday"
                 case None => global.console.error(s"No currently selected subject for ${sessionOfTheWeek.toString}")
               }
             case None =>

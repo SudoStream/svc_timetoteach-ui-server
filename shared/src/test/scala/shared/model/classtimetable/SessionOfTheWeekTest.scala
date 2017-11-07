@@ -8,17 +8,29 @@ class SessionOfTheWeekTest extends FunSpec {
       val sessionOfTheWeek : SessionOfTheWeek = MondayEarlyMorningSession()
       assert(sessionOfTheWeek.value == "monday-early-morning-session")
     }
+    it("should have a session minus day value of early-morning-session") {
+      val sessionOfTheWeek : SessionOfTheWeek = MondayEarlyMorningSession()
+      assert(sessionOfTheWeek.valueWithoutDay == "early-morning-session")
+    }
   }
   describe("Late Morning Wednesday SessionOfTheWeek") {
     it("should have a value of 'wednesday-late-morning-session'") {
       val sessionOfTheWeek : SessionOfTheWeek = WednesdayLateMorningSession()
       assert(sessionOfTheWeek.value == "wednesday-late-morning-session")
     }
+    it("should have a session minus day value of late-morning-session") {
+      val sessionOfTheWeek : SessionOfTheWeek = WednesdayLateMorningSession()
+      assert(sessionOfTheWeek.valueWithoutDay == "late-morning-session")
+    }
   }
   describe("Friday Afternoon SessionOfTheWeek") {
     it("should have a value of 'friday-afternoon-session'") {
       val sessionOfTheWeek : SessionOfTheWeek = FridayAfternoonSession()
       assert(sessionOfTheWeek.value == "friday-afternoon-session")
+    }
+    it("should have a session minus day value of afternoon-session") {
+      val sessionOfTheWeek : SessionOfTheWeek = FridayAfternoonSession()
+      assert(sessionOfTheWeek.valueWithoutDay == "afternoon-session")
     }
   }
 

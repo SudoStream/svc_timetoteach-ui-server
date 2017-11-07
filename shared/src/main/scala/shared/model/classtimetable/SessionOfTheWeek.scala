@@ -40,6 +40,10 @@ trait SessionOfTheWeek {
     val dashFormat = baseClassname.replaceAll("([A-Z])", "-$1")
     dashFormat.toLowerCase().drop(1)
   }
+
+  def valueWithoutDay: String = {
+    value.split("-").tail.mkString("-")
+  }
 }
 
 sealed case class MondayEarlyMorningSession() extends SessionOfTheWeek {
