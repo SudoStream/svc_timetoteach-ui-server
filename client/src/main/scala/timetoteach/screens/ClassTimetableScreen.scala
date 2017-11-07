@@ -57,6 +57,7 @@ object ClassTimetableScreen {
           $("#addLessonsModal").modal("hide")
           addEventListenerToDragDrop()
           lastSelectedSubject = None
+          setDisableValueOnAllTimetableButtonsTo(true)
         case None =>
           global.alert("Unable to add subject to session")
           global.console.error(s"Error adding subject to session")
@@ -96,10 +97,6 @@ object ClassTimetableScreen {
   }
 
   def addEventListenerToDragDrop(): Unit = {
-    val timetableSubjectButtons = dom.document.getElementsByClassName("subject")
-    val nodeListSize = timetableSubjectButtons.length
-    var index = 0
-
     def popupSubjectTimesModal(e: Event) = {
       e.preventDefault()
       e.currentTarget match {
@@ -147,6 +144,9 @@ object ClassTimetableScreen {
       }
     }
 
+    val timetableSubjectButtons = dom.document.getElementsByClassName("subject")
+    val nodeListSize = timetableSubjectButtons.length
+    var index = 0
     while (index < nodeListSize) {
       val button = timetableSubjectButtons(index).asInstanceOf[HTMLButtonElement]
 
@@ -193,6 +193,7 @@ object ClassTimetableScreen {
     val nodeListSize = timetableSlotButtons.length
     var index = 0
     while (index < nodeListSize) {
+      global.console.log(s"Deactivating button ${isDisabled}")
       val button = timetableSlotButtons(index).asInstanceOf[HTMLButtonElement]
       button.disabled = isDisabled
       button.style.borderColor = if (isDisabled) "lightgrey" else "yellow"
