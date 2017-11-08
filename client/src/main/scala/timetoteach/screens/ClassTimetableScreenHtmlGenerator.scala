@@ -54,6 +54,7 @@ trait ClassTimetableScreenHtmlGenerator {
 
   def generateHtmlForClassTimetable(classTimetable: ClassTimetable): String = {
     val sortedDays = classTimetable.allSessionsOfTheWeekInOrderByDay.keys.toList.sortBy(day => day.ordinalNumber)
+    global.console.log(s"Actually Trying to remove : Andy B : ${sortedDays.toString()}")
     val html = sortedDays.map {
       day =>
         val dayOfTheWeekRowContainer = div(`class` := "row dayoftheweek-row align-items-center")
@@ -66,7 +67,6 @@ trait ClassTimetableScreenHtmlGenerator {
         val subjectButtonsForEarlyMorning = generateSubjectButtons(sessionBreakdowns.head)
         val subjectButtonsForLateMorning = generateSubjectButtons(sessionBreakdowns(1))
         val subjectButtonsForAfternoon = generateSubjectButtons(sessionBreakdowns(2))
-
         dayOfTheWeekRowContainer(
           dayOfTheWeekRow,
           sessionContainer(
