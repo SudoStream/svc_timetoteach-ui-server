@@ -14,7 +14,11 @@ object ClassTimetableScreenHtmlGenerator {
         val dayOfWeek = breakdown.sessionOfTheWeek.dayOfTheWeek.value
         button(`class` := "col-" + entry._2 + " rounded subject non-empty-subject " + entry._1.subject.value,
           attr("data-timetable-session") := sessionType,
-          attr("data-day-of-the-week") := dayOfWeek)( entry._1.subject.niceValue )
+          attr("data-day-of-the-week") := dayOfWeek,
+          attr("data-subject-code") := entry._1.subject.value,
+          attr("data-lesson-start-time") := entry._1.timeSlot.startTime.toString,
+          attr("data-lesson-end-time") := entry._1.timeSlot.endTime.toString
+        )( entry._1.subject.niceValue )
     }
     buttons
   }

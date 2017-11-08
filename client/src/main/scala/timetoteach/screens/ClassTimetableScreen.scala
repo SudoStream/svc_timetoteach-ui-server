@@ -182,7 +182,18 @@ object ClassTimetableScreen {
     while (index < nodeListSize) {
       val button = timetableSubjectButtons(index).asInstanceOf[HTMLButtonElement]
       button.addEventListener("click", (e: dom.Event) => {
-        global.alert("Yeah heh!")
+        val subjectCode = button.getAttribute("data-subject-code")
+        val day = button.getAttribute("data-day-of-the-week")
+        val timetableSession = button.getAttribute("data-timetable-session")
+        val startTime = button.getAttribute("data-lesson-start-time")
+        val endTime = button.getAttribute("data-lesson-end-time")
+
+        global.alert(s"Subject: $subjectCode\n" +
+          s"Start Time: $startTime\n" +
+          s"End Time: $endTime\n" +
+          s"Session: $timetableSession\n" +
+          s"Day: $day\n"
+        )
       })
 
       index = index + 1
