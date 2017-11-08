@@ -438,6 +438,15 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
     })
   }
 
+  def saveCancelClearBehaviour(): Unit = {
+    val clearSubjectsButton = dom.document.getElementById("clear-subjects-from-class-timetable-button").asInstanceOf[HTMLButtonElement]
+    clearSubjectsButton.addEventListener("click", (e: dom.Event) => {
+      global.console.log("Clearing the subjects...")
+      classTimetable.clearWholeTimetable()
+      renderClassTimetable()
+    })
+  }
+
   def loadClassTimetableJavascript(): Unit = {
     calculateEndTimeFromNewEndTime()
     calculateEndTimeFromNewStartTime()
@@ -447,6 +456,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
     launchAddSubjectToEmptySessionModalEventListeners()
     addListenerToAllSubjectButtons()
     modalButtonsBehaviour()
+    saveCancelClearBehaviour()
   }
 
   def renderClassTimetable(): Unit = {

@@ -359,6 +359,11 @@ img {
     margin-top: 1rem;
 }
 
+.clear-cancel-save-buttons {
+    margin-top: 2rem;
+    float: right;
+}
+
 @media screen and ( min-width: 991px) {
     .feature-content {
         display: flex;
