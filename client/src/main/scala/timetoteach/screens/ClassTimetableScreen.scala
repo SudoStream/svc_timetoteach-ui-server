@@ -204,18 +204,19 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
         val currentSubjectSummary = dom.document.getElementById("subject-summary-in-timetable").asInstanceOf[HTMLDivElement]
         if (currentSubjectSummary != null) {
           val $ = js.Dynamic.global.$
-          $("#subject-summary-in-timetable").collapse({
-            "toggle : false"
-          })
-          dayContainerRow.removeChild(currentSubjectSummary)
+          $("#subject-summary-in-timetable").collapse()
         }
 
         val subjectSummaryAndOptions = createSubjectSummary(subjectCode, startTime, endTime, timetableSession, day)
         if (getRemoveBehaviourTuple.isDefined) {
+          if (currentSubjectSummary != null) {
+            dayContainerRow.removeChild(currentSubjectSummary)
+          }
           dayContainerRow.appendChild(subjectSummaryAndOptions.render)
-          addRemoveBehaviour(getRemoveBehaviourTuple)
-          addOKSubjectBehaviour(getRemoveBehaviourTuple)
         }
+        addRemoveBehaviour(getRemoveBehaviourTuple)
+        addOKSubjectBehaviour(getRemoveBehaviourTuple)
+
         global.console.log(s"Subject: $subjectCode\n" +
           s"Start Time: $startTime\n" +
           s"End Time: $endTime\n" +
