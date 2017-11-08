@@ -17,6 +17,16 @@ case class SessionBreakdown(sessionOfTheWeek: SessionOfTheWeek, startTime: Local
     getEmptyTimePeriodsInGivenSession(subjectsWithoutEmpty)
   }
 
+  def getFirstEmptyTimePeriodAvailable: Option[TimeSlot] = {
+    val allEmptyPeriods = getEmptyTimePeriodsAvailable
+    if (allEmptyPeriods.nonEmpty) {
+      val timeSlot = TimeSlot(allEmptyPeriods.head._1, allEmptyPeriods.head._2)
+      Some(timeSlot)
+    } else {
+      None
+    }
+  }
+
   def getEmptyTimePeriodsInGivenSession(session: mutable.ListBuffer[SubjectDetail]):
   List[(LocalTime, LocalTime)] = {
     @tailrec
@@ -139,7 +149,7 @@ case class SessionBreakdown(sessionOfTheWeek: SessionOfTheWeek, startTime: Local
         val proposedEndTime = availableTimeSlot.startTime.plusMinutes(roundedNumberOfMinutesNearestFive)
         println(s"The proposed end time = ${proposedEndTime}")
         println(s"The empty session end time = ${availableTimeSlot.endTime}")
-        val endTime = if (Math.abs(MINUTES.between(availableTimeSlot.endTime, proposedEndTime )) <= 5) {
+        val endTime = if (Math.abs(MINUTES.between(availableTimeSlot.endTime, proposedEndTime)) <= 5) {
           availableTimeSlot.endTime
         } else {
           proposedEndTime

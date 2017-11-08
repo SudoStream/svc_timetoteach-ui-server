@@ -4,6 +4,7 @@ import org.scalajs.dom
 import org.scalajs.dom.Event
 import org.scalajs.dom.raw._
 import shared.model.classtimetable._
+import shared.util.LocalTimeUtil
 
 import scala.scalajs.js
 import scala.scalajs.js.Dynamic.global
@@ -30,10 +31,92 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
   def preciseTimeToggler(): Unit = {
     val preciseTimeButton = dom.document.getElementById("precise-time-button").asInstanceOf[HTMLButtonElement]
     preciseTimeButton.addEventListener("click", (e: dom.Event) => {
-      val preciseLessonTimeBody = dom.document.getElementById("precise-lesson-timing-body").asInstanceOf[HTMLDivElement]
-      val currentDisplay = preciseLessonTimeBody.style.display
-      preciseTimeButton.innerHTML = if (currentlyHidden(currentDisplay)) "Hide Precise Times" else "... Or Choose Precise Times"
-      preciseLessonTimeBody.style.display = if (currentlyHidden(currentDisplay)) "block" else "none"
+      preciseTimeTogglerBehaviour(preciseTimeButton)
+    })
+  }
+
+  private def preciseTimeTogglerBehaviour(preciseTimeButton: HTMLButtonElement): Unit = {
+    val preciseLessonTimeBody = dom.document.getElementById("precise-lesson-timing-body").asInstanceOf[HTMLDivElement]
+    val currentDisplay = preciseLessonTimeBody.style.display
+    preciseTimeButton.innerHTML = if (currentlyHidden(currentDisplay)) "Hide Precise Times" else "... Or Choose Precise Times"
+    preciseLessonTimeBody.style.display = if (currentlyHidden(currentDisplay)) "block" else "none"
+    setDecentTimesForPreciseModal()
+  }
+
+  private def preciseTimeTogglerBehaviourOff(preciseTimeButton: HTMLButtonElement): Unit = {
+    val preciseLessonTimeBody = dom.document.getElementById("precise-lesson-timing-body").asInstanceOf[HTMLDivElement]
+    preciseTimeButton.innerHTML = "... Or Choose Precise Times"
+    preciseLessonTimeBody.style.display = "none"
+    setDecentTimesForPreciseModal()
+  }
+
+
+  private def setDecentTimesForPreciseModal(): Unit = {
+    for {
+      subjectName <- this.lastSelectedSubject
+      session <- this.currentlySelectedSession
+      dayOfWeek <- this.currentlySelectedDayOfWeek
+    } {
+      val inputStartTime = dom.document.getElementById("timepicker1").asInstanceOf[HTMLInputElement]
+      val inputEndTime = dom.document.getElementById("timepicker2").asInstanceOf[HTMLInputElement]
+      val maybeEarliestStartTime =
+        classTimetable.getFirstAvailableTimeSlot(SessionOfTheWeek.createSessionOfTheWeek(dayOfWeek, session))
+
+      inputStartTime.value = if (maybeEarliestStartTime.isDefined) {
+        maybeEarliestStartTime.get.startTime.toString
+      } else "09:00 AM"
+
+      inputEndTime.value = if (maybeEarliestStartTime.isDefined) {
+        maybeEarliestStartTime.get.startTime.plusMinutes(40).toString
+      } else "09:40 AM"
+    }
+  }
+
+  def submitLessonDuration(): Unit = {
+    val submitLessonDuration = dom.document.getElementById("submit-lesson-duration").asInstanceOf[HTMLButtonElement]
+    submitLessonDuration.addEventListener("click", (e: dom.Event) => {
+
+      val startTimeStringProposed = dom.document.getElementById("timepicker1").asInstanceOf[HTMLInputElement].value
+      val maybeStartTimeProposed = LocalTimeUtil.convertStringTimeToLocalTime(startTimeStringProposed)
+
+      val endTimeStringProposed = dom.document.getElementById("timepicker2").asInstanceOf[HTMLInputElement].value
+      val maybeEndTimeProposed = LocalTimeUtil.convertStringTimeToLocalTime(endTimeStringProposed)
+
+      val maybeTimeSlot = for {
+        startTime <- maybeStartTimeProposed
+        endTime <- maybeEndTimeProposed
+      } yield TimeSlot(startTime, endTime)
+
+      val maybeSessionOfTheWeek: Option[SessionOfTheWeek] = extractSelectedSessionOfTheWeek
+      val maybeSubjectSession = for {
+        sessionOfTheWeek <- maybeSessionOfTheWeek
+        sessionTimeSlot <- classTimetable.getTimeSlotForSession(sessionOfTheWeek)
+        selectedSubject <- lastSelectedSubject
+        timeSlot <- maybeTimeSlot
+        subjectDetail = SubjectDetail(selectedSubject, timeSlot)
+      } yield (subjectDetail, sessionOfTheWeek)
+
+      global.console.log(s"maybeSubjectSession = ${maybeSubjectSession.toString}")
+      maybeSubjectSession match {
+        case Some(subjectSession) =>
+          if (classTimetable.addSubject(subjectSession._1, subjectSession._2)) {
+            renderClassTimetable()
+          } else {
+            global.alert("Not enough space to add subject")
+          }
+          val $ = js.Dynamic.global.$
+          $("#addLessonsModal").modal("hide")
+          lastSelectedSubject = None
+          if (longerClickSubjectSelected) {
+            setDisableValueOnAllTimetableButtonsTo(false)
+          } else {
+            setDisableValueOnAllTimetableButtonsTo(true)
+          }
+        case None =>
+          global.alert("Unable to add subject to session")
+          global.console.error(s"Error adding subject to session")
+      }
+
     })
   }
 
@@ -147,6 +230,9 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
 
         case _ =>
       }
+
+      val preciseTimeButton = dom.document.getElementById("precise-time-button").asInstanceOf[HTMLButtonElement]
+      preciseTimeTogglerBehaviourOff(preciseTimeButton)
     }
 
     val timetableSubjectButtons = dom.document.getElementsByClassName("subject-empty")
@@ -437,12 +523,12 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
     })
   }
 
-  def calculateEndTimeFromNewEndTime(): Unit = {
+  def calculateStartTimeFromNewEndTime(): Unit = {
     def updateTheEndTimeWhenEndChanges(lessonStartTimeInput: Element): Unit = {
       val lessonDuration = dom.document.getElementById("lesson-duration").asInstanceOf[HTMLInputElement].value
       val lessonDurationInMinutes = Integer.parseInt(lessonDuration.stripMargin)
-      val lessonEndTime = addMinutesToTime(lessonDurationInMinutes, lessonStartTimeInput.asInstanceOf[HTMLInputElement].value)
-      dom.document.getElementById("timepicker1").asInstanceOf[HTMLInputElement].value = lessonEndTime
+      val lessonStartTime = subtractMinutesToTime(lessonDurationInMinutes, lessonStartTimeInput.asInstanceOf[HTMLInputElement].value)
+      dom.document.getElementById("timepicker1").asInstanceOf[HTMLInputElement].value = lessonStartTime
     }
 
     val lessonEndTimeInput = dom.document.getElementById("timepicker2")
@@ -485,8 +571,9 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
     })
   }
 
+
   def loadClassTimetableJavascript(): Unit = {
-    calculateEndTimeFromNewEndTime()
+    calculateStartTimeFromNewEndTime()
     calculateEndTimeFromNewStartTime()
     calculateEndTimeFromDuration()
     preciseTimeToggler()
@@ -496,6 +583,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
     modalButtonsBehaviour()
     saveCancelClearBehaviour()
     toggleTheSubjectsAside()
+    submitLessonDuration()
   }
 
   def renderClassTimetable(): Unit = {

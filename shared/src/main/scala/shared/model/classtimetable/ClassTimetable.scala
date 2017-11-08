@@ -24,6 +24,13 @@ case class ClassTimetable(private val schoolDayTimesOption: Option[Map[SchoolDay
   private val beenEdits = false
   def hasBeenEdited: Boolean = beenEdits
 
+  def getFirstAvailableTimeSlot(maybeSessionOfTheWeek: Option[SessionOfTheWeek]): Option[TimeSlot] = {
+    (for {
+      sessionOfTheWeek <- maybeSessionOfTheWeek
+      sessionBreakdown <- sessionsOfTheWeek.get(sessionOfTheWeek)
+    } yield sessionBreakdown.getFirstEmptyTimePeriodAvailable).flatten
+  }
+
   def getFirstAvailableTimeSlot(sessionOfTheWeek: SessionOfTheWeek, fractionOfSession: Fraction): Option[TimeSlot] = {
     sessionsOfTheWeek.get(sessionOfTheWeek) match {
       case Some(sessionBreakdown) =>
@@ -60,7 +67,7 @@ case class ClassTimetable(private val schoolDayTimesOption: Option[Map[SchoolDay
       if (remainingSessionsToAdd.isEmpty) currentMap
       else {
         val sessionToAdd = remainingSessionsToAdd.head
-        val currentDayOfWeekList = currentMap.getOrElse(sessionToAdd.sessionOfTheWeek.dayOfTheWeek,Nil)
+        val currentDayOfWeekList = currentMap.getOrElse(sessionToAdd.sessionOfTheWeek.dayOfTheWeek, Nil)
         val newDayOfWeekList = (sessionToAdd :: currentDayOfWeekList).
           sortBy(sessionBreakdown => sessionBreakdown.sessionOfTheWeek.ordinalNumber)
 
