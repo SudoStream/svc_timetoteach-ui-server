@@ -367,6 +367,14 @@ img {
     float: right;
 }
 
+#remove-lesson-from-timetable-button {
+    margin-right: 1rem;
+}
+
+#ok-update-for-timetable-button {
+    margin-left: 1rem;
+}
+
 #show-subjects-button-div {
     margin-top: 2rem;
     display: none;

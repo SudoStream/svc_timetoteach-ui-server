@@ -212,6 +212,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
         val subjectSummaryAndOptions = createSubjectSummary(subjectCode, startTime, endTime, timetableSession, day)
         dayContainerRow.appendChild(subjectSummaryAndOptions.render)
         addRemoveBehaviour(getRemoveBehaviourTuple)
+        addOKSubjectBehaviour(getRemoveBehaviourTuple)
 
         global.console.log(s"Subject: $subjectCode\n" +
           s"Start Time: $startTime\n" +
@@ -236,6 +237,20 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
       removeSubjectButton.addEventListener("click", (e: dom.Event) => {
         val removedOkay = getClassTimetable.removeSubject(subjectToRemove, sessionOfTheWeek)
         renderClassTimetable()
+      })
+    }
+  }
+
+  def addOKSubjectBehaviour(maybeRemoveBehaviour: Option[(SubjectDetail, SessionOfTheWeek)]): Unit = {
+    for {
+      removeBehaviour <- maybeRemoveBehaviour
+      subjectToRemove = removeBehaviour._1
+      sessionOfTheWeek = removeBehaviour._2
+    } {
+      val removeSubjectButton = dom.document.getElementById("ok-update-for-timetable-button").asInstanceOf[HTMLButtonElement]
+      removeSubjectButton.addEventListener("click", (e: dom.Event) => {
+        global.console.log("hi")
+        dom.document.getElementById("subject-summary-in-timetable").asInstanceOf[HTMLButtonElement].style.display = "none"
       })
     }
   }
