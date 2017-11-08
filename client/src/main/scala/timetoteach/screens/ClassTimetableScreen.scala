@@ -175,6 +175,19 @@ object ClassTimetableScreen {
   }
 
 
+  def getDayContainerRow(button: HTMLButtonElement): HTMLDivElement = {
+    def rowSearcher(currentHtmlElement: HTMLElement): HTMLDivElement = {
+      val allClassesForElement = currentHtmlElement.classList
+      if (allClassesForElement.contains("dayoftheweek-row")) {
+        currentHtmlElement.asInstanceOf[HTMLDivElement]
+      } else {
+        rowSearcher(currentHtmlElement.parentElement)
+      }
+    }
+
+    rowSearcher(button)
+  }
+
   def addEventListenerForSubjectButtonsAddedToTimetable(): Unit = {
     val timetableSubjectButtons = dom.document.getElementsByClassName("non-empty-subject")
     val nodeListSize = timetableSubjectButtons.length
@@ -188,12 +201,20 @@ object ClassTimetableScreen {
         val startTime = button.getAttribute("data-lesson-start-time")
         val endTime = button.getAttribute("data-lesson-end-time")
 
-        global.alert(s"Subject: $subjectCode\n" +
+        // TODO: 1 Create a div showing the subject details, with REMOVE option, ADD/EDIT SUBHEADING
+        val subjectSummaryAndOptions = ClassTimetableScreenHtmlGenerator.createSubjectSummary(subjectCode, startTime, endTime, timetableSession, day)
+        // TODO: 2 Toggle it
+        val dayContainerRow = getDayContainerRow(button)
+
+//        dayContainerRow.appendChild(subjectSummaryAndOptions)
+
+        global.console.log(s"Subject: $subjectCode\n" +
           s"Start Time: $startTime\n" +
           s"End Time: $endTime\n" +
           s"Session: $timetableSession\n" +
           s"Day: $day\n"
         )
+
       })
 
       index = index + 1

@@ -328,6 +328,26 @@ img {
     padding-right: 0;
 }
 
+.non-empty-subject .lesson-start-time {
+    font-size: xx-small;
+    float: left;
+    line-height: 5px;
+}
+
+.non-empty-subject .lesson-end-time {
+    font-size: xx-small;
+    float: right;
+    line-height: 5px;
+}
+
+.small-close {
+    font-size: xx-small;
+}
+
+.clear-both {
+    clear: both;
+}
+
 @media screen and ( min-width: 991px) {
     .feature-content {
         display: flex;

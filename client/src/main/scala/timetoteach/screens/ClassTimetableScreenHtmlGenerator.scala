@@ -1,5 +1,6 @@
 package timetoteach.screens
 
+import org.scalajs.dom.Node
 import shared.model.classtimetable.{ClassTimetable, SessionBreakdown}
 
 import scalatags.Text
@@ -10,15 +11,30 @@ object ClassTimetableScreenHtmlGenerator {
   def generateSubjectButtons(breakdown: SessionBreakdown): List[Text.TypedTag[String]] = {
     val buttons = breakdown.subjectsWithTimeFractionInTwelves.map {
       entry =>
+        val subjectCode = entry._1.subject.value
         val sessionType = breakdown.sessionOfTheWeek.valueWithoutDay
         val dayOfWeek = breakdown.sessionOfTheWeek.dayOfTheWeek.value
-        button(`class` := "col-" + entry._2 + " rounded subject non-empty-subject " + entry._1.subject.value,
-          attr("data-timetable-session") := sessionType,
-          attr("data-day-of-the-week") := dayOfWeek,
-          attr("data-subject-code") := entry._1.subject.value,
-          attr("data-lesson-start-time") := entry._1.timeSlot.startTime.toString,
-          attr("data-lesson-end-time") := entry._1.timeSlot.endTime.toString
-        )( entry._1.subject.niceValue )
+
+        if (subjectCode == "subject-empty") {
+          button(disabled := true, `class` := "col-" + entry._2 + " rounded subject " + subjectCode,
+            attr("data-timetable-session") := sessionType,
+            attr("data-day-of-the-week") := dayOfWeek,
+            attr("data-subject-code") := subjectCode
+          )(entry._1.subject.niceValue)
+        } else {
+          val startTime = entry._1.timeSlot.startTime.toString
+          val smallStartTime = small(`class` := "lesson-start-time align-text-top")(startTime)
+          val endTime = entry._1.timeSlot.endTime.toString
+          val smallEndTime = small(`class` := "lesson-end-time align-text-top")(endTime)
+
+          button(`class` := "col-" + entry._2 + " rounded subject non-empty-subject " + subjectCode,
+            attr("data-timetable-session") := sessionType,
+            attr("data-day-of-the-week") := dayOfWeek,
+            attr("data-subject-code") := subjectCode,
+            attr("data-lesson-start-time") := startTime,
+            attr("data-lesson-end-time") := endTime
+          )(smallStartTime, smallEndTime, br, p(`class` := "clear-both", entry._1.subject.niceValue))
+        }
     }
     buttons
   }
@@ -62,5 +78,18 @@ object ClassTimetableScreenHtmlGenerator {
     html.mkString
   }
 
+  def createSubjectSummary(subjectCode: String,
+                           startTime: String,
+                           endTime: String,
+                           timetableSession: String,
+                           day: String): Text.TypedTag[String] = {
+    div(
+      p(s"subject: $subjectCode"),
+      p(s"startTime: $startTime"),
+      p(s"endTime: $endTime"),
+      p(s"timetableSession: $timetableSession"),
+      p(s"day: $day")
+    )
+  }
 
 }
