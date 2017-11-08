@@ -101,7 +101,7 @@ trait ClassTimetableScreenHtmlGenerator {
     val session = Session(timetableSession)
 
     val subjectSummary = div(
-      `class` := "collapse",
+      `class` := "collapse mx-auto",
       id := "subject-summary-in-timetable",
       div(`class` := "card-header")(
         h4(`class` := "card-title subject-name-title", SubjectName(subjectCode).niceValue)
@@ -113,7 +113,7 @@ trait ClassTimetableScreenHtmlGenerator {
       ),
       div(
         `class` := "card-footer text-muted",
-        button(id := "remove-lesson-from-timetable-button", `class` := "btn btn-outline-dark")("Remove Lesson"),
+        button(id := "remove-lesson-from-timetable-button", `class` := "btn btn-outline-info")("Remove Lesson"),
         button(id := "ok-update-for-timetable-button", `class` := "btn btn-outline-success")("Ok")
       )
     )
