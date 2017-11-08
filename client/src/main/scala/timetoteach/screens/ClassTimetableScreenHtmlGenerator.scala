@@ -10,10 +10,6 @@ object ClassTimetableScreenHtmlGenerator {
   def generateSubjectButtons(breakdown: SessionBreakdown): List[Text.TypedTag[String]] = {
     val buttons = breakdown.subjectsWithTimeFractionInTwelves.map {
       entry =>
-        val dismissButton = button(`type`:="button", `class`:="close", attr("aria-label"):="close")(
-          span( attr("aria-hidden"):="true")("x")
-        )
-
         val sessionType = breakdown.sessionOfTheWeek.valueWithoutDay
         val dayOfWeek = breakdown.sessionOfTheWeek.dayOfTheWeek.value
         button(`class` := "col-" + entry._2 + " rounded subject non-empty-subject " + entry._1.subject.value,
