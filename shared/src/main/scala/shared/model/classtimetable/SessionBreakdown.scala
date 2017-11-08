@@ -119,7 +119,7 @@ case class SessionBreakdown(sessionOfTheWeek: SessionOfTheWeek, startTime: Local
 
     val possibleSlots: List[TimeSlot] = for {
       emptyPeriod <- emptyPeriods
-      maybePeriodThatFits = if (MINUTES.between(emptyPeriod._1, emptyPeriod._2) >= numberOfMinutesForProposedSession) {
+      maybePeriodThatFits = if (MINUTES.between(emptyPeriod._1, emptyPeriod._2) >= (numberOfMinutesForProposedSession - 5)) {
         Some(TimeSlot(emptyPeriod._1, emptyPeriod._2))
       } else None
       periodThatFits <- maybePeriodThatFits
@@ -128,8 +128,22 @@ case class SessionBreakdown(sessionOfTheWeek: SessionOfTheWeek, startTime: Local
     val firstAvailableTimeSlot = possibleSlots.headOption
     firstAvailableTimeSlot match {
       case Some(availableTimeSlot) =>
-        val roundedNUmberOfMinutesNearestFive = 5 * Math.round(numberOfMinutesForProposedSession / 5)
-        val endTime = availableTimeSlot.startTime.plusMinutes(roundedNUmberOfMinutesNearestFive)
+
+        val roundedNumberOfMinutesNearestFive = fractionOfSession match {
+          case OneHalf() =>
+            5 * Math.round((numberOfMinutesForProposedSession + 1) / 5)
+          case _ =>
+            5 * Math.round(numberOfMinutesForProposedSession / 5)
+        }
+
+        val proposedEndTime = availableTimeSlot.startTime.plusMinutes(roundedNumberOfMinutesNearestFive)
+        println(s"The proposed end time = ${proposedEndTime}")
+        println(s"The empty session end time = ${availableTimeSlot.endTime}")
+        val endTime = if (Math.abs(MINUTES.between(availableTimeSlot.endTime, proposedEndTime )) <= 5) {
+          availableTimeSlot.endTime
+        } else {
+          proposedEndTime
+        }
         Some(
           TimeSlot(availableTimeSlot.startTime, endTime)
         )
