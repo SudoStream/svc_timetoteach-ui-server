@@ -359,8 +359,22 @@ img {
     margin-top: 1rem;
 }
 
-.clear-cancel-save-buttons {
+#class-timetable-subject-aside {
     margin-top: 2rem;
+}
+
+#show-subjects-button {
+    float: right;
+}
+
+#show-subjects-button-div {
+    margin-top: 2rem;
+    display: none;
+    margin-bottom: 7rem;
+}
+
+.clear-cancel-save-buttons {
+    margin-top: 3rem;
     float: right;
 }
 

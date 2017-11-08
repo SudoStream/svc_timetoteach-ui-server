@@ -2,12 +2,8 @@
 @import models.timetoteach.classtimetable.SchoolDayTimes
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], schoolDayTimes: SchoolDayTimes)(implicit request: AuthenticatedRequest[Any])
 
-@timetoteachAppMain(handler, "",
+@timetoteachAppMain(handler, "Class Timetable",
     userPictureUri, userFirstName, userFamilyName) {
-
-    <div class="conatiner">
-        <h1 class="text-center">Timetable : Class P4B<em> TODO</em></h1>
-    </div>
 
     <div class="container" hidden="true">
         <div id="timetable-alert" class="alert alert-info alert-dismissible fade show" role="alert">
@@ -27,8 +23,16 @@
         </div>
     </div>
 
-    <aside id="class-timetable-subject-nav">
+    <aside id="class-timetable-subject-aside">
         <div class="container text-center class-timetable-subject-nav-background justify-content-center">
+            <span>
+                <h2>Subjects
+                <button id="class-timetable-subject-aside-toggle-button" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&minus;</span>
+                </button>
+                </h2>
+            </span>
+
             <div class="row justify-content-center class-timetable-subject-row">
                 <div class="col-sm-2">
                     <div id="subject-golden-time" class="btn rounded subject-golden-time class-timetable-button"
@@ -93,9 +97,12 @@
                     type="button" draggable="true">P.E.</div>
                 </div>
             </div>
-
         </div>
     </aside>
+
+    <div id="show-subjects-button-div" class="container text-center justify-content-center">
+        <button id="show-subjects-button" class="rounded btn btn-secondary">Show Subjects</button>
+    </div>
 
 
     <section id="class-timetable-section">
@@ -272,7 +279,8 @@
             </div>
 
             <div class="clear-cancel-save-buttons">
-                <button id="clear-subjects-from-class-timetable-button" type="button" class="btn btn-lg btn-secondary">Clear</button>
+                <button id="clear-subjects-from-class-timetable-button" type="button" class="btn btn-lg btn-secondary">
+                    Clear</button>
                 <button id="cancel-class-timetable-button" type="button" class="btn btn-lg btn-secondary">
                     <a href="/app">Cancel</a>
                 </button>

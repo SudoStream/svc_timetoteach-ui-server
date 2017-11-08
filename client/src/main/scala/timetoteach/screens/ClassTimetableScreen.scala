@@ -4,6 +4,7 @@ import org.scalajs.dom
 import org.scalajs.dom.Event
 import org.scalajs.dom.raw._
 import shared.model.classtimetable._
+import timetoteach.screens.ClassTimetableScreen.renderClassTimetable
 
 import scala.scalajs.js
 import scala.scalajs.js.Dynamic.global
@@ -204,7 +205,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
 
         val dayContainerRow = getDayContainerRow(button)
         val currentSubjectSummary = dom.document.getElementById("subject-summary-in-timetable").asInstanceOf[HTMLDivElement]
-        if ( currentSubjectSummary != null ) {
+        if (currentSubjectSummary != null) {
           dayContainerRow.removeChild(currentSubjectSummary)
         }
 
@@ -447,6 +448,25 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
     })
   }
 
+  def toggleTheSubjectsAside(): Unit = {
+    val subjectAsideToggle =
+      dom.document.getElementById("class-timetable-subject-aside-toggle-button").asInstanceOf[HTMLButtonElement]
+
+    subjectAsideToggle.addEventListener("click", (e: dom.Event) => {
+      val subjectAside = dom.document.getElementById("class-timetable-subject-aside").asInstanceOf[HTMLButtonElement]
+      subjectAside.style.display = "none"
+
+      val showSubjectsDiv = dom.document.getElementById("show-subjects-button-div").asInstanceOf[HTMLDivElement]
+      showSubjectsDiv.style.display = "block"
+      showSubjectsDiv.addEventListener("click", (e: dom.Event) => {
+        val subjectAside = dom.document.getElementById("class-timetable-subject-aside").asInstanceOf[HTMLButtonElement]
+        subjectAside.style.display = "block"
+        showSubjectsDiv.style.display = "none"
+      })
+
+    })
+  }
+
   def loadClassTimetableJavascript(): Unit = {
     calculateEndTimeFromNewEndTime()
     calculateEndTimeFromNewStartTime()
@@ -457,6 +477,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
     addListenerToAllSubjectButtons()
     modalButtonsBehaviour()
     saveCancelClearBehaviour()
+    toggleTheSubjectsAside()
   }
 
   def renderClassTimetable(): Unit = {
