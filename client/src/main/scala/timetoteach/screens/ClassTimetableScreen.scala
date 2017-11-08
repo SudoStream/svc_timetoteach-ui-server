@@ -4,7 +4,6 @@ import org.scalajs.dom
 import org.scalajs.dom.Event
 import org.scalajs.dom.raw._
 import shared.model.classtimetable._
-import timetoteach.screens.ClassTimetableScreen.renderClassTimetable
 
 import scala.scalajs.js
 import scala.scalajs.js.Dynamic.global
@@ -58,8 +57,6 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
           }
           val $ = js.Dynamic.global.$
           $("#addLessonsModal").modal("hide")
-          launchAddSubjectToEmptySessionModalEventListeners()
-          addEventListenerForSubjectButtonsAddedToTimetable()
           lastSelectedSubject = None
           if (longerClickSubjectSelected) {
             setDisableValueOnAllTimetableButtonsTo(false)
@@ -206,14 +203,19 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
         val dayContainerRow = getDayContainerRow(button)
         val currentSubjectSummary = dom.document.getElementById("subject-summary-in-timetable").asInstanceOf[HTMLDivElement]
         if (currentSubjectSummary != null) {
+          val $ = js.Dynamic.global.$
+          $("#subject-summary-in-timetable").collapse({
+            "toggle : false"
+          })
           dayContainerRow.removeChild(currentSubjectSummary)
         }
 
         val subjectSummaryAndOptions = createSubjectSummary(subjectCode, startTime, endTime, timetableSession, day)
-        dayContainerRow.appendChild(subjectSummaryAndOptions.render)
-        addRemoveBehaviour(getRemoveBehaviourTuple)
-        addOKSubjectBehaviour(getRemoveBehaviourTuple)
-
+        if (getRemoveBehaviourTuple.isDefined) {
+          dayContainerRow.appendChild(subjectSummaryAndOptions.render)
+          addRemoveBehaviour(getRemoveBehaviourTuple)
+          addOKSubjectBehaviour(getRemoveBehaviourTuple)
+        }
         global.console.log(s"Subject: $subjectCode\n" +
           s"Start Time: $startTime\n" +
           s"End Time: $endTime\n" +
@@ -249,7 +251,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
     } {
       val removeSubjectButton = dom.document.getElementById("ok-update-for-timetable-button").asInstanceOf[HTMLButtonElement]
       removeSubjectButton.addEventListener("click", (e: dom.Event) => {
-        global.console.log("hi")
+        global.console.log("We just pressed OK")
         dom.document.getElementById("subject-summary-in-timetable").asInstanceOf[HTMLButtonElement].style.display = "none"
       })
     }

@@ -54,7 +54,6 @@ trait ClassTimetableScreenHtmlGenerator {
 
   def generateHtmlForClassTimetable(classTimetable: ClassTimetable): String = {
     val sortedDays = classTimetable.allSessionsOfTheWeekInOrderByDay.keys.toList.sortBy(day => day.ordinalNumber)
-    global.console.log(s"Actually Trying to remove : Andy B : ${sortedDays.toString()}")
     val html = sortedDays.map {
       day =>
         val dayOfTheWeekRowContainer = div(`class` := "row dayoftheweek-row align-items-center")
@@ -128,7 +127,21 @@ trait ClassTimetableScreenHtmlGenerator {
 
     SessionOfTheWeek.createSessionOfTheWeek(dayOfWeek, session) match {
       case Some(sessionOfTheWeek) =>
-        removeBehaviourTuple = Some((subjectDetail, sessionOfTheWeek))
+        val proposedRemoveBehaviourTuple = (subjectDetail, sessionOfTheWeek)
+        global.console.log(
+            s"current removeBehaviourTuple: ${removeBehaviourTuple.toString}\n" +
+            s"proposed removeBehaviourTuple: ${proposedRemoveBehaviourTuple.toString}\n"
+        )
+
+        removeBehaviourTuple match {
+          case Some(currentValueOfBehaviour) =>
+            if ( currentValueOfBehaviour != proposedRemoveBehaviourTuple) {
+              removeBehaviourTuple = Some(proposedRemoveBehaviourTuple)
+            } else {
+              removeBehaviourTuple = None
+            }
+          case None => removeBehaviourTuple = Some(proposedRemoveBehaviourTuple)
+        }
       case None => global.console.error(s"Could not create session of week from ${dayOfWeek.value} & ${session.value}")
     }
 
