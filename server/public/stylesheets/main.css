@@ -364,6 +364,15 @@ img {
     float: right;
 }
 
+.clear-cancel-save-buttons a {
+    color: white;
+}
+
+.clear-cancel-save-buttons a:link {
+    color: white;
+    text-decoration:  none;
+}
+
 @media screen and ( min-width: 991px) {
     .feature-content {
         display: flex;
