@@ -1,14 +1,23 @@
 package timetoteach.screens
 
-import org.scalajs.dom.Node
-import shared.model.classtimetable.{ClassTimetable, SessionBreakdown}
+import java.time.LocalTime
 
-import scalatags.Text
-import scalatags.Text.all._
+import org.scalajs.dom.html.{Button, Div}
+import shared.model.classtimetable._
+import shared.util.LocalTimeUtil
 
-object ClassTimetableScreenHtmlGenerator {
+import scala.scalajs.js.Dynamic.global
+import scalatags.JsDom
+import scalatags.JsDom.all.{p, _}
 
-  def generateSubjectButtons(breakdown: SessionBreakdown): List[Text.TypedTag[String]] = {
+trait ClassTimetableScreenHtmlGenerator {
+
+  private var removeBehaviourTuple: Option[(SubjectDetail, SessionOfTheWeek)] = None
+  def getRemoveBehaviourTuple: Option[(SubjectDetail, SessionOfTheWeek)] = removeBehaviourTuple
+
+  def getClassTimetable: ClassTimetable
+
+  def generateSubjectButtons(breakdown: SessionBreakdown): List[JsDom.TypedTag[Button]] = {
     val buttons = breakdown.subjectsWithTimeFractionInTwelves.map {
       entry =>
         val subjectCode = entry._1.subject.value
@@ -32,7 +41,11 @@ object ClassTimetableScreenHtmlGenerator {
             attr("data-day-of-the-week") := dayOfWeek,
             attr("data-subject-code") := subjectCode,
             attr("data-lesson-start-time") := startTime,
-            attr("data-lesson-end-time") := endTime
+            attr("data-lesson-end-time") := endTime,
+            attr("data-toggle") := "collapse",
+            attr("data-target") := "#subject-summary-in-timetable",
+            attr("aria-expanded") := "false",
+            attr("aria-controls") := "subject-summary-in-timetable"
           )(smallStartTime, smallEndTime, br, p(`class` := "clear-both", entry._1.subject.niceValue))
         }
     }
@@ -72,7 +85,7 @@ object ClassTimetableScreenHtmlGenerator {
               subjectButtonsForAfternoon
             )
           )
-        ).render
+        ).toString
     }
 
     html.mkString
@@ -82,14 +95,49 @@ object ClassTimetableScreenHtmlGenerator {
                            startTime: String,
                            endTime: String,
                            timetableSession: String,
-                           day: String): Text.TypedTag[String] = {
-    div(
-      p(s"subject: $subjectCode"),
-      p(s"startTime: $startTime"),
-      p(s"endTime: $endTime"),
-      p(s"timetableSession: $timetableSession"),
-      p(s"day: $day")
+                           day: String): JsDom.TypedTag[Div] = {
+
+    val dayOfWeek = DayOfWeek(day)
+    val session = Session(timetableSession)
+
+    val subjectSummary = div(
+      `class` := "collapse",
+      id := "subject-summary-in-timetable",
+      div(`class` := "card-header")(
+        h4(`class` := "card-title subject-name-title", SubjectName(subjectCode).niceValue)
+      ),
+      div(
+        `class` := "card card-body",
+        label(`for` := "input-for-subheading", "Subheading"),
+        input(id := "input-for-subheading", `type` := "text")
+      ),
+      div(
+        `class` := "card-footer text-muted",
+        button(id := "remove-lesson-from-timetable-button", `class` := "btn btn-outline-dark")("Remove Lesson"),
+        button(id := "ok-update-for-timetable-button", `class` := "btn btn-outline-success")("Ok")
+      )
     )
+
+    val startTimeAsLocalTime = LocalTimeUtil.convertStringTimeToLocalTime(startTime).getOrElse(LocalTime.MIDNIGHT)
+    val endTimeAsLocalTime = LocalTimeUtil.convertStringTimeToLocalTime(endTime).getOrElse(LocalTime.MIDNIGHT)
+
+    val subjectDetail = SubjectDetail(
+      SubjectName(subjectCode),
+      TimeSlot(startTimeAsLocalTime, endTimeAsLocalTime)
+    )
+
+    SessionOfTheWeek.createSessionOfTheWeek(dayOfWeek, session) match {
+      case Some(sessionOfTheWeek) =>
+        removeBehaviourTuple = Some((subjectDetail, sessionOfTheWeek))
+      case None => global.console.error(s"Could not create session of week from ${dayOfWeek.value} & ${session.value}")
+    }
+
+    subjectSummary
+  }
+
+
+  def addUpdateBehaviour(): Unit = {
+
   }
 
 }

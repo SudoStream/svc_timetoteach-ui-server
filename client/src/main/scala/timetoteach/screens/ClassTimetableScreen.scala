@@ -8,9 +8,10 @@ import shared.model.classtimetable._
 import scala.scalajs.js
 import scala.scalajs.js.Dynamic.global
 
-object ClassTimetableScreen {
+object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
 
   var classTimetable: ClassTimetable = ClassTimetable(None)
+  override def getClassTimetable: ClassTimetable = classTimetable
 
   var currentlySelectedSession: Option[Session] = None
   var currentlySelectedSubject: Option[SubjectName] = None
@@ -202,11 +203,13 @@ object ClassTimetableScreen {
         val endTime = button.getAttribute("data-lesson-end-time")
 
         // TODO: 1 Create a div showing the subject details, with REMOVE option, ADD/EDIT SUBHEADING
-        val subjectSummaryAndOptions = ClassTimetableScreenHtmlGenerator.createSubjectSummary(subjectCode, startTime, endTime, timetableSession, day)
+        val subjectSummaryAndOptions = createSubjectSummary(subjectCode, startTime, endTime, timetableSession, day)
         // TODO: 2 Toggle it
         val dayContainerRow = getDayContainerRow(button)
 
-//        dayContainerRow.appendChild(subjectSummaryAndOptions)
+        dayContainerRow.appendChild(subjectSummaryAndOptions.render)
+
+        addRemoveBehaviour(getRemoveBehaviourTuple)
 
         global.console.log(s"Subject: $subjectCode\n" +
           s"Start Time: $startTime\n" +
@@ -220,6 +223,21 @@ object ClassTimetableScreen {
       index = index + 1
     }
 
+  }
+
+  def addRemoveBehaviour(maybeRemoveBehaviour: Option[(SubjectDetail, SessionOfTheWeek)]): Unit = {
+    for {
+      removeBehaviour <- maybeRemoveBehaviour
+      subjectToRemove = removeBehaviour._1
+      sessionOfTheWeek = removeBehaviour._2
+    } {
+      val removeSubjectButton = dom.document.getElementById("remove-lesson-from-timetable-button").asInstanceOf[HTMLButtonElement]
+      removeSubjectButton.addEventListener("click", (e: dom.Event) => {
+        val removedOkay = getClassTimetable.removeSubject(subjectToRemove, sessionOfTheWeek)
+        renderClassTimetable()
+
+      })
+    }
   }
 
   def addEventListenerToDragstart(): Unit = {
@@ -248,7 +266,7 @@ object ClassTimetableScreen {
     val nodeListSize = timetableSlotButtons.length
     var index = 0
     while (index < nodeListSize) {
-      global.console.log(s"Deactivating button ${isDisabled}")
+      global.console.log(s"Deactivating button $isDisabled")
       val button = timetableSlotButtons(index).asInstanceOf[HTMLButtonElement]
       button.disabled = isDisabled
       button.style.borderColor = if (isDisabled) "lightgrey" else "yellow"
@@ -433,9 +451,11 @@ object ClassTimetableScreen {
   }
 
   def renderClassTimetable(): Unit = {
-    val theDaysSubjectsAsHtml = ClassTimetableScreenHtmlGenerator.generateHtmlForClassTimetable(classTimetable)
+    val theDaysSubjectsAsHtml = generateHtmlForClassTimetable(classTimetable)
     val allTheDaysDiv = dom.document.getElementById("all-the-days-rows").asInstanceOf[HTMLDivElement]
     allTheDaysDiv.innerHTML = theDaysSubjectsAsHtml
+    launchAddSubjectToEmptySessionModalEventListeners()
+    addEventListenerForSubjectButtonsAddedToTimetable()
   }
 
 }

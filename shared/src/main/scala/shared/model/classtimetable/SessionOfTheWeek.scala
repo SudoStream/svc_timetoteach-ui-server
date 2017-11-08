@@ -44,6 +44,7 @@ trait SessionOfTheWeek {
   def valueWithoutDay: String = {
     value.split("-").tail.mkString("-")
   }
+
 }
 
 sealed case class MondayEarlyMorningSession() extends SessionOfTheWeek {

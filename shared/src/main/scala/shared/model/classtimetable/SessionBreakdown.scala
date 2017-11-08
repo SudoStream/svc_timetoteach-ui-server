@@ -149,7 +149,7 @@ case class SessionBreakdown(sessionOfTheWeek: SessionOfTheWeek, startTime: Local
   def removeSubject(subjectDetail: SubjectDetail): Boolean = {
     if (subjectsInSession.contains(subjectDetail)) {
       subjectsInSession = subjectsInSession.filterNot(_.equals(subjectDetail))
-      subjectsInSession.contains(subjectDetail)
+      !subjectsInSession.contains(subjectDetail)
     } else {
       false
     }

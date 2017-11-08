@@ -10,4 +10,8 @@ object Sessions {
 
 case class Session(value: String) {
   require(Sessions.values.count(_ == value) == 1)
+
+  def niceValue: String = {
+    value.split("-").map(_.capitalize).mkString(" ")
+  }
 }

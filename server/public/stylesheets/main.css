@@ -332,12 +332,14 @@ img {
     font-size: xx-small;
     float: left;
     line-height: 5px;
+    color: #393969;
 }
 
 .non-empty-subject .lesson-end-time {
     font-size: xx-small;
     float: right;
     line-height: 5px;
+    color: #393969;
 }
 
 .small-close {
@@ -346,6 +348,15 @@ img {
 
 .clear-both {
     clear: both;
+}
+
+#subject-summary-in-timetable {
+    margin-top: 2rem;
+    margin-left: 2rem;
+}
+
+.subject-name-title {
+    margin-top: 1rem;
 }
 
 @media screen and ( min-width: 991px) {
