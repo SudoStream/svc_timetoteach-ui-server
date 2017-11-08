@@ -355,6 +355,11 @@ img {
     margin-left: 2rem;
 }
 
+#subject-summary-in-timetable .card-header,
+#subject-summary-in-timetable .card-footer {
+    background: rgba(0, 0, 0, 0.07);
+}
+
 .subject-name-title {
     margin-top: 1rem;
 }
@@ -392,7 +397,7 @@ img {
 
 .clear-cancel-save-buttons a:link {
     color: white;
-    text-decoration:  none;
+    text-decoration: none;
 }
 
 @media screen and ( min-width: 991px) {
