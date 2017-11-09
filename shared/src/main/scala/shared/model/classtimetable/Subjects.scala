@@ -16,7 +16,11 @@ object Subjects {
     "subject-writing",
     "subject-maths",
     "subject-topic",
-    "subject-physical-education"
+    "subject-physical-education",
+    "subject-soft-start",
+    "subject-numeracy",
+    "subject-art",
+    "subject-rme"
   )
 }
 
@@ -28,6 +32,7 @@ case class SubjectName(value: String) {
       case "subject-physical-education" => "PE"
       case "subject-topic" => "IDL"
       case "subject-ict" => "ICT"
+      case "subject-rme" => "RME"
       case otherValue: String => otherValue
     }
 
