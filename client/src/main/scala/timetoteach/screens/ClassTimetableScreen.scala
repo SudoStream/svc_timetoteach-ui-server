@@ -123,23 +123,22 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
   def fillAsMuchAsPossibleOfSession() : Unit = {
     val oneThirdFillSubjectButton = dom.document.getElementById("fill-rest-session-button").asInstanceOf[HTMLButtonElement]
     oneThirdFillSubjectButton.addEventListener("click", (e: dom.Event) => {
-      addingSubjectGeneralBehaviour(AsMuchAsPossible())
+      addingSubjectGeneralBehaviour(Right(AsMuchAsPossible()))
     })
   }
 
-  private def addingSubjectGeneralBehaviour(fraction: Fraction) = {
+  case class AsMuchAsPossible()
+
+  private def addingSubjectGeneralBehaviour(eitherFractionOrAsMuchAsPossible: Either[Fraction, AsMuchAsPossible]) = {
     val maybeSessionOfTheWeek: Option[SessionOfTheWeek] = extractSelectedSessionOfTheWeek
     val maybeSubjectSession = for {
       sessionOfTheWeek <- maybeSessionOfTheWeek
       sessionTimeSlot <- classTimetable.getTimeSlotForSession(sessionOfTheWeek)
       selectedSubject <- lastSelectedSubject
-
-      timeSlot <- if ( fraction.isInstanceOf[AsMuchAsPossible] ) {
-        classTimetable.getFirstAvailableTimeSlot(maybeSessionOfTheWeek)
-      } else {
-        classTimetable.getFirstAvailableTimeSlot(sessionOfTheWeek, fraction)
+      timeSlot <-  eitherFractionOrAsMuchAsPossible match {
+        case Right(asMuchAsPoss) =>   classTimetable.getFirstAvailableTimeSlot(maybeSessionOfTheWeek)
+        case Left(fraction) =>classTimetable.getFirstAvailableTimeSlot(sessionOfTheWeek, fraction)
       }
-
       subjectDetail = SubjectDetail(selectedSubject, timeSlot)
     } yield (subjectDetail, sessionOfTheWeek)
 
@@ -166,7 +165,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
 
   def addSubjectToPartlyFillSession(): Unit = {
     def fractionBehaviourForButton(fraction: Fraction) = {
-      addingSubjectGeneralBehaviour(fraction)
+      addingSubjectGeneralBehaviour(Left(fraction))
     }
 
     val oneThirdFillSubjectButton = dom.document.getElementById("add-subject-to-one-third-session-button").asInstanceOf[HTMLButtonElement]
