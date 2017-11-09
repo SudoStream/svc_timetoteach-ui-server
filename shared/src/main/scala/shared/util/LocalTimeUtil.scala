@@ -22,4 +22,11 @@ object LocalTimeUtil {
     }
   }
 
+  def get12HourAmPmFromLocalTime(time: LocalTime) : String = {
+    val hours = if ( time.getHour > 12 ) time.getHour - 12 else time.getHour
+    val minutes = if ( time.getMinute >= 10 ) time.getMinute else "0" + time.getMinute.toString
+    val amOrPm = if ( time.getHour >= 12 ) "PM" else "AM"
+    s"$hours:$minutes $amOrPm"
+  }
+
 }

@@ -15,7 +15,7 @@ class LocalTimeUtilTest extends FunSpec {
     it("should return a LocalTime of 9:18)") {
       val time = LocalTimeUtil.convertStringTimeToLocalTime("09:18")
       assert(time.isDefined)
-      assert(time.get.equals(LocalTime.of(9,18)))
+      assert(time.get.equals(LocalTime.of(9, 18)))
     }
   }
   describe("Given a string of 'hello' LocalTimeUtil") {
@@ -28,6 +28,24 @@ class LocalTimeUtilTest extends FunSpec {
       assert(time.isEmpty)
     }
 
+  }
+  describe("Given a LocalTime of 9:18 get12HourAmPmFromLocalTime") {
+    it("should return a value of '9:18 AM'") {
+      val timeString = LocalTimeUtil.get12HourAmPmFromLocalTime(LocalTime.of(9,18))
+      assert(timeString == "9:18 AM")
+    }
+  }
+  describe("Given a LocalTime of 15:42 get12HourAmPmFromLocalTime") {
+    it("should return a value of '3:42 PM'") {
+      val timeString = LocalTimeUtil.get12HourAmPmFromLocalTime(LocalTime.of(15,42))
+      assert(timeString == "3:42 PM")
+    }
+  }
+  describe("Given a LocalTime of 12:00 get12HourAmPmFromLocalTime") {
+    it("should return a value of '12:00 PM'") {
+      val timeString = LocalTimeUtil.get12HourAmPmFromLocalTime(LocalTime.of(12,0))
+      assert(timeString == "12:00 PM")
+    }
   }
 
 }
