@@ -148,6 +148,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
 
     maybeSubjectDetailAndSessionOfTheWeek match {
       case Some(subjectDetailAndSessionOfTheWeek) =>
+        global.console.log(s"subjectDetailAndSessionOfTheWeek: ${subjectDetailAndSessionOfTheWeek.toString}")
         if (classTimetable.addSubject(subjectDetailAndSessionOfTheWeek._1, subjectDetailAndSessionOfTheWeek._2)) {
           renderClassTimetable()
         } else {

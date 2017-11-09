@@ -74,7 +74,9 @@ case class SessionBreakdown(sessionOfTheWeek: SessionOfTheWeek, startTime: Local
   private def reevaluateEmptySpace(): Unit = {
     if (!isEmpty) {
       val subjectsWithoutEmpty: mutable.ListBuffer[SubjectDetail] = subjectsInSession.filterNot(_.subject.value == SUBJECT_EMPTY)
+      println(s"reevaluateEmptySpace subjectsWithoutEmpty: ${subjectsWithoutEmpty.toString}")
       val emptyTimePeriodsInSession: List[(LocalTime, LocalTime)] = getEmptyTimePeriodsInGivenSession(subjectsWithoutEmpty)
+      println(s"reevaluateEmptySpace emptyTimePeriodsInSession: ${emptyTimePeriodsInSession.toString}")
       for (emptyPeriod <- emptyTimePeriodsInSession) {
         subjectsWithoutEmpty += SubjectDetail(SubjectName(SUBJECT_EMPTY), TimeSlot(emptyPeriod._1, emptyPeriod._2))
       }
@@ -84,6 +86,7 @@ case class SessionBreakdown(sessionOfTheWeek: SessionOfTheWeek, startTime: Local
 
   private def addSubjectToSession(subjectDetail: SubjectDetail): Unit = {
     subjectsInSession += subjectDetail
+    subjectsInSession = subjectsInSession.sortBy(_.timeSlot.startTime)
     reevaluateEmptySpace()
   }
 
@@ -100,19 +103,20 @@ case class SessionBreakdown(sessionOfTheWeek: SessionOfTheWeek, startTime: Local
   private def canAddSubjectWithinRequestedTimes(proposedTimeSlot: TimeSlot): Boolean = {
     val subjectsWithoutEmpty = subjectsInSession.filterNot(_.subject.value == SUBJECT_EMPTY)
     val emptyTimePeriodsInSession = getEmptyTimePeriodsInGivenSession(subjectsWithoutEmpty)
-    val poptentialEmptyPeriodsThatMatch: Seq[Option[(LocalTime, LocalTime)]] = for {
-      emptyPeriod <- emptyTimePeriodsInSession
+    val poptentialEmptyPeriodsThatMatch: Seq[Option[(LocalTime, LocalTime)]] =
+      for {
+        emptyPeriod <- emptyTimePeriodsInSession
 
-      validEmptyPeriod = if ((emptyPeriod._1.isBefore(proposedTimeSlot.startTime) || emptyPeriod._1.equals(proposedTimeSlot.startTime))
-        &&
-        (emptyPeriod._2.isAfter(proposedTimeSlot.endTime) || emptyPeriod._2.equals(proposedTimeSlot.endTime))
-      ) {
-        Some(emptyPeriod)
-      } else {
+        validEmptyPeriod = if ((emptyPeriod._1.isBefore(proposedTimeSlot.startTime) || emptyPeriod._1.equals(proposedTimeSlot.startTime))
+          &&
+          (emptyPeriod._2.isAfter(proposedTimeSlot.endTime) || emptyPeriod._2.equals(proposedTimeSlot.endTime))
+        ) {
+          Some(emptyPeriod)
+        } else {
 
-        None
-      }
-    } yield validEmptyPeriod
+          None
+        }
+      } yield validEmptyPeriod
 
     poptentialEmptyPeriodsThatMatch.count(_.isDefined) == 1
   }

@@ -494,4 +494,27 @@ class SessionBreakdownTest extends FunSpec {
     }
   }
 
+  describe("Maths is added to a middle slot then p.e. attempted to add before this") {
+    it("should allow the addition with no empty space between") {
+      val sessionBreakdown = SessionBreakdown(MondayLateMorningSession(), LocalTime.of(10, 45), LocalTime.of(12, 0))
+      val mathsTimeSlot = TimeSlot(LocalTime.of(11,0), LocalTime.of(11,30))
+      val mathsAddedOkay = sessionBreakdown.addSubject(
+        SubjectDetail(SubjectName("subject-maths"), mathsTimeSlot)
+      )
+      assert(mathsAddedOkay)
+
+      val peTimeSlot = TimeSlot(LocalTime.of(10,45), LocalTime.of(11,0))
+      val peAddedOkay = sessionBreakdown.addSubject(
+        SubjectDetail(SubjectName("subject-physical-education"), peTimeSlot)
+      )
+      assert(peAddedOkay)
+
+      println(s"subjects in 12s = ${sessionBreakdown.subjectsWithTimeFractionInTwelves.toString()}")
+
+      val emptyPerdiods = sessionBreakdown.getEmptyTimePeriodsAvailable
+      println(s"Empty Periods = ${emptyPerdiods.toString}")
+      assert(emptyPerdiods.size == 1)
+    }
+  }
+
 }
