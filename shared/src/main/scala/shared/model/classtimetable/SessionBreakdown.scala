@@ -18,7 +18,7 @@ case class SessionBreakdown(sessionOfTheWeek: SessionOfTheWeek, startTime: Local
   }
 
   def getFirstEmptyTimePeriodAvailable: Option[TimeSlot] = {
-    val allEmptyPeriods = getEmptyTimePeriodsAvailable
+    val allEmptyPeriods = getEmptyTimePeriodsAvailable.sortBy(_._1)
     if (allEmptyPeriods.nonEmpty) {
       val timeSlot = TimeSlot(allEmptyPeriods.head._1, allEmptyPeriods.head._2)
       Some(timeSlot)

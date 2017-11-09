@@ -135,7 +135,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
 
   private def addingSubjectGeneralBehaviour(eitherFractionOrAsMuchAsPossible: Either[Fraction, AsMuchAsPossible]) = {
     val maybeSessionOfTheWeek: Option[SessionOfTheWeek] = extractSelectedSessionOfTheWeek
-    val maybeSubjectSession = for {
+    val maybeSubjectDetailAndSessionOfTheWeek = for {
       sessionOfTheWeek <- maybeSessionOfTheWeek
       sessionTimeSlot <- classTimetable.getTimeSlotForSession(sessionOfTheWeek)
       selectedSubject <- lastSelectedSubject
@@ -146,9 +146,9 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
       subjectDetail = SubjectDetail(selectedSubject, timeSlot)
     } yield (subjectDetail, sessionOfTheWeek)
 
-    maybeSubjectSession match {
-      case Some(subjectSession) =>
-        if (classTimetable.addSubject(subjectSession._1, subjectSession._2)) {
+    maybeSubjectDetailAndSessionOfTheWeek match {
+      case Some(subjectDetailAndSessionOfTheWeek) =>
+        if (classTimetable.addSubject(subjectDetailAndSessionOfTheWeek._1, subjectDetailAndSessionOfTheWeek._2)) {
           renderClassTimetable()
         } else {
           global.alert("Not enough space to add subject")
@@ -391,7 +391,6 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
     val nodeListSize = timetableSlotButtons.length
     var index = 0
     while (index < nodeListSize) {
-      global.console.log(s"Deactivating button $isDisabled")
       val button = timetableSlotButtons(index).asInstanceOf[HTMLButtonElement]
       button.disabled = isDisabled
       button.style.borderColor = if (isDisabled) "lightgrey" else "yellow"
