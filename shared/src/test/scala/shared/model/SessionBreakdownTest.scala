@@ -470,4 +470,28 @@ class SessionBreakdownTest extends FunSpec {
     }
   }
 
+  describe("A subject added with timeslot *before* session") {
+    it("should not be allowed to add") {
+      val sessionBreakdown = SessionBreakdown(MondayLateMorningSession(), LocalTime.of(10, 45), LocalTime.of(12, 0))
+      val timeSlot = TimeSlot(LocalTime.of(10,40), LocalTime.of(11,30))
+
+      val addedOkay = sessionBreakdown.addSubject(
+        SubjectDetail(SubjectName("subject-maths"), timeSlot)
+      )
+      assert(!addedOkay)
+    }
+  }
+
+  describe("A subject added with timeslot *after* session") {
+    it("should not be allowed to add") {
+      val sessionBreakdown = SessionBreakdown(MondayLateMorningSession(), LocalTime.of(10, 45), LocalTime.of(12, 0))
+      val timeSlot = TimeSlot(LocalTime.of(11,40), LocalTime.of(12,5))
+
+      val addedOkay = sessionBreakdown.addSubject(
+        SubjectDetail(SubjectName("subject-maths"), timeSlot)
+      )
+      assert(!addedOkay)
+    }
+  }
+
 }
