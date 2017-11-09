@@ -120,6 +120,42 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
     })
   }
 
+  def fillAsMuchAsPossibleOfSession() : Unit = {
+    val oneThirdFillSubjectButton = dom.document.getElementById("fill-rest-session-button").asInstanceOf[HTMLButtonElement]
+    oneThirdFillSubjectButton.addEventListener("click", (e: dom.Event) => {
+      val maybeSessionOfTheWeek: Option[SessionOfTheWeek] = extractSelectedSessionOfTheWeek
+      val maybeSubjectSession = for {
+        sessionOfTheWeek <- maybeSessionOfTheWeek
+        sessionTimeSlot <- classTimetable.getTimeSlotForSession(sessionOfTheWeek)
+        selectedSubject <- lastSelectedSubject
+        timeSlot <- classTimetable.getFirstAvailableTimeSlot(maybeSessionOfTheWeek)
+        subjectDetail = SubjectDetail(selectedSubject, timeSlot)
+      } yield (subjectDetail, sessionOfTheWeek)
+
+      maybeSubjectSession match {
+        case Some(subjectSession) =>
+          if (classTimetable.addSubject(subjectSession._1, subjectSession._2)) {
+            renderClassTimetable()
+          } else {
+            global.alert("Not enough space to add subject")
+          }
+          val $ = js.Dynamic.global.$
+          $("#addLessonsModal").modal("hide")
+          lastSelectedSubject = None
+          if (longerClickSubjectSelected) {
+            setDisableValueOnAllTimetableButtonsTo(false)
+          } else {
+            setDisableValueOnAllTimetableButtonsTo(true)
+          }
+        case None =>
+          global.alert("Unable to add subject to session")
+          global.console.error(s"Error adding subject to session")
+      }
+
+    })
+
+  }
+
   def addSubjectToPartlyFillSession(): Unit = {
     def fractionBehaviourForButton(fraction: Fraction) = {
       val maybeSessionOfTheWeek: Option[SessionOfTheWeek] = extractSelectedSessionOfTheWeek
@@ -181,6 +217,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
     theSessionOfTheWeek
   }
   def modalButtonsBehaviour(): Unit = {
+    fillAsMuchAsPossibleOfSession()
     addSubjectToPartlyFillSession()
   }
 
