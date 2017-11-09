@@ -123,69 +123,50 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
   def fillAsMuchAsPossibleOfSession() : Unit = {
     val oneThirdFillSubjectButton = dom.document.getElementById("fill-rest-session-button").asInstanceOf[HTMLButtonElement]
     oneThirdFillSubjectButton.addEventListener("click", (e: dom.Event) => {
-      val maybeSessionOfTheWeek: Option[SessionOfTheWeek] = extractSelectedSessionOfTheWeek
-      val maybeSubjectSession = for {
-        sessionOfTheWeek <- maybeSessionOfTheWeek
-        sessionTimeSlot <- classTimetable.getTimeSlotForSession(sessionOfTheWeek)
-        selectedSubject <- lastSelectedSubject
-        timeSlot <- classTimetable.getFirstAvailableTimeSlot(maybeSessionOfTheWeek)
-        subjectDetail = SubjectDetail(selectedSubject, timeSlot)
-      } yield (subjectDetail, sessionOfTheWeek)
+      addingSubjectGeneralBehaviour(AsMuchAsPossible())
+    })
+  }
 
-      maybeSubjectSession match {
-        case Some(subjectSession) =>
-          if (classTimetable.addSubject(subjectSession._1, subjectSession._2)) {
-            renderClassTimetable()
-          } else {
-            global.alert("Not enough space to add subject")
-          }
-          val $ = js.Dynamic.global.$
-          $("#addLessonsModal").modal("hide")
-          lastSelectedSubject = None
-          if (longerClickSubjectSelected) {
-            setDisableValueOnAllTimetableButtonsTo(false)
-          } else {
-            setDisableValueOnAllTimetableButtonsTo(true)
-          }
-        case None =>
-          global.alert("Unable to add subject to session")
-          global.console.error(s"Error adding subject to session")
+  private def addingSubjectGeneralBehaviour(fraction: Fraction) = {
+    val maybeSessionOfTheWeek: Option[SessionOfTheWeek] = extractSelectedSessionOfTheWeek
+    val maybeSubjectSession = for {
+      sessionOfTheWeek <- maybeSessionOfTheWeek
+      sessionTimeSlot <- classTimetable.getTimeSlotForSession(sessionOfTheWeek)
+      selectedSubject <- lastSelectedSubject
+
+      timeSlot <- if ( fraction.isInstanceOf[AsMuchAsPossible] ) {
+        classTimetable.getFirstAvailableTimeSlot(maybeSessionOfTheWeek)
+      } else {
+        classTimetable.getFirstAvailableTimeSlot(sessionOfTheWeek, fraction)
       }
 
-    })
+      subjectDetail = SubjectDetail(selectedSubject, timeSlot)
+    } yield (subjectDetail, sessionOfTheWeek)
 
+    maybeSubjectSession match {
+      case Some(subjectSession) =>
+        if (classTimetable.addSubject(subjectSession._1, subjectSession._2)) {
+          renderClassTimetable()
+        } else {
+          global.alert("Not enough space to add subject")
+        }
+        val $ = js.Dynamic.global.$
+        $("#addLessonsModal").modal("hide")
+        lastSelectedSubject = None
+        if (longerClickSubjectSelected) {
+          setDisableValueOnAllTimetableButtonsTo(false)
+        } else {
+          setDisableValueOnAllTimetableButtonsTo(true)
+        }
+      case None =>
+        global.alert("Unable to add subject to session")
+        global.console.error(s"Error adding subject to session")
+    }
   }
 
   def addSubjectToPartlyFillSession(): Unit = {
     def fractionBehaviourForButton(fraction: Fraction) = {
-      val maybeSessionOfTheWeek: Option[SessionOfTheWeek] = extractSelectedSessionOfTheWeek
-      val maybeSubjectSession = for {
-        sessionOfTheWeek <- maybeSessionOfTheWeek
-        sessionTimeSlot <- classTimetable.getTimeSlotForSession(sessionOfTheWeek)
-        selectedSubject <- lastSelectedSubject
-        timeSlot <- classTimetable.getFirstAvailableTimeSlot(sessionOfTheWeek, fraction)
-        subjectDetail = SubjectDetail(selectedSubject, timeSlot)
-      } yield (subjectDetail, sessionOfTheWeek)
-
-      maybeSubjectSession match {
-        case Some(subjectSession) =>
-          if (classTimetable.addSubject(subjectSession._1, subjectSession._2)) {
-            renderClassTimetable()
-          } else {
-            global.alert("Not enough space to add subject")
-          }
-          val $ = js.Dynamic.global.$
-          $("#addLessonsModal").modal("hide")
-          lastSelectedSubject = None
-          if (longerClickSubjectSelected) {
-            setDisableValueOnAllTimetableButtonsTo(false)
-          } else {
-            setDisableValueOnAllTimetableButtonsTo(true)
-          }
-        case None =>
-          global.alert("Unable to add subject to session")
-          global.console.error(s"Error adding subject to session")
-      }
+      addingSubjectGeneralBehaviour(fraction)
     }
 
     val oneThirdFillSubjectButton = dom.document.getElementById("add-subject-to-one-third-session-button").asInstanceOf[HTMLButtonElement]

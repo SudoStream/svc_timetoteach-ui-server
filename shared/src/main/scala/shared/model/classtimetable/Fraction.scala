@@ -20,3 +20,6 @@ sealed case class TwoThirds() extends Fraction {
   override def multiplier: Double = 0.66
 }
 
+sealed case class AsMuchAsPossible() extends Fraction {
+  override def multiplier: Double = 1
+}
