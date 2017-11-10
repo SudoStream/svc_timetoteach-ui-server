@@ -421,6 +421,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
 
     classTimetable.editSubject(editedSubject, sessionOfTheWeek)
     dom.document.getElementById("subject-summary-in-timetable").asInstanceOf[HTMLButtonElement].style.display = "none"
+    setRemoveBehaviourTupleToNone()
     renderClassTimetable()
   }
   def addEventListenerToDragstart(): Unit = {
