@@ -67,5 +67,10 @@ lazy val shared = (crossProject.crossType(CrossType.Pure) in file("shared")).
 lazy val sharedJvm = shared.jvm
 lazy val sharedJs = shared.js
 
+lazy val mainProject =
+  (project in file("."))
+    .aggregate(client, timetoteach_ui_server, shared.jvm)
+
 // loads the server project at sbt startup
-onLoad in Global := (Command.process("project timetoteach_ui_server", _: State)) compose (onLoad in Global).value
+//onLoad in Global := mainProject compose (onLoad in Global).value
+//onLoad in Global := (Command.process("project timetoteach_ui_server", _: State)) compose (onLoad in Global).value
