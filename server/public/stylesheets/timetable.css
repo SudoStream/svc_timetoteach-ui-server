@@ -57,7 +57,7 @@
 }
 
 .subject {
-    min-height: 4rem;
+    height: 5rem;
     border-style: groove;
     border-color: lightgrey;
 }

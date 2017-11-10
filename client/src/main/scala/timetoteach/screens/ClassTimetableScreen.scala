@@ -52,6 +52,28 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
     setDecentTimesForPreciseModal()
   }
 
+  private def addAdditionalInfoToSubject(maybeOkBehaviour: Option[(SubjectDetail, SessionOfTheWeek)]): Unit = {
+    for {
+      okBehaviour <- maybeOkBehaviour
+      subjectSelected = okBehaviour._1
+      sessionOfTheWeek = okBehaviour._2
+    } {
+      val additionalInfoInput = dom.document.getElementById("input-for-additional-info").asInstanceOf[HTMLInputElement]
+      additionalInfoInput.addEventListener("keypress", (e: dom.Event) => {
+        e match {
+          case event: KeyboardEvent =>
+            if (event.keyCode == 13) {
+              updatedSubject(subjectSelected, sessionOfTheWeek)
+              setRemoveBehaviourTupleToNone()
+            }
+          case _ =>
+        }
+      })
+    }
+
+  }
+
+
   private def setDecentTimesForPreciseModal(): Unit = {
     for {
       subjectName <- this.lastSelectedSubject
@@ -207,7 +229,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
   }
 
   def launchAddSubjectToEmptySessionModalEventListeners(): Unit = {
-    def popupSubjectTimesModal(e: Event) = {
+    def popupSubjectTimesModal(e: Event): Unit = {
       e.preventDefault()
       e.currentTarget match {
         case buttonTarget: HTMLButtonElement =>
@@ -315,7 +337,28 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
           $("#subject-summary-in-timetable").collapse()
         }
 
-        val subjectSummaryAndOptions = createSubjectSummary(subjectCode, startTime, endTime, timetableSession, day)
+        val maybeTimeSlot = for {
+          startTimeAsLocal <- LocalTimeUtil.convertStringTimeToLocalTime(startTime)
+          endTimeAsLocal <- LocalTimeUtil.convertStringTimeToLocalTime(endTime)
+          timeSlot = TimeSlot(startTimeAsLocal, endTimeAsLocal)
+        } yield timeSlot
+
+        global.console.log(s"maybeTimeSlot := $maybeTimeSlot")
+
+        val maybeAdditionalInfo = for {
+          sessionOfTheWeek <- SessionOfTheWeek.createSessionOfTheWeek(DayOfWeek(day), Session(timetableSession))
+          timeSlot <- maybeTimeSlot
+          additionalInfo <- classTimetable.getAdditionalInfoForSubject(
+            SubjectDetail(SubjectName(subjectCode), timeSlot),
+            sessionOfTheWeek)
+        } yield additionalInfo
+
+        global.console.log(s"maybeAdditionalInfo := $maybeAdditionalInfo")
+
+        val subjectSummaryAndOptions = createSubjectSummary(subjectCode, startTime, endTime,
+          timetableSession, day,
+          maybeAdditionalInfo.getOrElse(""))
+
         if (getRemoveBehaviourTuple.isDefined) {
           if (currentSubjectSummary != null) {
             dayContainerRow.removeChild(currentSubjectSummary)
@@ -324,6 +367,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
         }
         addRemoveBehaviour(getRemoveBehaviourTuple)
         addOKSubjectBehaviour(getRemoveBehaviourTuple)
+        addAdditionalInfoToSubject(getRemoveBehaviourTuple)
 
         global.console.log(s"Subject: $subjectCode\n" +
           s"Start Time: $startTime\n" +
@@ -352,20 +396,33 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
     }
   }
 
-  def addOKSubjectBehaviour(maybeRemoveBehaviour: Option[(SubjectDetail, SessionOfTheWeek)]): Unit = {
+  def addOKSubjectBehaviour(maybeOkBehaviour: Option[(SubjectDetail, SessionOfTheWeek)]): Unit = {
     for {
-      removeBehaviour <- maybeRemoveBehaviour
-      subjectToRemove = removeBehaviour._1
-      sessionOfTheWeek = removeBehaviour._2
+      okBehaviour <- maybeOkBehaviour
+      subjectSelected = okBehaviour._1
+      sessionOfTheWeek = okBehaviour._2
     } {
-      val removeSubjectButton = dom.document.getElementById("ok-update-for-timetable-button").asInstanceOf[HTMLButtonElement]
-      removeSubjectButton.addEventListener("click", (e: dom.Event) => {
-        global.console.log("We just pressed OK")
-        dom.document.getElementById("subject-summary-in-timetable").asInstanceOf[HTMLButtonElement].style.display = "none"
+      val okSubjectButton = dom.document.getElementById("ok-update-for-timetable-button").asInstanceOf[HTMLButtonElement]
+      okSubjectButton.addEventListener("click", (e: dom.Event) => {
+        updatedSubject(subjectSelected, sessionOfTheWeek)
       })
     }
   }
 
+  private def updatedSubject(subjectSelected: SubjectDetail, sessionOfTheWeek: SessionOfTheWeek): Unit = {
+    val additionalInfo = dom.document.getElementById("input-for-additional-info").asInstanceOf[HTMLInputElement].value
+    global.console.log(s"Editing subject to have additional info: $additionalInfo")
+
+    val editedSubject = SubjectDetail(
+      subjectSelected.subject,
+      subjectSelected.timeSlot,
+      additionalInfo
+    )
+
+    classTimetable.editSubject(editedSubject, sessionOfTheWeek)
+    dom.document.getElementById("subject-summary-in-timetable").asInstanceOf[HTMLButtonElement].style.display = "none"
+    renderClassTimetable()
+  }
   def addEventListenerToDragstart(): Unit = {
     val timetableSubjectButtons = dom.document.getElementsByClassName("class-timetable-button")
     val nodeListSize = timetableSubjectButtons.length
@@ -442,7 +499,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
     }
   }
 
-  private def resetDiv(subjectDiv: HTMLDivElement) = {
+  private def resetDiv(subjectDiv: HTMLDivElement): Unit = {
     val parent = subjectDiv.parentNode.asInstanceOf[HTMLDivElement]
     parent.style.border = ""
     parent.style.paddingLeft = "15px"
@@ -453,7 +510,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
     subjectDiv.style.fontWeight = "normal"
     subjectDiv.style.fontSize = "medium"
   }
-  private def selectThisElement(subjectDiv: HTMLDivElement, justSelectedSubject: SubjectName) = {
+  private def selectThisElement(subjectDiv: HTMLDivElement, justSelectedSubject: SubjectName): Unit = {
 
     val parent = subjectDiv.parentNode.asInstanceOf[HTMLDivElement]
     parent.style.borderLeft = "5px solid #fcfc00"

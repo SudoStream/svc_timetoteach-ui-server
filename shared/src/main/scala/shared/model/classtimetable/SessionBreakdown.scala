@@ -90,6 +90,19 @@ case class SessionBreakdown(sessionOfTheWeek: SessionOfTheWeek, startTime: Local
     reevaluateEmptySpace()
   }
 
+  private def editSubjectToSession(subjectDetailToEdit: SubjectDetail): Boolean = {
+    val subjectExistsOnce = subjectsInSession.count(_ == subjectDetailToEdit)
+    if (subjectExistsOnce == 1) {
+      subjectsInSession = subjectsInSession.filterNot(_ == subjectDetailToEdit)
+      subjectsInSession += subjectDetailToEdit
+      subjectsInSession = subjectsInSession.sortBy(_.timeSlot.startTime)
+      reevaluateEmptySpace()
+      true
+    } else {
+      false
+    }
+  }
+
   addSubjectToSession(SubjectDetail(SubjectName(SUBJECT_EMPTY), TimeSlot(this.startTime, this.endTime)))
 
   def isEmpty: Boolean = {
@@ -174,6 +187,19 @@ case class SessionBreakdown(sessionOfTheWeek: SessionOfTheWeek, startTime: Local
     }
   }
 
+  def editSubject(subjectDetail: SubjectDetail): Boolean = {
+    editSubjectToSession(subjectDetail)
+  }
+
+  def getSubject(subjectDetail: SubjectDetail): Option[SubjectDetail] = {
+    val subjectsFound = subjectsInSession.filter(_ == subjectDetail)
+    if (subjectsFound.size == 1) {
+      Some(subjectsFound.head)
+    } else {
+      None
+    }
+  }
+
   def removeSubject(subjectDetail: SubjectDetail): Boolean = {
     if (subjectsInSession.contains(subjectDetail)) {
       subjectsInSession = subjectsInSession.filterNot(_.equals(subjectDetail))
@@ -221,7 +247,7 @@ case class SessionBreakdown(sessionOfTheWeek: SessionOfTheWeek, startTime: Local
       subject =>
         s"\t${subject.timeSlot.startTime.toString}-${subject.timeSlot.endTime.toString}: " +
           s"${subject.subject.value.replace("subject-", "").capitalize} " +
-          (if (subject.lessonSubHeading.nonEmpty) subject.lessonSubHeading else "") + "\n"
+          (if (subject.lessonAdditionalInfo.nonEmpty) subject.lessonAdditionalInfo else "") + "\n"
     }.mkString
     startTimeString + subjectsString + "------\n"
   }

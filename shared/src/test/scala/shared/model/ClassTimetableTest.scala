@@ -129,4 +129,17 @@ class ClassTimetableTest extends FunSpec with ClassTimetableTestHelper {
     }
   }
 
+  describe("Editing a current subject") {
+    it("should show the updated *additional info*") {
+      val classTimetable: ClassTimetable = ClassTimetable(None)
+      val mathsOnMonday = SubjectDetail(SubjectName("subject-maths"), TimeSlot(LocalTime.of(9, 30), LocalTime.of(9, 50)))
+      classTimetable.addSubject(mathsOnMonday, MondayEarlyMorningSession())
+
+      val mathsOnMondayWithAdditionalInfo = SubjectDetail(
+        mathsOnMonday.subject, mathsOnMonday.timeSlot, "This is additional info")
+
+      assert(classTimetable.editSubject(mathsOnMondayWithAdditionalInfo, MondayEarlyMorningSession()))
+    }
+  }
+
 }

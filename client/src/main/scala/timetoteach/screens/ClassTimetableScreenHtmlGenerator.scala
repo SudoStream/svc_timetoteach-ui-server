@@ -14,6 +14,7 @@ trait ClassTimetableScreenHtmlGenerator {
 
   private var removeBehaviourTuple: Option[(SubjectDetail, SessionOfTheWeek)] = None
   def getRemoveBehaviourTuple: Option[(SubjectDetail, SessionOfTheWeek)] = removeBehaviourTuple
+  def setRemoveBehaviourTupleToNone(): Unit = removeBehaviourTuple = None
 
   def getClassTimetable: ClassTimetable
 
@@ -46,7 +47,9 @@ trait ClassTimetableScreenHtmlGenerator {
             attr("data-target") := "#subject-summary-in-timetable",
             attr("aria-expanded") := "false",
             attr("aria-controls") := "subject-summary-in-timetable"
-          )(smallStartTime, smallEndTime, br, p(`class` := "clear-both", entry._1.subject.niceValue))
+          )(smallStartTime, smallEndTime, br, p(`class` := "clear-both subject-main-header", entry._1.subject.niceValue),
+            p(`class` := "subject-additional-info rounded mx-auto text-center", entry._1.lessonAdditionalInfo)
+          )
         }
     }
     buttons
@@ -94,7 +97,9 @@ trait ClassTimetableScreenHtmlGenerator {
                            startTime: String,
                            endTime: String,
                            timetableSession: String,
-                           day: String): JsDom.TypedTag[Div] = {
+                           day: String,
+                           currentAdditionalInfoValue: String
+                          ): JsDom.TypedTag[Div] = {
 
     val dayOfWeek = DayOfWeek(day)
     val session = Session(timetableSession)
@@ -107,8 +112,8 @@ trait ClassTimetableScreenHtmlGenerator {
       ),
       div(
         `class` := "card card-body",
-        label(`for` := "input-for-subheading", "Additional Info"),
-        input(id := "input-for-subheading", `type` := "text")
+        label(`for` := "input-for-additional-info", "Additional Info"),
+        input(id := "input-for-additional-info", `type` := "text", autofocus := true, value:= currentAdditionalInfoValue)
       ),
       div(
         `class` := "card-footer text-muted",
@@ -122,7 +127,8 @@ trait ClassTimetableScreenHtmlGenerator {
 
     val subjectDetail = SubjectDetail(
       SubjectName(subjectCode),
-      TimeSlot(startTimeAsLocalTime, endTimeAsLocalTime)
+      TimeSlot(startTimeAsLocalTime, endTimeAsLocalTime),
+      currentAdditionalInfoValue
     )
 
     SessionOfTheWeek.createSessionOfTheWeek(dayOfWeek, session) match {

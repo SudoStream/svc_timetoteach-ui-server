@@ -3,12 +3,12 @@
 /* ================= */
 
 .subject-numeracy {
-    background-color: rgba(58, 212, 250, 0.5);
+    background-color: rgba(69, 170, 250, 0.5);
     color: black;
 }
 
 .subject-maths {
-    background-color: rgb(54, 197, 250);
+    background-color: rgb(57, 157, 250);
     color: black;
 }
 
@@ -54,7 +54,7 @@
 }
 
 .subject-health {
-    background-color: rgba(147, 121, 237, 0.85);
+    background-color: rgba(237, 72, 167, 0.81);
     color: black;
 }
 

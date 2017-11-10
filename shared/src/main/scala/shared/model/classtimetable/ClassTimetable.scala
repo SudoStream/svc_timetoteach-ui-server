@@ -47,11 +47,31 @@ case class ClassTimetable(private val schoolDayTimesOption: Option[Map[SchoolDay
     }
   }
 
+  def editSubject(subjectDetail: SubjectDetail, sessionOfTheWeek: SessionOfTheWeek): Boolean = {
+    sessionsOfTheWeek.get(sessionOfTheWeek) match {
+      case Some(sessionBreakdown) =>
+        sessionBreakdown.editSubject(subjectDetail)
+      case None => false
+    }
+  }
+
   def removeSubject(subjectDetail: SubjectDetail, sessionOfTheWeek: SessionOfTheWeek): Boolean = {
     sessionsOfTheWeek.get(sessionOfTheWeek) match {
       case Some(sessionBreakdown) =>
         sessionBreakdown.removeSubject(subjectDetail)
       case None => false
+    }
+    }
+
+  def getAdditionalInfoForSubject(subjectDetail: SubjectDetail, sessionOfTheWeek: SessionOfTheWeek): Option[String] = {
+    sessionsOfTheWeek.get(sessionOfTheWeek) match {
+      case Some(sessionBreakdown) =>
+        val maybeSubjectDetail = sessionBreakdown.getSubject(subjectDetail)
+        maybeSubjectDetail match {
+          case Some(subject) => Some(subject.lessonAdditionalInfo)
+          case None => None
+        }
+      case None => None
     }
   }
 

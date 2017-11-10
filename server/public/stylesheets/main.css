@@ -350,6 +350,20 @@ img {
     color: #393969;
 }
 
+.subject-main-header {
+    line-height: 1rem;
+}
+
+.subject-additional-info {
+    color: #0a0a0a;
+    background-color: lightgoldenrodyellow;
+    line-height: 1rem;
+    font-size: smaller;
+    margin-bottom: 4px;
+    width: 90%;
+}
+
+
 .small-close {
     font-size: xx-small;
 }
@@ -361,7 +375,9 @@ img {
 #subject-summary-in-timetable {
     margin-top: 2rem;
     margin-left: 2rem;
+    width: 40%;
 }
+
 
 #subject-summary-in-timetable .card-header,
 #subject-summary-in-timetable .card-footer {
