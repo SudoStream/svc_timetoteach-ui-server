@@ -107,7 +107,7 @@ trait ClassTimetableScreenHtmlGenerator {
       ),
       div(
         `class` := "card card-body",
-        label(`for` := "input-for-subheading", "Subheading"),
+        label(`for` := "input-for-subheading", "Additional Info"),
         input(id := "input-for-subheading", `type` := "text")
       ),
       div(
