@@ -99,6 +99,12 @@ class SecurityController @Inject()(deadbolt: DeadboltActions,
 
     val req = HttpRequest(GET, uri = userServiceUri)
 
+    val environmentVars = System.getenv()
+    for ((k,v) <- environmentVars) logger.debug(s"key: $k, value: $v")
+
+    val properties = System.getProperties
+    for ((k,v) <- properties) logger.debug(s"key: $k, value: $v")
+
     logger.info("javax.net.ssl.trustStore=" + System.getProperty("javax.net.ssl.trustStore"))
     logger.info("javax.net.ssl.trustStorePassword="+ System.getProperty("javax.net.ssl.trustStorePassword"))
     logger.info("javax.net.ssl.keyStore=" + System.getProperty("javax.net.ssl.keyStore"))
@@ -111,9 +117,10 @@ class SecurityController @Inject()(deadbolt: DeadboltActions,
         .withLoose(s.loose.withDisableHostnameVerification(true))
         .withLoose(s.loose.withAcceptAnyCertificate(true))
     )
+
+    logger.info(s"ssl config = ${badSslConfig.toString}")
     val badCtx = Http().createClientHttpsContext(badSslConfig)
 
-    Http().setDefaultClientHttpsContext(badCtx)
     val responseFuture: Future[HttpResponse] = Http().singleRequest(req, badCtx)
     val eventualFuture: Future[Future[Result]] = responseFuture map {
       resp => processHttpResponse(resp, payload)
