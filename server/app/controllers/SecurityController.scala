@@ -99,7 +99,7 @@ class SecurityController @Inject()(deadbolt: DeadboltActions,
 
     val req = HttpRequest(GET, uri = userServiceUri)
 
-    val badSslConfig = AkkaSSLConfig().mapSettings(s => s.withLoose(s.loose.withDisableSNI(true)))
+    val badSslConfig = AkkaSSLConfig().mapSettings(s => s.withLoose(s.loose.withDisableSNI(true)).withLoose(s.loose.withDisableHostnameVerification(true)))
     val badCtx = Http().createClientHttpsContext(badSslConfig)
     Http().setDefaultClientHttpsContext(badCtx)
     val responseFuture: Future[HttpResponse] =  Http().singleRequest(req)
