@@ -1,3 +1,4 @@
+import com.typesafe.sbt.packager.docker.{Cmd, ExecCmd}
 import com.typesafe.sbt.packager.docker.DockerPlugin.autoImport.{dockerRepository, dockerUpdateLatest}
 
 enablePlugins(JavaAppPackaging)
@@ -18,6 +19,17 @@ lazy val timetoteach_ui_server = (project in file("server")).settings(
   dockerExposedPorts := Seq(9000),
   dockerRepository := Some("eu.gcr.io/time-to-teach-zone"),
   dockerUpdateLatest := true,
+  dockerCommands ++= Seq(
+    // setting the run script executable
+    ExecCmd("RUN",
+      "chmod", "u+x",
+      //    s"${(defaultLinuxInstallLocation in Docker).value}/bin/${executableScriptName.value}"),
+      s"bin/${executableScriptName.value} -Djavax.net.ssl.trustStore=/etc/ssl/cacerts " +
+        s"-Djavax.net.ssl.trustStorePassword=the8balL"),
+    // setting a daemon user
+    Cmd("USER", "daemon")
+
+  ),
   //version in Docker := version.value + "-" + java.util.UUID.randomUUID.toString
   packageName in Docker := "www-time-to-teach",
   resolvers += Resolver.sonatypeRepo("snapshots"),
