@@ -24,8 +24,7 @@ lazy val timetoteach_ui_server = (project in file("server")).settings(
     ExecCmd("RUN",
       "chmod", "u+x",
       //    s"${(defaultLinuxInstallLocation in Docker).value}/bin/${executableScriptName.value}"),
-      s"bin/${executableScriptName.value} -Djavax.net.ssl.trustStore=/etc/ssl/cacerts " +
-        s"-Djavax.net.ssl.trustStorePassword=the8balL"),
+      s"bin/${executableScriptName.value}"),
     // setting a daemon user
     Cmd("USER", "daemon")
 
