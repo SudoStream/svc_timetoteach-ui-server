@@ -27,6 +27,7 @@ class SchoolReaderServiceProxyImpl {
   private val config = ConfigFactory.load()
   private val schoolReaderServiceHostname = config.getString("services.school-reader-service-host")
   private val schoolReaderServicePort = config.getString("services.school-reader-service-port")
+
   val logger: Logger.type = Logger
 
   def getAllSchoolsFuture: Future[Seq[School]] = {

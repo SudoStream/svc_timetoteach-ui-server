@@ -109,7 +109,7 @@ class SecurityController @Inject()(deadbolt: DeadboltActions,
   private def verifyToken(tokenId: TokenId) = {
     val verifier: GoogleIdTokenVerifier =
       new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), JacksonFactory.getDefaultInstance)
-        .setAudience(Collections.singletonList("19438371353-1gljfancidnfrtjdt2ic22hd3ib4fab0.apps.googleusercontent.com"))
+        .setAudience(Collections.singletonList("473457256422-khclkcv9b7u7ecu6q7nntq9460ko3mo4.apps.googleusercontent.com"))
         .build()
     val idToken: GoogleIdToken = verifier.verify(tokenId.value)
     idToken
