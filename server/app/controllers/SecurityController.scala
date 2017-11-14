@@ -99,11 +99,6 @@ class SecurityController @Inject()(deadbolt: DeadboltActions,
 
     val req = HttpRequest(GET, uri = userServiceUri)
 
-    val environmentVars = System.getenv()
-    for ((k,v) <- environmentVars) logger.debug(s"key: $k, value: $v")
-
-    val properties = System.getProperties
-    for ((k,v) <- properties) logger.debug(s"key: $k, value: $v")
 
     logger.info("javax.net.ssl.trustStore=" + System.getProperty("javax.net.ssl.trustStore"))
     logger.info("javax.net.ssl.trustStorePassword="+ System.getProperty("javax.net.ssl.trustStorePassword"))
