@@ -23,7 +23,9 @@ lazy val timetoteach_ui_server = (project in file("server")).settings(
     "-Djavax.net.ssl.keyStore=/etc/ssl/cacerts",
     "-Djavax.net.ssl.keyStorePassword=the8balL",
     "-Djavax.net.ssl.trustStore=/etc/ssl/cacerts",
-    "-Djavax.net.ssl.trustStorePassword=the8balL"
+    "-Djavax.net.ssl.trustStorePassword=the8balL",
+    "-Dplay.server.https.keyStore.path=/etc/ssl/cacerts",
+    "-Dplay.server.https.keyStore.password=the8balL"
   ),
   //version in Docker := version.value + "-" + java.util.UUID.randomUUID.toString
   packageName in Docker := "www-time-to-teach",
