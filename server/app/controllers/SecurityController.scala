@@ -5,7 +5,7 @@ import java.util.Collections
 import javax.inject.Inject
 
 import akka.actor.ActorSystem
-import akka.http.scaladsl.Http
+import akka.http.scaladsl.{Http, HttpsConnectionContext}
 import akka.http.scaladsl.model.HttpMethods._
 import akka.http.scaladsl.model._
 import akka.stream.ActorMaterializer
@@ -118,8 +118,11 @@ class SecurityController @Inject()(deadbolt: DeadboltActions,
         .withLoose(s.loose.withAcceptAnyCertificate(true))
     )
 
+
     logger.info(s"ssl config = ${badSslConfig.toString}")
     val badCtx = Http().createClientHttpsContext(badSslConfig)
+
+//    new HttpsConnectionContext(badCtx, Some(badSslConfig))
 
     val responseFuture: Future[HttpResponse] = Http().singleRequest(req, badCtx)
     val eventualFuture: Future[Future[Result]] = responseFuture map {
