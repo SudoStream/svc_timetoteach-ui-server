@@ -112,8 +112,9 @@ class SecurityController @Inject()(deadbolt: DeadboltActions,
         .withLoose(s.loose.withAcceptAnyCertificate(true))
     )
     val badCtx = Http().createClientHttpsContext(badSslConfig)
+
     Http().setDefaultClientHttpsContext(badCtx)
-    val responseFuture: Future[HttpResponse] = Http().singleRequest(req)
+    val responseFuture: Future[HttpResponse] = Http().singleRequest(req, badCtx)
     val eventualFuture: Future[Future[Result]] = responseFuture map {
       resp => processHttpResponse(resp, payload)
     }
