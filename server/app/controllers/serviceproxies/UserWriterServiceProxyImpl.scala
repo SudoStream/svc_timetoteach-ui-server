@@ -43,7 +43,7 @@ class UserWriterServiceProxyImpl @Inject()(schoolReader: SchoolReaderServiceProx
         school => school.id -> convertLocalSchoolToMessageSchool(school)
       } toMap
     case Failure(t) =>
-      logger.error("Failed to get schools on loadup")
+      logger.error(s"Failed to get schools on loadup. ${t.toString} \n\n ${t.getStackTrace.toString}")
   }
 
   private var theSchools: Map[String, io.sudostream.timetoteach.messages.systemwide.model.School] = Map.empty
