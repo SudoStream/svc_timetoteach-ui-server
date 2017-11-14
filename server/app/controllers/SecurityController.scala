@@ -99,12 +99,19 @@ class SecurityController @Inject()(deadbolt: DeadboltActions,
 
     val req = HttpRequest(GET, uri = userServiceUri)
 
+    logger.info("javax.net.ssl.trustStore=" + System.getProperty("javax.net.ssl.trustStore"))
+    logger.info("javax.net.ssl.trustStorePassword="+ System.getProperty("javax.net.ssl.trustStorePassword"))
+    logger.info("javax.net.ssl.keyStore=" + System.getProperty("javax.net.ssl.keyStore"))
+    logger.info("javax.net.ssl.keyStorePassword="+ System.getProperty("javax.net.ssl.keyStorePassword"))
+    logger.info("play.server.https.keyStore.path=" + System.getProperty("play.server.https.keyStore.path"))
+    logger.info("play.server.https.keyStore.password="+ System.getProperty("play.server.https.keyStore.password"))
+
     val badSslConfig = AkkaSSLConfig().mapSettings(s =>
       s.withLoose(s.loose.withDisableSNI(true))
         .withLoose(s.loose.withDisableHostnameVerification(true)))
     val badCtx = Http().createClientHttpsContext(badSslConfig)
     Http().setDefaultClientHttpsContext(badCtx)
-    val responseFuture: Future[HttpResponse] =  Http().singleRequest(req)
+    val responseFuture: Future[HttpResponse] = Http().singleRequest(req)
     val eventualFuture: Future[Future[Result]] = responseFuture map {
       resp => processHttpResponse(resp, payload)
     }
