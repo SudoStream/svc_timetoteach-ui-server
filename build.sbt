@@ -19,15 +19,11 @@ lazy val timetoteach_ui_server = (project in file("server")).settings(
   dockerExposedPorts := Seq(9000),
   dockerRepository := Some("eu.gcr.io/time-to-teach-zone"),
   dockerUpdateLatest := true,
-  dockerCommands ++= Seq(
-    // setting the run script executable
-    ExecCmd("RUN",
-      "chmod", "u+x",
-      //    s"${(defaultLinuxInstallLocation in Docker).value}/bin/${executableScriptName.value}"),
-      s"bin/${executableScriptName.value}"),
-    // setting a daemon user
-    Cmd("USER", "daemon")
-
+  dockerEntrypoint := Seq("sh", "-c", s"bin/${executableScriptName.value}",
+    "-Djavax.net.ssl.keyStore=/etc/ssl/cacerts",
+    "-Djavax.net.ssl.keyStorePassword=the8balL",
+    "-Djavax.net.ssl.trustStore=/etc/ssl/cacerts",
+    "-Djavax.net.ssl.trustStorePassword=the8balL"
   ),
   //version in Docker := version.value + "-" + java.util.UUID.randomUUID.toString
   packageName in Docker := "www-time-to-teach",
