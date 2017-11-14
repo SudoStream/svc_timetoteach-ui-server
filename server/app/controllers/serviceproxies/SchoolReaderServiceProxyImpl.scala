@@ -32,8 +32,7 @@ class SchoolReaderServiceProxyImpl {
 
   def getAllSchoolsFuture: Future[Seq[School]] = {
     val protocol = if (schoolReaderServicePort.toInt > 9000) "http" else "https"
-//    val uriString = s"$protocol://$schoolReaderServiceHostname:$schoolReaderServicePort/api/schools"
-    val uriString = s"http://$schoolReaderServiceHostname/api/schools"
+    val uriString = s"$protocol://$schoolReaderServiceHostname:$schoolReaderServicePort/api/schools"
     logger.debug(s"uri string is $uriString")
     val userServiceUri = Uri(uriString)
     val req = HttpRequest(GET, uri = userServiceUri).withHeaders(Accept(mediaRanges = List(MediaRanges.`*/*`)))
