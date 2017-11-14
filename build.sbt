@@ -14,16 +14,14 @@ lazy val timetoteach_ui_server = (project in file("server")).settings(
   scalaJSProjects := Seq(client),
   pipelineStages in Assets := Seq(scalaJSPipeline),
   pipelineStages := Seq(digest, gzip),
-  version := "0.0.1",
+  version := "0.0.1-1",
   dockerBaseImage := "anapsix/alpine-java:8_server-jre",
   dockerExposedPorts := Seq(9000),
   dockerRepository := Some("eu.gcr.io/time-to-teach-zone"),
   dockerUpdateLatest := true,
-  dockerEntrypoint := Seq("sh", "-c", s"bin/${executableScriptName.value}"
-//    ,
-//    "-Dplay.server.https.keyStore.path=/etc/tls/cacerts",
-//    "-Dplay.server.https.keyStore.type=PEM",
-//    "-Dplay.server.https.keyStore.password=the8balL"
+  dockerEntrypoint := Seq("sh", "-c", s"bin/${executableScriptName.value}",
+    "-Dplay.server.https.keyStore.path=/etc/tls/server.keystore",
+    "-Dplay.server.https.keyStore.password=the8balL"
   ),
   //version in Docker := version.value + "-" + java.util.UUID.randomUUID.toString
   packageName in Docker := "www-time-to-teach",
