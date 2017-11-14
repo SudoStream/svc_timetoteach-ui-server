@@ -17,6 +17,7 @@ import com.google.api.client.googleapis.auth.oauth2.{GoogleIdToken, GoogleIdToke
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.jackson2.JacksonFactory
 import com.typesafe.config.ConfigFactory
+import com.typesafe.sslconfig.akka.AkkaSSLConfig
 import io.sudostream.timetoteach.messages.systemwide.model.User
 import models.timetoteach.CookieNames
 import org.apache.avro.io.{Decoder, DecoderFactory}
@@ -95,8 +96,13 @@ class SecurityController @Inject()(deadbolt: DeadboltActions,
       Uri(s"$protocol://$userServiceHostname:$userServicePort/api/user?" +
         s"socialNetworkName=GOOGLE&socialNetworkUserId=${payload.getSubject}")
     logger.debug(s"Sending request to '${userServiceUri.toString()}'")
+
     val req = HttpRequest(GET, uri = userServiceUri)
-    val responseFuture: Future[HttpResponse] = Http().singleRequest(req)
+
+    val badSslConfig = AkkaSSLConfig().mapSettings(s => s.withLoose(s.loose.withDisableSNI(true)))
+    val badCtx = Http().createClientHttpsContext(badSslConfig)
+    Http().setDefaultServerHttpContext(badCtx)
+    val responseFuture: Future[HttpResponse] =  Http().singleRequest(req)
     val eventualFuture: Future[Future[Result]] = responseFuture map {
       resp => processHttpResponse(resp, payload)
     }
@@ -129,7 +135,7 @@ class SecurityController @Inject()(deadbolt: DeadboltActions,
   private[controllers] def processHttpResponse(resp: HttpResponse,
                                                payload: Payload): Future[Result] = {
     if (resp.status.isSuccess()) {
-
+      logger.info(s"Success status for request.")
       val smallTimeout = 3000.millis
       //     val dataFuture: Future[ByteString] = resp.entity.toStrict(smallTimeout).map {
       val dataFuture = resp.entity.toStrict(smallTimeout) map {
