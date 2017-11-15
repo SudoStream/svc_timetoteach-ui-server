@@ -14,6 +14,7 @@ import io.sudostream.timetoteach.messages.systemwide.model._
 import models.timetoteach
 import models.timetoteach.TimeToTeachUser
 import play.api.Logger
+import play.api.libs.ws.{WSClient, WSRequest}
 import utils.SchoolConverter.convertLocalSchoolToMessageSchool
 
 import scala.concurrent.duration._

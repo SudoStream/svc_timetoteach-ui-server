@@ -1,5 +1,7 @@
 package controllers.serviceproxies
 
+import javax.inject.Inject
+
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.HttpMethods.GET
@@ -13,12 +15,13 @@ import io.sudostream.timetoteach.kafka.serializing.systemwide.model.SchoolsDeser
 import io.sudostream.timetoteach.messages.systemwide.model.SingleSchoolWrapper
 import models.timetoteach.{Country, LocalAuthority, School}
 import play.api.Logger
+import play.api.libs.ws.{WSClient, WSRequest}
 
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContextExecutor, Future}
 
 @Singleton
-class SchoolReaderServiceProxyImpl {
+class SchoolReaderServiceProxyImpl  @Inject()(ws: WSClient) {
   implicit val system: ActorSystem = ActorSystem()
   implicit val executor: ExecutionContextExecutor = system.dispatcher
   implicit val materializer: ActorMaterializer = ActorMaterializer()
@@ -34,8 +37,20 @@ class SchoolReaderServiceProxyImpl {
     val protocol = if (schoolReaderServicePort.toInt > 9000) "http" else "https"
     val uriString = s"$protocol://$schoolReaderServiceHostname:$schoolReaderServicePort/api/schools"
     logger.debug(s"uri string is $uriString")
-    val userServiceUri = Uri(uriString)
-    val req = HttpRequest(GET, uri = userServiceUri).withHeaders(Accept(mediaRanges = List(MediaRanges.`*/*`)))
+    val schoolServiceUri = Uri(uriString)
+
+    //// andy
+    val request: WSRequest = ws.url(schoolServiceUri.toString())
+    logger.debug(s"Howdy doodly doo, request = ${request.toString}")
+    val resp = request.get()
+    val respMapped = resp map {
+      wsResponse => logger.info(s"let us say ..... WOOHOOO ${wsResponse.toString}")
+    }
+    //// andy
+
+
+
+    val req = HttpRequest(GET, uri = schoolServiceUri).withHeaders(Accept(mediaRanges = List(MediaRanges.`*/*`)))
     val allSchoolsResponseFuture: Future[HttpResponse] = Http().singleRequest(req)
     val allSchoolsEventualFuture: Future[Future[Seq[School]]] = allSchoolsResponseFuture map {
       httpResponse =>
