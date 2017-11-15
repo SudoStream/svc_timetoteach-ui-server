@@ -38,20 +38,6 @@ class SchoolReaderServiceProxyImpl  @Inject()(ws: WSClient) {
     val uriString = s"$protocol://$schoolReaderServiceHostname:$schoolReaderServicePort/api/schools"
     logger.debug(s"uri string is $uriString")
     val schoolServiceUri = Uri(uriString)
-
-    //// andy
-    val request: WSRequest = ws.url(schoolServiceUri.toString())
-    logger.debug(s"Howdy doodly doo, request = ${request.toString}")
-    val resp = request.get()
-    import scala.util.{Success, Failure}
-    resp onComplete {
-      case Success(wsResponse) => logger.info(s"success: let us say ..... WOOHOOO ${wsResponse.toString}")
-      case Failure(t) => logger.error(s"failure: ${t.getMessage}")
-    }
-    //// andy
-
-
-
     val req = HttpRequest(GET, uri = schoolServiceUri).withHeaders(Accept(mediaRanges = List(MediaRanges.`*/*`)))
     val allSchoolsResponseFuture: Future[HttpResponse] = Http().singleRequest(req)
     val allSchoolsEventualFuture: Future[Future[Seq[School]]] = allSchoolsResponseFuture map {

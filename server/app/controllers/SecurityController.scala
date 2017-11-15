@@ -100,12 +100,6 @@ class SecurityController @Inject()(ws: WSClient,
         s"socialNetworkName=GOOGLE&socialNetworkUserId=${payload.getSubject}")
     logger.debug(s"Sending request to '${userServiceUri.toString()}'")
 
-
-    /// andy
-    val request: WSRequest = ws.url(userServiceUri.toString())
-    logger.debug(s"Howdy doodly doo, request = ${request.toString}")
-    /// andy
-
     val req = HttpRequest(GET, uri = userServiceUri)
 
     import scala.collection.JavaConversions._
