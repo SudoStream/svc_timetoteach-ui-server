@@ -43,8 +43,10 @@ class SchoolReaderServiceProxyImpl  @Inject()(ws: WSClient) {
     val request: WSRequest = ws.url(schoolServiceUri.toString())
     logger.debug(s"Howdy doodly doo, request = ${request.toString}")
     val resp = request.get()
-    val respMapped = resp map {
-      wsResponse => logger.info(s"let us say ..... WOOHOOO ${wsResponse.toString}")
+    import scala.util.{Success, Failure}
+    resp onComplete {
+      case Success(wsResponse) => logger.info(s"success: let us say ..... WOOHOOO ${wsResponse.toString}")
+      case Failure(t) => logger.error(s"failure: ${t.getMessage}")
     }
     //// andy
 
