@@ -25,12 +25,15 @@ import org.apache.avro.specific.SpecificDatumReader
 import play.api.Logger
 import play.api.data.Forms._
 import play.api.data._
+import play.api.libs.ws.{WSClient, WSRequest}
 import play.api.mvc.{Cookie, _}
+import play.libs.ws.WS
 
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContextExecutor, Future}
 
-class SecurityController @Inject()(deadbolt: DeadboltActions,
+class SecurityController @Inject()(ws: WSClient,
+                                   deadbolt: DeadboltActions,
                                    handlers: HandlerCache,
                                    actionBuilder: ActionBuilders
                                   ) extends Controller {
@@ -96,6 +99,12 @@ class SecurityController @Inject()(deadbolt: DeadboltActions,
       Uri(s"$protocol://$userServiceHostname:$userServicePort/api/user?" +
         s"socialNetworkName=GOOGLE&socialNetworkUserId=${payload.getSubject}")
     logger.debug(s"Sending request to '${userServiceUri.toString()}'")
+
+
+    /// andy
+    val request: WSRequest = ws.url(userServiceUri.toString())
+    logger.debug(s"Howdy doodly doo, request = ${request.toString}")
+    /// andy
 
     val req = HttpRequest(GET, uri = userServiceUri)
 
