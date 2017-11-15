@@ -10,6 +10,7 @@ import akka.stream.ActorMaterializer
 import akka.util.{ByteString, Timeout}
 import com.google.inject.Singleton
 import com.typesafe.config.ConfigFactory
+import com.typesafe.sslconfig.akka.AkkaSSLConfig
 import io.sudostream.timetoteach.messages.systemwide.model.User
 import org.apache.avro.io.{Decoder, DecoderFactory}
 import org.apache.avro.specific.SpecificDatumReader
@@ -38,7 +39,16 @@ class UserReaderServiceProxyImpl {
         s"timeToTeachUserId=$timeToTeachUserId")
     logger.debug(s"Sending request to '${userServiceUri.toString()}'")
     val req = HttpRequest(GET, uri = userServiceUri)
-    val responseFuture: Future[HttpResponse] = Http().singleRequest(req)
+
+    val badSslConfig = AkkaSSLConfig().mapSettings(s =>
+      s.withLoose(s.loose.withDisableSNI(true))
+        .withLoose(s.loose.withDisableHostnameVerification(true))
+        .withLoose(s.loose.withAcceptAnyCertificate(true))
+    )
+    logger.info(s"ssl config = ${badSslConfig.toString}")
+    val badCtx = Http().createClientHttpsContext(badSslConfig)
+
+    val responseFuture: Future[HttpResponse] = Http().singleRequest(req, badCtx)
     val eventualFuture: Future[Future[Boolean]] = responseFuture map {
       resp => processHttpResponse(resp)
     }

@@ -11,6 +11,7 @@ import akka.stream.ActorMaterializer
 import akka.util.Timeout
 import com.google.inject.Singleton
 import com.typesafe.config.ConfigFactory
+import com.typesafe.sslconfig.akka.AkkaSSLConfig
 import io.sudostream.timetoteach.kafka.serializing.systemwide.model.SchoolsDeserializer
 import io.sudostream.timetoteach.messages.systemwide.model.SingleSchoolWrapper
 import models.timetoteach.{Country, LocalAuthority, School}
@@ -39,7 +40,17 @@ class SchoolReaderServiceProxyImpl  @Inject()(ws: WSClient) {
     logger.debug(s"uri string is $uriString")
     val schoolServiceUri = Uri(uriString)
     val req = HttpRequest(GET, uri = schoolServiceUri).withHeaders(Accept(mediaRanges = List(MediaRanges.`*/*`)))
-    val allSchoolsResponseFuture: Future[HttpResponse] = Http().singleRequest(req)
+
+    val badSslConfig = AkkaSSLConfig().mapSettings(s =>
+      s.withLoose(s.loose.withDisableSNI(true))
+        .withLoose(s.loose.withDisableHostnameVerification(true))
+        .withLoose(s.loose.withAcceptAnyCertificate(true))
+    )
+    logger.info(s"ssl config = ${badSslConfig.toString}")
+    val badCtx = Http().createClientHttpsContext(badSslConfig)
+
+    val allSchoolsResponseFuture: Future[HttpResponse] = Http().singleRequest(req, badCtx)
+
     val allSchoolsEventualFuture: Future[Future[Seq[School]]] = allSchoolsResponseFuture map {
       httpResponse =>
         val eventualSchools = extractSchoolsFromHttpResponse(httpResponse)
