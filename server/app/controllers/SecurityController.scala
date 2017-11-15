@@ -102,29 +102,14 @@ class SecurityController @Inject()(ws: WSClient,
 
     val req = HttpRequest(GET, uri = userServiceUri)
 
-    import scala.collection.JavaConversions._
-    val environmentVars = System.getenv()
-    for ((k, v) <- environmentVars) println(s"key: $k, value: $v")
-    val properties = System.getProperties()
-    for ((k, v) <- properties) println(s"key: $k, value: $v")
-
-    logger.info("javax.net.ssl.trustStore=" + System.getProperty("javax.net.ssl.trustStore"))
-    logger.info("javax.net.ssl.trustStorePassword=" + System.getProperty("javax.net.ssl.trustStorePassword"))
-    logger.info("javax.net.ssl.keyStore=" + System.getProperty("javax.net.ssl.keyStore"))
-    logger.info("javax.net.ssl.keyStorePassword=" + System.getProperty("javax.net.ssl.keyStorePassword"))
-    logger.info("play.server.https.keyStore.path=" + System.getProperty("play.server.https.keyStore.path"))
-    logger.info("play.server.https.keyStore.password=" + System.getProperty("play.server.https.keyStore.password"))
-
     val badSslConfig = AkkaSSLConfig().mapSettings(s =>
       s.withLoose(s.loose.withDisableSNI(true))
         .withLoose(s.loose.withDisableHostnameVerification(true))
         .withLoose(s.loose.withAcceptAnyCertificate(true))
     )
 
-
     logger.info(s"ssl config = ${badSslConfig.toString}")
     val badCtx = Http().createClientHttpsContext(badSslConfig)
-
 
     val responseFuture: Future[HttpResponse] = Http().singleRequest(req, badCtx)
 
