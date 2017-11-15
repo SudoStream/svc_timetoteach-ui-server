@@ -35,21 +35,8 @@ class UserWriterServiceProxyImpl @Inject()(schoolReader: SchoolReaderServiceProx
 
   //  case class SchoolId(value: String)
   private val userWriterServicePort = config.getString("services.user-writer-port")
-  private val theSchoolsFuture: Future[Seq[timetoteach.School]] = schoolReader.getAllSchoolsFuture
-
-  theSchoolsFuture.onComplete {
-    case Success(seqSchools) =>
-      logger.debug(s"${seqSchools.size} future schools gotted")
-      theSchools = seqSchools map {
-        school => school.id -> convertLocalSchoolToMessageSchool(school)
-      } toMap
-    case Failure(t) =>
-      logger.error(s"Failed to get schools on loadup. The error was ... ${t.toString} \n\n" + t.getStackTrace.map{
-        line => line.toString
-      }.toString)
-  }
-
   private var theSchools: Map[String, io.sudostream.timetoteach.messages.systemwide.model.School] = Map.empty
+  populateTheSchools
 
   def createNewUser(user: TimeToTeachUser): Future[TimeToTeachUserId] = {
     val userMessage = convertUserToMessage(user)
@@ -74,6 +61,10 @@ class UserWriterServiceProxyImpl @Inject()(schoolReader: SchoolReaderServiceProx
     }
   }
   def convertUserToMessage(user: TimeToTeachUser): io.sudostream.timetoteach.messages.systemwide.model.User = {
+    if (theSchools.isEmpty) {
+      populateTheSchools
+    }
+
     val socialNetwork = user.socialNetworkName.toString.toUpperCase match {
       case "FACEBOOK" => SocialNetwork.FACEBOOK
       case "GOOGLE" => SocialNetwork.GOOGLE
@@ -118,6 +109,21 @@ class UserWriterServiceProxyImpl @Inject()(schoolReader: SchoolReaderServiceProx
     )
   }
 
+  private def populateTheSchools = {
+    val theSchoolsFuture: Future[Seq[timetoteach.School]] = schoolReader.getAllSchoolsFuture
+
+    theSchoolsFuture.onComplete {
+      case Success(seqSchools) =>
+        logger.debug(s"${seqSchools.size} future schools gotted")
+        theSchools = seqSchools map {
+          school => school.id -> convertLocalSchoolToMessageSchool(school)
+        } toMap
+      case Failure(t) =>
+        logger.error(s"Failed to get schools on loadup. The error was ... ${t.toString} \n\n" + t.getStackTrace.map {
+          line => line.toString
+        }.toString)
+    }
+  }
 }
 
 case class TimeToTeachUserId(value: String)
