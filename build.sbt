@@ -20,10 +20,11 @@ lazy val timetoteach_ui_server = (project in file("server")).settings(
   dockerExposedPorts := Seq(9000),
   dockerRepository := Some("eu.gcr.io/time-to-teach-zone"),
   dockerUpdateLatest := true,
-  dockerEntrypoint := Seq("sh", "-c", s"bin/${executableScriptName.value} " +
-    "-Dplay.server.https.keyStore.path=/etc/tls/server.keystore -Dplay.server.https.keyStore.password=the8balL " +
-    "-Djavax.net.ssl.trustStore=/etc/tls/server.keystore -Djavax.net.ssl.trustStorePassword=the8balL " +
-    "-Djavax.net.ssl.keyStore=/etc/tls/server.keystore -Djavax.net.ssl.keyStorePassword=the8balL"
+  dockerEntrypoint := Seq("sh", "-c", s"bin/${executableScriptName.value} "
+    //+
+//    "-Dplay.server.https.keyStore.path=/etc/tls/server.keystore -Dplay.server.https.keyStore.password=the8balL " +
+//    "-Djavax.net.ssl.trustStore=/etc/tls/server.keystore -Djavax.net.ssl.trustStorePassword=the8balL " +
+//    "-Djavax.net.ssl.keyStore=/etc/tls/server.keystore -Djavax.net.ssl.keyStorePassword=the8balL"
   ),
   //version in Docker := version.value + "-" + java.util.UUID.randomUUID.toString
   packageName in Docker := "www-time-to-teach",
