@@ -19,12 +19,10 @@ function statusChangeCallback(response) {
         // Logged into your app and Facebook.
         testAPI();
     }
-//                    else {
-//                        // The person is not logged into your app or we are unable to tell.
-//                        document.getElementById('status').innerHTML = 'Please log ' +
-//                                'into this app.';
-//                    }
-};
+    else {
+        console.log("The person is not logged into your app or we are unable to tell.");
+    }
+}
 
 // This function is called when someone finishes with the Login
 // Button.  See the onlogin handler attached to it in the sample
@@ -37,7 +35,7 @@ function checkLoginState() {
 
 window.fbAsyncInit = function () {
     FB.init({
-        appId: '{your-app-id}',
+        appId: '377986715954577',
         cookie: true,  // enable cookies to allow the server to access
                        // the session
         xfbml: true,  // parse social plugins on this page
@@ -83,5 +81,7 @@ function testAPI() {
         console.log('FB Family Name: ' + response.last_name);
         console.log('FB Image URL: ' + response.picture.data.url);
         console.log('FB Email: ' + response.email);
+
+
     });
-};
+}
