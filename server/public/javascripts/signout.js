@@ -23,39 +23,39 @@ window.fbAsyncInit = function () {
 
 // This is called with the results from from FB.getLoginStatus().
 function statusChangeCallback(response) {
-    console.log('statusChangeCallback');
-    console.log(response);
+    console.log('FACEBOOK : statusChangeCallback');
+    console.log('FACEBOOK :  response = ' + response);
     // The response object is returned with a status field that lets the
     // app know the current login status of the person.
     // Full docs on the response object can be found in the documentation
     // for FB.getLoginStatus().
     if (response.status === 'connected') {
-        console.log("FB Token = " + response.authResponse.accessToken);
+        console.log("FACEBOOK : FB Token = " + response.authResponse.accessToken);
         // Logged into your app and Facebook.
 
         FB.api('/me?fields=id,name,picture,first_name,last_name,age_range,verified,email', function (innerResponse) {
-            console.log('FB ID:: ' + innerResponse.id);
-            console.log('FB Full Name: ' + innerResponse.name);
-            console.log('FB Given Name: ' + innerResponse.first_name);
-            console.log('FB Family Name: ' + innerResponse.last_name);
-            console.log('FB Image URL: ' + innerResponse.picture.data.url);
-            console.log('FB Email: ' + innerResponse.email);
+            console.log('FACEBOOK : FB ID:: ' + innerResponse.id);
+            console.log('FACEBOOK : FB Full Name: ' + innerResponse.name);
+            console.log('FACEBOOK : FB Given Name: ' + innerResponse.first_name);
+            console.log('FACEBOOK : FB Family Name: ' + innerResponse.last_name);
+            console.log('FACEBOOK : FB Image URL: ' + innerResponse.picture.data.url);
+            console.log('FACEBOOK : FB Email: ' + innerResponse.email);
         });
 
     }
     else {
-        console.log("The person is not logged into your app or we are unable to tell.");
+        console.log("FACEBOOK : The person is not logged into your app or we are unable to tell.");
     }
 }
 
 function logoutFacebook() {
-    console.log('FACEBOOK: About to try and log out! SOO CLOSE NOW! ONE');
+    console.log('FACEBOOK: About to try and log out');
     FB.logout(function(response) {
         // FB.Auth.setAuthResponse(null, 'unknown');
         // Person is now logged out
-        console.log('FACEBOOK: OOOOOOOOBHHHHHHHHHH  YYYEAAHH!!!');
+        console.log('FACEBOOK: logged out');
     });
-    console.log('FACEBOOK: Did you see logged out message?')
+    console.log('FACEBOOK: logged out now')
 }
 
 function onLoadForSignout() {
