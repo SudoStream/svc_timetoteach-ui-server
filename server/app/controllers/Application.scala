@@ -5,6 +5,7 @@ import javax.inject.Inject
 
 import be.objectify.deadbolt.scala.cache.HandlerCache
 import be.objectify.deadbolt.scala.{ActionBuilders, DeadboltActions}
+import com.typesafe.config.ConfigFactory
 import controllers.serviceproxies.UserReaderServiceProxyImpl
 import models.timetoteach.CookieNames
 import models.timetoteach.classtimetable.SchoolDayTimes
@@ -18,6 +19,9 @@ import scala.concurrent.Future
 
 class Application @Inject()(userReader: UserReaderServiceProxyImpl, deadbolt: DeadboltActions, handlers: HandlerCache, actionBuilder: ActionBuilders) extends Controller {
 
+  private val config = ConfigFactory.load()
+  private val showFrontPageSections = if (config.getString("feature.toggles.front-page-feature-sections") == "true") true else false
+
   val defaultSchoolDayTimes = SchoolDayTimes(
     schoolDayStarts = LocalTime.of(9, 0),
     morningBreakStarts = LocalTime.of(10, 30),
@@ -28,7 +32,7 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl, deadbolt: De
   )
 
   def index = Action {
-    Ok(views.html.index())
+    Ok(views.html.index(showFrontPageSections))
   }
 
   def health = Action {
@@ -36,7 +40,7 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl, deadbolt: De
   }
 
   def loggedOutSuccessfully = Action {
-    Ok(views.html.loggedOutSuccessfully())
+    Ok(views.html.loggedOutSuccessfully(showFrontPageSections))
   }
 
   def profile = deadbolt.SubjectPresent()() { authRequest =>
@@ -90,7 +94,7 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl, deadbolt: De
         userPictureUri,
         userFirstName,
         userFamilyName,
-        defaultSchoolDayTimes )(authRequest))
+        defaultSchoolDayTimes)(authRequest))
     }
   }
 
@@ -99,7 +103,7 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl, deadbolt: De
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
 
     Future {
-      Ok(views.html.weeklyplanning(new MyDeadboltHandler(userReader), SharedMessages.httpMainTitle, userPictureUri, userFirstName)(authRequest))
+      Ok(views.html.weeklyplanning(new MyDeadboltHandler(userReader), SharedMessages.httpMainTitle, userPictureUri, userFirstName, showFrontPageSections)(authRequest))
     }
   }
 
@@ -108,7 +112,7 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl, deadbolt: De
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
 
     Future {
-      Ok(views.html.termlyplanning(new MyDeadboltHandler(userReader), SharedMessages.httpMainTitle, userPictureUri, userFirstName)(authRequest))
+      Ok(views.html.termlyplanning(new MyDeadboltHandler(userReader), SharedMessages.httpMainTitle, userPictureUri, userFirstName, showFrontPageSections)(authRequest))
     }
   }
 

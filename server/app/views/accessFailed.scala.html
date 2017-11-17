@@ -1,4 +1,5 @@
-@main("Time To Teach - Access Failed", None, None) {
+@(showFrontPageFeatures : Boolean)
+@main("Time To Teach - Access Failed", None, None, showFrontPageFeatures) {
     <h3>Access failed</h3>
     <p>
         You will need to <a class="a-href-link-color" href="@routes.Application.login()">sign in</a> to use Time To Teach

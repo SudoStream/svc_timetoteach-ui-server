@@ -2,6 +2,7 @@ package security
 
 import be.objectify.deadbolt.scala.models.Subject
 import be.objectify.deadbolt.scala.{AuthenticatedRequest, DeadboltHandler, DynamicResourceHandler}
+import com.typesafe.config.ConfigFactory
 import controllers.serviceproxies.{TimeToTeachUserId, UserReaderServiceProxyImpl}
 import models.User
 import play.api.Logger
@@ -17,6 +18,8 @@ import scala.concurrent._
 class MyDeadboltHandler(userReader: UserReaderServiceProxyImpl, dynamicResourceHandler: Option[DynamicResourceHandler] = None) extends DeadboltHandler {
 
   val logger = Logger("timetoteach")
+  private val config = ConfigFactory.load()
+  private val showFrontPageSections = if (config.getString("feature.toggles.front-page-feature-sections") == "true") true else false
 
   def beforeAuthCheck[A](request: Request[A]) = Future(None)
 
@@ -61,7 +64,7 @@ class MyDeadboltHandler(userReader: UserReaderServiceProxyImpl, dynamicResourceH
 
   def onAuthFailure[A](request: AuthenticatedRequest[A]): Future[Result] = {
     Future {
-      Results.Forbidden(views.html.accessFailed())
+      Results.Forbidden(views.html.accessFailed(showFrontPageSections))
     }
   }
 }
