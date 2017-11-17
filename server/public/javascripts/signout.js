@@ -7,18 +7,6 @@ window.fbAsyncInit = function () {
         version: 'v2.8' // use graph api version 2.8
     });
 
-    // Now that we've initialized the JavaScript SDK, we call
-    // FB.getLoginStatus().  This function gets the state of the
-    // person visiting this page and can return one of three states to
-    // the callback you provide.  They can be:
-    //
-    // 1. Logged into your app ('connected')
-    // 2. Logged into Facebook, but not your app ('not_authorized')
-    // 3. Not logged into Facebook and can't tell if they are logged into
-    //    your app or not.
-    //
-    // These three cases are handled in the callback function.
-
     FB.getLoginStatus(function (response) {
         statusChangeCallback(response);
     });
@@ -62,8 +50,8 @@ function statusChangeCallback(response) {
 
 function logoutFacebook() {
     console.log('FACEBOOK: About to try and log out! SOO CLOSE NOW! ONE');
-    FB.logout(function() {
-        FB.Auth.setAuthResponse(null, 'unknown');
+    FB.logout(function(response) {
+        // FB.Auth.setAuthResponse(null, 'unknown');
         // Person is now logged out
         console.log('FACEBOOK: OOOOOOOOBHHHHHHHHHH  YYYEAAHH!!!');
     });
