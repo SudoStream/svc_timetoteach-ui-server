@@ -32,7 +32,6 @@ import play.api.mvc.{Cookie, _}
 
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContextExecutor, Future}
-import scala.util.{Failure, Success}
 
 class SecurityController @Inject()(ws: WSClient,
                                    deadbolt: DeadboltActions,
@@ -123,11 +122,12 @@ class SecurityController @Inject()(ws: WSClient,
 
 
   def signout = Action.async { implicit request =>
-    logger.debug("Signing out now!")
+    logger.debug("Signing out now! ---------------------------------------------------------------------")
 
     Future {
       Ok("Signed Out")
         .discardingCookies(
+          DiscardingCookie("fbsr_" + timeToTeachFacebookId),
           DiscardingCookie(CookieNames.timetoteachId),
           DiscardingCookie(CookieNames.socialNetworkFamilyName),
           DiscardingCookie(CookieNames.socialNetworkGivenName),
@@ -337,9 +337,7 @@ class SecurityController @Inject()(ws: WSClient,
   }
 
 
-  private def deserialiseUser(databytes: ByteString)
-
-  = {
+  private def deserialiseUser(databytes: ByteString) = {
     logger.debug("Deserialise User data bytes")
     val data = databytes.toList.toArray
     val reader = new SpecificDatumReader[User](User.SCHEMA$)
