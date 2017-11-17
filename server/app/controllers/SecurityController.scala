@@ -5,9 +5,10 @@ import java.util.Collections
 import javax.inject.Inject
 
 import akka.actor.ActorSystem
-import akka.http.scaladsl.{Http, HttpsConnectionContext}
+import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.HttpMethods._
 import akka.http.scaladsl.model._
+import akka.http.scaladsl.model.headers.Accept
 import akka.stream.ActorMaterializer
 import akka.util.{ByteString, Timeout}
 import be.objectify.deadbolt.scala.cache.HandlerCache
@@ -19,18 +20,19 @@ import com.google.api.client.json.jackson2.JacksonFactory
 import com.typesafe.config.ConfigFactory
 import com.typesafe.sslconfig.akka.AkkaSSLConfig
 import io.sudostream.timetoteach.messages.systemwide.model.User
+import models.facebook.FacebookUser
 import models.timetoteach.CookieNames
 import org.apache.avro.io.{Decoder, DecoderFactory}
 import org.apache.avro.specific.SpecificDatumReader
 import play.api.Logger
 import play.api.data.Forms._
 import play.api.data._
-import play.api.libs.ws.{WSClient, WSRequest}
+import play.api.libs.ws.WSClient
 import play.api.mvc.{Cookie, _}
-import play.libs.ws.WS
 
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContextExecutor, Future}
+import scala.util.{Failure, Success}
 
 class SecurityController @Inject()(ws: WSClient,
                                    deadbolt: DeadboltActions,
@@ -45,11 +47,19 @@ class SecurityController @Inject()(ws: WSClient,
   private val config = ConfigFactory.load()
   private val userServiceHostname = config.getString("services.user-service-host")
   private val userServicePort = config.getString("services.user-service-port")
+  private val timeToTeachFacebookId = config.getString("login.details.facebook.timetoteach-facebook-id")
+  private val timeToTeachFacebookSecret = config.getString("login.details.facebook.timetoteach-facebook-secret")
+
   val logger = Logger
 
   val userForm = Form(
     mapping(
-      "idtoken" -> text
+      "idtoken" -> text,
+      "userId" -> text,
+      "userEmail" -> text,
+      "userUri" -> text,
+      "userGivenName" -> text,
+      "userFamilyName" -> text
     )(TokenId.apply)(TokenId.unapply)
   )
 
@@ -64,6 +74,53 @@ class SecurityController @Inject()(ws: WSClient,
       invalidToken
     }
   }
+
+  def extractFacebookUserFromResponse(tokenId: TokenId): _root_.models.facebook.FacebookUser = {
+    FacebookUser(
+      userFacebookId = tokenId.userId,
+      userFacebookEmail = tokenId.userEmail,
+      userPictureUri = tokenId.userUri,
+      userFacebookGivenName = tokenId.userGivenName,
+      userFacebookFamilyName = tokenId.userFamilyName
+    )
+  }
+
+  def facebookTokenSignIn: Action[AnyContent] = Action.async { implicit request =>
+    val tokenId = userForm.bindFromRequest.get
+    logger.debug(s"FACEBOOK Token Id Values = ${tokenId.toString}")
+
+    val facebookUser: FacebookUser = extractFacebookUserFromResponse(tokenId)
+
+    val facebookAccessUri = Uri("https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&" +
+      s"client_id=$timeToTeachFacebookId&" +
+      s"client_secret=$timeToTeachFacebookSecret&" +
+      s"fb_exchange_token=${tokenId.value}")
+
+    logger.debug(s"Facebook Oauth URI is = ${facebookAccessUri.toString()}")
+
+    val req = HttpRequest(GET, uri = facebookAccessUri).withHeaders(Accept(mediaRanges = List(MediaRanges.`*/*`)))
+
+    val badSslConfig = AkkaSSLConfig().mapSettings(s =>
+      s.withLoose(s.loose.withDisableSNI(true))
+        .withLoose(s.loose.withDisableHostnameVerification(true))
+        .withLoose(s.loose.withAcceptAnyCertificate(true))
+    )
+
+    val badCtx = Http().createClientHttpsContext(badSslConfig)
+
+    val facebookTokenVerifyResponse: Future[HttpResponse] = Http().singleRequest(req, badCtx)
+
+    val eventualFuture: Future[Future[Result]] = facebookTokenVerifyResponse map {
+      resp =>
+        processFacebookHttpResponse(resp, facebookUser)
+    }
+
+    eventualFuture.flatMap {
+      res => res
+    }
+
+  }
+
 
   def signout = Action.async { implicit request =>
     logger.debug("Signing out now!")
@@ -189,16 +246,121 @@ class SecurityController @Inject()(ws: WSClient,
     }
   }
 
-  private def deserialiseUser(databytes: ByteString) = {
+  private[controllers] def processFacebookHttpResponse(resp: HttpResponse, facebookUser: FacebookUser): Future[Result] = {
+    if (resp.status.isSuccess()) {
+      logger.info(s"Success status for request.")
+
+      val protocol = if (userServicePort.toInt > 9000) "http" else "https"
+      val userServiceUri =
+        Uri(s"$protocol://$userServiceHostname:$userServicePort/api/user?" +
+          s"socialNetworkName=FACEBOOK&socialNetworkUserId=${facebookUser.userFacebookId}")
+      logger.debug(s"Sending request to '${userServiceUri.toString()}'")
+
+      val req = HttpRequest(GET, uri = userServiceUri)
+
+      val badSslConfig = AkkaSSLConfig().mapSettings(s =>
+        s.withLoose(s.loose.withDisableSNI(true))
+          .withLoose(s.loose.withDisableHostnameVerification(true))
+          .withLoose(s.loose.withAcceptAnyCertificate(true))
+      )
+
+      logger.info(s"ssl config = ${badSslConfig.toString}")
+      val badCtx = Http().createClientHttpsContext(badSslConfig)
+
+      val responseFuture: Future[HttpResponse] = Http().singleRequest(req, badCtx)
+
+      val theAnswer = responseFuture.map {
+        resp =>
+          if (resp.status.isSuccess()) {
+            val smallTimeout = 3000.millis
+            //     val dataFuture: Future[ByteString] = resp.entity.toStrict(smallTimeout).map {
+            val dataFuture = resp.entity.toStrict(smallTimeout) map {
+              httpEntity =>
+                httpEntity.getData()
+            }
+            val userExtractedFuture = dataFuture map {
+              databytes =>
+                deserialiseUser(databytes)
+            }
+
+            userExtractedFuture map {
+              user =>
+                Ok(s"${facebookUser.userFacebookGivenName} ${facebookUser.userFacebookFamilyName}")
+                  .withCookies(
+                    Cookie(CookieNames.timetoteachId, user.timeToTeachId),
+                    Cookie(CookieNames.socialNetworkName, "FACEBOOK"),
+                    Cookie(CookieNames.socialNetworkUserId, facebookUser.userFacebookId),
+                    Cookie(CookieNames.socialNetworkEmail, facebookUser.userFacebookEmail),
+                    Cookie(CookieNames.socialNetworkPicture, facebookUser.userPictureUri),
+                    Cookie(CookieNames.socialNetworkFamilyName, facebookUser.userFacebookFamilyName),
+                    Cookie(CookieNames.socialNetworkGivenName, facebookUser.userFacebookGivenName)
+                  )
+                  .bakeCookies()
+            }
+          }
+          else {
+            logger.warn(s"Couldn't find user in time to teach : ${resp.toString()}")
+            Future {
+              NotFound(s"${facebookUser.userFacebookGivenName} ${facebookUser.userFacebookFamilyName}")
+                .discardingCookies(DiscardingCookie(CookieNames.timetoteachId))
+                .withCookies(
+                  Cookie(CookieNames.socialNetworkFamilyName, facebookUser.userFacebookFamilyName),
+                  Cookie(CookieNames.socialNetworkGivenName, facebookUser.userFacebookGivenName),
+                  Cookie(CookieNames.socialNetworkName, "FACEBOOK"),
+                  Cookie(CookieNames.socialNetworkUserId, facebookUser.userFacebookId),
+                  Cookie(CookieNames.socialNetworkEmail, facebookUser.userFacebookEmail),
+                  Cookie(CookieNames.socialNetworkPicture, facebookUser.userPictureUri)
+                )
+                .bakeCookies()
+            }
+          }
+      }
+      theAnswer.flatMap {
+        ans => ans
+      }
+    } else {
+      Future {
+        NotFound(s"${facebookUser.userFacebookGivenName} ${facebookUser.userFacebookFamilyName}")
+          .discardingCookies(DiscardingCookie(CookieNames.timetoteachId))
+          .withCookies(
+            Cookie(CookieNames.socialNetworkFamilyName, facebookUser.userFacebookFamilyName),
+            Cookie(CookieNames.socialNetworkGivenName, facebookUser.userFacebookGivenName),
+            Cookie(CookieNames.socialNetworkName, "FACEBOOK"),
+            Cookie(CookieNames.socialNetworkUserId, facebookUser.userFacebookId),
+            Cookie(CookieNames.socialNetworkEmail, facebookUser.userFacebookEmail),
+            Cookie(CookieNames.socialNetworkPicture, facebookUser.userPictureUri)
+          )
+          .bakeCookies()
+      }
+    }
+
+  }
+
+
+  private def deserialiseUser(databytes: ByteString)
+
+  = {
     logger.debug("Deserialise User data bytes")
     val data = databytes.toList.toArray
     val reader = new SpecificDatumReader[User](User.SCHEMA$)
     val in: InputStream = new ByteArrayInputStream(data)
     val decoder: Decoder = new DecoderFactory().binaryDecoder(in, null)
     val user = new User()
-    reader.read(user, decoder)
+    try {
+      reader.read(user, decoder)
+    } catch {
+      case e: Exception => logger.error(s"OOOOHHHHH DEAAAAR .... ${e.getMessage}")
+    }
+    logger.debug(s"User = ${user.toString}")
     user
   }
 }
 
-case class TokenId(value: String)
+case class TokenId(
+                    value: String,
+                    userId: String,
+                    userEmail: String,
+                    userUri: String,
+                    userGivenName: String,
+                    userFamilyName: String
+                  )

@@ -16,8 +16,45 @@ function statusChangeCallback(response) {
     // Full docs on the response object can be found in the documentation
     // for FB.getLoginStatus().
     if (response.status === 'connected') {
+        console.log("FB Token = " + response.authResponse.accessToken);
         // Logged into your app and Facebook.
-        testAPI();
+
+        FB.api('/me?fields=id,name,picture,first_name,last_name,age_range,verified,email', function (innerResponse) {
+            console.log('FB ID:: ' + innerResponse.id);
+            console.log('FB Full Name: ' + innerResponse.name);
+            console.log('FB Given Name: ' + innerResponse.first_name);
+            console.log('FB Family Name: ' + innerResponse.last_name);
+            console.log('FB Image URL: ' + innerResponse.picture.data.url);
+            console.log('FB Email: ' + innerResponse.email);
+
+            var xhr = new XMLHttpRequest();
+
+            xhr.open('POST', '/facebooktokensignin');
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.setRequestHeader('X-Requested-With', 'Accept');
+            xhr.onload = function () {
+                console.log('Signed in as: ' + xhr.responseText);
+            };
+            xhr.onloadend = function () {
+                if (xhr.status === 404) {
+                    console.log("reply status :- " + xhr.status);
+                    window.location.href = "/signupsteptwo";
+                } else {
+                    console.log("reply status :- " + xhr.status);
+                    window.setTimeout(goToApp, 500);
+                }
+
+            };
+            xhr.send(
+                'idtoken=' + response.authResponse.accessToken + '&' +
+                'userId=' + innerResponse.id + '&' +
+                'userEmail=' + innerResponse.email + '&' +
+                'userUri=' + encodeURIComponent(innerResponse.picture.data.url) + '&' +
+                'userGivenName=' + innerResponse.first_name + '&' +
+                'userFamilyName=' + innerResponse.last_name
+            );
+        });
+
     }
     else {
         console.log("The person is not logged into your app or we are unable to tell.");
@@ -60,15 +97,6 @@ window.fbAsyncInit = function () {
 
 };
 
-// Load the SDK asynchronously
-(function (d, s, id) {
-    var js, fjs = d.getElementsByTagName(s)[0];
-    if (d.getElementById(id)) return;
-    js = d.createElement(s);
-    js.id = id;
-    js.src = "https://connect.facebook.net/en_US/sdk.js";
-    fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));
 
 // Here we run a very simple test of the Graph API after login is
 // successful.  See statusChangeCallback() for when this call is made.

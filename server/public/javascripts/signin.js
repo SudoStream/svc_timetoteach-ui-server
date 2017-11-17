@@ -29,7 +29,14 @@ function onSignIn(googleUser) {
         }
 
     };
-    xhr.send('idtoken=' + id_token);
+    xhr.send(
+        'idtoken=' + id_token + '&' +
+        'userId=' + '&' +
+        'userEmail=' + '&' +
+        'userUri=' + '&' +
+        'userGivenName=' + '&' +
+        'userFamilyName='
+    );
 
 }
 

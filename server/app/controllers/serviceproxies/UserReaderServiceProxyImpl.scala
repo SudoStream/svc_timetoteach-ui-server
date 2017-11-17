@@ -45,7 +45,7 @@ class UserReaderServiceProxyImpl {
         .withLoose(s.loose.withDisableHostnameVerification(true))
         .withLoose(s.loose.withAcceptAnyCertificate(true))
     )
-    logger.info(s"ssl config = ${badSslConfig.toString}")
+
     val badCtx = Http().createClientHttpsContext(badSslConfig)
 
     val responseFuture: Future[HttpResponse] = Http().singleRequest(req, badCtx)
