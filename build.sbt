@@ -9,13 +9,16 @@ name := "timetoteach"
 
 val scalaV = "2.11.11"
 
+///////////////////////////////////////////
+val WWW_TIMETOTEACH_VERSION = "0.0.1-29"
+///////////////////////////////////////////
 
 lazy val timetoteach_ui_server = (project in file("server")).settings(
   scalaVersion := scalaV,
   scalaJSProjects := Seq(client),
   pipelineStages in Assets := Seq(scalaJSPipeline),
   pipelineStages := Seq(digest, gzip),
-  version := "0.0.1-28",
+  version := WWW_TIMETOTEACH_VERSION,
   dockerBaseImage := "anapsix/alpine-java:8_server-jre",
   dockerExposedPorts := Seq(9000),
   dockerRepository := Some("eu.gcr.io/time-to-teach-zone"),
