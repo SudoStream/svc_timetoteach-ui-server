@@ -1,5 +1,5 @@
 @import be.objectify.deadbolt.scala.AuthenticatedRequest
-    @(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUser: io.sudostream.timetoteach.messages.systemwide.model.User, postInitialPreferencesUrl: Call)(implicit request: AuthenticatedRequest[Any])
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUser: io.sudostream.timetoteach.messages.systemwide.model.User, postInitialPreferencesUrl: Call)(implicit request: AuthenticatedRequest[Any])
 
 @timetoteachAppMain(handler, "Class Timetable",
     userPictureUri, userFirstName, userFamilyName) {
@@ -8,15 +8,101 @@
         <h1>School Times & Class Details</h1>
 
         <section id="askInitialPreferencesForm">
-            <div class="row">
-                <div class="col-lg-12 ">
-                    <form action="@postInitialPreferencesUrl.url" method="post" id="needs-validation" novalidate>
-                    @helper.CSRF.formField
-
-                    </form>
+            <form action="@postInitialPreferencesUrl.url" method="post" id="needs-validation" novalidate>
+                @helper.CSRF.formField
+                <div class="col-sm-12">
+                    <div class="school-times-section">
+                        <div class="row">
+                            <div class="form-group col-sm-3">
+                                <div class="bootstrap-timepicker timepicker">
+                                    <label for="schoolStartTime">School Start Time</label>
+                                    <input id="schoolStartTime" type="text" class="form-control input-small">
+                                </div>
+                            </div>
+                            <div class="col-sm-1"></div>
+                            <div class="form-group col-sm-3">
+                                <div class="bootstrap-timepicker timepicker">
+                                    <label for="morningBreakStartTime">Morning Break Start Time</label>
+                                    <input id="morningBreakStartTime" type="text" class="form-control input-small">
+                                </div>
+                            </div>
+                            <div class="col-sm-1"></div>
+                            <div class="form-group col-sm-3">
+                                <div class="bootstrap-timepicker timepicker">
+                                    <label for="morningBreakEndTime">Morning Break End Time</label>
+                                    <input id="morningBreakEndTime" type="text" class="form-control input-small">
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="form-group col-sm-3">
+                                <div class="bootstrap-timepicker timepicker">
+                                    <label for="lunchStartTime">Lunch Start Time</label>
+                                    <input id="lunchStartTime" type="text" class="form-control input-small">
+                                </div>
+                            </div>
+                            <div class="col-sm-1"></div>
+                            <div class="form-group col-sm-3">
+                                <div class="bootstrap-timepicker timepicker">
+                                    <label for="lunchEndTime">Lunch End Time</label>
+                                    <input id="lunchEndTime" type="text" class="form-control input-small">
+                                </div>
+                            </div>
+                            <div class="col-sm-1"></div>
+                            <div class="form-group col-sm-3">
+                                <div class="bootstrap-timepicker timepicker">
+                                    <label for="schoolEndTime">School End Time</label>
+                                    <input id="schoolEndTime" type="text" class="form-control input-small">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </form>
         </section>
     </div>
+
+
+    <script type="text/javascript">
+            $('#schoolStartTime').timepicker({
+                template: false,
+                showInputs: false,
+                minuteStep: 5,
+                defaultTime: '09:00 AM'
+            });
+            $('#morningBreakStartTime').timepicker({
+                template: false,
+                showInputs: false,
+                minuteStep: 5,
+                defaultTime: '10:30 AM'
+            });
+            $('#morningBreakEndTime').timepicker({
+                template: false,
+                showInputs: false,
+                minuteStep: 5,
+                defaultTime: '10:45 AM'
+            });
+            $('#lunchStartTime').timepicker({
+                template: false,
+                showInputs: false,
+                minuteStep: 5,
+                defaultTime: '12:00 AM'
+            });
+            $('#lunchEndTime').timepicker({
+                template: false,
+                showInputs: false,
+                minuteStep: 5,
+                defaultTime: '01:00 PM'
+            });
+            $('#schoolEndTime').timepicker({
+                template: false,
+                showInputs: false,
+                minuteStep: 5,
+                defaultTime: '03:00 PM'
+            });
+
+
+    </script>
 
 }

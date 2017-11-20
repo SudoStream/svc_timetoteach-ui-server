@@ -40,7 +40,7 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl,
 
   val initialUserPreferencesForm = Form(
     mapping(
-      "School Start Time" -> text,
+      "schoolStartTime" -> text,
       "morningBreakStartTime" -> text,
       "morningBreakEndTime" -> text,
       "lunchStartTime" -> text,
@@ -118,6 +118,7 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl,
           case Some(userInfo) =>
             if (userInfo.userPreferences.isDefined) {
 
+              println("Initial user preferences already defined.")
               Ok(views.html.timetoteachDashboard(new MyDeadboltHandler(userReader),
                 SharedMessages.httpMainTitle,
                 userPictureUri,
@@ -126,6 +127,7 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl,
 
             } else {
               // TODO: Redirect
+              println("Initial user preferences not yet defined. Lets grab them now")
               Ok(views.html.askInitialPreferences(new MyDeadboltHandler(userReader),
                 userPictureUri,
                 userFirstName,

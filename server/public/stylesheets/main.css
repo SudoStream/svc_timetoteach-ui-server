@@ -132,6 +132,15 @@ img {
     margin-top: 6rem;
 }
 
+#askInitialPreferencesForm {
+    margin-top: 4rem;
+}
+
+.school-times-section {
+    border: 1px solid lightgrey;
+    padding: 1rem;
+}
+
 .signup-form-content {
     padding: 4rem 0;
 }
