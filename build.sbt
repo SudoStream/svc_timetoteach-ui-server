@@ -10,7 +10,7 @@ name := "timetoteach"
 val scalaV = "2.11.11"
 
 ///////////////////////////////////////////
-val WWW_TIMETOTEACH_VERSION = "0.0.1-34"
+val WWW_TIMETOTEACH_VERSION = "0.0.1-35"
 ///////////////////////////////////////////
 
 lazy val timetoteach_ui_server = (project in file("server")).settings(
@@ -23,8 +23,7 @@ lazy val timetoteach_ui_server = (project in file("server")).settings(
   dockerExposedPorts := Seq(9000),
   dockerRepository := Some("eu.gcr.io/time-to-teach-zone"),
   dockerUpdateLatest := true,
-  dockerEntrypoint := Seq("sh", "-c", s"bin/${executableScriptName.value} "
-  ),
+  dockerEntrypoint := Seq("sh", "-c", s"bin/${executableScriptName.value}"),
   packageName in Docker := "www-time-to-teach",
   resolvers += Resolver.sonatypeRepo("snapshots"),
 
@@ -33,7 +32,7 @@ lazy val timetoteach_ui_server = (project in file("server")).settings(
   libraryDependencies ++= Seq(
     guice,
     ws,
-    "io.sudostream.timetoteach" %% "messages" % "0.0.11-15",
+    "io.sudostream.timetoteach" %% "messages" % "0.0.11-19",
     "com.google.api-client" % "google-api-client" % "1.22.0",
     "be.objectify" %% "deadbolt-scala" % "2.6.0",
     "com.vmunier" %% "scalajs-scripts" % "1.1.0",

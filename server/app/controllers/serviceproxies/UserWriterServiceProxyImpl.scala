@@ -115,7 +115,8 @@ class UserWriterServiceProxyImpl @Inject()(schoolReader: SchoolReaderServiceProx
         )
       ),
       userRole = UserRole.TEACHER,
-      schools = List(SchoolWrapper(theSchool))
+      schools = List(SchoolWrapper(theSchool)),
+      userPreferences = None
     )
   }
 
