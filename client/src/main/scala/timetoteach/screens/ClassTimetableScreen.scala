@@ -108,6 +108,9 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
       val endTimeStringProposed = dom.document.getElementById("timepicker2").asInstanceOf[HTMLInputElement].value
       val maybeEndTimeProposed = LocalTimeUtil.convertStringTimeToLocalTime(endTimeStringProposed)
 
+      println(s"Proposed start time: ${maybeStartTimeProposed.get.toString}")
+      println(s"Proposed end time: ${maybeEndTimeProposed.get.toString}")
+
       val maybeTimeSlot = for {
         startTime <- maybeStartTimeProposed
         endTime <- maybeEndTimeProposed
@@ -128,7 +131,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
           if (classTimetable.addSubject(subjectSession._1, subjectSession._2)) {
             renderClassTimetable()
           } else {
-            global.alert("Not enough space to add subject")
+            global.alert("Issue: Not enough space to add subject")
           }
           val $ = js.Dynamic.global.$
           $("#addLessonsModal").modal("hide")
@@ -174,7 +177,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
         if (classTimetable.addSubject(subjectDetailAndSessionOfTheWeek._1, subjectDetailAndSessionOfTheWeek._2)) {
           renderClassTimetable()
         } else {
-          global.alert("Not enough space to add subject")
+          global.alert("Error : Could not add subject. Perhaps not enough space to add subject")
         }
         val $ = js.Dynamic.global.$
         $("#addLessonsModal").modal("hide")

@@ -114,8 +114,10 @@ case class SessionBreakdown(sessionOfTheWeek: SessionOfTheWeek, startTime: Local
   def isPartiallyFull: Boolean = !isEmpty && !isFull
 
   private def canAddSubjectWithinRequestedTimes(proposedTimeSlot: TimeSlot): Boolean = {
+    println(s"proposedTimeSlot:- ${proposedTimeSlot.toString}")
     val subjectsWithoutEmpty = subjectsInSession.filterNot(_.subject.value == SUBJECT_EMPTY)
     val emptyTimePeriodsInSession = getEmptyTimePeriodsInGivenSession(subjectsWithoutEmpty)
+    println(s"emptyTimePeriodsInSession : ${emptyTimePeriodsInSession.toString()}")
     val poptentialEmptyPeriodsThatMatch: Seq[Option[(LocalTime, LocalTime)]] =
       for {
         emptyPeriod <- emptyTimePeriodsInSession
