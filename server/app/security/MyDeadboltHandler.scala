@@ -52,7 +52,6 @@ class MyDeadboltHandler(userReader: UserReaderServiceProxyImpl, dynamicResourceH
         }
       }
 
-      //      Future(Some(new User("steve")))
       eventualSubjectOption flatMap { fut => fut }
     } else {
       logger.warn("Subject not found in request")

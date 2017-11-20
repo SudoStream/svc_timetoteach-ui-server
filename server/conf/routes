@@ -3,28 +3,29 @@
 # ~~~~
 
 # Home page
-GET         /                           controllers.Application.index
-GET         /health                     controllers.Application.health
+GET         /                              controllers.Application.index
+GET         /health                        controllers.Application.health
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+GET         /assets/*file                  controllers.Assets.versioned(path="/public", file: Asset)
 
-GET         /login                      controllers.Application.login
-GET         /loggedout                  controllers.Application.loggedOutSuccessfully
-GET         /signup                     controllers.UserSignupController.signupStep1
-GET         /signupsteptwo              controllers.UserSignupController.signupStep2
-POST        /usercreated                controllers.UserSignupController.userCreated
-GET         /profile                    controllers.Application.profile
-POST        /tokensignin                controllers.SecurityController.tokensignin
-POST        /facebooktokensignin        controllers.SecurityController.facebookTokenSignIn
-POST        /signout                    controllers.SecurityController.signout
-GET         /signedupcongrats           controllers.UserSignupController.signedUpCongrats
+GET         /login                         controllers.Application.login
+GET         /loggedout                     controllers.Application.loggedOutSuccessfully
+GET         /signup                        controllers.UserSignupController.signupStep1
+GET         /signupsteptwo                 controllers.UserSignupController.signupStep2
+POST        /usercreated                   controllers.UserSignupController.userCreated
+GET         /profile                       controllers.Application.profile
+POST        /tokensignin                   controllers.SecurityController.tokensignin
+POST        /facebooktokensignin           controllers.SecurityController.facebookTokenSignIn
+POST        /signout                       controllers.SecurityController.signout
+GET         /signedupcongrats              controllers.UserSignupController.signedUpCongrats
 
-GET         /app                        controllers.Application.timeToTeachApp
-GET         /classtimetable             controllers.Application.classTimetable
-GET         /weeklyplanning             controllers.Application.weeklyPlanning
-GET         /termlyplanning             controllers.Application.termlyPlanning
+GET         /app                           controllers.Application.timeToTeachApp
+GET         /classtimetable                controllers.Application.classTimetable
+GET         /initialUserPreferences        controllers.Application.askInitialPreferences
+GET         /weeklyplanning                controllers.Application.weeklyPlanning
+GET         /termlyplanning                controllers.Application.termlyPlanning
 
 
 #########################
-GET         /twitter/auth               controllers.Twitter.authenticate()
+GET         /twitter/auth                  controllers.Twitter.authenticate()
 #GET     /view/:foo/:bar             controllers.Application.view(foo: String, bar: String)

@@ -1,0 +1,10 @@
+@import be.objectify.deadbolt.scala.AuthenticatedRequest
+@import models.timetoteach.classtimetable.SchoolDayTimes
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], schoolDayTimes: SchoolDayTimes)(implicit request: AuthenticatedRequest[Any])
+
+@timetoteachAppMain(handler, "Class Timetable",
+    userPictureUri, userFirstName, userFamilyName) {
+
+    <h1>Preferences</h1>
+
+}

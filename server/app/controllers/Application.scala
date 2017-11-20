@@ -6,7 +6,7 @@ import javax.inject.Inject
 import be.objectify.deadbolt.scala.cache.HandlerCache
 import be.objectify.deadbolt.scala.{ActionBuilders, DeadboltActions}
 import com.typesafe.config.ConfigFactory
-import controllers.serviceproxies.UserReaderServiceProxyImpl
+import controllers.serviceproxies.{TimeToTeachUserId, UserReaderServiceProxyImpl}
 import models.timetoteach.CookieNames
 import models.timetoteach.classtimetable.SchoolDayTimes
 import play.api.mvc._
@@ -75,12 +75,51 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl, deadbolt: De
     println(s"userFirstName =' ${userFirstName.getOrElse("OH DEAR NOT DEFINED")}")
     println(s"userPictureUri =' ${userPictureUri.getOrElse("OH DEAR NOT DEFINED")}")
 
+    val timeToTeachUserId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest)
+    timeToTeachUserId match {
+      case Some(userId) =>
+        val userInfoFuture = userReader.getUserDetails(TimeToTeachUserId(userId))
+
+        userInfoFuture map {
+          case Some(userInfo) =>
+            if (userInfo.userPreferences.isDefined) {
+
+              Ok(views.html.timetoteachDashboard(new MyDeadboltHandler(userReader),
+                SharedMessages.httpMainTitle,
+                userPictureUri,
+                userFirstName,
+                userFamilyName)(authRequest))
+
+            } else {
+              Ok(views.html.askInitialPreferences(new MyDeadboltHandler(userReader),
+                userPictureUri,
+                userFirstName,
+                userFamilyName,
+                defaultSchoolDayTimes)(authRequest))
+            }
+
+          case None =>
+            NotFound(s"Tim To Teach User Id not found: ${timeToTeachUserId.toString}")
+        }
+
+      case None =>
+        Future {
+          NotFound(s"Tim To Teach User Id not found: ${timeToTeachUserId.toString}")
+        }
+    }
+  }
+
+  def askInitialPreferences = deadbolt.SubjectPresent()() { authRequest =>
+    val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
+    val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
+    val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
+
     Future {
-      Ok(views.html.timetoteachDashboard(new MyDeadboltHandler(userReader),
-        SharedMessages.httpMainTitle,
+      Ok(views.html.askInitialPreferences(new MyDeadboltHandler(userReader),
         userPictureUri,
         userFirstName,
-        userFamilyName)(authRequest))
+        userFamilyName,
+        defaultSchoolDayTimes)(authRequest))
     }
   }
 

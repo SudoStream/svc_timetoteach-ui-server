@@ -31,7 +31,8 @@ class UserReaderServiceProxyImpl {
   private val userReaderServiceHostname = config.getString("services.user-service-host")
   private val userReaderServicePort = config.getString("services.user-service-port")
 
-  def isUserValid(timeToTeachUserIdWrapper: TimeToTeachUserId): Future[Boolean] = {
+
+  def getUser(timeToTeachUserIdWrapper: TimeToTeachUserId): Future[HttpResponse] = {
     val timeToTeachUserId = timeToTeachUserIdWrapper.value
     val protocol = if (userReaderServicePort.toInt > 9000) "http" else "https"
     val userServiceUri =
@@ -48,9 +49,12 @@ class UserReaderServiceProxyImpl {
 
     val badCtx = Http().createClientHttpsContext(badSslConfig)
 
-    val responseFuture: Future[HttpResponse] = Http().singleRequest(req, badCtx)
-    val eventualFuture: Future[Future[Boolean]] = responseFuture map {
-      resp => processHttpResponse(resp)
+    Http().singleRequest(req, badCtx)
+  }
+
+  def isUserValid(timeToTeachUserIdWrapper: TimeToTeachUserId): Future[Boolean] = {
+    val eventualFuture: Future[Future[Boolean]] = getUser(timeToTeachUserIdWrapper) map {
+      resp => processHttpResponseIsUserValid(resp)
     }
 
     eventualFuture.flatMap {
@@ -58,19 +62,32 @@ class UserReaderServiceProxyImpl {
     }
   }
 
-  private def processHttpResponse(resp: HttpResponse): Future[Boolean] = {
-    if (resp.status.isSuccess()) {
-      val smallTimeout = 3000.millis
-      val dataFuture = resp.entity.toStrict(smallTimeout) map {
-        httpEntity =>
-          httpEntity.getData()
-      }
-      val userExtractedFuture = dataFuture map {
-        databytes =>
-          deserialiseUser(databytes)
-      }
 
-      userExtractedFuture map {
+  def getUserDetails(timeToTeachUserIdWrapper: TimeToTeachUserId): Future[Option[User]] = {
+    val eventualOptionFuture: Future[Future[Option[User]]] = getUser(timeToTeachUserIdWrapper) map {
+      resp => processHttpResponseGetUser(resp)
+    }
+
+    eventualOptionFuture flatMap  {
+      res => res
+    }
+  }
+
+  private def extractUserFromResponse(resp: HttpResponse): Future[Option[User]] = {
+    val smallTimeout = 3000.millis
+    val dataFuture = resp.entity.toStrict(smallTimeout) map {
+      httpEntity =>
+        httpEntity.getData()
+    }
+    dataFuture map {
+      databytes =>
+        deserialiseUser(databytes)
+    }
+  }
+
+  private def processHttpResponseIsUserValid(resp: HttpResponse): Future[Boolean] = {
+    if (resp.status.isSuccess()) {
+      extractUserFromResponse(resp) map {
         user => true
       }
     } else {
@@ -81,15 +98,31 @@ class UserReaderServiceProxyImpl {
     }
   }
 
-  private def deserialiseUser(databytes: ByteString) = {
-    logger.debug("Deserialise User data bytes")
-    val data = databytes.toList.toArray
-    val reader = new SpecificDatumReader[User](User.SCHEMA$)
-    val in: InputStream = new ByteArrayInputStream(data)
-    val decoder: Decoder = new DecoderFactory().binaryDecoder(in, null)
-    val user = new User()
-    reader.read(user, decoder)
-    user
+  private def processHttpResponseGetUser(resp: HttpResponse): Future[Option[User]] = {
+    if (resp.status.isSuccess()) {
+      extractUserFromResponse(resp)
+    } else {
+      logger.warn(s"Couldn't find user in time to teach : ${resp.toString()}")
+      Future {
+        None
+      }
+    }
+  }
+
+
+  private def deserialiseUser(databytes: ByteString): Option[User] = {
+    try {
+      logger.debug("Deserialise User data bytes")
+      val data = databytes.toList.toArray
+      val reader = new SpecificDatumReader[User](User.SCHEMA$)
+      val in: InputStream = new ByteArrayInputStream(data)
+      val decoder: Decoder = new DecoderFactory().binaryDecoder(in, null)
+      val user = new User()
+      reader.read(user, decoder)
+      Some(user)
+    } catch {
+      case _: Throwable => None
+    }
   }
 
 }
