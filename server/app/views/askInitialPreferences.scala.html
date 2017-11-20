@@ -1,10 +1,22 @@
 @import be.objectify.deadbolt.scala.AuthenticatedRequest
-@import models.timetoteach.classtimetable.SchoolDayTimes
-@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], schoolDayTimes: SchoolDayTimes)(implicit request: AuthenticatedRequest[Any])
+    @(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUser: io.sudostream.timetoteach.messages.systemwide.model.User, postInitialPreferencesUrl: Call)(implicit request: AuthenticatedRequest[Any])
 
 @timetoteachAppMain(handler, "Class Timetable",
     userPictureUri, userFirstName, userFamilyName) {
 
-    <h1>Preferences</h1>
+    <div class="container text-center justify-content-center">
+        <h1>School Times & Class Details</h1>
+
+        <section id="askInitialPreferencesForm">
+            <div class="row">
+                <div class="col-lg-12 ">
+                    <form action="@postInitialPreferencesUrl.url" method="post" id="needs-validation" novalidate>
+                    @helper.CSRF.formField
+
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
 
 }
