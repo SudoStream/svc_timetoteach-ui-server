@@ -145,6 +145,10 @@ img {
     padding: 4rem 0;
 }
 
+.row-in-form {
+    margin-top: 1rem;
+}
+
 .center {
     display: flex;
     margin: 0 auto;
@@ -417,6 +421,10 @@ img {
     margin-top: 2rem;
     display: none;
     margin-bottom: 7rem;
+}
+
+.form-submit-button {
+    margin-top: 3rem;
 }
 
 .clear-cancel-save-buttons {
