@@ -34,34 +34,34 @@
                             <div class="form-row">
                                 <div class="form-group bootstrap-timepicker timepicker col-sm-5">
                                     <label for="schoolStartTime">School Start Time</label>
-                                    <input id="schoolStartTime" type="text" class="form-control input-small">
+                                    <input type="text" class="form-control input-small" id="schoolStartTime" name="schoolStartTime">
                                 </div>
                                 <div class="col-sm-2"></div>
                                 <div class="form-group bootstrap-timepicker timepicker col-sm-5">
                                     <label for="schoolEndTime">School End Time</label>
-                                    <input id="schoolEndTime" type="text" class="form-control input-small">
+                                    <input id="schoolEndTime" type="text" class="form-control input-small" name="schoolEndTime">
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group bootstrap-timepicker timepicker col-sm-5">
                                     <label for="morningBreakStartTime">Morning Break Start Time</label>
-                                    <input id="morningBreakStartTime" type="text" class="form-control input-small">
+                                    <input id="morningBreakStartTime" type="text" class="form-control input-small" name="morningBreakStartTime">
                                 </div>
                                 <div class="col-sm-2"></div>
                                 <div class="form-group bootstrap-timepicker timepicker col-sm-5">
                                     <label for="morningBreakEndTime">Morning Break End Time</label>
-                                    <input id="morningBreakEndTime" type="text" class="form-control input-small">
+                                    <input id="morningBreakEndTime" type="text" class="form-control input-small" name="morningBreakEndTime">
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group bootstrap-timepicker timepicker col-sm-5">
                                     <label for="lunchStartTime">Lunch Start Time</label>
-                                    <input id="lunchStartTime" type="text" class="form-control input-small">
+                                    <input id="lunchStartTime" type="text" class="form-control input-small" name="lunchStartTime">
                                 </div>
                                 <div class="col-sm-2"></div>
                                 <div class="form-group bootstrap-timepicker timepicker col-sm-5">
                                     <label for="lunchEndTime">Lunch End Time</label>
-                                    <input id="lunchEndTime" type="text" class="form-control input-small">
+                                    <input id="lunchEndTime" type="text" class="form-control input-small" name="lunchEndTime">
                                 </div>
                             </div>
 
@@ -96,7 +96,7 @@
                         <div class="col-sm-3"></div>
                         <div class="col-sm-6">
                             <label for="className">Class Name</label>
-                            <input type="text" id="className" class="form-control" placeholder="Enter Your Class Name, e.g. P3AB etc">
+                            <input type="text" id="className" name="className" class="form-control" placeholder="Enter Your Class Name, e.g. P3AB etc" required>
                         </div>
                         <div class="col-sm-3"></div>
                     </div>
@@ -113,33 +113,44 @@
                         </div>
                         <div class="col-sm-3"></div>
                     </div>
-                    <div class="form-row">
-                        <div class="col-sm-3"></div>
-                        <div class="form-check col-sm-6">
+                    <div class="form-row justify-content-center">
+                        <div class="col-sm-1"></div>
+                        <div class="form-check col-sm-10 text-center">
                             <div class="col-sm-12">
-                                <label class="form-check-label col-auto">
-                                    <input id="checkEarlyCurriculum" class="form-check-input" type="checkbox" value="">
-                                    EARLY
+                                <label class="custom-control custom-checkbox col-auto">
+                                    <input type="hidden" name="check[0]" value="0" />
+                                    <input name="checkEarlyCurriculum" type="hidden" value="Off">
+                                    <input id="checkEarlyCurriculum" name="checkEarlyCurriculum" class="custom-control-input" type="checkbox" value="On">
+                                    <span class="custom-control-indicator"></span>
+                                    <span class="custom-control-description">EARLY</span>
                                 </label>
-                                <label class="form-check-label col-auto">
-                                    <input id="checkFirstCurriculum" class="form-check-input" type="checkbox" value="">
-                                    FIRST
+                                <label class="custom-control custom-checkbox col-auto">
+                                    <input name="checkFirstCurriculum" type="hidden" value="Off">
+                                    <input id="checkFirstCurriculum" name="checkFirstCurriculum" class="custom-control-input" type="checkbox" >
+                                    <span class="custom-control-indicator"></span>
+                                    <span class="custom-control-description">FIRST</span>
                                 </label>
-                                <label class="form-check-label col-auto">
-                                    <input id="checkSecondCurriculum" class="form-check-input" type="checkbox" value="">
-                                    SECOND
+                                <label class="custom-control custom-checkbox col-auto">
+                                    <input name="checkSecondCurriculum" type="hidden" value="Off">
+                                    <input id="checkSecondCurriculum" name="checkSecondCurriculum" class="custom-control-input" type="checkbox" >
+                                    <span class="custom-control-indicator"></span>
+                                    <span class="custom-control-description">SECOND</span>
                                 </label>
-                                <label class="form-check-label col-auto">
-                                    <input id="checkThirdCurriculum" class="form-check-input" type="checkbox" value="">
-                                    THIRD
+                                <label class="custom-control custom-checkbox col-auto">
+                                    <input name="checkThirdCurriculum" type="hidden" value="Off">
+                                    <input id="checkThirdCurriculum" name="checkThirdCurriculum" class="custom-control-input" type="checkbox">
+                                    <span class="custom-control-indicator"></span>
+                                    <span class="custom-control-description">THIRD</span>
                                 </label>
-                                <label class="form-check-label col-auto">
-                                    <input id="checkFourthCurriculum" class="form-check-input" type="checkbox" value="">
-                                    FOURTH
+                                <label class="custom-control custom-checkbox col-auto">
+                                    <input name="checkFourthCurriculum" type="hidden" value="Off">
+                                    <input id="checkFourthCurriculum" name="checkFourthCurriculum" class="custom-control-input" type="checkbox">
+                                    <span class="custom-control-indicator"></span>
+                                    <span class="custom-control-description">FOURTH</span>
                                 </label>
                             </div>
                         </div>
-                        <div class="col-sm-3"></div>
+                        <div class="col-sm-1"></div>
                     </div>
 
                 </div>
@@ -191,6 +202,23 @@
             });
 
 
+    </script>
+
+    <script>
+            // Example starter JavaScript for disabling form submissions if there are invalid fields
+            (function () {
+                "use strict";
+                window.addEventListener("load", function () {
+                    var form = document.getElementById("needs-validation");
+                    form.addEventListener("submit", function (event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add("was-validated");
+                    }, false);
+                }, false);
+            }());
     </script>
 
 }

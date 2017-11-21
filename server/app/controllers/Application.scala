@@ -8,8 +8,8 @@ import be.objectify.deadbolt.scala.{ActionBuilders, DeadboltActions}
 import com.typesafe.config.ConfigFactory
 import controllers.serviceproxies.{SchoolReaderServiceProxyImpl, TimeToTeachUserId, UserReaderServiceProxyImpl, UserWriterServiceProxyImpl}
 import io.sudostream.timetoteach.messages.systemwide.model.User
+import models.timetoteach.CookieNames
 import models.timetoteach.classtimetable.SchoolDayTimes
-import models.timetoteach.{CookieNames, TimeToTeachUser}
 import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms.{mapping, _}
@@ -37,27 +37,31 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl,
                                      lunchEndTime: String,
                                      schoolEndTime: String,
                                      className: String,
-                                     checkEarlyCurriculum: Boolean,
-                                     checkFirstCurriculum: Boolean,
-                                     checkSecondCurriculum: Boolean,
-                                     checkThirdCurriculum: Boolean,
-                                     checkFourthCurriculum: Boolean
-                                   )
+                                     checkEarlyCurriculum: String,
+                                     checkFirstCurriculum: String,
+                                     checkSecondCurriculum: String,
+                                     checkThirdCurriculum: String,
+                                     checkFourthCurriculum: String
+                                   ) {
+    logger.debug("InitialUserPreferences - some values")
+    logger.debug(s"checkEarlyCurriculum = $checkEarlyCurriculum")
+    logger.debug(s"checkFirstCurriculum = $checkFirstCurriculum")
+  }
 
   val initialUserPreferencesForm = Form(
     mapping(
-      "schoolStartTime" -> text,
-      "morningBreakStartTime" -> text,
-      "morningBreakEndTime" -> text,
-      "lunchStartTime" -> text,
-      "lunchEndTime" -> text,
-      "schoolEndTime" -> text,
-      "className" -> text,
-      "checkEarlyCurriculum" -> boolean,
-      "checkFirstCurriculum" -> boolean,
-      "checkSecondCurriculum" -> boolean,
-      "checkThirdCurriculum" -> boolean,
-      "checkFourthCurriculum" -> boolean
+      "schoolStartTime" -> nonEmptyText,
+      "morningBreakStartTime" -> nonEmptyText,
+      "morningBreakEndTime" -> nonEmptyText,
+      "lunchStartTime" -> nonEmptyText,
+      "lunchEndTime" -> nonEmptyText,
+      "schoolEndTime" -> nonEmptyText,
+      "className" -> nonEmptyText,
+      "checkEarlyCurriculum" -> text,
+      "checkFirstCurriculum" -> text,
+      "checkSecondCurriculum" -> text,
+      "checkThirdCurriculum" -> text,
+      "checkFourthCurriculum" -> text
     )(InitialUserPreferences.apply)(InitialUserPreferences.unapply)
   )
 
@@ -220,13 +224,11 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl,
 
 
   def initialPreferencesCreated: Action[AnyContent] = deadbolt.SubjectPresent()() { implicit request =>
-    request.cookies foreach (cookie => logger.debug("UC name: '" + cookie.name + "',   value: '" + cookie.value + "'"))
-
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, request)
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, request)
 
     val errorFunction = { formWithErrors: Form[InitialUserPreferences] =>
-      logger.error("ERROR : Oh dear ... " + formWithErrors.toString)
+      logger.error(s"${LocalTime.now.toString} : Form ERROR : Oh well ... " + formWithErrors.errors.toString())
       Future {
         BadRequest(views.html.askInitialPreferences(
           handler = new MyDeadboltHandler(userReader),
@@ -239,6 +241,7 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl,
     }
 
     val successFunction = { data: InitialUserPreferences =>
+      logger.info(s"${LocalTime.now.toString} : Form SUCCESS : Oh dear ... ")
       val cookies = request.cookies
 
       val theUserPictureUri = cookies.get(CookieNames.socialNetworkPicture) match {
