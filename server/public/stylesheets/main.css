@@ -133,12 +133,18 @@ img {
 }
 
 #askInitialPreferencesForm {
-    margin-top: 4rem;
+    margin-top: 2rem;
 }
 
-.school-times-section {
+.school-form-section {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
     border: 1px solid lightgrey;
     padding: 1rem;
+}
+
+.form-header {
+    margin-bottom: 1.2rem;
 }
 
 .signup-form-content {
@@ -307,10 +313,14 @@ img {
 }
 
 #app-main-screen-title {
-    margin-left: 2rem;
-    clear: both;
-    display: inline-block;
-    white-space: nowrap;
+    /*margin-left: 2rem;*/
+    /*clear: both;*/
+    /*display: inline-block;*/
+    /*white-space: nowrap;*/
+}
+
+.classCurriculumLevelsRow {
+    margin-top: 2rem;
 }
 
 #startupNavbar {

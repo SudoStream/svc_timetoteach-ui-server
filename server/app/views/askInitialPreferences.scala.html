@@ -1,109 +1,150 @@
 @import be.objectify.deadbolt.scala.AuthenticatedRequest
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUser: io.sudostream.timetoteach.messages.systemwide.model.User, postInitialPreferencesUrl: Call)(implicit request: AuthenticatedRequest[Any])
 
-@timetoteachAppMain(handler, "Class Timetable",
+@timetoteachAppMain(handler, "Setup Questions",
     userPictureUri, userFirstName, userFamilyName) {
 
-    <div class="container text-center justify-content-center">
-        <h1>School Times & Class Details</h1>
+    <div class="container justify-content-center">
 
         <section id="askInitialPreferencesForm">
             <form action="@postInitialPreferencesUrl.url" method="post" id="needs-validation" novalidate>
                 @helper.CSRF.formField
-                <div class="col-sm-12">
-                    <div class="school-times-section">
+                <div class="school-form-section">
 
-                        <div class="row row-in-form">
+                    <h6 class="text-center text-muted form-header">School Times</h6>
 
-                            <div class="col-sm-4">
-                                <div class="row">
-                                    <div class="col-sm-2"></div>
-                                    <div class="form-group col-sm-8">
-                                        <div class="bootstrap-timepicker timepicker">
-                                            <label for="schoolStartTime">School Start Time</label>
-                                            <input id="schoolStartTime" type="text" class="form-control input-small">
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-2"></div>
+                    <div class="form-row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-sm-8">
+                            <div class="alert alert-info alert-dismissible fade show" role="alert">
+                                <button id="data-dismiss-timetable-alert" type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                Currently we assume one break per day, in the morning, and no afternoon break. In the future
+                                this will be more adaptable.
+                            </div>
+                        </div>
+                        <div class="col-sm-2"></div>
+                    </div>
+
+
+                    <div class="form-row">
+                        <div class="col-sm-3"></div>
+                        <div class="col-sm-6">
+                            <div class="form-row">
+                                <div class="form-group bootstrap-timepicker timepicker col-sm-5">
+                                    <label for="schoolStartTime">School Start Time</label>
+                                    <input id="schoolStartTime" type="text" class="form-control input-small">
+                                </div>
+                                <div class="col-sm-2"></div>
+                                <div class="form-group bootstrap-timepicker timepicker col-sm-5">
+                                    <label for="schoolEndTime">School End Time</label>
+                                    <input id="schoolEndTime" type="text" class="form-control input-small">
                                 </div>
                             </div>
-
-                            <div class="col-sm-4">
-                                <div class="row">
-                                    <div class="col-sm-2"></div>
-                                    <div class="form-group col-sm-8">
-                                        <div class="bootstrap-timepicker timepicker">
-                                            <label for="morningBreakStartTime">Morning Break Start Time</label>
-                                            <input id="morningBreakStartTime" type="text" class="form-control input-small">
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-2"></div>
+                            <div class="form-row">
+                                <div class="form-group bootstrap-timepicker timepicker col-sm-5">
+                                    <label for="morningBreakStartTime">Morning Break Start Time</label>
+                                    <input id="morningBreakStartTime" type="text" class="form-control input-small">
+                                </div>
+                                <div class="col-sm-2"></div>
+                                <div class="form-group bootstrap-timepicker timepicker col-sm-5">
+                                    <label for="morningBreakEndTime">Morning Break End Time</label>
+                                    <input id="morningBreakEndTime" type="text" class="form-control input-small">
                                 </div>
                             </div>
-
-                            <div class="col-sm-4">
-                                <div class="row">
-                                    <div class="col-sm-2"></div>
-                                    <div class="form-group col-sm-8">
-                                        <div class="bootstrap-timepicker timepicker">
-                                            <label for="morningBreakEndTime">Morning Break End Time</label>
-                                            <input id="morningBreakEndTime" type="text" class="form-control input-small">
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-2"></div>
+                            <div class="form-row">
+                                <div class="form-group bootstrap-timepicker timepicker col-sm-5">
+                                    <label for="lunchStartTime">Lunch Start Time</label>
+                                    <input id="lunchStartTime" type="text" class="form-control input-small">
+                                </div>
+                                <div class="col-sm-2"></div>
+                                <div class="form-group bootstrap-timepicker timepicker col-sm-5">
+                                    <label for="lunchEndTime">Lunch End Time</label>
+                                    <input id="lunchEndTime" type="text" class="form-control input-small">
                                 </div>
                             </div>
 
                         </div>
-
-                        <div class="row row-in-form">
-
-                            <div class="col-sm-4">
-                                <div class="row">
-                                    <div class="col-sm-2"></div>
-                                    <div class="form-group col-sm-8">
-                                        <div class="bootstrap-timepicker timepicker">
-                                            <label for="lunchStartTime">Lunch Start Time</label>
-                                            <input id="lunchStartTime" type="text" class="form-control input-small">
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-2"></div>
-                                </div>
-                            </div>
-
-                            <div class="col-sm-4">
-                                <div class="row">
-                                    <div class="col-sm-2"></div>
-                                    <div class="form-group col-sm-8">
-                                        <div class="bootstrap-timepicker timepicker">
-                                            <label for="lunchEndTime">Lunch End Time</label>
-                                            <input id="lunchEndTime" type="text" class="form-control input-small">
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-2"></div>
-                                </div>
-                            </div>
-
-
-                            <div class="col-sm-4">
-                                <div class="row">
-                                    <div class="col-sm-2"></div>
-                                    <div class="form-group col-sm-8">
-                                        <div class="bootstrap-timepicker timepicker">
-                                            <label for="schoolEndTime">School End Time</label>
-                                            <input id="schoolEndTime" type="text" class="form-control input-small">
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-2"></div>
-                                </div>
-                            </div>
-
-                        </div>
-
+                        <div class="col-sm-3"></div>
                     </div>
                 </div>
 
-                <div class="form-submit-button">
+
+                <div class="school-form-section">
+
+                    <h6 class="text-center text-muted form-header">Class Details</h6>
+
+                    <div class="form-row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-sm-8">
+                            <div class="alert alert-info alert-dismissible fade show" role="alert">
+                                <button id="data-dismiss-timetable-alert" type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                <p>Again, for simplicity we're assuming one class per teacher at the moment. This will also be more
+                                    flexible in the future.</p>
+
+                                Secondly, the levels here cover all the levels in your class, but while planning you'll be able to create groups at
+                                a more specific level - e.g. for differentiating, mixed class etc.
+                            </div>
+                        </div>
+                        <div class="col-sm-2"></div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="col-sm-3"></div>
+                        <div class="col-sm-6">
+                            <label for="className">Class Name</label>
+                            <input type="text" id="className" class="form-control" placeholder="Enter Your Class Name, e.g. P3AB etc">
+                        </div>
+                        <div class="col-sm-3"></div>
+                    </div>
+
+                    <div class="form-row classCurriculumLevelsRow">
+                        <div class="col-sm-3"></div>
+                        <div class="col-sm-6">
+                            <label class="text-center">Select Class Levels </label>
+                            <small class="text-muted">
+                                - specifically the <cite title="Scottish Curriculum for Excellence">
+                                Scottish Curriculum for Excellence
+                            </cite>
+                            </small>
+                        </div>
+                        <div class="col-sm-3"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-sm-3"></div>
+                        <div class="form-check col-sm-6">
+                            <div class="col-sm-12">
+                                <label class="form-check-label col-auto">
+                                    <input id="checkEarlyCurriculum" class="form-check-input" type="checkbox" value="">
+                                    EARLY
+                                </label>
+                                <label class="form-check-label col-auto">
+                                    <input id="checkFirstCurriculum" class="form-check-input" type="checkbox" value="">
+                                    FIRST
+                                </label>
+                                <label class="form-check-label col-auto">
+                                    <input id="checkSecondCurriculum" class="form-check-input" type="checkbox" value="">
+                                    SECOND
+                                </label>
+                                <label class="form-check-label col-auto">
+                                    <input id="checkThirdCurriculum" class="form-check-input" type="checkbox" value="">
+                                    THIRD
+                                </label>
+                                <label class="form-check-label col-auto">
+                                    <input id="checkFourthCurriculum" class="form-check-input" type="checkbox" value="">
+                                    FOURTH
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-3"></div>
+                    </div>
+
+                </div>
+
+                <div class="form-submit-button text-center">
                     <button type="submit" class="btn btn-primary btn-lg">Submit</button>
                 </div>
             </form>

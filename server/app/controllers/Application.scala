@@ -35,7 +35,13 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl,
                                      morningBreakEndTime: String,
                                      lunchStartTime: String,
                                      lunchEndTime: String,
-                                     schoolEndTime: String
+                                     schoolEndTime: String,
+                                     className: String,
+                                     checkEarlyCurriculum: Boolean,
+                                     checkFirstCurriculum: Boolean,
+                                     checkSecondCurriculum: Boolean,
+                                     checkThirdCurriculum: Boolean,
+                                     checkFourthCurriculum: Boolean
                                    )
 
   val initialUserPreferencesForm = Form(
@@ -45,7 +51,13 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl,
       "morningBreakEndTime" -> text,
       "lunchStartTime" -> text,
       "lunchEndTime" -> text,
-      "schoolEndTime" -> text
+      "schoolEndTime" -> text,
+      "className" -> text,
+      "checkEarlyCurriculum" -> boolean,
+      "checkFirstCurriculum" -> boolean,
+      "checkSecondCurriculum" -> boolean,
+      "checkThirdCurriculum" -> boolean,
+      "checkFourthCurriculum" -> boolean
     )(InitialUserPreferences.apply)(InitialUserPreferences.unapply)
   )
 
