@@ -10,10 +10,11 @@ import akka.util.Timeout
 import com.google.inject.Singleton
 import com.typesafe.config.ConfigFactory
 import com.typesafe.sslconfig.akka.AkkaSSLConfig
-import io.sudostream.timetoteach.kafka.serializing.systemwide.model.UserSerializer
+import io.sudostream.timetoteach.kafka.serializing.systemwide.model.{UserPreferencesSerializer, UserSerializer}
+import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumLevel
 import io.sudostream.timetoteach.messages.systemwide.model._
 import models.timetoteach
-import models.timetoteach.TimeToTeachUser
+import models.timetoteach.{InitialUserPreferences, TimeToTeachUser}
 import play.api.Logger
 import play.api.libs.ws.{WSClient, WSRequest}
 import utils.SchoolConverter.convertLocalSchoolToMessageSchool
@@ -38,6 +39,74 @@ class UserWriterServiceProxyImpl @Inject()(schoolReader: SchoolReaderServiceProx
   private val userWriterServicePort = config.getString("services.user-writer-port")
   private var theSchools: Map[String, io.sudostream.timetoteach.messages.systemwide.model.School] = Map.empty
   populateTheSchools
+
+  def convertToUserPreferences(newUserPreferences: InitialUserPreferences): UserPreferences = {
+    UserPreferences(
+      allSchoolTimes = List(
+        SchoolTimes(
+          schoolId = newUserPreferences.schoolId,
+          schoolStartTime = newUserPreferences.schoolStartTime,
+          morningBreakStartTime = newUserPreferences.morningBreakStartTime,
+          morningBreakEndTime = newUserPreferences.morningBreakEndTime,
+          lunchStartTime = newUserPreferences.lunchStartTime,
+          lunchEndTime = newUserPreferences.lunchEndTime,
+          schoolEndTime = newUserPreferences.schoolEndTime,
+          userTeachesTheseClasses = List(
+            SchoolClass(
+              className = newUserPreferences.className,
+              curriculumLevels = List(
+                CurriculumLevelWrapper(
+                  CurriculumLevel(
+                    country = Country.SCOTLAND,
+                    scottishCurriculumLevel = newUserPreferences.
+                  )
+                ),
+                CurriculumLevelWrapper(
+                  CurriculumLevel(
+                    country = Country.SCOTLAND,
+                    scottishCurriculumLevel = Some(ScottishCurriculumLevel.FIRST)
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  }
+
+  def updateUserPreferences(userId: TimeToTeachUserId, newUserPreferences: InitialUserPreferences): Future[Boolean] = {
+    val userPreferences: UserPreferences = convertToUserPreferences(newUserPreferences)
+    val protocol = if (userWriterServicePort.toInt > 9000) "http" else "https"
+    val uriString = s"$protocol://$userWriterServiceHostname:$userWriterServicePort/api/users/${userId.value}/editprefs"
+    logger.debug(s"uri for updating user preferences is $uriString")
+    val userWriterServiceUri = Uri(uriString)
+
+    val userPreferencesSerializer = new UserPreferencesSerializer
+    val userPreferencesBytes = userPreferencesSerializer.serialize("ignore", userPreferences)
+
+    val postNewUserRequest = HttpRequest(HttpMethods.POST, uri = userWriterServiceUri, entity = userPreferencesBytes)
+
+    val badSslConfig = AkkaSSLConfig().mapSettings(s =>
+      s.withLoose(s.loose.withDisableSNI(true))
+        .withLoose(s.loose.withDisableHostnameVerification(true))
+        .withLoose(s.loose.withAcceptAnyCertificate(true))
+    )
+
+    logger.info(s"ssl config = ${badSslConfig.toString}")
+    val badCtx = Http().createClientHttpsContext(badSslConfig)
+
+    val response: Future[HttpResponse] = http.singleRequest(postNewUserRequest, badCtx)
+
+    response onComplete {
+      case Success(httpResponse) => logger.info("User Preferences Updated!")
+      case Failure(ex) => logger.error(s"Issue updating user preferences: ${ex.getMessage}")
+    }
+
+    response map { httpResponse =>
+      if (httpResponse.status.isSuccess()) true else false
+    }
+  }
 
   def createNewUser(user: TimeToTeachUser): Future[TimeToTeachUserId] = {
     val userMessage = convertUserToMessage(user)
@@ -70,6 +139,7 @@ class UserWriterServiceProxyImpl @Inject()(schoolReader: SchoolReaderServiceProx
       TimeToTeachUserId(userMessage.timeToTeachId)
     }
   }
+
   def convertUserToMessage(user: TimeToTeachUser): io.sudostream.timetoteach.messages.systemwide.model.User = {
     if (theSchools.isEmpty) {
       populateTheSchools

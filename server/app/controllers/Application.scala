@@ -8,7 +8,7 @@ import be.objectify.deadbolt.scala.{ActionBuilders, DeadboltActions}
 import com.typesafe.config.ConfigFactory
 import controllers.serviceproxies.{SchoolReaderServiceProxyImpl, TimeToTeachUserId, UserReaderServiceProxyImpl, UserWriterServiceProxyImpl}
 import io.sudostream.timetoteach.messages.systemwide.model.User
-import models.timetoteach.CookieNames
+import models.timetoteach.{CookieNames, InitialUserPreferences}
 import models.timetoteach.classtimetable.SchoolDayTimes
 import play.api.Logger
 import play.api.data.Form
@@ -29,27 +29,9 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl,
                             actionBuilder: ActionBuilders) extends Controller {
 
 
-  case class InitialUserPreferences(
-                                     schoolStartTime: String,
-                                     morningBreakStartTime: String,
-                                     morningBreakEndTime: String,
-                                     lunchStartTime: String,
-                                     lunchEndTime: String,
-                                     schoolEndTime: String,
-                                     className: String,
-                                     checkEarlyCurriculum: String,
-                                     checkFirstCurriculum: String,
-                                     checkSecondCurriculum: String,
-                                     checkThirdCurriculum: String,
-                                     checkFourthCurriculum: String
-                                   ) {
-    logger.debug("InitialUserPreferences - some values")
-    logger.debug(s"checkEarlyCurriculum = $checkEarlyCurriculum")
-    logger.debug(s"checkFirstCurriculum = $checkFirstCurriculum")
-  }
-
   val initialUserPreferencesForm = Form(
     mapping(
+      "schoolId" ->nonEmptyText,
       "schoolStartTime" -> nonEmptyText,
       "morningBreakStartTime" -> nonEmptyText,
       "morningBreakEndTime" -> nonEmptyText,
@@ -64,7 +46,6 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl,
       "checkFourthCurriculum" -> text
     )(InitialUserPreferences.apply)(InitialUserPreferences.unapply)
   )
-
 
   private val config = ConfigFactory.load()
   private val showFrontPageSections = if (config.getString("feature.toggles.front-page-feature-sections") == "true") true else false
@@ -241,7 +222,7 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl,
     }
 
     val successFunction = { data: InitialUserPreferences =>
-      logger.info(s"${LocalTime.now.toString} : Form SUCCESS : Oh dear ... ")
+      logger.info(s"${LocalTime.now.toString} : Form SUCCESS")
       val cookies = request.cookies
 
       val theUserPictureUri = cookies.get(CookieNames.socialNetworkPicture) match {
@@ -258,6 +239,13 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl,
         case Some(socialUserIdCookie) => socialUserIdCookie.value
         case None => ""
       }
+
+      val theTimeToTeachUserId = cookies.get(CookieNames.timetoteachId) match {
+        case Some(userId) => userId.value
+        case None => ""
+      }
+
+      userWriterServiceProxy.updateUserPreferences(TimeToTeachUserId(theTimeToTeachUserId))
 
       //      val theUser = TimeToTeachUser(
       //        firstName = data.firstName,
