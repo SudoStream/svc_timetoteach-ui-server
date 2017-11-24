@@ -30,7 +30,7 @@
 
                     <div class="form-row">
 
-                        <input id="schoolId" type="text" class="form-control input-small" name="schoolId" value="@(if(tttUser.schools.nonEmpty){tttUser.schools.head.school.id}else{""})">
+                        <input id="schoolId" type="hidden" class="form-control input-small" name="schoolId" value="@(if(tttUser.schools.nonEmpty){tttUser.schools.head.school.id}else{""})">
 
                         <div class="col-sm-3"></div>
                         <div class="col-sm-6">
