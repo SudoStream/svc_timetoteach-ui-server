@@ -7,7 +7,7 @@ import be.objectify.deadbolt.scala.cache.HandlerCache
 import be.objectify.deadbolt.scala.{ActionBuilders, DeadboltActions}
 import com.typesafe.config.ConfigFactory
 import controllers.serviceproxies.{SchoolReaderServiceProxyImpl, TimeToTeachUserId, UserReaderServiceProxyImpl, UserWriterServiceProxyImpl}
-import io.sudostream.timetoteach.messages.systemwide.model.User
+import io.sudostream.timetoteach.messages.systemwide.model.{User, UserPreferences}
 import models.timetoteach.{CookieNames, InitialUserPreferences}
 import models.timetoteach.classtimetable.SchoolDayTimes
 import play.api.Logger
@@ -178,44 +178,47 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl,
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
     val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
-    val maybeUserTimeToTeachId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest)
+    val tttUserId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO ID")
 
-    val futureSchoolDayTimes: Future[SchoolDayTimes] = maybeUserTimeToTeachId match {
-      case Some(tttUserId) =>
-        val futureMaybeUserPrefs = userReader.getUserPreferences(TimeToTeachUserId(tttUserId))
-        futureMaybeUserPrefs map {
-          case Some(userPrefs) =>
-            val schoolTimes = userPrefs.allSchoolTimes.head
-            logger.debug(s"classTimetable() : schoolTimes : ${schoolTimes.toString}")
-            SchoolDayTimes(
-              schoolDayStarts = LocalTimeUtil.convertStringTimeToLocalTime(schoolTimes.schoolStartTime).getOrElse(
-                defaultSchoolDayTimes.schoolDayStarts),
-              morningBreakStarts = LocalTimeUtil.convertStringTimeToLocalTime(schoolTimes.morningBreakStartTime).getOrElse(
-                defaultSchoolDayTimes.morningBreakStarts),
-              morningBreakEnds = LocalTimeUtil.convertStringTimeToLocalTime(schoolTimes.morningBreakEndTime).getOrElse(
-                defaultSchoolDayTimes.morningBreakEnds),
-              lunchStarts = LocalTimeUtil.convertStringTimeToLocalTime(schoolTimes.lunchStartTime).getOrElse(
-                defaultSchoolDayTimes.lunchStarts),
-              lunchEnds = LocalTimeUtil.convertStringTimeToLocalTime(schoolTimes.lunchEndTime).getOrElse(
-                defaultSchoolDayTimes.lunchEnds),
-              schoolDayEnds = LocalTimeUtil.convertStringTimeToLocalTime(schoolTimes.schoolEndTime).getOrElse(
-                defaultSchoolDayTimes.schoolDayEnds)
-            )
-          case None => defaultSchoolDayTimes
-        }
-      case None => Future {
-        defaultSchoolDayTimes
-      }
+    val futureUserPrefs: Future[Option[UserPreferences]] = userReader.getUserPreferences(TimeToTeachUserId(tttUserId))
+
+    val futureSchoolDayTimes: Future[SchoolDayTimes] = futureUserPrefs map {
+      case Some(userPrefs) =>
+        val schoolTimes = userPrefs.allSchoolTimes.head
+        logger.debug(s"classTimetable() : schoolTimes : ${schoolTimes.toString}")
+        SchoolDayTimes(
+          schoolDayStarts = LocalTimeUtil.convertStringTimeToLocalTime(schoolTimes.schoolStartTime).getOrElse(
+            defaultSchoolDayTimes.schoolDayStarts),
+          morningBreakStarts = LocalTimeUtil.convertStringTimeToLocalTime(schoolTimes.morningBreakStartTime).getOrElse(
+            defaultSchoolDayTimes.morningBreakStarts),
+          morningBreakEnds = LocalTimeUtil.convertStringTimeToLocalTime(schoolTimes.morningBreakEndTime).getOrElse(
+            defaultSchoolDayTimes.morningBreakEnds),
+          lunchStarts = LocalTimeUtil.convertStringTimeToLocalTime(schoolTimes.lunchStartTime).getOrElse(
+            defaultSchoolDayTimes.lunchStarts),
+          lunchEnds = LocalTimeUtil.convertStringTimeToLocalTime(schoolTimes.lunchEndTime).getOrElse(
+            defaultSchoolDayTimes.lunchEnds),
+          schoolDayEnds = LocalTimeUtil.convertStringTimeToLocalTime(schoolTimes.schoolEndTime).getOrElse(
+            defaultSchoolDayTimes.schoolDayEnds)
+        )
+      case None => defaultSchoolDayTimes
+    }
+
+    val futureClassName : Future[String] = futureUserPrefs map {
+      case Some(userPrefs) => userPrefs.allSchoolTimes.head.userTeachesTheseClasses.head.className
+      case None => "<No Class Name>"
     }
 
     for {
       schoolDayTimes <- futureSchoolDayTimes
+      className <- futureClassName
     } yield {
       Ok(views.html.classtimetable(new MyDeadboltHandler(userReader),
         userPictureUri,
         userFirstName,
         userFamilyName,
-        schoolDayTimes)(authRequest))
+        schoolDayTimes,
+        className
+      )(authRequest))
     }
   }
 
