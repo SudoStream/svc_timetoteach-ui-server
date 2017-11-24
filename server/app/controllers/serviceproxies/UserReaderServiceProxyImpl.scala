@@ -11,7 +11,7 @@ import akka.util.{ByteString, Timeout}
 import com.google.inject.Singleton
 import com.typesafe.config.ConfigFactory
 import com.typesafe.sslconfig.akka.AkkaSSLConfig
-import io.sudostream.timetoteach.messages.systemwide.model.User
+import io.sudostream.timetoteach.messages.systemwide.model.{User, UserPreferences}
 import org.apache.avro.io.{Decoder, DecoderFactory}
 import org.apache.avro.specific.SpecificDatumReader
 import play.api.Logger
@@ -68,8 +68,25 @@ class UserReaderServiceProxyImpl {
       resp => processHttpResponseGetUser(resp)
     }
 
-    eventualOptionFuture flatMap  {
+    eventualOptionFuture flatMap {
       res => res
+    }
+  }
+
+  def getUserPreferences(timeToTeachUserIdWrapper: TimeToTeachUserId): Future[Option[UserPreferences]] = {
+    val eventualOptionFuture: Future[Future[Option[User]]] = getUser(timeToTeachUserIdWrapper) map {
+      resp => processHttpResponseGetUser(resp)
+    }
+
+    val futureOptionUser = eventualOptionFuture flatMap {
+      res => res
+    }
+
+    futureOptionUser map {
+      case Some(user) =>
+        logger.debug(s"User Prefs we have here are : ${user.userPreferences.toString}")
+        user.userPreferences
+      case None => None
     }
   }
 

@@ -53,4 +53,27 @@ class LocalTimeUtilTest extends FunSpec {
       assert(time.get === LocalTime.of(13,40))
     }
   }
+  describe("Given a string time of '9:05 AM' convertStringTimeToLocalTime") {
+    it("should return a localtime equal to 9:05 AM") {
+      val time = LocalTimeUtil.convertStringTimeToLocalTime("9:05 AM")
+      assert(time.get === LocalTime.of(9,5))
+    }
+  }
+
+  describe("Given a string time of '10:40 AM' convertStringTimeToLocalTime") {
+    it("should return a localtime equal to 10:40 AM") {
+      val time = LocalTimeUtil.convertStringTimeToLocalTime("10:40 AM")
+      assert(time.get === LocalTime.of(10,40))
+    }
+  }
+
+  describe("Given a string times of '9:05 AM' & '10:40 AM' convertStringTimeToLocalTime") {
+    it("should return have localtime 9:05 AM is BEFORE 10:40 AM") {
+      val time =
+      assert(
+        LocalTimeUtil.convertStringTimeToLocalTime("9:05 AM").get.isBefore(
+        LocalTimeUtil.convertStringTimeToLocalTime("10:40 AM").get))
+    }
+  }
+
 }

@@ -16,13 +16,14 @@ import play.api.data.Forms.{mapping, _}
 import play.api.mvc._
 import security.MyDeadboltHandler
 import shared.SharedMessages
+import shared.util.LocalTimeUtil
 import utils.TemplateUtils.getCookieStringFromRequest
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class Application @Inject()(userReader: UserReaderServiceProxyImpl,
-                            userWriterServiceProxy: UserWriterServiceProxyImpl,
+                            userWriter: UserWriterServiceProxyImpl,
                             schoolsProxy: SchoolReaderServiceProxyImpl,
                             deadbolt: DeadboltActions,
                             handlers: HandlerCache,
@@ -31,7 +32,7 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl,
 
   val initialUserPreferencesForm = Form(
     mapping(
-      "schoolId" ->nonEmptyText,
+      "schoolId" -> nonEmptyText,
       "schoolStartTime" -> nonEmptyText,
       "morningBreakStartTime" -> nonEmptyText,
       "morningBreakEndTime" -> nonEmptyText,
@@ -177,13 +178,44 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl,
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
     val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
+    val maybeUserTimeToTeachId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest)
 
-    Future {
+    val futureSchoolDayTimes: Future[SchoolDayTimes] = maybeUserTimeToTeachId match {
+      case Some(tttUserId) =>
+        val futureMaybeUserPrefs = userReader.getUserPreferences(TimeToTeachUserId(tttUserId))
+        futureMaybeUserPrefs map {
+          case Some(userPrefs) =>
+            val schoolTimes = userPrefs.allSchoolTimes.head
+            logger.debug(s"classTimetable() : schoolTimes : ${schoolTimes.toString}")
+            SchoolDayTimes(
+              schoolDayStarts = LocalTimeUtil.convertStringTimeToLocalTime(schoolTimes.schoolStartTime).getOrElse(
+                defaultSchoolDayTimes.schoolDayStarts),
+              morningBreakStarts = LocalTimeUtil.convertStringTimeToLocalTime(schoolTimes.morningBreakStartTime).getOrElse(
+                defaultSchoolDayTimes.morningBreakStarts),
+              morningBreakEnds = LocalTimeUtil.convertStringTimeToLocalTime(schoolTimes.morningBreakEndTime).getOrElse(
+                defaultSchoolDayTimes.morningBreakEnds),
+              lunchStarts = LocalTimeUtil.convertStringTimeToLocalTime(schoolTimes.lunchStartTime).getOrElse(
+                defaultSchoolDayTimes.lunchStarts),
+              lunchEnds = LocalTimeUtil.convertStringTimeToLocalTime(schoolTimes.lunchEndTime).getOrElse(
+                defaultSchoolDayTimes.lunchEnds),
+              schoolDayEnds = LocalTimeUtil.convertStringTimeToLocalTime(schoolTimes.schoolEndTime).getOrElse(
+                defaultSchoolDayTimes.schoolDayEnds)
+            )
+          case None => defaultSchoolDayTimes
+        }
+      case None => Future {
+        defaultSchoolDayTimes
+      }
+    }
+
+    for {
+      schoolDayTimes <- futureSchoolDayTimes
+    } yield {
       Ok(views.html.classtimetable(new MyDeadboltHandler(userReader),
         userPictureUri,
         userFirstName,
         userFamilyName,
-        defaultSchoolDayTimes)(authRequest))
+        schoolDayTimes)(authRequest))
     }
   }
 
@@ -248,7 +280,7 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl,
         case None => ""
       }
 
-      userWriterServiceProxy.updateUserPreferences(TimeToTeachUserId(theTimeToTeachUserId), newUserPreferences)
+      userWriter.updateUserPreferences(TimeToTeachUserId(theTimeToTeachUserId), newUserPreferences)
 
       Future {
         Redirect(routes.Application.timeToTeachApp())
