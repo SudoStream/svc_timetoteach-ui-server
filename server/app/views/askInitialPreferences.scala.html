@@ -29,6 +29,9 @@
 
 
                     <div class="form-row">
+
+                        <input id="schoolId" type="text" class="form-control input-small" name="schoolId" value="@(if(tttUser.schools.nonEmpty){tttUser.schools.head.school.id}else{""})">
+
                         <div class="col-sm-3"></div>
                         <div class="col-sm-6">
                             <div class="form-row">
@@ -119,32 +122,32 @@
                             <div class="col-sm-12">
                                 <label class="custom-control custom-checkbox col-auto">
                                     <input type="hidden" name="check[0]" value="0" />
-                                    <input name="checkEarlyCurriculum" type="hidden" value="Off">
                                     <input id="checkEarlyCurriculum" name="checkEarlyCurriculum" class="custom-control-input" type="checkbox" value="On">
+                                    <input name="checkEarlyCurriculum" type="hidden" value="Off">
                                     <span class="custom-control-indicator"></span>
                                     <span class="custom-control-description">EARLY</span>
                                 </label>
                                 <label class="custom-control custom-checkbox col-auto">
+                                    <input id="checkFirstCurriculum" name="checkFirstCurriculum" class="custom-control-input" type="checkbox" value="On">
                                     <input name="checkFirstCurriculum" type="hidden" value="Off">
-                                    <input id="checkFirstCurriculum" name="checkFirstCurriculum" class="custom-control-input" type="checkbox" >
                                     <span class="custom-control-indicator"></span>
                                     <span class="custom-control-description">FIRST</span>
                                 </label>
                                 <label class="custom-control custom-checkbox col-auto">
+                                    <input id="checkSecondCurriculum" name="checkSecondCurriculum" class="custom-control-input" type="checkbox" value="On">
                                     <input name="checkSecondCurriculum" type="hidden" value="Off">
-                                    <input id="checkSecondCurriculum" name="checkSecondCurriculum" class="custom-control-input" type="checkbox" >
                                     <span class="custom-control-indicator"></span>
                                     <span class="custom-control-description">SECOND</span>
                                 </label>
                                 <label class="custom-control custom-checkbox col-auto">
+                                    <input id="checkThirdCurriculum" name="checkThirdCurriculum" class="custom-control-input" type="checkbox" value="On">
                                     <input name="checkThirdCurriculum" type="hidden" value="Off">
-                                    <input id="checkThirdCurriculum" name="checkThirdCurriculum" class="custom-control-input" type="checkbox">
                                     <span class="custom-control-indicator"></span>
                                     <span class="custom-control-description">THIRD</span>
                                 </label>
                                 <label class="custom-control custom-checkbox col-auto">
+                                    <input id="checkFourthCurriculum" name="checkFourthCurriculum" class="custom-control-input" type="checkbox" value="On">
                                     <input name="checkFourthCurriculum" type="hidden" value="Off">
-                                    <input id="checkFourthCurriculum" name="checkFourthCurriculum" class="custom-control-input" type="checkbox">
                                     <span class="custom-control-indicator"></span>
                                     <span class="custom-control-description">FOURTH</span>
                                 </label>

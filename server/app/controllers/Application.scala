@@ -107,6 +107,7 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl,
     println(s"userPictureUri =' ${userPictureUri.getOrElse("OH DEAR NOT DEFINED")}")
 
     val timeToTeachUserId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest)
+    println(s"timetoteachId = '${timeToTeachUserId}'")
     timeToTeachUserId match {
       case Some(userId) =>
         val userInfoFuture = userReader.getUserDetails(TimeToTeachUserId(userId))
@@ -124,6 +125,7 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl,
 
             } else {
               // TODO: Redirect
+
               println("Initial user preferences not yet defined. Lets grab them now")
               Ok(views.html.askInitialPreferences(new MyDeadboltHandler(userReader),
                 userPictureUri,
@@ -221,8 +223,9 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl,
       }
     }
 
-    val successFunction = { data: InitialUserPreferences =>
+    val successFunction = { newUserPreferences: InitialUserPreferences =>
       logger.info(s"${LocalTime.now.toString} : Form SUCCESS")
+      logger.debug(s"${LocalTime.now.toString} : New User Prefs are - ${newUserPreferences.toString}")
       val cookies = request.cookies
 
       val theUserPictureUri = cookies.get(CookieNames.socialNetworkPicture) match {
@@ -245,30 +248,11 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl,
         case None => ""
       }
 
-      userWriterServiceProxy.updateUserPreferences(TimeToTeachUserId(theTimeToTeachUserId))
+      userWriterServiceProxy.updateUserPreferences(TimeToTeachUserId(theTimeToTeachUserId), newUserPreferences)
 
-      //      val theUser = TimeToTeachUser(
-      //        firstName = data.firstName,
-      //        familyName = data.familyName,
-      //        emailAddress = data.emailAddress,
-      //        picture = theUserPictureUri,
-      //        socialNetworkName = theSocialNetwork,
-      //        socialNetworkUserId = theSocialNetworkUserId,
-      //        schoolId = data.schoolId
-      //      )
-      //
-      //      logger.debug(s"Creating a new user with values : ${theUser.toString}")
-      //
-      //      val timeToTeachUserIdFuture = userWriterServiceProxy.createNewUser(theUser)
-
-      //      for {
-      //        timeToTeachUserId <- timeToTeachUserIdFuture
-      //      } yield {
-      //        logger.debug(s"Time To Teach Id = '${timeToTeachUserId.value.toString}'")
       Future {
         Redirect(routes.Application.timeToTeachApp())
       }
-      //      }
     }
 
     val formValidationResult = initialUserPreferencesForm.bindFromRequest

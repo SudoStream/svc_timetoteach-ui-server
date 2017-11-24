@@ -16,15 +16,57 @@ import io.sudostream.timetoteach.messages.systemwide.model._
 import models.timetoteach
 import models.timetoteach.{InitialUserPreferences, TimeToTeachUser}
 import play.api.Logger
-import play.api.libs.ws.{WSClient, WSRequest}
 import utils.SchoolConverter.convertLocalSchoolToMessageSchool
 
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.util.{Failure, Success}
 
+object UserWriterServiceProxyImpl {
+  def createCustomLevelWrappers(newUserPreferences: InitialUserPreferences): List[CurriculumLevelWrapper] = {
+    val customerLevelWrappers0 = if (newUserPreferences.checkEarlyCurriculum != "Off")
+      List(CurriculumLevelWrapper(
+        CurriculumLevel(
+          country = Country.SCOTLAND,
+          scottishCurriculumLevel = Some(ScottishCurriculumLevel.EARLY)
+        ))) else Nil
+
+    val customerLevelWrappers1 = if (newUserPreferences.checkFirstCurriculum != "Off")
+      List(CurriculumLevelWrapper(
+        CurriculumLevel(
+          country = Country.SCOTLAND,
+          scottishCurriculumLevel = Some(ScottishCurriculumLevel.FIRST)
+        ))) else Nil
+
+    val customerLevelWrappers2 = if (newUserPreferences.checkSecondCurriculum != "Off")
+      List(CurriculumLevelWrapper(
+        CurriculumLevel(
+          country = Country.SCOTLAND,
+          scottishCurriculumLevel = Some(ScottishCurriculumLevel.SECOND)
+        ))) else Nil
+
+    val customerLevelWrappers3 = if (newUserPreferences.checkThirdCurriculum != "Off")
+      List(CurriculumLevelWrapper(
+        CurriculumLevel(
+          country = Country.SCOTLAND,
+          scottishCurriculumLevel = Some(ScottishCurriculumLevel.THIRD)
+        ))) else Nil
+
+    val customerLevelWrappers4 = if (newUserPreferences.checkThirdCurriculum != "Off")
+      List(CurriculumLevelWrapper(
+        CurriculumLevel(
+          country = Country.SCOTLAND,
+          scottishCurriculumLevel = Some(ScottishCurriculumLevel.FOURTH)
+        ))) else Nil
+
+    customerLevelWrappers0 ::: customerLevelWrappers1 ::: customerLevelWrappers2 ::: customerLevelWrappers3 ::: customerLevelWrappers4 ::: Nil
+  }
+}
+
 @Singleton
 class UserWriterServiceProxyImpl @Inject()(schoolReader: SchoolReaderServiceProxyImpl) {
+
+  import UserWriterServiceProxyImpl._
 
   implicit val system: ActorSystem = ActorSystem()
   implicit val executor: ExecutionContextExecutor = system.dispatcher
@@ -54,29 +96,18 @@ class UserWriterServiceProxyImpl @Inject()(schoolReader: SchoolReaderServiceProx
           userTeachesTheseClasses = List(
             SchoolClass(
               className = newUserPreferences.className,
-              curriculumLevels = List(
-                CurriculumLevelWrapper(
-                  CurriculumLevel(
-                    country = Country.SCOTLAND,
-                    scottishCurriculumLevel = newUserPreferences.
-                  )
-                ),
-                CurriculumLevelWrapper(
-                  CurriculumLevel(
-                    country = Country.SCOTLAND,
-                    scottishCurriculumLevel = Some(ScottishCurriculumLevel.FIRST)
-                  )
-                )
-              )
+              curriculumLevels = createCustomLevelWrappers(newUserPreferences)
             )
           )
         )
       )
     )
+
   }
 
   def updateUserPreferences(userId: TimeToTeachUserId, newUserPreferences: InitialUserPreferences): Future[Boolean] = {
     val userPreferences: UserPreferences = convertToUserPreferences(newUserPreferences)
+    logger.debug(s"updateUserPreferences: ${userPreferences.toString}")
     val protocol = if (userWriterServicePort.toInt > 9000) "http" else "https"
     val uriString = s"$protocol://$userWriterServiceHostname:$userWriterServicePort/api/users/${userId.value}/editprefs"
     logger.debug(s"uri for updating user preferences is $uriString")

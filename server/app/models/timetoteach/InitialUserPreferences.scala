@@ -18,8 +18,12 @@ case class InitialUserPreferences(
                                    checkFourthCurriculum: String
                                  ) {
   val logger: Logger = Logger
-  logger.debug("InitialUserPreferences - some values")
+  logger.debug("InitialUserPreferences - some values ===================================================================")
   logger.debug(s"checkEarlyCurriculum = $checkEarlyCurriculum")
   logger.debug(s"checkFirstCurriculum = $checkFirstCurriculum")
+  logger.debug(s"checkSecondCurriculum = $checkSecondCurriculum")
+  logger.debug(s"checkThirdCurriculum = $checkThirdCurriculum")
+  logger.debug(s"checkFourthCurriculum = $checkFourthCurriculum")
+  logger.debug("InitialUserPreferences - some values ====================== END ========================================")
 }
 
