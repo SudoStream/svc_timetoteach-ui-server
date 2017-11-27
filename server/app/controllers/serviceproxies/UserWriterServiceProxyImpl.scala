@@ -1,5 +1,6 @@
 package controllers.serviceproxies
 
+import java.time.{LocalDate, LocalTime}
 import javax.inject.Inject
 
 import akka.actor.ActorSystem
@@ -208,6 +209,10 @@ class UserWriterServiceProxyImpl @Inject()(schoolReader: SchoolReaderServiceProx
       givenName = if (user.firstName.isEmpty) None else Some(user.firstName),
       familyName = if (user.familyName.isEmpty) None else Some(user.familyName),
       imageUrl = if (user.picture.isEmpty) None else Some(user.picture),
+      userAccountCreated = UserAccountCreatedDetails(
+        dateSignedUp_Iso8601 = LocalDate.now().toString,
+        timeSignedUp_Iso8601 = LocalTime.now().toString
+      ),
       emails = List(
         EmailDetails(
           emailAddress = user.emailAddress,
