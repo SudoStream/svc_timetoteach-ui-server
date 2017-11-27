@@ -231,6 +231,7 @@ class UserWriterServiceProxyImpl @Inject()(schoolReader: SchoolReaderServiceProx
           school => school.id -> convertLocalSchoolToMessageSchool(school)
         } toMap
       case Failure(t) =>
+        t.printStackTrace()
         logger.error(s"Failed to get schools on loadup. The error was ... ${t.toString} \n\n" + t.getStackTrace.map {
           line => line.toString
         }.toString)
