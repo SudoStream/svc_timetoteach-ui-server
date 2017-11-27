@@ -11,22 +11,16 @@
                 @helper.CSRF.formField
                 <div class="school-form-section">
 
-                    <h6 class="text-center text-muted form-header">School Times</h6>
-
-                    <div class="form-row">
-                        <div class="col-sm-2"></div>
-                        <div class="col-sm-8">
-                            <div class="alert alert-info alert-dismissible fade show" role="alert">
-                                <button id="data-dismiss-timetable-alert" type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
+                    <button id="initial-prefs-school-times-info-button" type="button" data-html="true" data-dismiss="modal" class="btn btn btn-secondary d-flex justify-content-end"
+                    data-toggle="popover" title="School Times Help" data-placement="left"
+                    data-content="<p>
                                 Currently we assume one break per day, in the morning, and no afternoon break. In the future
                                 this will be more adaptable.
-                            </div>
-                        </div>
-                        <div class="col-sm-2"></div>
-                    </div>
+                                </p>" >
+                        <span aria-hidden="true"><strong>&#9432;</strong></span>
+                    </button>
 
+                    <h6 class="text-center text-muted form-header">School Times</h6>
 
                     <div class="form-row">
 
@@ -76,24 +70,19 @@
 
                 <div class="school-form-section">
 
-                    <h6 class="text-center text-muted form-header">Class Details</h6>
-
-                    <div class="form-row">
-                        <div class="col-sm-2"></div>
-                        <div class="col-sm-8">
-                            <div class="alert alert-info alert-dismissible fade show" role="alert">
-                                <button id="data-dismiss-timetable-alert" type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
+                    <button id="initial-prefs-class-details-info-button" type="button" data-html="true" data-dismiss="modal" class="btn btn btn-secondary"
+                    data-toggle="popover" title="Class Details Help" data-placement="left"
+                    data-content="
                                 <p>Again, for simplicity we're assuming one class per teacher at the moment. This will also be more
                                     flexible in the future.</p>
 
                                 Secondly, the levels here cover all the levels in your class, but while planning you'll be able to create groups at
-                                a more specific level - e.g. for differentiating, mixed class etc.
-                            </div>
-                        </div>
-                        <div class="col-sm-2"></div>
-                    </div>
+                                a more specific level - e.g. for differentiating, mixed class etc." >
+                        <span aria-hidden="true"><strong>&#9432;</strong></span>
+                    </button>
+
+
+                    <h6 class="text-center text-muted form-header">Class Details</h6>
 
                     <div class="form-row">
                         <div class="col-sm-3"></div>
@@ -205,6 +194,15 @@
             });
 
 
+    </script>
+
+    <script>
+            $(function () {
+                $('[data-toggle="tooltip"]').tooltip()
+            });
+            $(function () {
+                $('[data-toggle="popover"]').popover()
+            });
     </script>
 
     <script>

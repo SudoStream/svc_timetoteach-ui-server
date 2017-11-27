@@ -5,28 +5,32 @@
 @timetoteachAppMain(handler, s"Class Timetable : $className",
     userPictureUri, userFirstName, userFamilyName) {
 
-    <div class="container" hidden="true">
-        <div id="timetable-alert" class="alert alert-info alert-dismissible fade show" role="alert">
-            <button id="data-dismiss-timetable-alert" type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-            <p>Fill in your timetable by choosing a subject then selecting the relevant sessions.
-                You can either:-</p>
-            <ol>
-                <li>Drag a subject to a single time slot. e.g drag <strong>Reading</strong> to Tuesday <strong>
-                    Late Morning</strong> session</li>
-                <li>Select a subject by clicking once on it, then click on multiple time slots. e.g. <strong>Maths</strong>
-                    to 4 different time slots</li>
-            </ol>
-            In either case you will be given the option of how much of that session to fill. e.g. 1/3, 1/2 or
-            Full session, or be more specific, say 9:45 to 10:15
-        </div>
-    </div>
 
     <aside id="class-timetable-subject-aside">
         <div class="container text-center class-timetable-subject-nav-background justify-content-center">
             <span>
-                <h2>Subjects
+                <h2>
+                    Subjects
+
+                    <button id="class-timetable-subject-aside-info-button" type="button" data-html="true" data-dismiss="modal" class="btn btn btn-info"
+                    data-toggle="popover" title="Class Timetable Help"
+                    data-content="<p>Fill in your timetable by choosing a subject then selecting the relevant sessions.
+                                    You can either:-</p>
+                                <ol>
+                                    <li>Drag a subject to a single time slot. e.g drag <strong>Reading</strong> to Tuesday <strong>
+                                        Late Morning</strong> session</li>
+                                        <br>
+                                        ... or ...
+                                        <br>
+                                        <br>
+                                    <li>Select a subject by clicking once on it, then click on multiple time slots. e.g. <strong>Maths</strong>
+                                        to 4 different time slots</li>
+                                </ol>
+                                In either case you will be given the option of how much of that session to fill. e.g. 1/3, 1/2 or
+                                Full session, or be more specific, say 9:45 to 10:15" >
+                        <span aria-hidden="true"><strong>&#9432;</strong></span>
+                    </button>
+
                     <button id="class-timetable-subject-aside-toggle-button" type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&minus;</span>
                     </button>
@@ -618,6 +622,15 @@
             $("input").on("change", function () {
                 $("small").fadeOut("slow");
             })
+    </script>
+
+    <script>
+            $(function () {
+                $('[data-toggle="tooltip"]').tooltip()
+            });
+            $(function () {
+                $('[data-toggle="popover"]').popover()
+            });
     </script>
 
     @scalajs.html.scripts("client", routes.Assets.versioned(_).toString, name => getClass.getResource(s"/public/$name") != null)

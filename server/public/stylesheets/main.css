@@ -437,6 +437,23 @@ img {
     margin-top: 3rem;
 }
 
+#class-timetable-subject-aside-info-button {
+    float: left;
+}
+
+#initial-prefs-school-times-info-button {
+    float: right;
+}
+
+#initial-prefs-class-details-info-button {
+    float: right;
+}
+
+
+#class-timetable-subject-aside h2 {
+    margin-bottom: 1.7rem;
+}
+
 .clear-cancel-save-buttons {
     margin-top: 3rem;
     float: right;
