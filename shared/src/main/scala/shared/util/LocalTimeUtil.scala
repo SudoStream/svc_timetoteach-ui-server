@@ -23,7 +23,7 @@ object LocalTimeUtil {
 
     maybeHoursAndMinutes match {
       case Some(hoursAndMinutes) =>
-        val hoursIn24HourFormat = hoursAndMinutes._1 + (if (isMorningTime(timeString)) 0 else 12)
+        val hoursIn24HourFormat = hoursAndMinutes._1 + (if (isMorningTime(timeString) || hoursAndMinutes._1 == 12) 0 else 12)
         Some(LocalTime.of(hoursIn24HourFormat, hoursAndMinutes._2))
       case None => None
     }
