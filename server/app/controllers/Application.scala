@@ -20,7 +20,8 @@ import shared.util.LocalTimeUtil
 import utils.TemplateUtils.getCookieStringFromRequest
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{Await, Future}
+import scala.concurrent.duration._
 
 class Application @Inject()(userReader: UserReaderServiceProxyImpl,
                             userWriter: UserWriterServiceProxyImpl,
@@ -283,7 +284,8 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl,
         case None => ""
       }
 
-      userWriter.updateUserPreferences(TimeToTeachUserId(theTimeToTeachUserId), newUserPreferences)
+      val userPreferencesUpdated = userWriter.updateUserPreferences(TimeToTeachUserId(theTimeToTeachUserId), newUserPreferences)
+      Await.result(userPreferencesUpdated, 1 seconds)
 
       Future {
         Redirect(routes.Application.timeToTeachApp())
