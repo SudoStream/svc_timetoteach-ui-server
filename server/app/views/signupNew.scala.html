@@ -121,7 +121,7 @@
                                                     <td style="display: none;">@school.id</td>
                                                     <td>@school.name</td>
                                                     <td>@school.address</td>
-                                                    <td>@school.localAuthority.value</td>
+                                                    <td>@school.localAuthority.value.toLowerCase.replace("_"," ").capitalize</td>
                                                     <td>@school.country.value</td>
                                                 </tr>
                                             }
