@@ -1,6 +1,6 @@
 #class-timetable-section {
     margin-top: 4rem;
-    padding-bottom: 4rem;
+    padding-bottom: 3rem;
 }
 
 #class-timetable-subject-nav {
@@ -119,4 +119,9 @@
 }
 
 @media screen and ( min-width: 1200px) {
+    #class-timetable-section {
+        margin-top: 4rem;
+        padding-bottom: 13rem;
+    }
+
 }

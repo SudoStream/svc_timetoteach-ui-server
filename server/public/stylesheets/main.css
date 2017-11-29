@@ -73,6 +73,7 @@ img {
 .nav-login-button {
     margin-left: 0;
     margin-right: 0;
+    margin-bottom: 0.5rem;
 }
 
 .blockquote {
@@ -310,16 +311,17 @@ img {
 .dashboardFadedBackground {
     min-height: 10rem;
     margin: 0 auto;
+    padding-bottom: 1rem;
     background: rgba(0, 0, 0, 0.20);
     border-radius: 1%;
 }
 
 .dashboard-button {
-    margin-top: 2rem;
+    margin-top: 1rem;
     margin-right: 0.5rem;
     margin-left: 0.5rem;
     margin-bottom: 1rem;
-    min-width: 12rem;
+    width: 96%;
 }
 
 #dashboardContent .col-lg-1 {
@@ -544,7 +546,7 @@ img {
         display: none;
     }
     .dashboardFadedBackground {
-        min-height: 22rem;
+        min-height: 15rem;
         margin: 0 auto;
         background: rgba(0, 0, 0, 0.20);
         border-radius: 5%;
@@ -590,6 +592,15 @@ img {
         background-size: 100% 100%;
         min-height: 100%;
         width: 100%;
+    }
+
+    .dashboard-button {
+        margin-top: 2rem;
+        margin-right: 0.5rem;
+        margin-left: 0.5rem;
+        margin-bottom: 1rem;
+        min-width: 12rem;
+        width: 80%;
     }
 
 }
