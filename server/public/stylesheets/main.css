@@ -98,6 +98,11 @@ img {
     margin-bottom: 2.5rem;
 }
 
+#follow-us {
+    margin-top: 3rem;
+    margin-bottom: 2rem;
+}
+
 .ttt-icon-writing {
     font-family: 'simplifica', sans-serif;
 }
@@ -130,6 +135,15 @@ img {
 
 #signupForm {
     margin-top: 6rem;
+}
+
+#about {
+    margin-top: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.about-us-name {
+    margin-top: 0.7rem;
 }
 
 #askInitialPreferencesForm {
@@ -259,7 +273,7 @@ img {
 #main-footer {
     background: #262F36;
     color: white;
-    padding: 6rem 0;
+    padding: 8rem 0;
     font-size: 0.8rem;
 }
 
@@ -409,6 +423,18 @@ img {
 
 .subject-name-title {
     margin-top: 1rem;
+}
+
+#class-timetable-subject-warning {
+    margin-top: 0;
+}
+
+.about-us {
+    margin-top: 5rem;
+}
+
+.about-us h3 {
+    margin-bottom: 1.5rem;
 }
 
 #class-timetable-subject-aside {

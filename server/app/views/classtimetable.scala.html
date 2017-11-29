@@ -5,6 +5,15 @@
 @timetoteachAppMain(handler, s"Class Timetable : $className",
     userPictureUri, userFirstName, userFamilyName) {
 
+    <div class="container">
+        <div id="class-timetable-subject-warning" class="alert alert-warning alert-dismissible fade show" role="alert" >
+            Note: The 'save' button has not been implemented yet. The rest of the screen does work, so feel free to play around.
+            It just means that next time you log in the screen will start with an empty timetable.
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
 
     <aside id="class-timetable-subject-aside">
         <div class="container text-center class-timetable-subject-nav-background justify-content-center">
@@ -306,7 +315,9 @@
                 <button id="cancel-class-timetable-button" type="button" class="btn btn-lg btn-secondary">
                     <a href="/app">Cancel</a>
                 </button>
-                <button id="save-class-timetable-button" type="button" class="btn btn-lg btn-primary">Save</button>
+                <button id="save-class-timetable-button" type="button" class="btn btn-lg btn-primary" data-placement="top"
+                data-toggle="popover" title="Save Button Inactive"
+                data-content="Saving of the class timetable is coming soon! For now the page is in demo status">Save</button>
             </div>
         </div>
 

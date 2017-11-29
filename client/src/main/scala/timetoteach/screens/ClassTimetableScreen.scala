@@ -641,6 +641,12 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
       classTimetable.clearWholeTimetable()
       renderClassTimetable()
     })
+
+    val saveClassTimetableButton = dom.document.getElementById("save-class-timetable-button").asInstanceOf[HTMLButtonElement]
+    saveClassTimetableButton.addEventListener("click", (e: dom.Event) => {
+      global.console.log("Saving the class timetable...")
+    })
+
   }
 
   def toggleTheSubjectsAside(): Unit = {
