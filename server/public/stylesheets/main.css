@@ -519,6 +519,11 @@ img {
     display: none;
 }
 
+.about-us-img {
+    margin-right: 1rem;
+}
+
+
 @media screen and ( min-width: 991px) {
 
     #class-timetable-school-times {
