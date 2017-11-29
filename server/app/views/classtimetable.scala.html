@@ -7,11 +7,15 @@
 
     <div class="container">
         <div id="class-timetable-subject-warning" class="alert alert-warning alert-dismissible fade show" role="alert" >
-            Note: The 'save' button has not been implemented yet. The rest of the screen does work, so feel free to play around.
-            It just means that next time you log in the screen will start with an empty timetable.
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
+
+        Note: The 'save' button has not been implemented yet. The rest of the screen does work, so feel free to play around.
+            It just means that next time you log in the screen will start with an empty timetable.
+            <br>
+            <br>
+            Click on the little Owl button for help.
         </div>
     </div>
 
@@ -21,7 +25,7 @@
                 <h2>
                     Subjects
 
-                    <button id="class-timetable-subject-aside-info-button" type="button" data-html="true" data-dismiss="modal" class="btn btn btn-info"
+                    <button id="class-timetable-subject-aside-info-button" type="button" data-html="true" data-dismiss="modal" class="btn btn btn-light"
                     data-toggle="popover" title="Class Timetable Help"
                     data-content="<p>Fill in your timetable by choosing a subject then selecting the relevant sessions.
                                     You can either:-</p>
@@ -37,7 +41,7 @@
                                 </ol>
                                 In either case you will be given the option of how much of that session to fill. e.g. 1/3, 1/2 or
                                 Full session, or be more specific, say 9:45 to 10:15" >
-                        <span aria-hidden="true"><strong>&#9432;</strong></span>
+                        <span aria-hidden="true"><img src="@routes.Assets.versioned("icons/everWonder.png")" alt="Info Help" height="32px"></span>
                     </button>
 
                     <button id="class-timetable-subject-aside-toggle-button" type="button" class="close" data-dismiss="modal" aria-label="Close">
