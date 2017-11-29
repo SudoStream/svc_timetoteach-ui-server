@@ -215,7 +215,7 @@ img {
 
 #appBackground {
     margin-top: 3rem;
-    background-image: url('/assets/images/appBackgroundAlt.jpeg');
+    background-image: url('/assets/images/appBackgroundAltJustWhite.jpeg');
     background-repeat: repeat-y;
     background-size: 100% 100%;
     min-height: 100%;
@@ -495,7 +495,7 @@ img {
 
 .clear-cancel-save-buttons a:link {
     color: white;
-    text-decoration: none;
+      text-decoration: none;
 }
 
 #class-timetable-subject-warning {
@@ -511,7 +511,24 @@ img {
 }
 
 
+#class-timetable-school-times {
+    display: none;
+}
+
+#class-timetable-session-names {
+    display: none;
+}
+
 @media screen and ( min-width: 991px) {
+
+    #class-timetable-school-times {
+        display: flex;
+    }
+
+    #class-timetable-session-names {
+        display: flex;
+    }
+
     .row-for-mobile {
         display: none;
     }
@@ -555,8 +572,14 @@ img {
 }
 
 @media screen and ( min-width: 1200px) {
-    /*#pricing .card {*/
-    /*display: block;*/
-    /*}*/
+    #appBackground {
+        margin-top: 3rem;
+        background-image: url('/assets/images/appBackgroundAlt.jpeg');
+        background-repeat: repeat-y;
+        background-size: 100% 100%;
+        min-height: 100%;
+        width: 100%;
+    }
+
 }
 

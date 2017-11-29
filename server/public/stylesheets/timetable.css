@@ -1,5 +1,6 @@
 #class-timetable-section {
     margin-top: 4rem;
+    padding-bottom: 4rem;
 }
 
 #class-timetable-subject-nav {
@@ -37,10 +38,10 @@
 .timetable-dayofweek-header {
     background: none;
     text-shadow: 1px 1px #ccc;
+    font-size: medium;
 }
 
 #class-timetable-section .dayoftheweek-row {
-    background: rgba(0, 0, 0, 0.05);
     text-align: center;
     min-height: 6rem;
 }
@@ -100,4 +101,22 @@
 
 #addLessonsModalFooter {
     display: none;
+}
+
+@media screen and ( min-width: 991px) {
+    #class-timetable-section .dayoftheweek-row {
+        background: rgba(0, 0, 0, 0.05);
+        text-align: center;
+        min-height: 6rem;
+    }
+
+    .timetable-dayofweek-header {
+        background: none;
+        text-shadow: 1px 1px #ccc;
+        font-size: small;
+    }
+
+}
+
+@media screen and ( min-width: 1200px) {
 }
