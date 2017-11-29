@@ -521,10 +521,16 @@ img {
 
 .about-us-img {
     margin-right: 1rem;
+    height: 128px;
 }
 
 
 @media screen and ( min-width: 991px) {
+
+    .about-us-img {
+        margin-right: 1rem;
+        height: 170px;
+    }
 
     #class-timetable-school-times {
         display: flex;

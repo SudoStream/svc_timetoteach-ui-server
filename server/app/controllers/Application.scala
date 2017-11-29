@@ -65,7 +65,7 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl,
   )
 
   def index = Action {
-    Ok(views.html.index(showFrontPageSections))
+    Ok(views.html.index(false))
   }
 
   def health = Action {
