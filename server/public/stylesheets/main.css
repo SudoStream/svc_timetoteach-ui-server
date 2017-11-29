@@ -69,8 +69,8 @@ img {
 }
 
 .nav-login-button {
-    margin-left: 1rem;
-    margin-right: 0.5rem;
+    margin-left: 0;
+    margin-right: 0;
 }
 
 .blockquote {
@@ -495,6 +495,11 @@ img {
 }
 
 @media screen and ( min-width: 991px) {
+    .nav-login-button {
+        margin-left: 1rem;
+        margin-right: 0.5rem;
+    }
+
     .feature-content {
         display: flex;
         align-items: center;
