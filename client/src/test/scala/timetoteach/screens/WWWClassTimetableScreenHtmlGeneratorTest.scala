@@ -7,7 +7,7 @@ import shared.model.classtimetable._
 
 import scala.annotation.tailrec
 
-class ClassTimetableScreenHtmlGeneratorTest extends org.specs2.mutable.Specification {
+class WWWClassTimetableScreenHtmlGeneratorTest extends org.specs2.mutable.Specification {
 
 //  override def is =
 //    s2"""

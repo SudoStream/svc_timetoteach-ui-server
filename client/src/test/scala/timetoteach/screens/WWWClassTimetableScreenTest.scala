@@ -2,7 +2,7 @@ package timetoteach.screens
 
 import org.specs2.matcher.MatchResult
 
-class ClassTimetableScreenTest extends org.specs2.mutable.Specification {
+class WWWClassTimetableScreenTest extends org.specs2.mutable.Specification {
 
   override def is =
     s2"""

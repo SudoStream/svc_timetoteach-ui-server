@@ -13,8 +13,8 @@ import scala.scalajs.js.Dynamic.global
 
 object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
 
-  var classTimetable: ClassTimetable = ClassTimetable(None)
-  override def getClassTimetable: ClassTimetable = classTimetable
+  var classTimetable: WWWClassTimetable = WWWClassTimetable(None)
+  override def getClassTimetable: WWWClassTimetable = classTimetable
 
   var currentlySelectedSession: Option[Session] = None
   var currentlySelectedSubject: Option[SubjectName] = None

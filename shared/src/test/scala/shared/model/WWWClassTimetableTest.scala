@@ -5,12 +5,12 @@ import java.time.LocalTime
 import org.scalatest._
 import shared.model.classtimetable._
 
-class ClassTimetableTest extends FunSpec with ClassTimetableTestHelper {
+class WWWClassTimetableTest extends FunSpec with ClassTimetableTestHelper {
 
   describe("Class Timetable created with no school times passed in") {
 
     it("should have School Day Times default dictionary created") {
-      val classTimetable: ClassTimetable = ClassTimetable(None)
+      val classTimetable: WWWClassTimetable = WWWClassTimetable(None)
 
       assert(classTimetable.schoolDayTimes.get(SchoolDayStarts()).isDefined)
       assert(classTimetable.schoolDayTimes.get(MorningBreakStarts()).isDefined)
@@ -21,13 +21,13 @@ class ClassTimetableTest extends FunSpec with ClassTimetableTestHelper {
     }
 
     it("should have 6 entries") {
-      val classTimetable: ClassTimetable = ClassTimetable(None)
+      val classTimetable: WWWClassTimetable = WWWClassTimetable(None)
 
       assert(classTimetable.schoolDayTimes.size == 6)
     }
 
     it("should have expected default times for each school day break point") {
-      val classTimetable: ClassTimetable = ClassTimetable(None)
+      val classTimetable: WWWClassTimetable = WWWClassTimetable(None)
 
       assert(classTimetable.schoolDayTimes(SchoolDayStarts()) == "09:00")
       assert(classTimetable.schoolDayTimes(MorningBreakStarts()) == "10:30")
@@ -49,26 +49,26 @@ class ClassTimetableTest extends FunSpec with ClassTimetableTestHelper {
       )
 
       assertThrows[RuntimeException] {
-        val classTimetable: ClassTimetable = ClassTimetable(Some(schoolDayTimesWithOneLessEntry))
+        val classTimetable: WWWClassTimetable = WWWClassTimetable(Some(schoolDayTimesWithOneLessEntry))
       }
     }
   }
 
   describe("A new ClassTimetable") {
     it("should have a current state of 'ENTIRELY_EMPTY'") {
-      val classTimetable: ClassTimetable = ClassTimetable(None)
+      val classTimetable: WWWClassTimetable = WWWClassTimetable(None)
       assert(classTimetable.getCurrentState == EntirelyEmpty())
     }
 
     it("should not have any edits been recorded") {
-      val classTimetable: ClassTimetable = ClassTimetable(None)
+      val classTimetable: WWWClassTimetable = WWWClassTimetable(None)
       assert(!classTimetable.hasBeenEdited)
     }
   }
 
   describe("A ClassTimetable with maths added to middle of Monday session") {
     it("should be partially full") {
-      val classTimetable: ClassTimetable = ClassTimetable(None)
+      val classTimetable: WWWClassTimetable = WWWClassTimetable(None)
       val mathsOnMonday = SubjectDetail(SubjectName("subject-maths"), TimeSlot(LocalTime.of(9, 30), LocalTime.of(9, 50)))
       classTimetable.addSubject(mathsOnMonday, MondayEarlyMorningSession())
       assert(classTimetable.getCurrentState == PartiallyComplete())
@@ -78,32 +78,32 @@ class ClassTimetableTest extends FunSpec with ClassTimetableTestHelper {
 
   describe("A ClassTimetable with all sessions filled") {
     it("should be full") {
-      val classTimetable: ClassTimetable = createFullClassTimetable
+      val classTimetable: WWWClassTimetable = createFullClassTimetable
       assert(classTimetable.getCurrentState == CompletelyFull())
     }
     it("should be possible to get a pretty print version of the full timetable") {
-      val classTimetable: ClassTimetable = createFullClassTimetable
+      val classTimetable: WWWClassTimetable = createFullClassTimetable
       val timetableAsPrettyString: String = classTimetable.currentTimetablePrettyString
       println(s"Pretty timetable:-\n$timetableAsPrettyString")
       assert(timetableAsPrettyString.nonEmpty)
     }
     it("should be possible to get a sorted list of session breakdowns with 5 days of the week") {
-      val classTimetable: ClassTimetable = createFullClassTimetable
+      val classTimetable: WWWClassTimetable = createFullClassTimetable
       val sessions = classTimetable.allSessionsOfTheWeekInOrderByDay
       assert(sessions.size == 5)
     }
     it("should be possible to get a sorted list of session breakdowns with the first session as Monday Early") {
-      val classTimetable: ClassTimetable = createFullClassTimetable
+      val classTimetable: WWWClassTimetable = createFullClassTimetable
       val sessions = classTimetable.allSessionsOfTheWeekInOrderByDay
       assert(sessions.getOrElse(DayOfWeek("Monday"), Nil).head.sessionOfTheWeek == MondayEarlyMorningSession())
     }
     it("should be possible to get a sorted list of session breakdowns with the last session as Friday afternoon") {
-      val classTimetable: ClassTimetable = createFullClassTimetable
+      val classTimetable: WWWClassTimetable = createFullClassTimetable
       val sessions = classTimetable.allSessionsOfTheWeekInOrderByDay
       assert(sessions.getOrElse(DayOfWeek("Friday"), Nil).last.sessionOfTheWeek == FridayAfternoonSession())
     }
     it("should be possible to get a sorted list of session breakdowns with the middle wednesay session as Wednesday late morning") {
-      val classTimetable: ClassTimetable = createFullClassTimetable
+      val classTimetable: WWWClassTimetable = createFullClassTimetable
       val sessions = classTimetable.allSessionsOfTheWeekInOrderByDay
       assert(sessions.getOrElse(DayOfWeek("Wednesday"), Nil).tail.head.sessionOfTheWeek == WednesdayLateMorningSession())
     }
@@ -111,7 +111,7 @@ class ClassTimetableTest extends FunSpec with ClassTimetableTestHelper {
 
   describe("A ClassTimetable with all sessions filled with one subject then removed") {
     it("should be partially full") {
-      val classTimetable: ClassTimetable = createFullClassTimetable
+      val classTimetable: WWWClassTimetable = createFullClassTimetable
       classTimetable.removeSubject(SubjectDetail(
         SubjectName("subject-reading"),
         TimeSlot(LocalTime.of(13, 0), LocalTime.of(15, 0))
@@ -123,7 +123,7 @@ class ClassTimetableTest extends FunSpec with ClassTimetableTestHelper {
 
   describe("A ClassTimetable with all sessions filled then cleared") {
     it("should be empty") {
-      val classTimetable: ClassTimetable = createFullClassTimetable
+      val classTimetable: WWWClassTimetable = createFullClassTimetable
       classTimetable.clearWholeTimetable()
       assert(classTimetable.getCurrentState == EntirelyEmpty())
     }
@@ -131,7 +131,7 @@ class ClassTimetableTest extends FunSpec with ClassTimetableTestHelper {
 
   describe("Editing a current subject") {
     it("should show the updated *additional info*") {
-      val classTimetable: ClassTimetable = ClassTimetable(None)
+      val classTimetable: WWWClassTimetable = WWWClassTimetable(None)
       val mathsOnMonday = SubjectDetail(SubjectName("subject-maths"), TimeSlot(LocalTime.of(9, 30), LocalTime.of(9, 50)))
       classTimetable.addSubject(mathsOnMonday, MondayEarlyMorningSession())
 

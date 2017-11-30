@@ -5,8 +5,8 @@ import java.time.LocalTime
 import shared.model.classtimetable._
 
 trait ClassTimetableTestHelper {
-  def createFullClassTimetable : ClassTimetable = {
-    val classTimetable = ClassTimetable(None)
+  def createFullClassTimetable : WWWClassTimetable = {
+    val classTimetable = WWWClassTimetable(None)
 
     // Monday
     classTimetable.addSubject(
