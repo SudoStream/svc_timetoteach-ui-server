@@ -5,7 +5,7 @@ import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.sessio
 import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.time.ClassTimetableSchoolTimes
 import shared.model.classtimetable.WWWClassTimetable
 
-object ClassTimetableConverter$ToAvro extends ClassTimetableConverterHelperToAvro {
+object ClassTimetableConverterToAvro extends ClassTimetableConverterHelperToAvro {
 
   def convertAvroClassTimeTableToWww(avroTimetable: ClassTimetable) : WWWClassTimetable = ???
 
