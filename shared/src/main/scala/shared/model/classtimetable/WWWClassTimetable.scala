@@ -87,9 +87,9 @@ case class WWWClassTimetable(private val schoolDayTimesOption: Option[Map[School
     } yield daySessionsTuple._2}.flatten}.toList
   }
 
-  def allSessionsOfTheWeekInOrderByDay: Map[DayOfWeek, List[WwwSessionBreakdown]] = {
-    def buildDayToSessionsMapAcc(currentMap: Map[DayOfWeek, List[WwwSessionBreakdown]],
-                                 remainingSessionsToAdd: List[WwwSessionBreakdown]): Map[DayOfWeek, List[WwwSessionBreakdown]] = {
+  def allSessionsOfTheWeekInOrderByDay: Map[WwwDayOfWeek, List[WwwSessionBreakdown]] = {
+    def buildDayToSessionsMapAcc(currentMap: Map[WwwDayOfWeek, List[WwwSessionBreakdown]],
+                                 remainingSessionsToAdd: List[WwwSessionBreakdown]): Map[WwwDayOfWeek, List[WwwSessionBreakdown]] = {
       if (remainingSessionsToAdd.isEmpty) currentMap
       else {
         val sessionToAdd = remainingSessionsToAdd.head

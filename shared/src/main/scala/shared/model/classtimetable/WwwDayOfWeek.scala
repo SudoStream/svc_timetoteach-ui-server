@@ -1,6 +1,6 @@
 package shared.model.classtimetable
 
-object DaysOfWeek {
+object WwwDaysOfWeek {
   val values = Set(
     "Monday",
     "Tuesday",
@@ -10,8 +10,8 @@ object DaysOfWeek {
   )
 }
 
-case class DayOfWeek(value: String) {
-  require(DaysOfWeek.values.count(_ == value) == 1)
+case class WwwDayOfWeek(value: String) {
+  require(WwwDaysOfWeek.values.count(_ == value) == 1)
   def shortValue : String = value.substring(0,3)
   def ordinalNumber: Int = {
     value match {

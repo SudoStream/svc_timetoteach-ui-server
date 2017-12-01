@@ -95,17 +95,17 @@ class WWWClassTimetableTest extends FunSpec with ClassTimetableTestHelper {
     it("should be possible to get a sorted list of session breakdowns with the first session as Monday Early") {
       val classTimetable: WWWClassTimetable = createFullClassTimetable
       val sessions = classTimetable.allSessionsOfTheWeekInOrderByDay
-      assert(sessions.getOrElse(DayOfWeek("Monday"), Nil).head.sessionOfTheWeek == MondayEarlyMorningSession())
+      assert(sessions.getOrElse(WwwDayOfWeek("Monday"), Nil).head.sessionOfTheWeek == MondayEarlyMorningSession())
     }
     it("should be possible to get a sorted list of session breakdowns with the last session as Friday afternoon") {
       val classTimetable: WWWClassTimetable = createFullClassTimetable
       val sessions = classTimetable.allSessionsOfTheWeekInOrderByDay
-      assert(sessions.getOrElse(DayOfWeek("Friday"), Nil).last.sessionOfTheWeek == FridayAfternoonSession())
+      assert(sessions.getOrElse(WwwDayOfWeek("Friday"), Nil).last.sessionOfTheWeek == FridayAfternoonSession())
     }
     it("should be possible to get a sorted list of session breakdowns with the middle wednesay session as Wednesday late morning") {
       val classTimetable: WWWClassTimetable = createFullClassTimetable
       val sessions = classTimetable.allSessionsOfTheWeekInOrderByDay
-      assert(sessions.getOrElse(DayOfWeek("Wednesday"), Nil).tail.head.sessionOfTheWeek == WednesdayLateMorningSession())
+      assert(sessions.getOrElse(WwwDayOfWeek("Wednesday"), Nil).tail.head.sessionOfTheWeek == WednesdayLateMorningSession())
     }
   }
 

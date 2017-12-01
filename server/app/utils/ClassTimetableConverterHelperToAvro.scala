@@ -11,7 +11,7 @@ trait ClassTimetableConverterHelperToAvro {
     ClassTimetableSchoolTimes(createSessionBoundaries(schoolDayTimes))
   }
 
-  def createAllSessionsOfTheWeek(allSessionsOfTheWeek: Map[DayOfWeek, List[WwwSessionBreakdown]]): scala.List[SessionOfTheDayWrapper] = {
+  def createAllSessionsOfTheWeek(allSessionsOfTheWeek: Map[WwwDayOfWeek, List[WwwSessionBreakdown]]): scala.List[SessionOfTheDayWrapper] = {
     {
       for {
         dayToSessionBreakdownsTuple <- allSessionsOfTheWeek

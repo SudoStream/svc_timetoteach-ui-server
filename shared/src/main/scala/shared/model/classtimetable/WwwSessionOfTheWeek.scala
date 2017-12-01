@@ -2,7 +2,7 @@ package shared.model.classtimetable
 
 object SessionOfTheWeek {
   def createSessionOfTheWeek(
-                              dayOfWeek: DayOfWeek,
+                              dayOfWeek: WwwDayOfWeek,
                               session: Session
                             ): Option[SessionOfTheWeek] = {
     val dayAndSession = dayOfWeek.value.toLowerCase + "-" + session.value
@@ -29,7 +29,7 @@ object SessionOfTheWeek {
 
 trait SessionOfTheWeek {
 
-  def dayOfTheWeek : DayOfWeek
+  def dayOfTheWeek : WwwDayOfWeek
 
   def ordinalNumber: Int
 
@@ -49,75 +49,75 @@ trait SessionOfTheWeek {
 
 sealed case class MondayEarlyMorningSession() extends SessionOfTheWeek {
   override def ordinalNumber = 1
-  override def dayOfTheWeek: DayOfWeek = DayOfWeek("Monday")
+  override def dayOfTheWeek: WwwDayOfWeek = WwwDayOfWeek("Monday")
 }
 
 sealed case class MondayLateMorningSession() extends SessionOfTheWeek {
   override def  ordinalNumber = 2
-  override def dayOfTheWeek: DayOfWeek = DayOfWeek("Monday")
+  override def dayOfTheWeek: WwwDayOfWeek = WwwDayOfWeek("Monday")
 }
 
 sealed case class MondayAfternoonSession() extends SessionOfTheWeek {
   override def  ordinalNumber = 3
-  override def dayOfTheWeek: DayOfWeek = DayOfWeek("Monday")
+  override def dayOfTheWeek: WwwDayOfWeek = WwwDayOfWeek("Monday")
 }
 
 sealed case class TuesdayEarlyMorningSession() extends SessionOfTheWeek {
   override def  ordinalNumber = 4
-  override def dayOfTheWeek: DayOfWeek = DayOfWeek("Tuesday")
+  override def dayOfTheWeek: WwwDayOfWeek = WwwDayOfWeek("Tuesday")
 }
 
 sealed case class TuesdayLateMorningSession() extends SessionOfTheWeek {
   override def  ordinalNumber = 5
-  override def dayOfTheWeek: DayOfWeek = DayOfWeek("Tuesday")
+  override def dayOfTheWeek: WwwDayOfWeek = WwwDayOfWeek("Tuesday")
 }
 
 sealed case class TuesdayAfternoonSession() extends SessionOfTheWeek {
   override def  ordinalNumber = 6
-  override def dayOfTheWeek: DayOfWeek = DayOfWeek("Tuesday")
+  override def dayOfTheWeek: WwwDayOfWeek = WwwDayOfWeek("Tuesday")
 }
 
 sealed case class WednesdayEarlyMorningSession() extends SessionOfTheWeek {
   override def  ordinalNumber = 7
-  override def dayOfTheWeek: DayOfWeek = DayOfWeek("Wednesday")
+  override def dayOfTheWeek: WwwDayOfWeek = WwwDayOfWeek("Wednesday")
 }
 
 sealed case class WednesdayLateMorningSession() extends SessionOfTheWeek {
   override def  ordinalNumber = 8
-  override def dayOfTheWeek: DayOfWeek = DayOfWeek("Wednesday")
+  override def dayOfTheWeek: WwwDayOfWeek = WwwDayOfWeek("Wednesday")
 }
 
 sealed case class WednesdayAfternoonSession() extends SessionOfTheWeek {
   override def  ordinalNumber = 9
-  override def dayOfTheWeek: DayOfWeek = DayOfWeek("Wednesday")
+  override def dayOfTheWeek: WwwDayOfWeek = WwwDayOfWeek("Wednesday")
 }
 
 sealed case class ThursdayEarlyMorningSession() extends SessionOfTheWeek {
   override def  ordinalNumber = 10
-  override def dayOfTheWeek: DayOfWeek = DayOfWeek("Thursday")
+  override def dayOfTheWeek: WwwDayOfWeek = WwwDayOfWeek("Thursday")
 }
 
 sealed case class ThursdayLateMorningSession() extends SessionOfTheWeek {
   override def  ordinalNumber = 11
-  override def dayOfTheWeek: DayOfWeek = DayOfWeek("Thursday")
+  override def dayOfTheWeek: WwwDayOfWeek = WwwDayOfWeek("Thursday")
 }
 
 sealed case class ThursdayAfternoonSession() extends SessionOfTheWeek {
   override def  ordinalNumber = 12
-  override def dayOfTheWeek: DayOfWeek = DayOfWeek("Thursday")
+  override def dayOfTheWeek: WwwDayOfWeek = WwwDayOfWeek("Thursday")
 }
 
 sealed case class FridayEarlyMorningSession() extends SessionOfTheWeek {
   override def  ordinalNumber = 13
-  override def dayOfTheWeek: DayOfWeek = DayOfWeek("Friday")
+  override def dayOfTheWeek: WwwDayOfWeek = WwwDayOfWeek("Friday")
 }
 
 sealed case class FridayLateMorningSession() extends SessionOfTheWeek {
   override def  ordinalNumber = 14
-  override def dayOfTheWeek: DayOfWeek = DayOfWeek("Friday")
+  override def dayOfTheWeek: WwwDayOfWeek = WwwDayOfWeek("Friday")
 }
 
 sealed case class FridayAfternoonSession() extends SessionOfTheWeek {
   override def  ordinalNumber = 15
-  override def dayOfTheWeek: DayOfWeek = DayOfWeek("Friday")
+  override def dayOfTheWeek: WwwDayOfWeek = WwwDayOfWeek("Friday")
 }

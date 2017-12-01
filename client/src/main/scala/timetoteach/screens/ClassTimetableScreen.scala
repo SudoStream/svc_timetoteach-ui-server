@@ -19,7 +19,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
   var currentlySelectedSession: Option[Session] = None
   var currentlySelectedSubject: Option[WwwSubjectName] = None
   var lastSelectedSubject: Option[WwwSubjectName] = None
-  var currentlySelectedDayOfWeek: Option[DayOfWeek] = None
+  var currentlySelectedDayOfWeek: Option[WwwDayOfWeek] = None
   var longerClickSubjectSelected = false
   var originalColour = ""
 
@@ -247,7 +247,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
 
           val dayOfTheWeek = buttonTarget.getAttribute("data-day-of-the-week")
           currentlySelectedDayOfWeek = dayOfTheWeek match {
-            case dayName: String => if (DaysOfWeek.values.contains(dayName)) Some(DayOfWeek(dayName)) else None
+            case dayName: String => if (WwwDaysOfWeek.values.contains(dayName)) Some(WwwDayOfWeek(dayName)) else None
             case _ => None
           }
 
@@ -349,7 +349,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
         global.console.log(s"maybeTimeSlot := $maybeTimeSlot")
 
         val maybeAdditionalInfo = for {
-          sessionOfTheWeek <- SessionOfTheWeek.createSessionOfTheWeek(DayOfWeek(day), Session(timetableSession))
+          sessionOfTheWeek <- SessionOfTheWeek.createSessionOfTheWeek(WwwDayOfWeek(day), Session(timetableSession))
           timeSlot <- maybeTimeSlot
           additionalInfo <- classTimetable.getAdditionalInfoForSubject(
             WwwSubjectDetail(WwwSubjectName(subjectCode), timeSlot),

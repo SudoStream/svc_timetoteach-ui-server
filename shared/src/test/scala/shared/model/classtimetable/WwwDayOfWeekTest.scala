@@ -2,10 +2,10 @@ package shared.model.classtimetable
 
 import org.scalatest.FunSpec
 
-class DayOfWeekTest extends FunSpec {
+class WwwDayOfWeekTest extends FunSpec {
   describe("Monday") {
     it("should have a short value of 'Mon'") {
-      val dayOfWeek = DayOfWeek("Monday")
+      val dayOfWeek = WwwDayOfWeek("Monday")
       assert(dayOfWeek.shortValue == "Mon")
     }
   }

@@ -101,7 +101,7 @@ trait ClassTimetableScreenHtmlGenerator {
                            currentAdditionalInfoValue: String
                           ): JsDom.TypedTag[Div] = {
 
-    val dayOfWeek = DayOfWeek(day)
+    val dayOfWeek = WwwDayOfWeek(day)
     val session = Session(timetableSession)
 
     val subjectSummary = div(
