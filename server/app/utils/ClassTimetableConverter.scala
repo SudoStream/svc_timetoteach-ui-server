@@ -7,8 +7,6 @@ import shared.model.classtimetable.WWWClassTimetable
 
 object ClassTimetableConverter extends ClassTimetableConverterHelper {
 
-  // TODO: Add tests here!!!!!
-
   def convertAvroClassTimeTableToWww(avroTimetable: ClassTimetable) : WWWClassTimetable = ???
 
   def convertWwwClassTimeTableToAvro(wwwTimetable: WWWClassTimetable) : ClassTimetable = {
