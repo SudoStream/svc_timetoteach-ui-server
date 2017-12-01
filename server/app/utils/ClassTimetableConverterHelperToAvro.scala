@@ -5,7 +5,7 @@ import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.subjec
 import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.time.{ClassTimetableSchoolTimes, DayOfTheWeek, EndTime, StartTime}
 import shared.model.classtimetable._
 
-trait ClassTimetableConverterHelper {
+trait ClassTimetableConverterHelperToAvro {
 
   def createSchoolTimes(schoolDayTimes: Map[SchoolDayTimeBoundary, String]): ClassTimetableSchoolTimes = {
     ClassTimetableSchoolTimes(createSessionBoundaries(schoolDayTimes))

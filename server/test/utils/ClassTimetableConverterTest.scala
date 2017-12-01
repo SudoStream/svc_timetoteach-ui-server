@@ -17,7 +17,7 @@ class ClassTimetableConverterTest extends Specification {
 
   def emptyWWWClassTimetableConvertsToEmptyAvroClassTimetable: MatchResult[Any] = {
     val wwwClassTimetable = createWwwClassTimetable()
-    val avroClassTimetable = ClassTimetableConverter.convertWwwClassTimeTableToAvro(wwwClassTimetable)
+    val avroClassTimetable = ClassTimetableConverter$ToAvro.convertWwwClassTimeTableToAvro(wwwClassTimetable)
 
     println(s"wwwClassTimetable  : ${wwwClassTimetable.allSessionsOfTheWeekInOrderByDay.toString}")
     println(s"avroClassTimetable : ${avroClassTimetable.allSessionsOfTheWeek.toString}")

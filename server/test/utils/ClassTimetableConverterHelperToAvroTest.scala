@@ -8,7 +8,7 @@ import org.specs2.matcher.MatchResult
 import org.specs2.mutable.Specification
 import shared.model.classtimetable._
 
-class ClassTimetableConverterHelperTest extends Specification {
+class ClassTimetableConverterHelperToAvroTest extends Specification {
   override def is =
     s2"""
 
@@ -61,7 +61,7 @@ class ClassTimetableConverterHelperTest extends Specification {
   def convertWwwSessionBoundariesToAvroHasSameSize: MatchResult[Any] = {
     val sessionBoundaries = createSessionBoundaries()
     val avroBoundaries = {
-      new ClassTimetableConverterHelper {}
+      new ClassTimetableConverterHelperToAvro {}
     }.createSessionBoundaries(sessionBoundaries)
 
     avroBoundaries.size mustEqual sessionBoundaries.size
@@ -72,7 +72,7 @@ class ClassTimetableConverterHelperTest extends Specification {
   def convertWwwSessionBoundariesToAvroHasOneSchoolDayStarts: MatchResult[Any] = {
     val sessionBoundaries = createSessionBoundaries()
     val avroBoundaries = {
-      new ClassTimetableConverterHelper {}
+      new ClassTimetableConverterHelperToAvro {}
     }.createSessionBoundaries(sessionBoundaries)
 
     println(s"avro: ${avroBoundaries.toString}")
@@ -82,7 +82,7 @@ class ClassTimetableConverterHelperTest extends Specification {
   def convertWwwSessionBoundariesToAvroHasOneSchoolDayStartsAsStartOfTeachingSession: MatchResult[Any] = {
     val sessionBoundaries = createSessionBoundaries()
     val avroBoundaries = {
-      new ClassTimetableConverterHelper {}
+      new ClassTimetableConverterHelperToAvro {}
     }.createSessionBoundaries(sessionBoundaries)
 
     val filtered = avroBoundaries.filter(_.sessionBoundary.sessionBoundaryName.sessionBoundaryName == "school-day-starts")
@@ -92,7 +92,7 @@ class ClassTimetableConverterHelperTest extends Specification {
   def convertWwwSessionBoundariesToAvroHasOneSchoolDayStartsWithOtherExpectedValues: MatchResult[Any] = {
     val sessionBoundaries = createSessionBoundaries()
     val avroBoundaries = {
-      new ClassTimetableConverterHelper {}
+      new ClassTimetableConverterHelperToAvro {}
     }.createSessionBoundaries(sessionBoundaries)
 
     val filtered = avroBoundaries.filter(_.sessionBoundary.sessionBoundaryName.sessionBoundaryName == "school-day-starts")
@@ -107,7 +107,7 @@ class ClassTimetableConverterHelperTest extends Specification {
   def convertWwwSessionBoundariesToAvroHasOneSchoolDayEnds: MatchResult[Any] = {
     val sessionBoundaries = createSessionBoundaries()
     val avroBoundaries = {
-      new ClassTimetableConverterHelper {}
+      new ClassTimetableConverterHelperToAvro {}
     }.createSessionBoundaries(sessionBoundaries)
 
     println(s"avro: ${avroBoundaries.toString}")
@@ -117,7 +117,7 @@ class ClassTimetableConverterHelperTest extends Specification {
   def convertWwwSessionBoundariesToAvroHasOneSchoolDayEndsAsEndsOfTeachingSession: MatchResult[Any] = {
     val sessionBoundaries = createSessionBoundaries()
     val avroBoundaries = {
-      new ClassTimetableConverterHelper {}
+      new ClassTimetableConverterHelperToAvro {}
     }.createSessionBoundaries(sessionBoundaries)
 
     val filtered = avroBoundaries.filter(_.sessionBoundary.sessionBoundaryName.sessionBoundaryName == "school-day-ends")
@@ -127,7 +127,7 @@ class ClassTimetableConverterHelperTest extends Specification {
   def convertWwwSessionBoundariesToAvroHasOneSchoolDayEndsWithOtherExpectedValues: MatchResult[Any] = {
     val sessionBoundaries = createSessionBoundaries()
     val avroBoundaries = {
-      new ClassTimetableConverterHelper {}
+      new ClassTimetableConverterHelperToAvro {}
     }.createSessionBoundaries(sessionBoundaries)
 
     val filtered = avroBoundaries.filter(_.sessionBoundary.sessionBoundaryName.sessionBoundaryName == "school-day-ends")
@@ -142,7 +142,7 @@ class ClassTimetableConverterHelperTest extends Specification {
   def convertWwwSessionBoundariesToAvroHasOneMorningBreakStarts: MatchResult[Any] = {
     val sessionBoundaries = createSessionBoundaries()
     val avroBoundaries = {
-      new ClassTimetableConverterHelper {}
+      new ClassTimetableConverterHelperToAvro {}
     }.createSessionBoundaries(sessionBoundaries)
 
     println(s"avro: ${avroBoundaries.toString}")
@@ -152,7 +152,7 @@ class ClassTimetableConverterHelperTest extends Specification {
   def convertWwwSessionBoundariesToAvroHasOneMorningBreakStartsAsStartOfTeachingSession: MatchResult[Any] = {
     val sessionBoundaries = createSessionBoundaries()
     val avroBoundaries = {
-      new ClassTimetableConverterHelper {}
+      new ClassTimetableConverterHelperToAvro {}
     }.createSessionBoundaries(sessionBoundaries)
 
     val filtered = avroBoundaries.filter(_.sessionBoundary.sessionBoundaryName.sessionBoundaryName == "morning-break-starts")
@@ -162,7 +162,7 @@ class ClassTimetableConverterHelperTest extends Specification {
   def convertWwwSessionBoundariesToAvroHasOneMorningBreakStartsWithOtherExpectedValues: MatchResult[Any] = {
     val sessionBoundaries = createSessionBoundaries()
     val avroBoundaries = {
-      new ClassTimetableConverterHelper {}
+      new ClassTimetableConverterHelperToAvro {}
     }.createSessionBoundaries(sessionBoundaries)
 
     val filtered = avroBoundaries.filter(_.sessionBoundary.sessionBoundaryName.sessionBoundaryName == "morning-break-starts")
@@ -177,7 +177,7 @@ class ClassTimetableConverterHelperTest extends Specification {
   def convertWwwSessionBoundariesToAvroHasOneMorningBreakEnds: MatchResult[Any] = {
     val sessionBoundaries = createSessionBoundaries()
     val avroBoundaries = {
-      new ClassTimetableConverterHelper {}
+      new ClassTimetableConverterHelperToAvro {}
     }.createSessionBoundaries(sessionBoundaries)
 
     println(s"avro: ${avroBoundaries.toString}")
@@ -187,7 +187,7 @@ class ClassTimetableConverterHelperTest extends Specification {
   def convertWwwSessionBoundariesToAvroHasOneMorningBreakEndsAsStartOfTeachingSession: MatchResult[Any] = {
     val sessionBoundaries = createSessionBoundaries()
     val avroBoundaries = {
-      new ClassTimetableConverterHelper {}
+      new ClassTimetableConverterHelperToAvro {}
     }.createSessionBoundaries(sessionBoundaries)
 
     val filtered = avroBoundaries.filter(_.sessionBoundary.sessionBoundaryName.sessionBoundaryName == "morning-break-ends")
@@ -197,7 +197,7 @@ class ClassTimetableConverterHelperTest extends Specification {
   def convertWwwSessionBoundariesToAvroHasOneMorningBreakEndsWithOtherExpectedValues: MatchResult[Any] = {
     val sessionBoundaries = createSessionBoundaries()
     val avroBoundaries = {
-      new ClassTimetableConverterHelper {}
+      new ClassTimetableConverterHelperToAvro {}
     }.createSessionBoundaries(sessionBoundaries)
 
     val filtered = avroBoundaries.filter(_.sessionBoundary.sessionBoundaryName.sessionBoundaryName == "morning-break-ends")
@@ -213,7 +213,7 @@ class ClassTimetableConverterHelperTest extends Specification {
   def convertWwwSessionBoundariesToAvroHasOneLunchStarts: MatchResult[Any] = {
     val sessionBoundaries = createSessionBoundaries()
     val avroBoundaries = {
-      new ClassTimetableConverterHelper {}
+      new ClassTimetableConverterHelperToAvro {}
     }.createSessionBoundaries(sessionBoundaries)
 
     println(s"avro: ${avroBoundaries.toString}")
@@ -223,7 +223,7 @@ class ClassTimetableConverterHelperTest extends Specification {
   def convertWwwSessionBoundariesToAvroHasOneLunchStartsAsStartOfTeachingSession: MatchResult[Any] = {
     val sessionBoundaries = createSessionBoundaries()
     val avroBoundaries = {
-      new ClassTimetableConverterHelper {}
+      new ClassTimetableConverterHelperToAvro {}
     }.createSessionBoundaries(sessionBoundaries)
 
     val filtered = avroBoundaries.filter(_.sessionBoundary.sessionBoundaryName.sessionBoundaryName == "lunch-starts")
@@ -233,7 +233,7 @@ class ClassTimetableConverterHelperTest extends Specification {
   def convertWwwSessionBoundariesToAvroHasOneLunchStartsWithOtherExpectedValues: MatchResult[Any] = {
     val sessionBoundaries = createSessionBoundaries()
     val avroBoundaries = {
-      new ClassTimetableConverterHelper {}
+      new ClassTimetableConverterHelperToAvro {}
     }.createSessionBoundaries(sessionBoundaries)
 
     val filtered = avroBoundaries.filter(_.sessionBoundary.sessionBoundaryName.sessionBoundaryName == "lunch-starts")
@@ -248,7 +248,7 @@ class ClassTimetableConverterHelperTest extends Specification {
   def convertWwwSessionBoundariesToAvroHasOneLunchEnds: MatchResult[Any] = {
     val sessionBoundaries = createSessionBoundaries()
     val avroBoundaries = {
-      new ClassTimetableConverterHelper {}
+      new ClassTimetableConverterHelperToAvro {}
     }.createSessionBoundaries(sessionBoundaries)
 
     println(s"avro: ${avroBoundaries.toString}")
@@ -258,7 +258,7 @@ class ClassTimetableConverterHelperTest extends Specification {
   def convertWwwSessionBoundariesToAvroHasOneLunchEndsAsStartOfTeachingSession: MatchResult[Any] = {
     val sessionBoundaries = createSessionBoundaries()
     val avroBoundaries = {
-      new ClassTimetableConverterHelper {}
+      new ClassTimetableConverterHelperToAvro {}
     }.createSessionBoundaries(sessionBoundaries)
 
     val filtered = avroBoundaries.filter(_.sessionBoundary.sessionBoundaryName.sessionBoundaryName == "lunch-ends")
@@ -268,7 +268,7 @@ class ClassTimetableConverterHelperTest extends Specification {
   def convertWwwSessionBoundariesToAvroHasOneLunchEndsWithOtherExpectedValues: MatchResult[Any] = {
     val sessionBoundaries = createSessionBoundaries()
     val avroBoundaries = {
-      new ClassTimetableConverterHelper {}
+      new ClassTimetableConverterHelperToAvro {}
     }.createSessionBoundaries(sessionBoundaries)
 
     val filtered = avroBoundaries.filter(_.sessionBoundary.sessionBoundaryName.sessionBoundaryName == "lunch-ends")
@@ -284,7 +284,7 @@ class ClassTimetableConverterHelperTest extends Specification {
   def createSchoolTimesHappyPath: MatchResult[Any] = {
     val sessionBoundaries = createSessionBoundaries()
     val avroSchoolTimes = {
-      new ClassTimetableConverterHelper {}
+      new ClassTimetableConverterHelperToAvro {}
     }.createSchoolTimes(sessionBoundaries)
 
     avroSchoolTimes.schoolSessionBoundaries.size mustEqual 6
@@ -300,7 +300,7 @@ class ClassTimetableConverterHelperTest extends Specification {
   def listOfSubjectDetailWrapperTheSameSizeAsTheInputListOfWwwSubjectDetail: MatchResult[Any] = {
     val wwwSubjectDetails = createAListOfWwwSubjectDetail()
     val avroSubjectDetails = {
-      new ClassTimetableConverterHelper {}
+      new ClassTimetableConverterHelperToAvro {}
     }.convertWwwSubjectDetailsToAvro(wwwSubjectDetails)
 
     avroSubjectDetails.size mustEqual wwwSubjectDetails.size
@@ -309,7 +309,7 @@ class ClassTimetableConverterHelperTest extends Specification {
   def listOfSubjectDetailWrapperHasOneMathsSubject: MatchResult[Any] = {
     val wwwSubjectDetails = createAListOfWwwSubjectDetail()
     val avroSubjectDetails = {
-      new ClassTimetableConverterHelper {}
+      new ClassTimetableConverterHelperToAvro {}
     }.convertWwwSubjectDetailsToAvro(wwwSubjectDetails)
 
     avroSubjectDetails.count(_.subjectDetail.subjectName == SubjectName.MATHS) mustEqual 1
@@ -318,7 +318,7 @@ class ClassTimetableConverterHelperTest extends Specification {
   def listOfSubjectDetailWrapperHasOneMathsSubjectWithExpectedValues: MatchResult[Any] = {
     val wwwSubjectDetails = createAListOfWwwSubjectDetail()
     val avroSubjectDetails = {
-      new ClassTimetableConverterHelper {}
+      new ClassTimetableConverterHelperToAvro {}
     }.convertWwwSubjectDetailsToAvro(wwwSubjectDetails)
 
     val subjects = avroSubjectDetails.filter(_.subjectDetail.subjectName == SubjectName.MATHS)
@@ -332,7 +332,7 @@ class ClassTimetableConverterHelperTest extends Specification {
   def listOfSubjectDetailWrapperHasOneReadingSubject: MatchResult[Any] = {
     val wwwSubjectDetails = createAListOfWwwSubjectDetail()
     val avroSubjectDetails = {
-      new ClassTimetableConverterHelper {}
+      new ClassTimetableConverterHelperToAvro {}
     }.convertWwwSubjectDetailsToAvro(wwwSubjectDetails)
 
     avroSubjectDetails.count(_.subjectDetail.subjectName == SubjectName.READING) mustEqual 1
@@ -343,7 +343,7 @@ class ClassTimetableConverterHelperTest extends Specification {
   def listOfSubjectDetailWrapperHasOneReadingSubjectWithExpectedValues: MatchResult[Any] = {
     val wwwSubjectDetails = createAListOfWwwSubjectDetail()
     val avroSubjectDetails = {
-      new ClassTimetableConverterHelper {}
+      new ClassTimetableConverterHelperToAvro {}
     }.convertWwwSubjectDetailsToAvro(wwwSubjectDetails)
 
     val subjects = avroSubjectDetails.filter(_.subjectDetail.subjectName == SubjectName.READING)
@@ -356,7 +356,7 @@ class ClassTimetableConverterHelperTest extends Specification {
   def listOfSubjectDetailWrapperHasZeroWritingSubject: MatchResult[Any] = {
     val wwwSubjectDetails = createAListOfWwwSubjectDetail()
     val avroSubjectDetails = {
-      new ClassTimetableConverterHelper {}
+      new ClassTimetableConverterHelperToAvro {}
     }.convertWwwSubjectDetailsToAvro(wwwSubjectDetails)
 
     avroSubjectDetails.count(_.subjectDetail.subjectName == SubjectName.WRITING) mustEqual 0
