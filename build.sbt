@@ -10,7 +10,7 @@ name := "timetoteach"
 val scalaV = "2.11.11"
 
 ///////////////////////////////////////////
-val WWW_TIMETOTEACH_VERSION = "0.0.1-69"
+val WWW_TIMETOTEACH_VERSION = "0.0.1-70"
 ///////////////////////////////////////////
 
 lazy val timetoteach_ui_server = (project in file("server")).settings(
@@ -32,7 +32,7 @@ lazy val timetoteach_ui_server = (project in file("server")).settings(
   libraryDependencies ++= Seq(
     guice,
     ws,
-    "io.sudostream.timetoteach" %% "messages" % "0.0.11-31",
+    "io.sudostream.timetoteach" %% "messages" % "0.0.11-32",
     "com.google.api-client" % "google-api-client" % "1.22.0",
     "be.objectify" %% "deadbolt-scala" % "2.6.0",
     "com.vmunier" %% "scalajs-scripts" % "1.1.0",

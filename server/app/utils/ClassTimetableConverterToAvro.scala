@@ -3,16 +3,16 @@ package utils
 import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.ClassTimetable
 import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.sessions.{SessionBoundaryWrapper, SessionOfTheDayWrapper}
 import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.time.ClassTimetableSchoolTimes
-import shared.model.classtimetable.WWWClassTimetable
+import shared.model.classtimetable.{SchoolDayTimeBoundary, WWWClassTimetable}
 
 object ClassTimetableConverterToAvro
   extends ClassTimetableConverterHelperToAvro with ClassTimetableConverterHelperFromAvro {
 
   def convertAvroClassTimeTableToWww(avroTimetable: ClassTimetable): WWWClassTimetable = {
-    val theSchoolTimes: ClassTimetableSchoolTimes = createSchoolTimes(avroTimetable.schoolTimes)
+    val theSchoolTimes: Option[Map[SchoolDayTimeBoundary, String]] = createSchoolTimes(avroTimetable.schoolTimes)
     val theAllSessionsOfTheWeek: List[SessionOfTheDayWrapper] = createAllSessionsOfTheWeek(avroTimetable.allSessionsOfTheWeek)
 
-    val wwwClassTimetable =  WWWClassTimetable(schoolDayTimesOption = None)
+    val wwwClassTimetable =  WWWClassTimetable(schoolDayTimesOption = theSchoolTimes)
     addAllSessionsToClassTimetable(theAllSessionsOfTheWeek, wwwClassTimetable)
   }
 
