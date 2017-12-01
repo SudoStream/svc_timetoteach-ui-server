@@ -70,7 +70,7 @@ class WWWClassTimetableTest extends FunSpec with ClassTimetableTestHelper {
     it("should be partially full") {
       val classTimetable: WWWClassTimetable = WWWClassTimetable(None)
       val mathsOnMonday = WwwSubjectDetail(WwwSubjectName("subject-maths"), WwwTimeSlot(LocalTime.of(9, 30), LocalTime.of(9, 50)))
-      classTimetable.addSubject(mathsOnMonday, MondayEarlyMorningSession())
+      classTimetable.addSubject(mathsOnMonday, MondayEarlyMorningWwwSession())
       assert(classTimetable.getCurrentState == PartiallyComplete())
     }
   }
@@ -95,17 +95,17 @@ class WWWClassTimetableTest extends FunSpec with ClassTimetableTestHelper {
     it("should be possible to get a sorted list of session breakdowns with the first session as Monday Early") {
       val classTimetable: WWWClassTimetable = createFullClassTimetable
       val sessions = classTimetable.allSessionsOfTheWeekInOrderByDay
-      assert(sessions.getOrElse(WwwDayOfWeek("Monday"), Nil).head.sessionOfTheWeek == MondayEarlyMorningSession())
+      assert(sessions.getOrElse(WwwDayOfWeek("Monday"), Nil).head.sessionOfTheWeek == MondayEarlyMorningWwwSession())
     }
     it("should be possible to get a sorted list of session breakdowns with the last session as Friday afternoon") {
       val classTimetable: WWWClassTimetable = createFullClassTimetable
       val sessions = classTimetable.allSessionsOfTheWeekInOrderByDay
-      assert(sessions.getOrElse(WwwDayOfWeek("Friday"), Nil).last.sessionOfTheWeek == FridayAfternoonSession())
+      assert(sessions.getOrElse(WwwDayOfWeek("Friday"), Nil).last.sessionOfTheWeek == FridayAfternoonWwwSession())
     }
     it("should be possible to get a sorted list of session breakdowns with the middle wednesay session as Wednesday late morning") {
       val classTimetable: WWWClassTimetable = createFullClassTimetable
       val sessions = classTimetable.allSessionsOfTheWeekInOrderByDay
-      assert(sessions.getOrElse(WwwDayOfWeek("Wednesday"), Nil).tail.head.sessionOfTheWeek == WednesdayLateMorningSession())
+      assert(sessions.getOrElse(WwwDayOfWeek("Wednesday"), Nil).tail.head.sessionOfTheWeek == WednesdayLateMorningWwwSession())
     }
   }
 
@@ -116,7 +116,7 @@ class WWWClassTimetableTest extends FunSpec with ClassTimetableTestHelper {
         WwwSubjectName("subject-reading"),
         WwwTimeSlot(LocalTime.of(13, 0), LocalTime.of(15, 0))
       ),
-        WednesdayAfternoonSession())
+        WednesdayAfternoonWwwSession())
       assert(classTimetable.getCurrentState == PartiallyComplete())
     }
   }
@@ -133,12 +133,12 @@ class WWWClassTimetableTest extends FunSpec with ClassTimetableTestHelper {
     it("should show the updated *additional info*") {
       val classTimetable: WWWClassTimetable = WWWClassTimetable(None)
       val mathsOnMonday = WwwSubjectDetail(WwwSubjectName("subject-maths"), WwwTimeSlot(LocalTime.of(9, 30), LocalTime.of(9, 50)))
-      classTimetable.addSubject(mathsOnMonday, MondayEarlyMorningSession())
+      classTimetable.addSubject(mathsOnMonday, MondayEarlyMorningWwwSession())
 
       val mathsOnMondayWithAdditionalInfo = WwwSubjectDetail(
         mathsOnMonday.subject, mathsOnMonday.timeSlot, "This is additional info")
 
-      assert(classTimetable.editSubject(mathsOnMondayWithAdditionalInfo, MondayEarlyMorningSession()))
+      assert(classTimetable.editSubject(mathsOnMondayWithAdditionalInfo, MondayEarlyMorningWwwSession()))
     }
   }
 

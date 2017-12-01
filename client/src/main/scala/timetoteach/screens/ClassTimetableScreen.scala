@@ -16,7 +16,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
   var classTimetable: WWWClassTimetable = WWWClassTimetable(None)
   override def getClassTimetable: WWWClassTimetable = classTimetable
 
-  var currentlySelectedSession: Option[Session] = None
+  var currentlySelectedSession: Option[WwwSession] = None
   var currentlySelectedSubject: Option[WwwSubjectName] = None
   var lastSelectedSubject: Option[WwwSubjectName] = None
   var currentlySelectedDayOfWeek: Option[WwwDayOfWeek] = None
@@ -52,7 +52,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
     setDecentTimesForPreciseModal()
   }
 
-  private def addAdditionalInfoToSubject(maybeOkBehaviour: Option[(WwwSubjectDetail, SessionOfTheWeek)]): Unit = {
+  private def addAdditionalInfoToSubject(maybeOkBehaviour: Option[(WwwSubjectDetail, WwwSessionOfTheWeek)]): Unit = {
     for {
       okBehaviour <- maybeOkBehaviour
       subjectSelected = okBehaviour._1
@@ -83,7 +83,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
       val inputStartTime = dom.document.getElementById("timepicker1").asInstanceOf[HTMLInputElement]
       val inputEndTime = dom.document.getElementById("timepicker2").asInstanceOf[HTMLInputElement]
       val maybeEarliestStartTime =
-        classTimetable.getFirstAvailableTimeSlot(SessionOfTheWeek.createSessionOfTheWeek(dayOfWeek, session))
+        classTimetable.getFirstAvailableTimeSlot(WwwSessionOfTheWeek.createSessionOfTheWeek(dayOfWeek, session))
 
       inputStartTime.value = if (maybeEarliestStartTime.isDefined) {
         val start = LocalTimeUtil.get12HourAmPmFromLocalTime(maybeEarliestStartTime.get.startTime)
@@ -116,7 +116,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
         endTime <- maybeEndTimeProposed
       } yield WwwTimeSlot(startTime, endTime)
 
-      val maybeSessionOfTheWeek: Option[SessionOfTheWeek] = extractSelectedSessionOfTheWeek
+      val maybeSessionOfTheWeek: Option[WwwSessionOfTheWeek] = extractSelectedSessionOfTheWeek
       val maybeSubjectSession = for {
         sessionOfTheWeek <- maybeSessionOfTheWeek
         sessionTimeSlot <- classTimetable.getTimeSlotForSession(sessionOfTheWeek)
@@ -159,7 +159,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
   case class AsMuchAsPossible()
 
   private def addingSubjectGeneralBehaviour(eitherFractionOrAsMuchAsPossible: Either[Fraction, AsMuchAsPossible]) = {
-    val maybeSessionOfTheWeek: Option[SessionOfTheWeek] = extractSelectedSessionOfTheWeek
+    val maybeSessionOfTheWeek: Option[WwwSessionOfTheWeek] = extractSelectedSessionOfTheWeek
     val maybeSubjectDetailAndSessionOfTheWeek = for {
       sessionOfTheWeek <- maybeSessionOfTheWeek
       sessionTimeSlot <- classTimetable.getTimeSlotForSession(sessionOfTheWeek)
@@ -222,7 +222,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
       for {
         day <- currentlySelectedDayOfWeek
         session <- currentlySelectedSession
-      } yield SessionOfTheWeek.createSessionOfTheWeek(day, session)
+      } yield WwwSessionOfTheWeek.createSessionOfTheWeek(day, session)
     }.flatten
     theSessionOfTheWeek
   }
@@ -241,7 +241,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
           val timetableSession = buttonTarget.getAttribute("data-timetable-session")
 
           currentlySelectedSession = timetableSession match {
-            case sessionName: String => if (Sessions.values.contains(sessionName)) Some(Session(sessionName)) else None
+            case sessionName: String => if (WwwSessions.values.contains(sessionName)) Some(WwwSession(sessionName)) else None
             case _ => None
           }
 
@@ -349,7 +349,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
         global.console.log(s"maybeTimeSlot := $maybeTimeSlot")
 
         val maybeAdditionalInfo = for {
-          sessionOfTheWeek <- SessionOfTheWeek.createSessionOfTheWeek(WwwDayOfWeek(day), Session(timetableSession))
+          sessionOfTheWeek <- WwwSessionOfTheWeek.createSessionOfTheWeek(WwwDayOfWeek(day), WwwSession(timetableSession))
           timeSlot <- maybeTimeSlot
           additionalInfo <- classTimetable.getAdditionalInfoForSubject(
             WwwSubjectDetail(WwwSubjectName(subjectCode), timeSlot),
@@ -385,7 +385,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
 
   }
 
-  def addRemoveBehaviour(maybeRemoveBehaviour: Option[(WwwSubjectDetail, SessionOfTheWeek)]): Unit = {
+  def addRemoveBehaviour(maybeRemoveBehaviour: Option[(WwwSubjectDetail, WwwSessionOfTheWeek)]): Unit = {
     for {
       removeBehaviour <- maybeRemoveBehaviour
       subjectToRemove = removeBehaviour._1
@@ -399,7 +399,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
     }
   }
 
-  def addOKSubjectBehaviour(maybeOkBehaviour: Option[(WwwSubjectDetail, SessionOfTheWeek)]): Unit = {
+  def addOKSubjectBehaviour(maybeOkBehaviour: Option[(WwwSubjectDetail, WwwSessionOfTheWeek)]): Unit = {
     for {
       okBehaviour <- maybeOkBehaviour
       subjectSelected = okBehaviour._1
@@ -412,7 +412,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
     }
   }
 
-  private def updatedSubject(subjectSelected: WwwSubjectDetail, sessionOfTheWeek: SessionOfTheWeek): Unit = {
+  private def updatedSubject(subjectSelected: WwwSubjectDetail, sessionOfTheWeek: WwwSessionOfTheWeek): Unit = {
     val additionalInfo = dom.document.getElementById("input-for-additional-info").asInstanceOf[HTMLInputElement].value
     global.console.log(s"Editing subject to have additional info: $additionalInfo")
 

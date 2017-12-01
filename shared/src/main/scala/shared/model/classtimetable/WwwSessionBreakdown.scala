@@ -6,7 +6,7 @@ import java.time.temporal.ChronoUnit.MINUTES
 import scala.annotation.tailrec
 import scala.collection.mutable
 
-case class WwwSessionBreakdown(sessionOfTheWeek: SessionOfTheWeek, startTime: LocalTime, endTime: LocalTime) {
+case class WwwSessionBreakdown(sessionOfTheWeek: WwwSessionOfTheWeek, startTime: LocalTime, endTime: LocalTime) {
   require(startTime.isBefore(endTime))
 
   private var subjectsInSession: mutable.ListBuffer[WwwSubjectDetail] = scala.collection.mutable.ListBuffer()

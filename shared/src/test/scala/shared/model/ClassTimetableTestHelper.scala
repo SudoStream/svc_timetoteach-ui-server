@@ -14,21 +14,21 @@ trait ClassTimetableTestHelper {
         WwwSubjectName("subject-writing"),
         WwwTimeSlot(LocalTime.of(9,0), LocalTime.of(10,30))
       ),
-      MondayEarlyMorningSession()
+      MondayEarlyMorningWwwSession()
     )
     classTimetable.addSubject(
       WwwSubjectDetail(
         WwwSubjectName("subject-maths"),
         WwwTimeSlot(LocalTime.of(10,45), LocalTime.of(12,0))
       ),
-      MondayLateMorningSession()
+      MondayLateMorningWwwSession()
     )
     classTimetable.addSubject(
       WwwSubjectDetail(
         WwwSubjectName("subject-reading"),
         WwwTimeSlot(LocalTime.of(13,0), LocalTime.of(15,0))
       ),
-      MondayAfternoonSession()
+      MondayAfternoonWwwSession()
     )
 
     // Tuesday
@@ -37,21 +37,21 @@ trait ClassTimetableTestHelper {
         WwwSubjectName("subject-writing"),
         WwwTimeSlot(LocalTime.of(9,0), LocalTime.of(10,30))
       ),
-      TuesdayEarlyMorningSession()
+      TuesdayEarlyMorningWwwSession()
     )
     classTimetable.addSubject(
       WwwSubjectDetail(
         WwwSubjectName("subject-maths"),
         WwwTimeSlot(LocalTime.of(10,45), LocalTime.of(12,0))
       ),
-      TuesdayLateMorningSession()
+      TuesdayLateMorningWwwSession()
     )
     classTimetable.addSubject(
       WwwSubjectDetail(
         WwwSubjectName("subject-reading"),
         WwwTimeSlot(LocalTime.of(13,0), LocalTime.of(15,0))
       ),
-      TuesdayAfternoonSession()
+      TuesdayAfternoonWwwSession()
     )
 
     // Wednesday
@@ -60,21 +60,21 @@ trait ClassTimetableTestHelper {
         WwwSubjectName("subject-writing"),
         WwwTimeSlot(LocalTime.of(9,0), LocalTime.of(10,30))
       ),
-      WednesdayEarlyMorningSession()
+      WednesdayEarlyMorningWwwSession()
     )
     classTimetable.addSubject(
       WwwSubjectDetail(
         WwwSubjectName("subject-maths"),
         WwwTimeSlot(LocalTime.of(10,45), LocalTime.of(12,0))
       ),
-      WednesdayLateMorningSession()
+      WednesdayLateMorningWwwSession()
     )
     classTimetable.addSubject(
       WwwSubjectDetail(
         WwwSubjectName("subject-reading"),
         WwwTimeSlot(LocalTime.of(13,0), LocalTime.of(15,0))
       ),
-      WednesdayAfternoonSession()
+      WednesdayAfternoonWwwSession()
     )
 
     // Thursday
@@ -83,21 +83,21 @@ trait ClassTimetableTestHelper {
         WwwSubjectName("subject-writing"),
         WwwTimeSlot(LocalTime.of(9,0), LocalTime.of(10,30))
       ),
-      ThursdayEarlyMorningSession()
+      ThursdayEarlyMorningWwwSession()
     )
     classTimetable.addSubject(
       WwwSubjectDetail(
         WwwSubjectName("subject-maths"),
         WwwTimeSlot(LocalTime.of(10,45), LocalTime.of(12,0))
       ),
-      ThursdayLateMorningSession()
+      ThursdayLateMorningWwwSession()
     )
     classTimetable.addSubject(
       WwwSubjectDetail(
         WwwSubjectName("subject-reading"),
         WwwTimeSlot(LocalTime.of(13,0), LocalTime.of(15,0))
       ),
-      ThursdayAfternoonSession()
+      ThursdayAfternoonWwwSession()
     )
 
     // Friday
@@ -106,21 +106,21 @@ trait ClassTimetableTestHelper {
         WwwSubjectName("subject-writing"),
         WwwTimeSlot(LocalTime.of(9,0), LocalTime.of(10,30))
       ),
-      FridayEarlyMorningSession()
+      FridayEarlyMorningWwwSession()
     )
     classTimetable.addSubject(
       WwwSubjectDetail(
         WwwSubjectName("subject-maths"),
         WwwTimeSlot(LocalTime.of(10,45), LocalTime.of(12,0))
       ),
-      FridayLateMorningSession()
+      FridayLateMorningWwwSession()
     )
     classTimetable.addSubject(
       WwwSubjectDetail(
         WwwSubjectName("subject-reading"),
         WwwTimeSlot(LocalTime.of(13,0), LocalTime.of(15,0))
       ),
-      FridayAfternoonSession()
+      FridayAfternoonWwwSession()
     )
 
 

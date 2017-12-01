@@ -12,8 +12,8 @@ import scalatags.JsDom.all.{p, _}
 
 trait ClassTimetableScreenHtmlGenerator {
 
-  private var removeBehaviourTuple: Option[(WwwSubjectDetail, SessionOfTheWeek)] = None
-  def getRemoveBehaviourTuple: Option[(WwwSubjectDetail, SessionOfTheWeek)] = removeBehaviourTuple
+  private var removeBehaviourTuple: Option[(WwwSubjectDetail, WwwSessionOfTheWeek)] = None
+  def getRemoveBehaviourTuple: Option[(WwwSubjectDetail, WwwSessionOfTheWeek)] = removeBehaviourTuple
   def setRemoveBehaviourTupleToNone(): Unit = removeBehaviourTuple = None
 
   def getClassTimetable: WWWClassTimetable
@@ -102,7 +102,7 @@ trait ClassTimetableScreenHtmlGenerator {
                           ): JsDom.TypedTag[Div] = {
 
     val dayOfWeek = WwwDayOfWeek(day)
-    val session = Session(timetableSession)
+    val session = WwwSession(timetableSession)
 
     val subjectSummary = div(
       `class` := "collapse mx-auto",
@@ -131,7 +131,7 @@ trait ClassTimetableScreenHtmlGenerator {
       currentAdditionalInfoValue
     )
 
-    SessionOfTheWeek.createSessionOfTheWeek(dayOfWeek, session) match {
+    WwwSessionOfTheWeek.createSessionOfTheWeek(dayOfWeek, session) match {
       case Some(sessionOfTheWeek) =>
         val proposedRemoveBehaviourTuple = (subjectDetail, sessionOfTheWeek)
         global.console.log(

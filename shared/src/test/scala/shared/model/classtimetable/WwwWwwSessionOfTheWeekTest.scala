@@ -2,34 +2,34 @@ package shared.model.classtimetable
 
 import org.scalatest._
 
-class SessionOfTheWeekTest extends FunSpec {
+class WwwWwwSessionOfTheWeekTest extends FunSpec {
   describe("Early Monday Morning SessionOfTheWeek") {
     it("should have a value of 'monday-early-morning-session'") {
-      val sessionOfTheWeek : SessionOfTheWeek = MondayEarlyMorningSession()
+      val sessionOfTheWeek : WwwSessionOfTheWeek = MondayEarlyMorningWwwSession()
       assert(sessionOfTheWeek.value == "monday-early-morning-session")
     }
     it("should have a session minus day value of early-morning-session") {
-      val sessionOfTheWeek : SessionOfTheWeek = MondayEarlyMorningSession()
+      val sessionOfTheWeek : WwwSessionOfTheWeek = MondayEarlyMorningWwwSession()
       assert(sessionOfTheWeek.valueWithoutDay == "early-morning-session")
     }
   }
   describe("Late Morning Wednesday SessionOfTheWeek") {
     it("should have a value of 'wednesday-late-morning-session'") {
-      val sessionOfTheWeek : SessionOfTheWeek = WednesdayLateMorningSession()
+      val sessionOfTheWeek : WwwSessionOfTheWeek = WednesdayLateMorningWwwSession()
       assert(sessionOfTheWeek.value == "wednesday-late-morning-session")
     }
     it("should have a session minus day value of late-morning-session") {
-      val sessionOfTheWeek : SessionOfTheWeek = WednesdayLateMorningSession()
+      val sessionOfTheWeek : WwwSessionOfTheWeek = WednesdayLateMorningWwwSession()
       assert(sessionOfTheWeek.valueWithoutDay == "late-morning-session")
     }
   }
   describe("Friday Afternoon SessionOfTheWeek") {
     it("should have a value of 'friday-afternoon-session'") {
-      val sessionOfTheWeek : SessionOfTheWeek = FridayAfternoonSession()
+      val sessionOfTheWeek : WwwSessionOfTheWeek = FridayAfternoonWwwSession()
       assert(sessionOfTheWeek.value == "friday-afternoon-session")
     }
     it("should have a session minus day value of afternoon-session") {
-      val sessionOfTheWeek : SessionOfTheWeek = FridayAfternoonSession()
+      val sessionOfTheWeek : WwwSessionOfTheWeek = FridayAfternoonWwwSession()
       assert(sessionOfTheWeek.valueWithoutDay == "afternoon-session")
     }
   }

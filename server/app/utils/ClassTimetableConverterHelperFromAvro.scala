@@ -6,6 +6,8 @@ import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.sessio
 import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.time.{ClassTimetableSchoolTimes, DayOfTheWeek}
 import shared.model.classtimetable._
 
+import scala.annotation.tailrec
+
 trait ClassTimetableConverterHelperFromAvro {
 
   def createSchoolTimes(schoolTimes: ClassTimetableSchoolTimes): Option[Map[SchoolDayTimeBoundary, String]] = {
@@ -28,8 +30,25 @@ trait ClassTimetableConverterHelperFromAvro {
   }
 
   def createAllSessionsOfTheWeek(allSessionsOfTheWeek: List[SessionOfTheDayWrapper]): Map[WwwDayOfWeek, List[WwwSessionBreakdown]] = {
-    def buildSessionOfTheWeek(sessionOfTheDay: SessionOfTheDay): SessionOfTheWeek = {
+    def buildSessionOfTheWeek(sessionOfTheDay: SessionOfTheDay): WwwSessionOfTheWeek = {
+      val dayOfTheWeek = sessionOfTheDay.dayOfTheWeek
 
+      val wwwSession = sessionOfTheDay.sessionName.value match {
+        case "EarlyMorningSession" => WwwSession("early-morning-session")
+        case "LateMorningSession" => WwwSession("late-morning-session")
+        case "AfternoonSession" => WwwSession("afternoon-session")
+        case _ => WwwSession("early-morning-session")
+      }
+      val wwwDayOfTheWeek = dayOfTheWeek match {
+        case DayOfTheWeek.MONDAY => WwwDayOfWeek("Monday")
+        case DayOfTheWeek.TUESDAY => WwwDayOfWeek("Tuesday")
+        case DayOfTheWeek.WEDNESDAY => WwwDayOfWeek("Wednesday")
+        case DayOfTheWeek.THURSDAY => WwwDayOfWeek("Thursday")
+        case DayOfTheWeek.FRIDAY => WwwDayOfWeek("Friday")
+      }
+
+      // TODO: FIX this .. no "get" please
+      WwwSessionOfTheWeek.createSessionOfTheWeek(wwwDayOfTheWeek, wwwSession).get
     }
 
     def buildDayOfTheWeek(dayOfTheWeek: DayOfTheWeek): WwwDayOfWeek = {
@@ -42,25 +61,40 @@ trait ClassTimetableConverterHelperFromAvro {
       }
     }
 
-    def loop(restOfSessions: List[SessionOfTheDayWrapper], currentMap: Map[WwwDayOfWeek, List[WwwSessionBreakdown]]): Map[WwwDayOfWeek, List[WwwSessionBreakdown]] = {
-      if (restOfSessions.isEmpty) currentMap
-      else {
-        val sessionOfTheDay = restOfSessions.head.sessionOfTheDay
-        val sessionOfTheWeek = buildSessionOfTheWeek(sessionOfTheDay)
-        val wwwSessionBreakdown = WwwSessionBreakdown(
-          sessionOfTheWeek,
-          LocalTime.parse(sessionOfTheDay.startTime.timeIso8601),
-          LocalTime.parse(sessionOfTheDay.endTime.timeIso8601)
-        )
-        val dayOfWeek = buildDayOfTheWeek(sessionOfTheDay.dayOfTheWeek)
+    def createNewWwwSession(sessionOfTheDay: SessionOfTheDay): WwwSessionBreakdown = {
+      val sessionOfTheWeek = buildSessionOfTheWeek(sessionOfTheDay)
+      WwwSessionBreakdown(
+        sessionOfTheWeek,
+        LocalTime.parse(sessionOfTheDay.startTime.timeIso8601),
+        LocalTime.parse(sessionOfTheDay.endTime.timeIso8601)
+      )
+    }
 
-        if (currentMap.get(dayOfWeek).isDefined) {
-          currentMap.get(dayOfWeek)
+    @tailrec
+    def loop(maybeSessionToAdd: Option[SessionOfTheDay], restOfSessions: List[SessionOfTheDayWrapper], currentMap: Map[WwwDayOfWeek, List[WwwSessionBreakdown]]): Map[WwwDayOfWeek, List[WwwSessionBreakdown]] = {
+      if (maybeSessionToAdd.isEmpty) currentMap
+      else {
+        val sessionToAdd = maybeSessionToAdd.get
+        val newWwwSessionBreakdown = createNewWwwSession(sessionToAdd)
+        val dayOfWeek = buildDayOfTheWeek(sessionToAdd.dayOfTheWeek)
+
+        val nextSessionsList = if (currentMap.get(dayOfWeek).isDefined) {
+          val currentSessions = currentMap(dayOfWeek)
+          (newWwwSessionBreakdown :: currentSessions) sortBy (_.startTime.toSecondOfDay)
+        } else {
+          newWwwSessionBreakdown :: Nil
         }
+
+        val nextMap = currentMap + (dayOfWeek -> nextSessionsList)
+        val nextMaybeSessionToAdd = if ( restOfSessions.isEmpty ) None else Some(restOfSessions.head.sessionOfTheDay)
+        val nextRestOfSessions= if ( restOfSessions.isEmpty ) restOfSessions else restOfSessions.tail
+        loop(nextMaybeSessionToAdd, nextRestOfSessions, nextMap)
       }
     }
 
-    loop(allSessionsOfTheWeek, Map())
+    if (allSessionsOfTheWeek.isEmpty) Map() else {
+      loop(Some(allSessionsOfTheWeek.head.sessionOfTheDay), allSessionsOfTheWeek.tail, Map())
+    }
   }
 
   def addAllSessionsToClassTimetable(theAllSessionsOfTheWeek: Map[WwwDayOfWeek, List[WwwSessionBreakdown]], wwwClassTimetable: WWWClassTimetable): WWWClassTimetable = ???

@@ -20,6 +20,8 @@ class ClassTimetableConverterHelperFromAvroTest extends Specification {
 
   The 'createAllSessionsOfTheWeek' method should
     Convert an Avro list of SessionOfTheDayWrapper to WWW map version of same size                     $convertAnAvroListOfSessionOfTheDayWrapperToWwwMapVersionOfSameSize
+    As above With First Session Made Up Of Maths And Reading                                           $asAboveWithFirstSessionWithExpectedValues
+    Second Session Is As Expected                                                                      $secondSessionIsAsExpected
   """
 
   def createClassTimetableSchoolTimes(): ClassTimetableSchoolTimes = {
@@ -278,12 +280,41 @@ class ClassTimetableConverterHelperFromAvroTest extends Specification {
   }
 
   def convertAnAvroListOfSessionOfTheDayWrapperToWwwMapVersionOfSameSize: MatchResult[Any] = {
-    val allSessionsOfTheWeek = createSessionOfTheDayWrapperList
+    val allSessionsOfTheWeek = createSessionOfTheDayWrapperList()
     val dayToSessionsOfTheDayMap = {
       new ClassTimetableConverterHelperFromAvro {}
     }.createAllSessionsOfTheWeek(allSessionsOfTheWeek)
 
     dayToSessionsOfTheDayMap.values.flatten.size mustEqual allSessionsOfTheWeek.size
   }
+
+  def asAboveWithFirstSessionWithExpectedValues: MatchResult[Any] = {
+    val allSessionsOfTheWeek = createSessionOfTheDayWrapperList()
+    val dayToSessionsOfTheDayMap = {
+      new ClassTimetableConverterHelperFromAvro {}
+    }.createAllSessionsOfTheWeek(allSessionsOfTheWeek)
+
+    val sessionsOnMonday = dayToSessionsOfTheDayMap(WwwDayOfWeek("Monday"))
+    sessionsOnMonday.head.startTime.toString mustEqual "09:00"
+    sessionsOnMonday.head.endTime.toString mustEqual "10:30"
+    sessionsOnMonday.head.sessionOfTheWeek.isInstanceOf[MondayEarlyMorningWwwSession] mustEqual true
+  }
+
+  def secondSessionIsAsExpected: MatchResult[Any] = {
+    val allSessionsOfTheWeek = createSessionOfTheDayWrapperList()
+    val dayToSessionsOfTheDayMap = {
+      new ClassTimetableConverterHelperFromAvro {}
+    }.createAllSessionsOfTheWeek(allSessionsOfTheWeek)
+
+    val sessionsOnMonday = dayToSessionsOfTheDayMap(WwwDayOfWeek("Monday"))
+    sessionsOnMonday.tail.head.startTime.toString mustEqual "10:45"
+    sessionsOnMonday.tail.head.endTime.toString mustEqual "12:00"
+    sessionsOnMonday.tail.head.sessionOfTheWeek.isInstanceOf[MondayLateMorningWwwSession] mustEqual true
+  }
+
+
+
+  //  println(s"empty: ${sessionsOnMonday.head.getEmptyTimePeriodsAvailable.toString}")
+//  sessionsOnMonday.head.getEmptyTimePeriodsAvailable.size mustEqual 0
 
 }
