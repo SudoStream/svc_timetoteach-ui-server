@@ -1,7 +1,8 @@
 package utils
 
 import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.sessions._
-import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.time.{ClassTimetableSchoolTimes, StartTime}
+import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.subjectdetail.{SubjectDetail, SubjectDetailAdditionalInfo, SubjectDetailWrapper, SubjectName}
+import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.time.{ClassTimetableSchoolTimes, DayOfTheWeek, EndTime, StartTime}
 import org.specs2.matcher.MatchResult
 import org.specs2.mutable.Specification
 import shared.model.classtimetable._
@@ -17,6 +18,8 @@ class ClassTimetableConverterHelperFromAvroTest extends Specification {
     Convert an Avro ClassTimetableSchoolTimes Boundaries To a Www version of the same size             $convertAnAvroClassTimetableSchoolTimesBoundariesToAWwwVersionOfTheSameSize
     Convert an Avro ClassTimetableSchoolTimes Boundaries To a Www version has expected values          $convertAnAvroClassTimetableSchoolTimesBoundariesToAWwwVersionWithExpectedValues
 
+  The 'createAllSessionsOfTheWeek' method should
+    Convert an Avro list of SessionOfTheDayWrapper to WWW map version of same size                     $convertAnAvroListOfSessionOfTheDayWrapperToWwwMapVersionOfSameSize
   """
 
   def createClassTimetableSchoolTimes(): ClassTimetableSchoolTimes = {
@@ -93,6 +96,194 @@ class ClassTimetableConverterHelperFromAvroTest extends Specification {
     schoolTimes(LunchStarts()) mustEqual "12:00"
     schoolTimes(LunchEnds()) mustEqual "13:00"
     schoolTimes(SchoolDayEnds()) mustEqual "15:00"
+  }
+
+  ////////////////////
+
+  def createSessionOfTheDayWrapperList(): List[SessionOfTheDayWrapper] = {
+    SessionOfTheDayWrapper(SessionOfTheDay(
+      SessionName("EarlyMorningSession"),
+      DayOfTheWeek.MONDAY,
+      StartTime("09:00"),
+      EndTime("10:30"),
+      List(SubjectDetailWrapper(SubjectDetail(
+        SubjectName.MATHS,
+        StartTime("09:00"),
+        EndTime("09:45"),
+        SubjectDetailAdditionalInfo("")
+      )),
+        SubjectDetailWrapper(SubjectDetail(
+          SubjectName.READING,
+          StartTime("09:45"),
+          EndTime("10:30"),
+          SubjectDetailAdditionalInfo("Check Homework")
+        ))
+      )
+    )) :: SessionOfTheDayWrapper(SessionOfTheDay(
+      SessionName("LateMorningSession"),
+      DayOfTheWeek.MONDAY,
+      StartTime("10:45"),
+      EndTime("12:00"),
+      List(SubjectDetailWrapper(SubjectDetail(
+        SubjectName.EMPTY,
+        StartTime("10:45"),
+        EndTime("12:00"),
+        SubjectDetailAdditionalInfo("")
+      )))
+    )) :: SessionOfTheDayWrapper(SessionOfTheDay(
+      SessionName("AfternoonSession"),
+      DayOfTheWeek.MONDAY,
+      StartTime("13:00"),
+      EndTime("15:00"),
+      List(SubjectDetailWrapper(SubjectDetail(
+        SubjectName.EMPTY,
+        StartTime("13:00"),
+        EndTime("15:00"),
+        SubjectDetailAdditionalInfo("")
+      )))
+    )) :: SessionOfTheDayWrapper(SessionOfTheDay(
+      SessionName("EarlyMorningSession"),
+      DayOfTheWeek.TUESDAY,
+      StartTime("09:00"),
+      EndTime("10:45"),
+      List(SubjectDetailWrapper(SubjectDetail(
+        SubjectName.EMPTY,
+        StartTime("09:00"),
+        EndTime("10:45"),
+        SubjectDetailAdditionalInfo("")
+      )))
+    )) :: SessionOfTheDayWrapper(SessionOfTheDay(
+      SessionName("LateMorningSession"),
+      DayOfTheWeek.TUESDAY,
+      StartTime("10:45"),
+      EndTime("12:00"),
+      List(SubjectDetailWrapper(SubjectDetail(
+        SubjectName.EMPTY,
+        StartTime("10:45"),
+        EndTime("12:00"),
+        SubjectDetailAdditionalInfo("")
+      )))
+    )) :: SessionOfTheDayWrapper(SessionOfTheDay(
+      SessionName("AfternoonSession"),
+      DayOfTheWeek.TUESDAY,
+      StartTime("13:00"),
+      EndTime("15:00"),
+      List(SubjectDetailWrapper(SubjectDetail(
+        SubjectName.EMPTY,
+        StartTime("13:00"),
+        EndTime("15:00"),
+        SubjectDetailAdditionalInfo("")
+      )))
+    )) :: SessionOfTheDayWrapper(SessionOfTheDay(
+      SessionName("EarlyMorningSession"),
+      DayOfTheWeek.WEDNESDAY,
+      StartTime("09:00"),
+      EndTime("10:45"),
+      List(SubjectDetailWrapper(SubjectDetail(
+        SubjectName.EMPTY,
+        StartTime("09:00"),
+        EndTime("10:45"),
+        SubjectDetailAdditionalInfo("")
+      )))
+    )) :: SessionOfTheDayWrapper(SessionOfTheDay(
+      SessionName("LateMorningSession"),
+      DayOfTheWeek.WEDNESDAY,
+      StartTime("10:45"),
+      EndTime("12:00"),
+      List(SubjectDetailWrapper(SubjectDetail(
+        SubjectName.EMPTY,
+        StartTime("10:45"),
+        EndTime("12:00"),
+        SubjectDetailAdditionalInfo("")
+      )))
+    )) :: SessionOfTheDayWrapper(SessionOfTheDay(
+      SessionName("AfternoonSession"),
+      DayOfTheWeek.WEDNESDAY,
+      StartTime("13:00"),
+      EndTime("15:00"),
+      List(SubjectDetailWrapper(SubjectDetail(
+        SubjectName.EMPTY,
+        StartTime("13:00"),
+        EndTime("15:00"),
+        SubjectDetailAdditionalInfo("")
+      )))
+    )) :: SessionOfTheDayWrapper(SessionOfTheDay(
+      SessionName("EarlyMorningSession"),
+      DayOfTheWeek.THURSDAY,
+      StartTime("09:00"),
+      EndTime("10:45"),
+      List(SubjectDetailWrapper(SubjectDetail(
+        SubjectName.EMPTY,
+        StartTime("09:00"),
+        EndTime("10:45"),
+        SubjectDetailAdditionalInfo("")
+      )))
+    )) :: SessionOfTheDayWrapper(SessionOfTheDay(
+      SessionName("LateMorningSession"),
+      DayOfTheWeek.THURSDAY,
+      StartTime("10:45"),
+      EndTime("12:00"),
+      List(SubjectDetailWrapper(SubjectDetail(
+        SubjectName.EMPTY,
+        StartTime("10:45"),
+        EndTime("12:00"),
+        SubjectDetailAdditionalInfo("")
+      )))
+    )) :: SessionOfTheDayWrapper(SessionOfTheDay(
+      SessionName("AfternoonSession"),
+      DayOfTheWeek.THURSDAY,
+      StartTime("13:00"),
+      EndTime("15:00"),
+      List(SubjectDetailWrapper(SubjectDetail(
+        SubjectName.EMPTY,
+        StartTime("13:00"),
+        EndTime("15:00"),
+        SubjectDetailAdditionalInfo("")
+      )))
+    )) :: SessionOfTheDayWrapper(SessionOfTheDay(
+      SessionName("EarlyMorningSession"),
+      DayOfTheWeek.FRIDAY,
+      StartTime("09:00"),
+      EndTime("10:45"),
+      List(SubjectDetailWrapper(SubjectDetail(
+        SubjectName.EMPTY,
+        StartTime("09:00"),
+        EndTime("10:45"),
+        SubjectDetailAdditionalInfo("")
+      )))
+    )) :: SessionOfTheDayWrapper(SessionOfTheDay(
+      SessionName("LateMorningSession"),
+      DayOfTheWeek.FRIDAY,
+      StartTime("10:45"),
+      EndTime("12:00"),
+      List(SubjectDetailWrapper(SubjectDetail(
+        SubjectName.EMPTY,
+        StartTime("10:45"),
+        EndTime("12:00"),
+        SubjectDetailAdditionalInfo("")
+      )))
+    )) :: SessionOfTheDayWrapper(SessionOfTheDay(
+      SessionName("AfternoonSession"),
+      DayOfTheWeek.FRIDAY,
+      StartTime("13:00"),
+      EndTime("15:00"),
+      List(SubjectDetailWrapper(SubjectDetail(
+        SubjectName.EMPTY,
+        StartTime("13:00"),
+        EndTime("15:00"),
+        SubjectDetailAdditionalInfo("")
+      )))
+    )) :: Nil
+
+  }
+
+  def convertAnAvroListOfSessionOfTheDayWrapperToWwwMapVersionOfSameSize: MatchResult[Any] = {
+    val allSessionsOfTheWeek = createSessionOfTheDayWrapperList
+    val dayToSessionsOfTheDayMap = {
+      new ClassTimetableConverterHelperFromAvro {}
+    }.createAllSessionsOfTheWeek(allSessionsOfTheWeek)
+
+    dayToSessionsOfTheDayMap.values.flatten.size mustEqual allSessionsOfTheWeek.size
   }
 
 }

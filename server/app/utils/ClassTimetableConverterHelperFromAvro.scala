@@ -23,7 +23,9 @@ trait ClassTimetableConverterHelperFromAvro {
     } yield schoolDayTimeBoundaryAndTime}.toMap)
   }
 
-  def createAllSessionsOfTheWeek(allSessionsOfTheWeek: List[SessionOfTheDayWrapper]): List[SessionOfTheDayWrapper] = ???
+  def createAllSessionsOfTheWeek(allSessionsOfTheWeek: List[SessionOfTheDayWrapper]): Map[DayOfWeek, List[WwwSessionBreakdown]] = {
+    Map()
+  }
 
-  def addAllSessionsToClassTimetable(theAllSessionsOfTheWeek: List[SessionOfTheDayWrapper], wwwClassTimetable: WWWClassTimetable): WWWClassTimetable = ???
+  def addAllSessionsToClassTimetable(theAllSessionsOfTheWeek: Map[DayOfWeek, List[WwwSessionBreakdown]], wwwClassTimetable: WWWClassTimetable): WWWClassTimetable = ???
 }
