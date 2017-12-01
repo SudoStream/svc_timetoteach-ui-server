@@ -18,6 +18,8 @@ object ClassTimetableConverter extends ClassTimetableConverterHelper {
       schoolTimes = theSchoolTimes,
       allSessionsOfTheWeek = theAllSessionsOfTheWeek
     )
+
+    null
   }
 
 }

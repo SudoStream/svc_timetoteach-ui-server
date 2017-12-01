@@ -32,7 +32,7 @@ trait ClassTimetableConverterHelper {
   }
 
   def createAllSessionsOfTheWeek(allSessionsOfTheWeek: Map[DayOfWeek, List[SessionBreakdown]]): scala.List[SessionOfTheDayWrapper] = {
-
+    Nil
   }
 
 
