@@ -1,6 +1,6 @@
 package shared.model.classtimetable
 
-trait SchoolDayTimes {
+trait WwwSchoolDayTimes {
   def createSchoolDayTimes(schoolDayTimesOption: Option[Map[SchoolDayTimeBoundary, String]]):
   Map[SchoolDayTimeBoundary, String] = {
     schoolDayTimesOption match {

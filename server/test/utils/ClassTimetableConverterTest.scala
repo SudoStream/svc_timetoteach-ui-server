@@ -19,8 +19,9 @@ class ClassTimetableConverterTest extends Specification {
     val wwwClassTimetable = createWwwClassTimetable()
     val avroClassTimetable = ClassTimetableConverter.convertWwwClassTimeTableToAvro(wwwClassTimetable)
 
-//    wwwClassTimetable.allSessionsOfTheWeekInOrderByDay.size mustEqual avroClassTimetable.allSessionsOfTheWeek.size
-    1 mustEqual 2
+    println(s"wwwClassTimetable  : ${wwwClassTimetable.allSessionsOfTheWeekInOrderByDay.toString}")
+    println(s"avroClassTimetable : ${avroClassTimetable.allSessionsOfTheWeek.toString}")
+    wwwClassTimetable.allSessionsOfTheWeek.size mustEqual avroClassTimetable.allSessionsOfTheWeek.size
   }
 
   def createWwwClassTimetable(): WWWClassTimetable = {

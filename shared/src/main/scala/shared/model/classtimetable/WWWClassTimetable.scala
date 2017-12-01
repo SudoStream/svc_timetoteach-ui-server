@@ -1,7 +1,7 @@
 package shared.model.classtimetable
 
 case class WWWClassTimetable(private val schoolDayTimesOption: Option[Map[SchoolDayTimeBoundary, String]])
-  extends AllSessionsOfTheWeek {
+  extends WwwAllSessionsOfTheWeek {
 
   lazy val schoolDayTimes: Map[SchoolDayTimeBoundary, String] = createSchoolDayTimes(schoolDayTimesOption)
   override def getSchoolDayTimes: Map[SchoolDayTimeBoundary, String] = schoolDayTimes
@@ -12,11 +12,11 @@ case class WWWClassTimetable(private val schoolDayTimesOption: Option[Map[School
     else PartiallyComplete()
   }
 
-  def getTimeSlotForSession(session: SessionOfTheWeek): Option[TimeSlot] = {
+  def getTimeSlotForSession(session: SessionOfTheWeek): Option[WwwTimeSlot] = {
     val maybeSessionBreakDown = sessionsOfTheWeek.get(session)
     maybeSessionBreakDown match {
       case Some(sessionBreakdown) =>
-        Some(TimeSlot(sessionBreakdown.startTime, sessionBreakdown.endTime))
+        Some(WwwTimeSlot(sessionBreakdown.startTime, sessionBreakdown.endTime))
       case None => None
     }
   }
@@ -24,14 +24,14 @@ case class WWWClassTimetable(private val schoolDayTimesOption: Option[Map[School
   private val beenEdits = false
   def hasBeenEdited: Boolean = beenEdits
 
-  def getFirstAvailableTimeSlot(maybeSessionOfTheWeek: Option[SessionOfTheWeek]): Option[TimeSlot] = {
+  def getFirstAvailableTimeSlot(maybeSessionOfTheWeek: Option[SessionOfTheWeek]): Option[WwwTimeSlot] = {
     (for {
       sessionOfTheWeek <- maybeSessionOfTheWeek
       sessionBreakdown <- sessionsOfTheWeek.get(sessionOfTheWeek)
     } yield sessionBreakdown.getFirstEmptyTimePeriodAvailable).flatten
   }
 
-  def getFirstAvailableTimeSlot(sessionOfTheWeek: SessionOfTheWeek, fractionOfSession: Fraction): Option[TimeSlot] = {
+  def getFirstAvailableTimeSlot(sessionOfTheWeek: SessionOfTheWeek, fractionOfSession: Fraction): Option[WwwTimeSlot] = {
     sessionsOfTheWeek.get(sessionOfTheWeek) match {
       case Some(sessionBreakdown) =>
         sessionBreakdown.getFirstAvailableTimeSlot(fractionOfSession)
@@ -39,7 +39,7 @@ case class WWWClassTimetable(private val schoolDayTimesOption: Option[Map[School
     }
   }
 
-  def addSubject(subjectDetail: SubjectDetail, sessionOfTheWeek: SessionOfTheWeek): Boolean = {
+  def addSubject(subjectDetail: WwwSubjectDetail, sessionOfTheWeek: SessionOfTheWeek): Boolean = {
     sessionsOfTheWeek.get(sessionOfTheWeek) match {
       case Some(sessionBreakdown) =>
         sessionBreakdown.addSubject(subjectDetail)
@@ -47,7 +47,7 @@ case class WWWClassTimetable(private val schoolDayTimesOption: Option[Map[School
     }
   }
 
-  def editSubject(subjectDetail: SubjectDetail, sessionOfTheWeek: SessionOfTheWeek): Boolean = {
+  def editSubject(subjectDetail: WwwSubjectDetail, sessionOfTheWeek: SessionOfTheWeek): Boolean = {
     sessionsOfTheWeek.get(sessionOfTheWeek) match {
       case Some(sessionBreakdown) =>
         sessionBreakdown.editSubject(subjectDetail)
@@ -55,7 +55,7 @@ case class WWWClassTimetable(private val schoolDayTimesOption: Option[Map[School
     }
   }
 
-  def removeSubject(subjectDetail: SubjectDetail, sessionOfTheWeek: SessionOfTheWeek): Boolean = {
+  def removeSubject(subjectDetail: WwwSubjectDetail, sessionOfTheWeek: SessionOfTheWeek): Boolean = {
     sessionsOfTheWeek.get(sessionOfTheWeek) match {
       case Some(sessionBreakdown) =>
         sessionBreakdown.removeSubject(subjectDetail)
@@ -63,7 +63,7 @@ case class WWWClassTimetable(private val schoolDayTimesOption: Option[Map[School
     }
     }
 
-  def getAdditionalInfoForSubject(subjectDetail: SubjectDetail, sessionOfTheWeek: SessionOfTheWeek): Option[String] = {
+  def getAdditionalInfoForSubject(subjectDetail: WwwSubjectDetail, sessionOfTheWeek: SessionOfTheWeek): Option[String] = {
     sessionsOfTheWeek.get(sessionOfTheWeek) match {
       case Some(sessionBreakdown) =>
         val maybeSubjectDetail = sessionBreakdown.getSubject(subjectDetail)
@@ -81,9 +81,15 @@ case class WWWClassTimetable(private val schoolDayTimesOption: Option[Map[School
     }
   }
 
-  def allSessionsOfTheWeekInOrderByDay: Map[DayOfWeek, List[SessionBreakdown]] = {
-    def buildDayToSessionsMapAcc(currentMap: Map[DayOfWeek, List[SessionBreakdown]],
-                                 remainingSessionsToAdd: List[SessionBreakdown]): Map[DayOfWeek, List[SessionBreakdown]] = {
+  def allSessionsOfTheWeek: List[WwwSessionBreakdown] = {
+    {{for {
+      daySessionsTuple <- allSessionsOfTheWeekInOrderByDay
+    } yield daySessionsTuple._2}.flatten}.toList
+  }
+
+  def allSessionsOfTheWeekInOrderByDay: Map[DayOfWeek, List[WwwSessionBreakdown]] = {
+    def buildDayToSessionsMapAcc(currentMap: Map[DayOfWeek, List[WwwSessionBreakdown]],
+                                 remainingSessionsToAdd: List[WwwSessionBreakdown]): Map[DayOfWeek, List[WwwSessionBreakdown]] = {
       if (remainingSessionsToAdd.isEmpty) currentMap
       else {
         val sessionToAdd = remainingSessionsToAdd.head

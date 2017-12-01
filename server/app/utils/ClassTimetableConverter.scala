@@ -7,6 +7,7 @@ import shared.model.classtimetable.WWWClassTimetable
 
 object ClassTimetableConverter extends ClassTimetableConverterHelper {
 
+  // TODO: Add tests here!!!!!
 
   def convertAvroClassTimeTableToWww(avroTimetable: ClassTimetable) : WWWClassTimetable = ???
 
@@ -14,12 +15,10 @@ object ClassTimetableConverter extends ClassTimetableConverterHelper {
     val theSchoolTimes: ClassTimetableSchoolTimes = createSchoolTimes(wwwTimetable.schoolDayTimes)
     val theAllSessionsOfTheWeek: List[SessionOfTheDayWrapper] = createAllSessionsOfTheWeek(wwwTimetable.allSessionsOfTheWeekInOrderByDay)
 
-    val timetable: ClassTimetable = ClassTimetable(
+    ClassTimetable(
       schoolTimes = theSchoolTimes,
       allSessionsOfTheWeek = theAllSessionsOfTheWeek
     )
-
-    null
   }
 
 }

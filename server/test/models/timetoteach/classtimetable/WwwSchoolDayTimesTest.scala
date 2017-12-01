@@ -4,7 +4,7 @@ import java.time.LocalTime
 
 import org.specs2.mutable.Specification
 
-class SchoolDayTimesTest extends Specification {
+class WwwSchoolDayTimesTest extends Specification {
   override def is =
     s2"""
 

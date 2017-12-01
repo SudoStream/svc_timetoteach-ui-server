@@ -12,13 +12,13 @@ import scalatags.JsDom.all.{p, _}
 
 trait ClassTimetableScreenHtmlGenerator {
 
-  private var removeBehaviourTuple: Option[(SubjectDetail, SessionOfTheWeek)] = None
-  def getRemoveBehaviourTuple: Option[(SubjectDetail, SessionOfTheWeek)] = removeBehaviourTuple
+  private var removeBehaviourTuple: Option[(WwwSubjectDetail, SessionOfTheWeek)] = None
+  def getRemoveBehaviourTuple: Option[(WwwSubjectDetail, SessionOfTheWeek)] = removeBehaviourTuple
   def setRemoveBehaviourTupleToNone(): Unit = removeBehaviourTuple = None
 
   def getClassTimetable: WWWClassTimetable
 
-  def generateSubjectButtons(breakdown: SessionBreakdown): List[JsDom.TypedTag[Button]] = {
+  def generateSubjectButtons(breakdown: WwwSessionBreakdown): List[JsDom.TypedTag[Button]] = {
     val buttons = breakdown.subjectsWithTimeFractionInTwelves.map {
       entry =>
         val subjectCode = entry._1.subject.value
@@ -108,7 +108,7 @@ trait ClassTimetableScreenHtmlGenerator {
       `class` := "collapse mx-auto",
       id := "subject-summary-in-timetable",
       div(`class` := "card-header")(
-        h4(`class` := "card-title subject-name-title", SubjectName(subjectCode).niceValue)
+        h4(`class` := "card-title subject-name-title", WwwSubjectName(subjectCode).niceValue)
       ),
       div(
         `class` := "card card-body",
@@ -125,9 +125,9 @@ trait ClassTimetableScreenHtmlGenerator {
     val startTimeAsLocalTime = LocalTimeUtil.convertStringTimeToLocalTime(startTime).getOrElse(LocalTime.MIDNIGHT)
     val endTimeAsLocalTime = LocalTimeUtil.convertStringTimeToLocalTime(endTime).getOrElse(LocalTime.MIDNIGHT)
 
-    val subjectDetail = SubjectDetail(
-      SubjectName(subjectCode),
-      TimeSlot(startTimeAsLocalTime, endTimeAsLocalTime),
+    val subjectDetail = WwwSubjectDetail(
+      WwwSubjectName(subjectCode),
+      WwwTimeSlot(startTimeAsLocalTime, endTimeAsLocalTime),
       currentAdditionalInfoValue
     )
 

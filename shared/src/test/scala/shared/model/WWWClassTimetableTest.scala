@@ -69,7 +69,7 @@ class WWWClassTimetableTest extends FunSpec with ClassTimetableTestHelper {
   describe("A ClassTimetable with maths added to middle of Monday session") {
     it("should be partially full") {
       val classTimetable: WWWClassTimetable = WWWClassTimetable(None)
-      val mathsOnMonday = SubjectDetail(SubjectName("subject-maths"), TimeSlot(LocalTime.of(9, 30), LocalTime.of(9, 50)))
+      val mathsOnMonday = WwwSubjectDetail(WwwSubjectName("subject-maths"), WwwTimeSlot(LocalTime.of(9, 30), LocalTime.of(9, 50)))
       classTimetable.addSubject(mathsOnMonday, MondayEarlyMorningSession())
       assert(classTimetable.getCurrentState == PartiallyComplete())
     }
@@ -112,9 +112,9 @@ class WWWClassTimetableTest extends FunSpec with ClassTimetableTestHelper {
   describe("A ClassTimetable with all sessions filled with one subject then removed") {
     it("should be partially full") {
       val classTimetable: WWWClassTimetable = createFullClassTimetable
-      classTimetable.removeSubject(SubjectDetail(
-        SubjectName("subject-reading"),
-        TimeSlot(LocalTime.of(13, 0), LocalTime.of(15, 0))
+      classTimetable.removeSubject(WwwSubjectDetail(
+        WwwSubjectName("subject-reading"),
+        WwwTimeSlot(LocalTime.of(13, 0), LocalTime.of(15, 0))
       ),
         WednesdayAfternoonSession())
       assert(classTimetable.getCurrentState == PartiallyComplete())
@@ -132,10 +132,10 @@ class WWWClassTimetableTest extends FunSpec with ClassTimetableTestHelper {
   describe("Editing a current subject") {
     it("should show the updated *additional info*") {
       val classTimetable: WWWClassTimetable = WWWClassTimetable(None)
-      val mathsOnMonday = SubjectDetail(SubjectName("subject-maths"), TimeSlot(LocalTime.of(9, 30), LocalTime.of(9, 50)))
+      val mathsOnMonday = WwwSubjectDetail(WwwSubjectName("subject-maths"), WwwTimeSlot(LocalTime.of(9, 30), LocalTime.of(9, 50)))
       classTimetable.addSubject(mathsOnMonday, MondayEarlyMorningSession())
 
-      val mathsOnMondayWithAdditionalInfo = SubjectDetail(
+      val mathsOnMondayWithAdditionalInfo = WwwSubjectDetail(
         mathsOnMonday.subject, mathsOnMonday.timeSlot, "This is additional info")
 
       assert(classTimetable.editSubject(mathsOnMondayWithAdditionalInfo, MondayEarlyMorningSession()))

@@ -1,12 +1,12 @@
 package shared.model
 
 import org.scalatest._
-import shared.model.classtimetable.SubjectName
+import shared.model.classtimetable.WwwSubjectName
 
-class SubjectNameTest extends FunSpec {
+class WwwSubjectNameTest extends FunSpec {
   describe("Subject on creation with valid name") {
     it("should have the same value as passed in") {
-        val subject = SubjectName("subject-spelling")
+        val subject = WwwSubjectName("subject-spelling")
       assert(subject.value == "subject-spelling")
     }
   }
@@ -14,7 +14,7 @@ class SubjectNameTest extends FunSpec {
   describe("Subject on creation with invalid name") {
     it("should through an runtime exception") {
       assertThrows[RuntimeException] {
-        SubjectName("invalid-name")
+        WwwSubjectName("invalid-name")
       }
     }
   }

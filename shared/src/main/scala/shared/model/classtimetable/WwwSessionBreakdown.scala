@@ -6,10 +6,10 @@ import java.time.temporal.ChronoUnit.MINUTES
 import scala.annotation.tailrec
 import scala.collection.mutable
 
-case class SessionBreakdown(sessionOfTheWeek: SessionOfTheWeek, startTime: LocalTime, endTime: LocalTime) {
+case class WwwSessionBreakdown(sessionOfTheWeek: SessionOfTheWeek, startTime: LocalTime, endTime: LocalTime) {
   require(startTime.isBefore(endTime))
 
-  private var subjectsInSession: mutable.ListBuffer[SubjectDetail] = scala.collection.mutable.ListBuffer()
+  private var subjectsInSession: mutable.ListBuffer[WwwSubjectDetail] = scala.collection.mutable.ListBuffer()
   private val SUBJECT_EMPTY = "subject-empty"
 
   def getEmptyTimePeriodsAvailable: List[(LocalTime, LocalTime)] = {
@@ -17,20 +17,20 @@ case class SessionBreakdown(sessionOfTheWeek: SessionOfTheWeek, startTime: Local
     getEmptyTimePeriodsInGivenSession(subjectsWithoutEmpty)
   }
 
-  def getFirstEmptyTimePeriodAvailable: Option[TimeSlot] = {
+  def getFirstEmptyTimePeriodAvailable: Option[WwwTimeSlot] = {
     val allEmptyPeriods = getEmptyTimePeriodsAvailable.sortBy(_._1)
     if (allEmptyPeriods.nonEmpty) {
-      val timeSlot = TimeSlot(allEmptyPeriods.head._1, allEmptyPeriods.head._2)
+      val timeSlot = WwwTimeSlot(allEmptyPeriods.head._1, allEmptyPeriods.head._2)
       Some(timeSlot)
     } else {
       None
     }
   }
 
-  def getEmptyTimePeriodsInGivenSession(session: mutable.ListBuffer[SubjectDetail]):
+  def getEmptyTimePeriodsInGivenSession(session: mutable.ListBuffer[WwwSubjectDetail]):
   List[(LocalTime, LocalTime)] = {
     @tailrec
-    def emptyPeriodAccumluator(session: mutable.ListBuffer[SubjectDetail],
+    def emptyPeriodAccumluator(session: mutable.ListBuffer[WwwSubjectDetail],
                                earliestStartNotFilled: LocalTime,
                                accEmptyPeriods: List[(LocalTime, LocalTime)]): List[(LocalTime, LocalTime)] = {
       def extractAnyEmptySpaceBefore = {
@@ -51,7 +51,7 @@ case class SessionBreakdown(sessionOfTheWeek: SessionOfTheWeek, startTime: Local
         if (accEmptyPeriods.isEmpty) (this.startTime, this.endTime) :: Nil
         else accEmptyPeriods
       } else if (session.size == 1) {
-        val (lastNonEmptySubjectDetail: SubjectDetail, nextAccValue: List[(LocalTime, LocalTime)]) = extractAnyEmptySpaceBefore
+        val (lastNonEmptySubjectDetail: WwwSubjectDetail, nextAccValue: List[(LocalTime, LocalTime)]) = extractAnyEmptySpaceBefore
 
         val maybePeriodAfter = if (lastNonEmptySubjectDetail.timeSlot.endTime.isBefore(this.endTime)) {
           Some(lastNonEmptySubjectDetail.timeSlot.endTime, this.endTime)
@@ -62,7 +62,7 @@ case class SessionBreakdown(sessionOfTheWeek: SessionOfTheWeek, startTime: Local
           case None => nextAccValue
         }
       } else {
-        val (firstNonEmptySubjectDetail: SubjectDetail, nextAccValue: List[(LocalTime, LocalTime)]) = extractAnyEmptySpaceBefore
+        val (firstNonEmptySubjectDetail: WwwSubjectDetail, nextAccValue: List[(LocalTime, LocalTime)]) = extractAnyEmptySpaceBefore
 
         emptyPeriodAccumluator(session.tail, firstNonEmptySubjectDetail.timeSlot.endTime, nextAccValue)
       }
@@ -73,24 +73,24 @@ case class SessionBreakdown(sessionOfTheWeek: SessionOfTheWeek, startTime: Local
 
   private def reevaluateEmptySpace(): Unit = {
     if (!isEmpty) {
-      val subjectsWithoutEmpty: mutable.ListBuffer[SubjectDetail] = subjectsInSession.filterNot(_.subject.value == SUBJECT_EMPTY)
+      val subjectsWithoutEmpty: mutable.ListBuffer[WwwSubjectDetail] = subjectsInSession.filterNot(_.subject.value == SUBJECT_EMPTY)
       println(s"reevaluateEmptySpace subjectsWithoutEmpty: ${subjectsWithoutEmpty.toString}")
       val emptyTimePeriodsInSession: List[(LocalTime, LocalTime)] = getEmptyTimePeriodsInGivenSession(subjectsWithoutEmpty)
       println(s"reevaluateEmptySpace emptyTimePeriodsInSession: ${emptyTimePeriodsInSession.toString}")
       for (emptyPeriod <- emptyTimePeriodsInSession) {
-        subjectsWithoutEmpty += SubjectDetail(SubjectName(SUBJECT_EMPTY), TimeSlot(emptyPeriod._1, emptyPeriod._2))
+        subjectsWithoutEmpty += WwwSubjectDetail(WwwSubjectName(SUBJECT_EMPTY), WwwTimeSlot(emptyPeriod._1, emptyPeriod._2))
       }
       subjectsInSession = subjectsWithoutEmpty
     }
   }
 
-  private def addSubjectToSession(subjectDetail: SubjectDetail): Unit = {
+  private def addSubjectToSession(subjectDetail: WwwSubjectDetail): Unit = {
     subjectsInSession += subjectDetail
     subjectsInSession = subjectsInSession.sortBy(_.timeSlot.startTime)
     reevaluateEmptySpace()
   }
 
-  private def editSubjectToSession(subjectDetailToEdit: SubjectDetail): Boolean = {
+  private def editSubjectToSession(subjectDetailToEdit: WwwSubjectDetail): Boolean = {
     val subjectExistsOnce = subjectsInSession.count(_ == subjectDetailToEdit)
     if (subjectExistsOnce == 1) {
       subjectsInSession = subjectsInSession.filterNot(_ == subjectDetailToEdit)
@@ -103,7 +103,7 @@ case class SessionBreakdown(sessionOfTheWeek: SessionOfTheWeek, startTime: Local
     }
   }
 
-  addSubjectToSession(SubjectDetail(SubjectName(SUBJECT_EMPTY), TimeSlot(this.startTime, this.endTime)))
+  addSubjectToSession(WwwSubjectDetail(WwwSubjectName(SUBJECT_EMPTY), WwwTimeSlot(this.startTime, this.endTime)))
 
   def isEmpty: Boolean = {
     subjectsInSession.count(_.subject.value == SUBJECT_EMPTY) == 1 && subjectsInSession.size == 1
@@ -113,7 +113,7 @@ case class SessionBreakdown(sessionOfTheWeek: SessionOfTheWeek, startTime: Local
   }
   def isPartiallyFull: Boolean = !isEmpty && !isFull
 
-  private def canAddSubjectWithinRequestedTimes(proposedTimeSlot: TimeSlot): Boolean = {
+  private def canAddSubjectWithinRequestedTimes(proposedTimeSlot: WwwTimeSlot): Boolean = {
     println(s"proposedTimeSlot:- ${proposedTimeSlot.toString}")
     val subjectsWithoutEmpty = subjectsInSession.filterNot(_.subject.value == SUBJECT_EMPTY)
     val emptyTimePeriodsInSession = getEmptyTimePeriodsInGivenSession(subjectsWithoutEmpty)
@@ -140,16 +140,16 @@ case class SessionBreakdown(sessionOfTheWeek: SessionOfTheWeek, startTime: Local
     subjectsInSession.filterNot(_.subject.value == SUBJECT_EMPTY).size
   }
 
-  def getFirstAvailableTimeSlot(fractionOfSession: Fraction): Option[TimeSlot] = {
+  def getFirstAvailableTimeSlot(fractionOfSession: Fraction): Option[WwwTimeSlot] = {
     val emptyPeriods = getEmptyTimePeriodsAvailable
 
     val numberOfMinutesForProposedSession =
       Math.floor(fractionOfSession.multiplier * MINUTES.between(this.startTime, this.endTime))
 
-    val possibleSlots: List[TimeSlot] = for {
+    val possibleSlots: List[WwwTimeSlot] = for {
       emptyPeriod <- emptyPeriods
       maybePeriodThatFits = if (MINUTES.between(emptyPeriod._1, emptyPeriod._2) >= (numberOfMinutesForProposedSession - 5)) {
-        Some(TimeSlot(emptyPeriod._1, emptyPeriod._2))
+        Some(WwwTimeSlot(emptyPeriod._1, emptyPeriod._2))
       } else None
       periodThatFits <- maybePeriodThatFits
     } yield periodThatFits
@@ -174,13 +174,13 @@ case class SessionBreakdown(sessionOfTheWeek: SessionOfTheWeek, startTime: Local
           proposedEndTime
         }
         Some(
-          TimeSlot(availableTimeSlot.startTime, endTime)
+          WwwTimeSlot(availableTimeSlot.startTime, endTime)
         )
       case None => None
     }
   }
 
-  def addSubject(subjectDetail: SubjectDetail): Boolean = {
+  def addSubject(subjectDetail: WwwSubjectDetail): Boolean = {
     if (canAddSubjectWithinRequestedTimes(subjectDetail.timeSlot)) {
       addSubjectToSession(subjectDetail)
       true
@@ -189,11 +189,11 @@ case class SessionBreakdown(sessionOfTheWeek: SessionOfTheWeek, startTime: Local
     }
   }
 
-  def editSubject(subjectDetail: SubjectDetail): Boolean = {
+  def editSubject(subjectDetail: WwwSubjectDetail): Boolean = {
     editSubjectToSession(subjectDetail)
   }
 
-  def getSubject(subjectDetail: SubjectDetail): Option[SubjectDetail] = {
+  def getSubject(subjectDetail: WwwSubjectDetail): Option[WwwSubjectDetail] = {
     val subjectsFound = subjectsInSession.filter(_ == subjectDetail)
     if (subjectsFound.size == 1) {
       Some(subjectsFound.head)
@@ -202,7 +202,7 @@ case class SessionBreakdown(sessionOfTheWeek: SessionOfTheWeek, startTime: Local
     }
   }
 
-  def removeSubject(subjectDetail: SubjectDetail): Boolean = {
+  def removeSubject(subjectDetail: WwwSubjectDetail): Boolean = {
     if (subjectsInSession.contains(subjectDetail)) {
       subjectsInSession = subjectsInSession.filterNot(_.equals(subjectDetail))
       reevaluateEmptySpace()
@@ -217,7 +217,7 @@ case class SessionBreakdown(sessionOfTheWeek: SessionOfTheWeek, startTime: Local
     reevaluateEmptySpace()
   }
 
-  def subjectsWithTimeFractionInTwelves: List[(SubjectDetail, Long)] = {
+  def subjectsWithTimeFractionInTwelves: List[(WwwSubjectDetail, Long)] = {
     val subjectsSorted = subjectsInSession.toList.sortBy {
       subjectDetail => subjectDetail.timeSlot.startTime
     }

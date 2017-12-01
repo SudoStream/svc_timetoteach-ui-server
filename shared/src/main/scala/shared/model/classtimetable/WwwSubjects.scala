@@ -1,6 +1,6 @@
 package shared.model.classtimetable
 
-object Subjects {
+object WwwSubjects {
   val values = Set(
     "subject-empty",
     "subject-golden-time",
@@ -24,8 +24,8 @@ object Subjects {
   )
 }
 
-case class SubjectName(value: String) {
-  require(Subjects.values.count(_ == value) == 1)
+case class WwwSubjectName(value: String) {
+  require(WwwSubjects.values.count(_ == value) == 1)
   def niceValue : String = {
     val translatedValue = value match {
       case "subject-teacher-covertime" => "RCCT"

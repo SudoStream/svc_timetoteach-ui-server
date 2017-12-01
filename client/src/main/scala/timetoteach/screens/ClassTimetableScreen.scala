@@ -17,8 +17,8 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
   override def getClassTimetable: WWWClassTimetable = classTimetable
 
   var currentlySelectedSession: Option[Session] = None
-  var currentlySelectedSubject: Option[SubjectName] = None
-  var lastSelectedSubject: Option[SubjectName] = None
+  var currentlySelectedSubject: Option[WwwSubjectName] = None
+  var lastSelectedSubject: Option[WwwSubjectName] = None
   var currentlySelectedDayOfWeek: Option[DayOfWeek] = None
   var longerClickSubjectSelected = false
   var originalColour = ""
@@ -52,7 +52,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
     setDecentTimesForPreciseModal()
   }
 
-  private def addAdditionalInfoToSubject(maybeOkBehaviour: Option[(SubjectDetail, SessionOfTheWeek)]): Unit = {
+  private def addAdditionalInfoToSubject(maybeOkBehaviour: Option[(WwwSubjectDetail, SessionOfTheWeek)]): Unit = {
     for {
       okBehaviour <- maybeOkBehaviour
       subjectSelected = okBehaviour._1
@@ -114,7 +114,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
       val maybeTimeSlot = for {
         startTime <- maybeStartTimeProposed
         endTime <- maybeEndTimeProposed
-      } yield TimeSlot(startTime, endTime)
+      } yield WwwTimeSlot(startTime, endTime)
 
       val maybeSessionOfTheWeek: Option[SessionOfTheWeek] = extractSelectedSessionOfTheWeek
       val maybeSubjectSession = for {
@@ -122,7 +122,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
         sessionTimeSlot <- classTimetable.getTimeSlotForSession(sessionOfTheWeek)
         selectedSubject <- lastSelectedSubject
         timeSlot <- maybeTimeSlot
-        subjectDetail = SubjectDetail(selectedSubject, timeSlot)
+        subjectDetail = WwwSubjectDetail(selectedSubject, timeSlot)
       } yield (subjectDetail, sessionOfTheWeek)
 
       global.console.log(s"maybeSubjectSession = ${maybeSubjectSession.toString}")
@@ -168,7 +168,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
         case Right(asMuchAsPoss) => classTimetable.getFirstAvailableTimeSlot(maybeSessionOfTheWeek)
         case Left(fraction) => classTimetable.getFirstAvailableTimeSlot(sessionOfTheWeek, fraction)
       }
-      subjectDetail = SubjectDetail(selectedSubject, timeSlot)
+      subjectDetail = WwwSubjectDetail(selectedSubject, timeSlot)
     } yield (subjectDetail, sessionOfTheWeek)
 
     maybeSubjectDetailAndSessionOfTheWeek match {
@@ -343,7 +343,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
         val maybeTimeSlot = for {
           startTimeAsLocal <- LocalTimeUtil.convertStringTimeToLocalTime(startTime)
           endTimeAsLocal <- LocalTimeUtil.convertStringTimeToLocalTime(endTime)
-          timeSlot = TimeSlot(startTimeAsLocal, endTimeAsLocal)
+          timeSlot = WwwTimeSlot(startTimeAsLocal, endTimeAsLocal)
         } yield timeSlot
 
         global.console.log(s"maybeTimeSlot := $maybeTimeSlot")
@@ -352,7 +352,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
           sessionOfTheWeek <- SessionOfTheWeek.createSessionOfTheWeek(DayOfWeek(day), Session(timetableSession))
           timeSlot <- maybeTimeSlot
           additionalInfo <- classTimetable.getAdditionalInfoForSubject(
-            SubjectDetail(SubjectName(subjectCode), timeSlot),
+            WwwSubjectDetail(WwwSubjectName(subjectCode), timeSlot),
             sessionOfTheWeek)
         } yield additionalInfo
 
@@ -385,7 +385,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
 
   }
 
-  def addRemoveBehaviour(maybeRemoveBehaviour: Option[(SubjectDetail, SessionOfTheWeek)]): Unit = {
+  def addRemoveBehaviour(maybeRemoveBehaviour: Option[(WwwSubjectDetail, SessionOfTheWeek)]): Unit = {
     for {
       removeBehaviour <- maybeRemoveBehaviour
       subjectToRemove = removeBehaviour._1
@@ -399,7 +399,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
     }
   }
 
-  def addOKSubjectBehaviour(maybeOkBehaviour: Option[(SubjectDetail, SessionOfTheWeek)]): Unit = {
+  def addOKSubjectBehaviour(maybeOkBehaviour: Option[(WwwSubjectDetail, SessionOfTheWeek)]): Unit = {
     for {
       okBehaviour <- maybeOkBehaviour
       subjectSelected = okBehaviour._1
@@ -412,11 +412,11 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
     }
   }
 
-  private def updatedSubject(subjectSelected: SubjectDetail, sessionOfTheWeek: SessionOfTheWeek): Unit = {
+  private def updatedSubject(subjectSelected: WwwSubjectDetail, sessionOfTheWeek: SessionOfTheWeek): Unit = {
     val additionalInfo = dom.document.getElementById("input-for-additional-info").asInstanceOf[HTMLInputElement].value
     global.console.log(s"Editing subject to have additional info: $additionalInfo")
 
-    val editedSubject = SubjectDetail(
+    val editedSubject = WwwSubjectDetail(
       subjectSelected.subject,
       subjectSelected.timeSlot,
       additionalInfo
@@ -461,7 +461,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
   }
 
   def addListenerToAllSubjectButtons(): Unit = {
-    for (subject <- Subjects.values) {
+    for (subject <- WwwSubjects.values) {
       if (subject != "subject-empty") {
         val subjectElement = dom.document.getElementById(subject)
         subjectElement.addEventListener("click", (e: dom.Event) => {
@@ -483,7 +483,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
   private def setTheCurrentlySelectedSubject(e: Event): Unit = {
     e.currentTarget match {
       case subjectDiv: HTMLDivElement =>
-        val justSelectedSubject = SubjectName(subjectDiv.id)
+        val justSelectedSubject = WwwSubjectName(subjectDiv.id)
         if (currentlySelectedSubject.isDefined) {
           if (currentlySelectedSubject.get == justSelectedSubject) {
             currentlySelectedSubject = None
@@ -514,7 +514,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
     subjectDiv.style.fontWeight = "normal"
     subjectDiv.style.fontSize = "medium"
   }
-  private def selectThisElement(subjectDiv: HTMLDivElement, justSelectedSubject: SubjectName): Unit = {
+  private def selectThisElement(subjectDiv: HTMLDivElement, justSelectedSubject: WwwSubjectName): Unit = {
 
     val parent = subjectDiv.parentNode.asInstanceOf[HTMLDivElement]
     parent.style.borderLeft = "5px solid #fcfc00"

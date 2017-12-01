@@ -1,15 +1,15 @@
 package shared.model.classtimetable
 
-case class SubjectDetail(
-                          subject: SubjectName,
-                          timeSlot: TimeSlot,
-                          lessonAdditionalInfo: String = "") {
+case class WwwSubjectDetail(
+                             subject: WwwSubjectName,
+                             timeSlot: WwwTimeSlot,
+                             lessonAdditionalInfo: String = "") {
 
-  def canEqual(a: Any): Boolean = a.isInstanceOf[SubjectDetail]
+  def canEqual(a: Any): Boolean = a.isInstanceOf[WwwSubjectDetail]
 
   override def equals(that: Any): Boolean =
     that match {
-      case that: SubjectDetail =>
+      case that: WwwSubjectDetail =>
         that.canEqual(this) &&
         this.hashCode == that.hashCode &&
         this.subject == that.subject &&
