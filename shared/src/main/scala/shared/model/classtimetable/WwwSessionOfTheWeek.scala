@@ -7,7 +7,7 @@ object WwwSessionOfTheWeek {
                             ): Option[WwwSessionOfTheWeek] = {
     val dayAndSession = dayOfWeek.value.toLowerCase + "-" + session.value
     dayAndSession match {
-      case "monday-early-morning-session" => Some(MondayEarlyMorningWwwSession())
+      case "monday-early-morning-session" => Some(MondayEarlyMorningSession())
       case "monday-late-morning-session" => Some(MondayLateMorningWwwSession())
       case "monday-afternoon-session" => Some(MondayAfternoonWwwSession())
       case "tuesday-early-morning-session" => Some(TuesdayEarlyMorningWwwSession())
@@ -47,7 +47,7 @@ trait WwwSessionOfTheWeek {
 
 }
 
-sealed case class MondayEarlyMorningWwwSession() extends WwwSessionOfTheWeek {
+sealed case class MondayEarlyMorningSession() extends WwwSessionOfTheWeek {
   override def ordinalNumber = 1
   override def dayOfTheWeek: WwwDayOfWeek = WwwDayOfWeek("Monday")
 }

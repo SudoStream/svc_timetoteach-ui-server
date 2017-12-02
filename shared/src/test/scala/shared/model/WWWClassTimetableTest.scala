@@ -70,7 +70,7 @@ class WWWClassTimetableTest extends FunSpec with ClassTimetableTestHelper {
     it("should be partially full") {
       val classTimetable: WWWClassTimetable = WWWClassTimetable(None)
       val mathsOnMonday = WwwSubjectDetail(WwwSubjectName("subject-maths"), WwwTimeSlot(LocalTime.of(9, 30), LocalTime.of(9, 50)))
-      classTimetable.addSubject(mathsOnMonday, MondayEarlyMorningWwwSession())
+      classTimetable.addSubject(mathsOnMonday, MondayEarlyMorningSession())
       assert(classTimetable.getCurrentState == PartiallyComplete())
     }
   }
@@ -95,7 +95,7 @@ class WWWClassTimetableTest extends FunSpec with ClassTimetableTestHelper {
     it("should be possible to get a sorted list of session breakdowns with the first session as Monday Early") {
       val classTimetable: WWWClassTimetable = createFullClassTimetable
       val sessions = classTimetable.allSessionsOfTheWeekInOrderByDay
-      assert(sessions.getOrElse(WwwDayOfWeek("Monday"), Nil).head.sessionOfTheWeek == MondayEarlyMorningWwwSession())
+      assert(sessions.getOrElse(WwwDayOfWeek("Monday"), Nil).head.sessionOfTheWeek == MondayEarlyMorningSession())
     }
     it("should be possible to get a sorted list of session breakdowns with the last session as Friday afternoon") {
       val classTimetable: WWWClassTimetable = createFullClassTimetable
@@ -133,12 +133,12 @@ class WWWClassTimetableTest extends FunSpec with ClassTimetableTestHelper {
     it("should show the updated *additional info*") {
       val classTimetable: WWWClassTimetable = WWWClassTimetable(None)
       val mathsOnMonday = WwwSubjectDetail(WwwSubjectName("subject-maths"), WwwTimeSlot(LocalTime.of(9, 30), LocalTime.of(9, 50)))
-      classTimetable.addSubject(mathsOnMonday, MondayEarlyMorningWwwSession())
+      classTimetable.addSubject(mathsOnMonday, MondayEarlyMorningSession())
 
       val mathsOnMondayWithAdditionalInfo = WwwSubjectDetail(
         mathsOnMonday.subject, mathsOnMonday.timeSlot, "This is additional info")
 
-      assert(classTimetable.editSubject(mathsOnMondayWithAdditionalInfo, MondayEarlyMorningWwwSession()))
+      assert(classTimetable.editSubject(mathsOnMondayWithAdditionalInfo, MondayEarlyMorningSession()))
     }
   }
 

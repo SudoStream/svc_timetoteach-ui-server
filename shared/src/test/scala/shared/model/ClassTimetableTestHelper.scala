@@ -14,7 +14,7 @@ trait ClassTimetableTestHelper {
         WwwSubjectName("subject-writing"),
         WwwTimeSlot(LocalTime.of(9,0), LocalTime.of(10,30))
       ),
-      MondayEarlyMorningWwwSession()
+      MondayEarlyMorningSession()
     )
     classTimetable.addSubject(
       WwwSubjectDetail(

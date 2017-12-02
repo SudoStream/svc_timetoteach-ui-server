@@ -2,14 +2,14 @@ package shared.model.classtimetable
 
 import org.scalatest._
 
-class WwwWwwSessionOfTheWeekTest extends FunSpec {
+class WwwSessionOfTheWeekTest extends FunSpec {
   describe("Early Monday Morning SessionOfTheWeek") {
     it("should have a value of 'monday-early-morning-session'") {
-      val sessionOfTheWeek : WwwSessionOfTheWeek = MondayEarlyMorningWwwSession()
+      val sessionOfTheWeek : WwwSessionOfTheWeek = MondayEarlyMorningSession()
       assert(sessionOfTheWeek.value == "monday-early-morning-session")
     }
     it("should have a session minus day value of early-morning-session") {
-      val sessionOfTheWeek : WwwSessionOfTheWeek = MondayEarlyMorningWwwSession()
+      val sessionOfTheWeek : WwwSessionOfTheWeek = MondayEarlyMorningSession()
       assert(sessionOfTheWeek.valueWithoutDay == "early-morning-session")
     }
   }
