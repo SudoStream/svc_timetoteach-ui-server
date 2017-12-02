@@ -15,21 +15,21 @@ class WwwSessionOfTheWeekTest extends FunSpec {
   }
   describe("Late Morning Wednesday SessionOfTheWeek") {
     it("should have a value of 'wednesday-late-morning-session'") {
-      val sessionOfTheWeek : WwwSessionOfTheWeek = WednesdayLateMorningWwwSession()
+      val sessionOfTheWeek : WwwSessionOfTheWeek = WednesdayLateMorningSession()
       assert(sessionOfTheWeek.value == "wednesday-late-morning-session")
     }
     it("should have a session minus day value of late-morning-session") {
-      val sessionOfTheWeek : WwwSessionOfTheWeek = WednesdayLateMorningWwwSession()
+      val sessionOfTheWeek : WwwSessionOfTheWeek = WednesdayLateMorningSession()
       assert(sessionOfTheWeek.valueWithoutDay == "late-morning-session")
     }
   }
   describe("Friday Afternoon SessionOfTheWeek") {
     it("should have a value of 'friday-afternoon-session'") {
-      val sessionOfTheWeek : WwwSessionOfTheWeek = FridayAfternoonWwwSession()
+      val sessionOfTheWeek : WwwSessionOfTheWeek = FridayAfternoonSession()
       assert(sessionOfTheWeek.value == "friday-afternoon-session")
     }
     it("should have a session minus day value of afternoon-session") {
-      val sessionOfTheWeek : WwwSessionOfTheWeek = FridayAfternoonWwwSession()
+      val sessionOfTheWeek : WwwSessionOfTheWeek = FridayAfternoonSession()
       assert(sessionOfTheWeek.valueWithoutDay == "afternoon-session")
     }
   }

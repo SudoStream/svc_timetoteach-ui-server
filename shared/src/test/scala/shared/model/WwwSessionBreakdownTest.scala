@@ -472,7 +472,7 @@ class WwwSessionBreakdownTest extends FunSpec {
 
   describe("A subject added with timeslot *before* session") {
     it("should not be allowed to add") {
-      val sessionBreakdown = WwwSessionBreakdown(MondayLateMorningWwwSession(), LocalTime.of(10, 45), LocalTime.of(12, 0))
+      val sessionBreakdown = WwwSessionBreakdown(MondayLateMorningSession(), LocalTime.of(10, 45), LocalTime.of(12, 0))
       val timeSlot = WwwTimeSlot(LocalTime.of(10,40), LocalTime.of(11,30))
 
       val addedOkay = sessionBreakdown.addSubject(
@@ -484,7 +484,7 @@ class WwwSessionBreakdownTest extends FunSpec {
 
   describe("A subject added with timeslot *after* session") {
     it("should not be allowed to add") {
-      val sessionBreakdown = WwwSessionBreakdown(MondayLateMorningWwwSession(), LocalTime.of(10, 45), LocalTime.of(12, 0))
+      val sessionBreakdown = WwwSessionBreakdown(MondayLateMorningSession(), LocalTime.of(10, 45), LocalTime.of(12, 0))
       val timeSlot = WwwTimeSlot(LocalTime.of(11,40), LocalTime.of(12,5))
 
       val addedOkay = sessionBreakdown.addSubject(
@@ -496,7 +496,7 @@ class WwwSessionBreakdownTest extends FunSpec {
 
   describe("Maths is added to a middle slot then p.e. attempted to add before this") {
     it("should allow the addition with no empty space between") {
-      val sessionBreakdown = WwwSessionBreakdown(MondayLateMorningWwwSession(), LocalTime.of(10, 45), LocalTime.of(12, 0))
+      val sessionBreakdown = WwwSessionBreakdown(MondayLateMorningSession(), LocalTime.of(10, 45), LocalTime.of(12, 0))
       val mathsTimeSlot = WwwTimeSlot(LocalTime.of(11,0), LocalTime.of(11,30))
       val mathsAddedOkay = sessionBreakdown.addSubject(
         WwwSubjectDetail(WwwSubjectName("subject-maths"), mathsTimeSlot)

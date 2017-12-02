@@ -34,87 +34,87 @@ trait WwwAllSessionsOfTheWeek extends WwwSchoolDayTimes {
       startTime = LocalTime.of(earlyMorningSessionStartsHoursMinutes._1, earlyMorningSessionStartsHoursMinutes._2),
       endTime = LocalTime.of(earlyMorningSessionEndsHoursMinutes._1, earlyMorningSessionEndsHoursMinutes._2)
     ))
-  sessionsOfTheWeek += (MondayLateMorningWwwSession() ->
+  sessionsOfTheWeek += (MondayLateMorningSession() ->
     WwwSessionBreakdown(
-      MondayLateMorningWwwSession(),
+      MondayLateMorningSession(),
       startTime = LocalTime.of(lateMorningSessionStartsHoursMinutes._1, lateMorningSessionStartsHoursMinutes._2),
       endTime = LocalTime.of(lateMorningSessionEndsHoursMinutes._1, lateMorningSessionEndsHoursMinutes._2)
     ))
-  sessionsOfTheWeek += (MondayAfternoonWwwSession() ->
+  sessionsOfTheWeek += (MondayAfternoonSession() ->
     WwwSessionBreakdown(
-      MondayAfternoonWwwSession(),
+      MondayAfternoonSession(),
       startTime = LocalTime.of(afternoonSessionStartsHoursMinutes._1, afternoonSessionStartsHoursMinutes._2),
       endTime = LocalTime.of(afternoonSessionEndsHoursMinutes._1, afternoonSessionEndsHoursMinutes._2)
     ))
-  sessionsOfTheWeek += (TuesdayEarlyMorningWwwSession() ->
+  sessionsOfTheWeek += (TuesdayEarlyMorningSession() ->
     WwwSessionBreakdown(
-      TuesdayEarlyMorningWwwSession(),
+      TuesdayEarlyMorningSession(),
       startTime = LocalTime.of(earlyMorningSessionStartsHoursMinutes._1, earlyMorningSessionStartsHoursMinutes._2),
       endTime = LocalTime.of(earlyMorningSessionEndsHoursMinutes._1, earlyMorningSessionEndsHoursMinutes._2)
     ))
-  sessionsOfTheWeek += (TuesdayLateMorningWwwSession() ->
+  sessionsOfTheWeek += (TuesdayLateMorningSession() ->
     WwwSessionBreakdown(
-      TuesdayLateMorningWwwSession(),
+      TuesdayLateMorningSession(),
       startTime = LocalTime.of(lateMorningSessionStartsHoursMinutes._1, lateMorningSessionStartsHoursMinutes._2),
       endTime = LocalTime.of(lateMorningSessionEndsHoursMinutes._1, lateMorningSessionEndsHoursMinutes._2)
     ))
-  sessionsOfTheWeek += (TuesdayAfternoonWwwSession() ->
+  sessionsOfTheWeek += (TuesdayAfternoonSession() ->
     WwwSessionBreakdown(
-      TuesdayAfternoonWwwSession(),
+      TuesdayAfternoonSession(),
       startTime = LocalTime.of(afternoonSessionStartsHoursMinutes._1, afternoonSessionStartsHoursMinutes._2),
       endTime = LocalTime.of(afternoonSessionEndsHoursMinutes._1, afternoonSessionEndsHoursMinutes._2)
     ))
-  sessionsOfTheWeek += (WednesdayEarlyMorningWwwSession() ->
+  sessionsOfTheWeek += (WednesdayEarlyMorningSession() ->
     WwwSessionBreakdown(
-      WednesdayEarlyMorningWwwSession(),
+      WednesdayEarlyMorningSession(),
       startTime = LocalTime.of(earlyMorningSessionStartsHoursMinutes._1, earlyMorningSessionStartsHoursMinutes._2),
       endTime = LocalTime.of(earlyMorningSessionEndsHoursMinutes._1, earlyMorningSessionEndsHoursMinutes._2)
     ))
-  sessionsOfTheWeek += (WednesdayLateMorningWwwSession() ->
+  sessionsOfTheWeek += (WednesdayLateMorningSession() ->
     WwwSessionBreakdown(
-      WednesdayLateMorningWwwSession(),
+      WednesdayLateMorningSession(),
       startTime = LocalTime.of(lateMorningSessionStartsHoursMinutes._1, lateMorningSessionStartsHoursMinutes._2),
       endTime = LocalTime.of(lateMorningSessionEndsHoursMinutes._1, lateMorningSessionEndsHoursMinutes._2)
     ))
-  sessionsOfTheWeek += (WednesdayAfternoonWwwSession() ->
+  sessionsOfTheWeek += (WednesdayAfternoonSession() ->
     WwwSessionBreakdown(
-      WednesdayAfternoonWwwSession(),
+      WednesdayAfternoonSession(),
       startTime = LocalTime.of(afternoonSessionStartsHoursMinutes._1, afternoonSessionStartsHoursMinutes._2),
       endTime = LocalTime.of(afternoonSessionEndsHoursMinutes._1, afternoonSessionEndsHoursMinutes._2)
     ))
-  sessionsOfTheWeek += (ThursdayEarlyMorningWwwSession() ->
+  sessionsOfTheWeek += (ThursdayEarlyMorningSession() ->
     WwwSessionBreakdown(
-      ThursdayEarlyMorningWwwSession(),
+      ThursdayEarlyMorningSession(),
       startTime = LocalTime.of(earlyMorningSessionStartsHoursMinutes._1, earlyMorningSessionStartsHoursMinutes._2),
       endTime = LocalTime.of(earlyMorningSessionEndsHoursMinutes._1, earlyMorningSessionEndsHoursMinutes._2)
     ))
-  sessionsOfTheWeek += (ThursdayLateMorningWwwSession() ->
+  sessionsOfTheWeek += (ThursdayLateMorningSession() ->
     WwwSessionBreakdown(
-      ThursdayLateMorningWwwSession(),
+      ThursdayLateMorningSession(),
       startTime = LocalTime.of(lateMorningSessionStartsHoursMinutes._1, lateMorningSessionStartsHoursMinutes._2),
       endTime = LocalTime.of(lateMorningSessionEndsHoursMinutes._1, lateMorningSessionEndsHoursMinutes._2)
     ))
-  sessionsOfTheWeek += (ThursdayAfternoonWwwSession() ->
+  sessionsOfTheWeek += (ThursdayAfternoonSession() ->
     WwwSessionBreakdown(
-      ThursdayAfternoonWwwSession(),
+      ThursdayAfternoonSession(),
       startTime = LocalTime.of(afternoonSessionStartsHoursMinutes._1, afternoonSessionStartsHoursMinutes._2),
       endTime = LocalTime.of(afternoonSessionEndsHoursMinutes._1, afternoonSessionEndsHoursMinutes._2)
     ))
-  sessionsOfTheWeek += (FridayEarlyMorningWwwSession() ->
+  sessionsOfTheWeek += (FridayEarlyMorningSession() ->
     WwwSessionBreakdown(
-      FridayEarlyMorningWwwSession(),
+      FridayEarlyMorningSession(),
       startTime = LocalTime.of(earlyMorningSessionStartsHoursMinutes._1, earlyMorningSessionStartsHoursMinutes._2),
       endTime = LocalTime.of(earlyMorningSessionEndsHoursMinutes._1, earlyMorningSessionEndsHoursMinutes._2)
     ))
-  sessionsOfTheWeek += (FridayLateMorningWwwSession() ->
+  sessionsOfTheWeek += (FridayLateMorningSession() ->
     WwwSessionBreakdown(
-      FridayLateMorningWwwSession(),
+      FridayLateMorningSession(),
       startTime = LocalTime.of(lateMorningSessionStartsHoursMinutes._1, lateMorningSessionStartsHoursMinutes._2),
       endTime = LocalTime.of(lateMorningSessionEndsHoursMinutes._1, lateMorningSessionEndsHoursMinutes._2)
     ))
-  sessionsOfTheWeek += (FridayAfternoonWwwSession() ->
+  sessionsOfTheWeek += (FridayAfternoonSession() ->
     WwwSessionBreakdown(
-      FridayAfternoonWwwSession(),
+      FridayAfternoonSession(),
       startTime = LocalTime.of(afternoonSessionStartsHoursMinutes._1, afternoonSessionStartsHoursMinutes._2),
       endTime = LocalTime.of(afternoonSessionEndsHoursMinutes._1, afternoonSessionEndsHoursMinutes._2)
     ))

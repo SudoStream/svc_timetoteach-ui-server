@@ -309,7 +309,7 @@ class ClassTimetableConverterHelperFromAvroTest extends Specification {
     val sessionsOnMonday = dayToSessionsOfTheDayMap(WwwDayOfWeek("Monday"))
     sessionsOnMonday.tail.head.startTime.toString mustEqual "10:45"
     sessionsOnMonday.tail.head.endTime.toString mustEqual "12:00"
-    sessionsOnMonday.tail.head.sessionOfTheWeek.isInstanceOf[MondayLateMorningWwwSession] mustEqual true
+    sessionsOnMonday.tail.head.sessionOfTheWeek.isInstanceOf[MondayLateMorningSession] mustEqual true
   }
 
 
