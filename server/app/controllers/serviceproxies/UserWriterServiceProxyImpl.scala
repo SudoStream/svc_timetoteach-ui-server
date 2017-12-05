@@ -103,7 +103,6 @@ class UserWriterServiceProxyImpl @Inject()(schoolReader: SchoolReaderServiceProx
         )
       )
     )
-
   }
 
   def updateUserPreferences(userId: TimeToTeachUserId, newUserPreferences: InitialUserPreferences): Future[Boolean] = {
