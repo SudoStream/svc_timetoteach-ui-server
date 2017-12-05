@@ -16,11 +16,12 @@ object ClassTimetableConverterToAvro
     addAllSessionsToClassTimetable(theAllSessionsOfTheWeek, wwwClassTimetable)
   }
 
-  def convertWwwClassTimeTableToAvro(wwwTimetable: WWWClassTimetable): ClassTimetable = {
+  def convertWwwClassTimeTableToAvro(tttUserId : String, wwwTimetable: WWWClassTimetable): ClassTimetable = {
     val theSchoolTimes: ClassTimetableSchoolTimes = createSchoolTimes(wwwTimetable.schoolDayTimes)
     val theAllSessionsOfTheWeek: List[SessionOfTheDayWrapper] = createAllSessionsOfTheWeek(wwwTimetable.allSessionsOfTheWeekInOrderByDay)
 
     ClassTimetable(
+      tttUserId,
       schoolTimes = theSchoolTimes,
       allSessionsOfTheWeek = theAllSessionsOfTheWeek
     )

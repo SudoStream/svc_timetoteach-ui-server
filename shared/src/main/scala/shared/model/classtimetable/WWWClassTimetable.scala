@@ -40,10 +40,6 @@ case class WWWClassTimetable(private val schoolDayTimesOption: Option[Map[School
   }
 
   def addSubject(subjectDetail: WwwSubjectDetail, sessionOfTheWeek: WwwSessionOfTheWeek): Boolean = {
-    println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-    println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-    println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-    println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     println(s"addSubject: ${subjectDetail.toString} to ${sessionOfTheWeek.toString}")
     sessionsOfTheWeek.get(sessionOfTheWeek) match {
       case Some(sessionBreakdown) =>

@@ -17,11 +17,12 @@ class ClassTimetableConverterTest extends Specification {
 
   def emptyWWWClassTimetableConvertsToEmptyAvroClassTimetable: MatchResult[Any] = {
     val wwwClassTimetable = createWwwClassTimetable()
-    val avroClassTimetable = ClassTimetableConverterToAvro.convertWwwClassTimeTableToAvro(wwwClassTimetable)
+    val avroClassTimetable = ClassTimetableConverterToAvro.convertWwwClassTimeTableToAvro("12345",wwwClassTimetable)
 
     println(s"wwwClassTimetable  : ${wwwClassTimetable.allSessionsOfTheWeekInOrderByDay.toString}")
     println(s"avroClassTimetable : ${avroClassTimetable.allSessionsOfTheWeek.toString}")
     wwwClassTimetable.allSessionsOfTheWeek.size mustEqual avroClassTimetable.allSessionsOfTheWeek.size
+    avroClassTimetable.timeToTeachId mustEqual "12345"
   }
 
   def createWwwClassTimetable(): WWWClassTimetable = {
