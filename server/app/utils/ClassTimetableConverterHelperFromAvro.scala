@@ -63,11 +63,19 @@ trait ClassTimetableConverterHelperFromAvro {
 
     def createNewWwwSession(sessionOfTheDay: SessionOfTheDay): WwwSessionBreakdown = {
       val sessionOfTheWeek = buildSessionOfTheWeek(sessionOfTheDay)
-      WwwSessionBreakdown(
+      val wwwSubjectBreakdown = WwwSessionBreakdown(
         sessionOfTheWeek,
         LocalTime.parse(sessionOfTheDay.startTime.timeIso8601),
         LocalTime.parse(sessionOfTheDay.endTime.timeIso8601)
       )
+
+      for {
+        subjectDetailWrapper <- sessionOfTheDay.subjects
+        subjectDetail = subjectDetailWrapper.subjectDetail
+        wwwSubjectDetail : WwwSubjectDetail = SubjectDetailConverter.converToWwwClassDetail(subjectDetail)
+      } wwwSubjectBreakdown.addSubject(wwwSubjectDetail)
+
+      wwwSubjectBreakdown
     }
 
     @tailrec
@@ -86,8 +94,8 @@ trait ClassTimetableConverterHelperFromAvro {
         }
 
         val nextMap = currentMap + (dayOfWeek -> nextSessionsList)
-        val nextMaybeSessionToAdd = if ( restOfSessions.isEmpty ) None else Some(restOfSessions.head.sessionOfTheDay)
-        val nextRestOfSessions= if ( restOfSessions.isEmpty ) restOfSessions else restOfSessions.tail
+        val nextMaybeSessionToAdd = if (restOfSessions.isEmpty) None else Some(restOfSessions.head.sessionOfTheDay)
+        val nextRestOfSessions = if (restOfSessions.isEmpty) restOfSessions else restOfSessions.tail
         loop(nextMaybeSessionToAdd, nextRestOfSessions, nextMap)
       }
     }
@@ -97,5 +105,20 @@ trait ClassTimetableConverterHelperFromAvro {
     }
   }
 
-  def addAllSessionsToClassTimetable(theAllSessionsOfTheWeek: Map[WwwDayOfWeek, List[WwwSessionBreakdown]], wwwClassTimetable: WWWClassTimetable): WWWClassTimetable = ???
+  def addAllSessionsToClassTimetable(theAllSessionsOfTheWeek: Map[WwwDayOfWeek, List[WwwSessionBreakdown]], wwwClassTimetable: WWWClassTimetable): WWWClassTimetable = {
+    for {
+      dayToSessionBreakdownTuple <- theAllSessionsOfTheWeek
+      sessionBreakdownsForTheDay = dayToSessionBreakdownTuple._2
+      sessionBreakDown <- sessionBreakdownsForTheDay
+      subjectsDetailsToFraction = sessionBreakDown.subjectsWithTimeFractionInTwelves
+      subjectDetailToFraction <- subjectsDetailsToFraction
+      wwwSubjectDetail = subjectDetailToFraction._1
+      wwwSessionOfTheWeek = sessionBreakDown.sessionOfTheWeek
+    } wwwClassTimetable.addSubject(wwwSubjectDetail, wwwSessionOfTheWeek)
+
+
+    wwwClassTimetable
+  }
+
+
 }

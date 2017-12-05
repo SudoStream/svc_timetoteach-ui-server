@@ -1,5 +1,6 @@
 package shared.model.classtimetable
 
+
 case class WwwSubjectDetail(
                              subject: WwwSubjectName,
                              timeSlot: WwwTimeSlot,
@@ -11,9 +12,9 @@ case class WwwSubjectDetail(
     that match {
       case that: WwwSubjectDetail =>
         that.canEqual(this) &&
-        this.hashCode == that.hashCode &&
-        this.subject == that.subject &&
-        this.timeSlot == that.timeSlot
+          this.hashCode == that.hashCode &&
+          this.subject == that.subject &&
+          this.timeSlot == that.timeSlot
       case _ => false
     }
 

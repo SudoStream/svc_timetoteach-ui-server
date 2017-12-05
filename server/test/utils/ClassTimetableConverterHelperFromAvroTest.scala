@@ -5,7 +5,7 @@ import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.subjec
 import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.time.{ClassTimetableSchoolTimes, DayOfTheWeek, EndTime, StartTime}
 import org.specs2.matcher.MatchResult
 import org.specs2.mutable.Specification
-import shared.model.classtimetable._
+import shared.model.classtimetable.{ClassTimetableState, _}
 
 class ClassTimetableConverterHelperFromAvroTest extends Specification {
   override def is =
@@ -21,7 +21,11 @@ class ClassTimetableConverterHelperFromAvroTest extends Specification {
   The 'createAllSessionsOfTheWeek' method should
     Convert an Avro list of SessionOfTheDayWrapper to WWW map version of same size                     $convertAnAvroListOfSessionOfTheDayWrapperToWwwMapVersionOfSameSize
     As above With First Session Made Up Of Maths And Reading                                           $asAboveWithFirstSessionWithExpectedValues
+    As Above With First Session Having Maths And Reading                                               $asAboveWithFirstSessionHavingMathsAndReading
     Second Session Is As Expected                                                                      $secondSessionIsAsExpected
+
+  The 'addAllSessionsToClassTimetable' method should
+    Add all the sessions to the Www Class timetable                                                    $addAllSessionsToClassTimetableHappyPath
   """
 
   def createClassTimetableSchoolTimes(): ClassTimetableSchoolTimes = {
@@ -285,6 +289,16 @@ class ClassTimetableConverterHelperFromAvroTest extends Specification {
       new ClassTimetableConverterHelperFromAvro {}
     }.createAllSessionsOfTheWeek(allSessionsOfTheWeek)
 
+    println("()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()")
+    println("()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()")
+    println("()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()")
+    println("()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()")
+    println(s"dayToSessionsOfTheDayMap : ${dayToSessionsOfTheDayMap.toString}")
+    println("()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()")
+    println("()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()")
+    println("()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()")
+    println("()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()")
+
     dayToSessionsOfTheDayMap.values.flatten.size mustEqual allSessionsOfTheWeek.size
   }
 
@@ -300,11 +314,23 @@ class ClassTimetableConverterHelperFromAvroTest extends Specification {
     sessionsOnMonday.head.sessionOfTheWeek.isInstanceOf[MondayEarlyMorningSession] mustEqual true
   }
 
+  def asAboveWithFirstSessionHavingMathsAndReading: MatchResult[Any] = {
+    val allSessionsOfTheWeek = createSessionOfTheDayWrapperList()
+    val dayToSessionsOfTheDayMap = {
+      new ClassTimetableConverterHelperFromAvro {}
+    }.createAllSessionsOfTheWeek(allSessionsOfTheWeek)
+
+    val sessionsOnMonday = dayToSessionsOfTheDayMap(WwwDayOfWeek("Monday"))
+    sessionsOnMonday.head.subjectsWithTimeFractionInTwelves.size mustEqual 2
+  }
+
   def secondSessionIsAsExpected: MatchResult[Any] = {
     val allSessionsOfTheWeek = createSessionOfTheDayWrapperList()
     val dayToSessionsOfTheDayMap = {
       new ClassTimetableConverterHelperFromAvro {}
     }.createAllSessionsOfTheWeek(allSessionsOfTheWeek)
+
+    println(s"All sessions of the week: ${dayToSessionsOfTheDayMap.toString}")
 
     val sessionsOnMonday = dayToSessionsOfTheDayMap(WwwDayOfWeek("Monday"))
     sessionsOnMonday.tail.head.startTime.toString mustEqual "10:45"
@@ -313,8 +339,21 @@ class ClassTimetableConverterHelperFromAvroTest extends Specification {
   }
 
 
+  ///////////////////////
 
-  //  println(s"empty: ${sessionsOnMonday.head.getEmptyTimePeriodsAvailable.toString}")
-//  sessionsOnMonday.head.getEmptyTimePeriodsAvailable.size mustEqual 0
+  def addAllSessionsToClassTimetableHappyPath(): MatchResult[Any] = {
+    val allSessionsOfTheWeek = createSessionOfTheDayWrapperList()
+    val dayToSessionsOfTheDayMap = {
+      new ClassTimetableConverterHelperFromAvro {}
+    }.createAllSessionsOfTheWeek(allSessionsOfTheWeek)
+
+    val wwwClassTimetable: WWWClassTimetable = WWWClassTimetable(None)
+
+    val updatedWwwClassTimetable = {
+      new ClassTimetableConverterHelperFromAvro {}
+    }.addAllSessionsToClassTimetable(dayToSessionsOfTheDayMap, wwwClassTimetable)
+
+    updatedWwwClassTimetable.getCurrentState mustEqual PartiallyComplete()
+  }
 
 }
