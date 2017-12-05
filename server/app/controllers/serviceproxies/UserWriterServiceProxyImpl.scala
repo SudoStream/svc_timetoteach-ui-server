@@ -204,7 +204,7 @@ class UserWriterServiceProxyImpl @Inject()(schoolReader: SchoolReaderServiceProx
     io.sudostream.timetoteach.messages.systemwide.model.User(
       timeToTeachId = "user_" + java.util.UUID.randomUUID(),
       socialNetworkIds = List(theSocialNetworkIds),
-      fullName = user.socialNetworkName,
+      fullName = user.firstName + " " + user.familyName,
       givenName = if (user.firstName.isEmpty) None else Some(user.firstName),
       familyName = if (user.familyName.isEmpty) None else Some(user.familyName),
       imageUrl = if (user.picture.isEmpty) None else Some(user.picture),

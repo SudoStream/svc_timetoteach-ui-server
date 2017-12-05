@@ -12,7 +12,7 @@ body {
     background-color: lightskyblue;
 }
 
-.img-circle-standard {
+.img-circle-standard-common {
     margin: 25px;
     border-radius: 50%;
 }

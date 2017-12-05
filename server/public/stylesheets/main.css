@@ -65,6 +65,11 @@ img {
     max-width: 100%;
 }
 
+.img-circle-standard-new-signup {
+    margin: 25px;
+    border-radius: 50%;
+}
+
 .img-circle-standard {
     border-radius: 50%;
     float: left;

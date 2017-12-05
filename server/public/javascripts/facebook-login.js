@@ -21,7 +21,7 @@ function statusChangeCallback(response) {
 
         FB.api('/me?fields=id,name,picture,first_name,last_name,age_range,verified,email', function (innerResponse) {
             console.log('FB ID:: ' + innerResponse.id);
-            console.log('FB Full Name: ' + innerResponse.name);
+            console.log('FB Full Name: ' + innerResponse.first_name + " " + innerResponse.last_name);
             console.log('FB Given Name: ' + innerResponse.first_name);
             console.log('FB Family Name: ' + innerResponse.last_name);
             console.log('FB Image URL: ' + innerResponse.picture.data.url);
