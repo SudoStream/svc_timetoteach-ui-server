@@ -644,7 +644,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
 
     val saveClassTimetableButton = dom.document.getElementById("save-class-timetable-button").asInstanceOf[HTMLButtonElement]
     saveClassTimetableButton.addEventListener("click", (e: dom.Event) => {
-      global.console.log("Saving the class timetable...")
+      global.console.log(s"Saving the class timetable... ${classTimetable.toString}")
     })
 
   }

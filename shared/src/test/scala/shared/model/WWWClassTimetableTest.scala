@@ -142,4 +142,12 @@ class WWWClassTimetableTest extends FunSpec with ClassTimetableTestHelper {
     }
   }
 
+  it("should be possible to get a sorted list of session breakdowns with 5 days of the week in json") {
+    val classTimetable: WWWClassTimetable = createFullClassTimetable
+    val sessions = classTimetable.allSessionsOfTheWeekAsJson()
+    println("------>>>>>>>>>>>>>>>>>>>>>>>>>>")
+    println(s"$sessions")
+    assert(!sessions.isEmpty)
+  }
+
 }

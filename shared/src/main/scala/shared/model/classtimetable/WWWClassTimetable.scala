@@ -1,10 +1,42 @@
 package shared.model.classtimetable
 
+import scala.scalajs.js
+
 case class WWWClassTimetable(private val schoolDayTimesOption: Option[Map[SchoolDayTimeBoundary, String]])
   extends WwwAllSessionsOfTheWeek {
 
+  override def toString: String = {
+
+    s"""
+       |{
+       |  "schoolTimes" : [
+       |     ${getSchoolDayTimesAsJson()}
+       |  ],
+       |  "allSessionsOfTheWeek" : [
+       |     ${allSessionsOfTheWeekAsJson()}
+       |  ]
+       |}
+    """.stripMargin
+  }
+
   lazy val schoolDayTimes: Map[SchoolDayTimeBoundary, String] = createSchoolDayTimes(schoolDayTimesOption)
   override def getSchoolDayTimes: Map[SchoolDayTimeBoundary, String] = schoolDayTimes
+
+  def getSchoolDayTimesAsJson(): String = {
+    val boundariesAsJs = for {
+      schoolDayTimeEntryTuple <- schoolDayTimes
+      boundaryName = schoolDayTimeEntryTuple._1.value
+      boundaryStartTime = schoolDayTimeEntryTuple._2
+    } yield
+      s"""
+         |{
+         |  "sessionBoundaryName" : "$boundaryName",
+         |  "boundaryStartTime"   : "$boundaryStartTime"
+         |}
+       """
+
+    boundariesAsJs.mkString(",\n")
+  }
 
   def getCurrentState: ClassTimetableState = {
     if (sessionsOfTheWeek.values.count(_.isFull) == sessionsOfTheWeek.values.size) CompletelyFull()
@@ -62,7 +94,7 @@ case class WWWClassTimetable(private val schoolDayTimesOption: Option[Map[School
         sessionBreakdown.removeSubject(subjectDetail)
       case None => false
     }
-    }
+  }
 
   def getAdditionalInfoForSubject(subjectDetail: WwwSubjectDetail, sessionOfTheWeek: WwwSessionOfTheWeek): Option[String] = {
     sessionsOfTheWeek.get(sessionOfTheWeek) match {
@@ -82,10 +114,30 @@ case class WWWClassTimetable(private val schoolDayTimesOption: Option[Map[School
     }
   }
 
+  def allSessionsOfTheWeekAsJson(): String = {
+    {for {
+      dayOfWeekToSessionsTuple <- allSessionsOfTheWeekInOrderByDay
+      dayOfWeek = dayOfWeekToSessionsTuple._1
+      sessions = dayOfWeekToSessionsTuple._2
+    } yield
+      s"""
+         |{
+         |  "dayOfTheWeek" : "${dayOfWeek.value}",
+         |  "sessions" : [
+         |  ${sessions.map(hmm => hmm.toString()).mkString(",")}
+         |     ]
+         |}
+       """.stripMargin}.mkString("\n,")
+  }
+
   def allSessionsOfTheWeek: List[WwwSessionBreakdown] = {
-    {{for {
-      daySessionsTuple <- allSessionsOfTheWeekInOrderByDay
-    } yield daySessionsTuple._2}.flatten}.toList
+    {
+      {
+        for {
+          daySessionsTuple <- allSessionsOfTheWeekInOrderByDay
+        } yield daySessionsTuple._2
+      }.flatten
+    }.toList
   }
 
   def allSessionsOfTheWeekInOrderByDay: Map[WwwDayOfWeek, List[WwwSessionBreakdown]] = {
