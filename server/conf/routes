@@ -26,7 +26,7 @@ POST        /initialPreferencesCreated        controllers.Application.initialPre
 GET         /weeklyplanning                   controllers.Application.weeklyPlanning
 GET         /termlyplanning                   controllers.Application.termlyPlanning
 
-
+POST        /classtimetablesave               controllers.ClassTimetableController.classTimetableSave
 #########################
 GET         /twitter/auth                     controllers.Twitter.authenticate()
 #GET     /view/:foo/:bar             controllers.Application.view(foo: String, bar: String)

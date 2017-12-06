@@ -2,14 +2,17 @@ package timetoteach.screens
 
 import java.time.temporal.ChronoUnit.MINUTES
 
+import com.sun.net.httpserver.Authenticator.Failure
 import org.scalajs.dom
 import org.scalajs.dom.Event
+import org.scalajs.dom.ext.Ajax.InputData
 import org.scalajs.dom.raw._
 import shared.model.classtimetable._
 import shared.util.LocalTimeUtil
 
 import scala.scalajs.js
 import scala.scalajs.js.Dynamic.global
+import scala.util.{Failure, Success}
 
 object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
 
@@ -645,6 +648,28 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
     val saveClassTimetableButton = dom.document.getElementById("save-class-timetable-button").asInstanceOf[HTMLButtonElement]
     saveClassTimetableButton.addEventListener("click", (e: dom.Event) => {
       global.console.log(s"Saving the class timetable... ${classTimetable.toString}")
+
+      import dom.ext.Ajax
+      import scala.concurrent.ExecutionContext.Implicits.global
+      val theUrl = "/classtimetablesave"
+      val theHeaders = Map(
+        "Content-Type" -> "application/x-www-form-urlencoded",
+        "X-Requested-With" -> "Accept"
+      )
+      val theData = InputData.str2ajax(s"value=${classTimetable.toString}")
+
+      Ajax.post(
+        url = theUrl,
+        headers = theHeaders,
+        data = theData
+      ).onComplete {
+        case Success(xhr) =>
+          val hello = xhr.responseText
+          println(s"hello === $hello")
+          dom.window.location.href = "/app";
+        case Failure(ex) =>
+          dom.window.alert("Something went wrong with saving class timetable")
+      }
     })
 
   }
