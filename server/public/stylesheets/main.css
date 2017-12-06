@@ -103,8 +103,12 @@ img {
 }
 
 #ttt-logo-front-page {
-    margin-top: 2rem;
-    margin-bottom: 4rem;
+    margin-top: 5rem;
+    margin-bottom: 3rem;
+}
+
+#ttt-h5-front-page {
+    margin-bottom: 2rem;
 }
 
 #follow-us {
@@ -534,6 +538,15 @@ img {
 
 
 @media screen and ( min-width: 991px) {
+
+    #ttt-logo-front-page {
+        margin-top: 0;
+        margin-bottom: 3rem;
+    }
+
+    #ttt-h5-front-page {
+        margin-bottom: 2rem;
+    }
 
     .about-us-img {
         margin-right: 1rem;
