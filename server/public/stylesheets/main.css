@@ -75,6 +75,9 @@ img {
     float: left;
 }
 
+#facebook-group-button {
+    margin-top: 0;
+}
 .nav-login-button {
     margin-left: 0;
     margin-right: 0;
