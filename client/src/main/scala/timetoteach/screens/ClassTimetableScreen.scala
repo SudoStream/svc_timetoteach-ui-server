@@ -1,5 +1,6 @@
 package timetoteach.screens
 
+import java.time.LocalTime
 import java.time.temporal.ChronoUnit.MINUTES
 
 import org.scalajs.dom
@@ -15,7 +16,33 @@ import scala.util.{Failure, Success}
 
 object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
 
-  var classTimetable: WWWClassTimetable = WWWClassTimetable(None)
+  val schoolDayStarts = dom.window.localStorage.getItem("schoolDayStarts")
+  val morningBreakStarts = dom.window.localStorage.getItem("morningBreakStarts")
+  val morningBreakEnds = dom.window.localStorage.getItem("morningBreakEnds")
+  val lunchStarts = dom.window.localStorage.getItem("lunchStarts")
+  val lunchEnds = dom.window.localStorage.getItem("lunchEnds")
+  val schoolDayEnds = dom.window.localStorage.getItem("schoolDayEnds")
+
+  val theClassTimetableName = dom.window.localStorage.getItem("timetableClassName")
+  val theTimeToTeachUserId = dom.window.localStorage.getItem("timeToTeachUserId")
+
+  val maybeSchoolTimetableTimes : Option[Map[SchoolDayTimeBoundary, String]] = if (
+    schoolDayStarts.nonEmpty && schoolDayEnds.nonEmpty && morningBreakStarts.nonEmpty &&
+    morningBreakEnds.nonEmpty && lunchStarts.nonEmpty && lunchEnds.nonEmpty ) {
+    Some(Map(
+      SchoolDayStarts() -> schoolDayStarts,
+      MorningBreakStarts() -> morningBreakStarts,
+      MorningBreakEnds() -> morningBreakEnds,
+      LunchStarts() -> lunchStarts,
+      LunchEnds() -> lunchEnds,
+      SchoolDayEnds() -> schoolDayEnds
+    ))
+  } else {
+    None
+  }
+
+
+  var classTimetable: WWWClassTimetable = WWWClassTimetable(maybeSchoolTimetableTimes)
   override def getClassTimetable: WWWClassTimetable = classTimetable
 
   var currentlySelectedSession: Option[WwwSession] = None

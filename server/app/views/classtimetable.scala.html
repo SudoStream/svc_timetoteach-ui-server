@@ -420,6 +420,13 @@
 
 
     <script>
+        localStorage.setItem("schoolDayStarts", "@{schoolDayTimes.schoolDayStarts.toString}");
+        localStorage.setItem("morningBreakStarts", "@{schoolDayTimes.morningBreakStarts.toString}");
+        localStorage.setItem("morningBreakEnds", "@{schoolDayTimes.morningBreakEnds.toString}");
+        localStorage.setItem("lunchStarts", "@{schoolDayTimes.lunchStarts.toString}");
+        localStorage.setItem("lunchEnds", "@{schoolDayTimes.lunchEnds.toString}");
+        localStorage.setItem("schoolDayEnds", "@{schoolDayTimes.schoolDayEnds.toString}");
+
         localStorage.setItem("timetableClassName", "@{className}");
         localStorage.setItem("timeToTeachUserId", "@{tttUserId.value}");
     </script>
