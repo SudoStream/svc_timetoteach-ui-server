@@ -218,7 +218,8 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl,
         userFirstName,
         userFamilyName,
         schoolDayTimes,
-        className
+        className,
+        TimeToTeachUserId(tttUserId)
       )(authRequest))
     }
   }

@@ -1,6 +1,7 @@
 @import be.objectify.deadbolt.scala.AuthenticatedRequest
 @import models.timetoteach.classtimetable.SchoolDayTimes
-@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], schoolDayTimes: SchoolDayTimes, className: String)(implicit request: AuthenticatedRequest[Any])
+@import controllers.serviceproxies.TimeToTeachUserId
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], schoolDayTimes: SchoolDayTimes, className: String,tttUserId: TimeToTeachUserId)(implicit request: AuthenticatedRequest[Any])
 
 @timetoteachAppMain(handler, s"Class Timetable : $className ",
     userPictureUri, userFirstName, userFamilyName) {
@@ -417,6 +418,11 @@
         </div>
     </div>
 
+
+    <script>
+        localStorage.setItem("timetableClassName", "@{className}");
+        localStorage.setItem("timeToTeachUserId", "@{tttUserId.value}");
+    </script>
 
     <script type="text/javascript">
             $('#timepicker1').timepicker({

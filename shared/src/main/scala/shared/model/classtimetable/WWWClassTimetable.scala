@@ -1,7 +1,5 @@
 package shared.model.classtimetable
 
-import scala.scalajs.js
-
 case class WWWClassTimetable(private val schoolDayTimesOption: Option[Map[SchoolDayTimeBoundary, String]])
   extends WwwAllSessionsOfTheWeek {
 
@@ -115,19 +113,21 @@ case class WWWClassTimetable(private val schoolDayTimesOption: Option[Map[School
   }
 
   def allSessionsOfTheWeekAsJson(): String = {
-    {for {
-      dayOfWeekToSessionsTuple <- allSessionsOfTheWeekInOrderByDay
-      dayOfWeek = dayOfWeekToSessionsTuple._1
-      sessions = dayOfWeekToSessionsTuple._2
-    } yield
-      s"""
-         |{
-         |  "dayOfTheWeek" : "${dayOfWeek.value}",
-         |  "sessions" : [
-         |  ${sessions.map(hmm => hmm.toString()).mkString(",")}
-         |     ]
-         |}
-       """.stripMargin}.mkString("\n,")
+    {
+      for {
+        dayOfWeekToSessionsTuple <- allSessionsOfTheWeekInOrderByDay
+        dayOfWeek = dayOfWeekToSessionsTuple._1
+        sessions = dayOfWeekToSessionsTuple._2
+      } yield
+        s"""
+           |{
+           |  "dayOfTheWeek" : "${dayOfWeek.value}",
+           |  "sessions" : [
+           |  ${sessions.map(hmm => hmm.toString()).mkString(",")}
+           |     ]
+           |}
+       """.stripMargin
+    }.mkString("\n,")
   }
 
   def allSessionsOfTheWeek: List[WwwSessionBreakdown] = {

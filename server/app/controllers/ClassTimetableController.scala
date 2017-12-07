@@ -8,11 +8,13 @@ import akka.util.Timeout
 import be.objectify.deadbolt.scala.cache.HandlerCache
 import be.objectify.deadbolt.scala.{ActionBuilders, DeadboltActions}
 import com.typesafe.config.ConfigFactory
-import controllers.serviceproxies.ClassTimetableWriterServiceProxyImpl
+import controllers.serviceproxies.{ClassTimetableWriterServiceProxyImpl, TimeToTeachUserId}
 import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms.{mapping, _}
 import play.api.mvc.{Action, AnyContent, Controller}
+import shared.model.classtimetable.WwwClassName
+import utils.ClassTimetableConverterToAvro.convertJsonClassTimetableToWwwClassTimetable
 
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContextExecutor, Future}
@@ -31,20 +33,30 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
   private val userServicePort = config.getString("services.user-service-port")
   private val timeToTeachFacebookId = config.getString("login.details.facebook.timetoteach-facebook-id")
   private val timeToTeachFacebookSecret = config.getString("login.details.facebook.timetoteach-facebook-secret")
+  val logger: Logger.type = Logger
 
   val classTimetableForm = Form(
     mapping(
-      "value" -> text
-    )(classTimeTableJson.apply)(classTimeTableJson.unapply)
+      "classTimetable" -> text,
+      "className" -> text,
+      "tttUserId" -> text
+    )(ClassTimeTableJson.apply)(ClassTimeTableJson.unapply)
   )
 
-  case class classTimeTableJson(value: String)
-
-  val logger = Logger
+  case class ClassTimeTableJson(classTimetable: String, className: String, tttUserId: String)
 
   def classTimetableSave: Action[AnyContent] = Action.async { implicit request =>
-    val classTimetableAsJsonString = classTimetableForm.bindFromRequest.get
-    logger.debug(s"Class Timetable As Json = ${classTimetableAsJsonString.toString}")
+    val classTimetableFormBound = classTimetableForm.bindFromRequest.get
+    logger.debug(s"Class Timetable As Json = ${classTimetableFormBound.classTimetable}")
+    logger.debug(s"Class Name As Json = ${classTimetableFormBound.className}")
+    logger.debug(s"TTT User Id = ${classTimetableFormBound.tttUserId}")
+
+    val wwwClassTimetable = convertJsonClassTimetableToWwwClassTimetable(classTimetableFormBound.classTimetable)
+    classTimetableWriter.upsertClassTimetables(
+      TimeToTeachUserId(classTimetableFormBound.tttUserId),
+      WwwClassName(classTimetableFormBound.className),
+      wwwClassTimetable
+    )
 
     Future {
       Ok("Hmmmmmmmm doodly doos!")
