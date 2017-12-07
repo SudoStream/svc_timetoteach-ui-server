@@ -125,7 +125,6 @@ img {
 }
 
 .ttt-icon-writing {
-    display: none;
     font-family: 'simplifica', sans-serif;
 }
 
@@ -543,8 +542,14 @@ img {
 
 @media screen and ( min-width: 991px) {
 
-    .ttt-icon-writing {
-        display: block;
+    #stage {
+        background: url('/assets/images/stage.jpeg') center center no-repeat;
+        background-size: cover;
+        color: white;
+        height: 100%;
+        width: 100%;
+        display: flex;
+        align-items: center;
     }
 
     #ttt-logo-front-page {
