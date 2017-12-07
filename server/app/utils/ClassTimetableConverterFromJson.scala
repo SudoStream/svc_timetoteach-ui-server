@@ -1,7 +1,10 @@
 package utils
 
+import java.time.LocalTime
+
+import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.time.DayOfTheWeek
 import play.api.libs.json.{JsArray, JsObject, JsString, JsValue}
-import shared.model.classtimetable.SchoolDayTimeBoundary
+import shared.model.classtimetable._
 import utils.ClassTimetableConverterToAvro.convertSchoolDayTimeBoundaryToStartTimeTuplesToMap
 
 trait ClassTimetableConverterFromJson {
@@ -37,5 +40,54 @@ trait ClassTimetableConverterFromJson {
 
     loop(Map(), incomingTuples.head, incomingTuples.tail)
   }
+
+  def convertToSessionsAsSubjectDetails(sessionsJsValues: IndexedSeq[JsValue], dayOfTheWeekString: String): List[(WwwSubjectDetail, WwwSessionOfTheWeek)] = {
+    val dayOfTheWeek = WwwDayOfWeek(dayOfTheWeekString)
+
+    {
+      for {
+        sessionJsValue <- sessionsJsValues
+        subject = (sessionJsValue \ "subject").get.asInstanceOf[JsString].value
+        startTimeIso8601 = (sessionJsValue \ "startTimeIso8601").get.asInstanceOf[JsString].value
+        endTimeIso8601 = (sessionJsValue \ "endTimeIso8601").get.asInstanceOf[JsString].value
+        lessonAdditionalInfo = (sessionJsValue \ "lessonAdditionalInfo").get.asInstanceOf[JsString].value
+        wwwSession: WwwSession = WwwSessions.createWwwSession(startTimeIso8601)
+        wwwSessionOfTheWeek: WwwSessionOfTheWeek = WwwSessionOfTheWeek.createSessionOfTheWeek(dayOfTheWeek, wwwSession).get
+        wwwSubjectDetail = WwwSubjectDetail(
+          WwwSubjectName(subject),
+          WwwTimeSlot(LocalTime.parse(startTimeIso8601), LocalTime.parse(endTimeIso8601)),
+          lessonAdditionalInfo
+        )
+      } yield (wwwSubjectDetail, wwwSessionOfTheWeek)
+    }.toList
+  }
+
+  def createSubjectDetailToSessionOfTheWeekList(allSessionsOfTheWeekJsArray: JsArray): List[(WwwSubjectDetail, WwwSessionOfTheWeek)] = {
+    {
+      for {
+        sessionOfTheWeekJsValue <- allSessionsOfTheWeekJsArray.value
+        sessionOfTheWeekJsObject = sessionOfTheWeekJsValue.asInstanceOf[JsObject]
+        dayOfTheWeek = (sessionOfTheWeekJsObject \ "dayOfTheWeek").get.asInstanceOf[JsString].value
+        sessionsJsValues = (sessionOfTheWeekJsObject \ "sessions").get.asInstanceOf[JsArray].value
+        sessionsAsSubjectDetails = convertToSessionsAsSubjectDetails(sessionsJsValues, dayOfTheWeek)
+      } yield sessionsAsSubjectDetails
+    }.flatten.toList
+  }
+
+  def populateClassTimetable(wWWClassTimetable: WWWClassTimetable, classTimetableAsJson: JsValue): WWWClassTimetable = {
+    val allSessionsOfTheWeekJsArray = (classTimetableAsJson \ "allSessionsOfTheWeek").get.as[JsArray]
+
+    val subjectDetailToSessionOfTheWeekList: List[(WwwSubjectDetail, WwwSessionOfTheWeek)] =
+      createSubjectDetailToSessionOfTheWeekList(allSessionsOfTheWeekJsArray)
+
+    for (subjectDetailToSessionOfTheWeekTuple <- subjectDetailToSessionOfTheWeekList) {
+      val subjectDetail: WwwSubjectDetail = subjectDetailToSessionOfTheWeekTuple._1
+      val sessionOfTheWeek: WwwSessionOfTheWeek = subjectDetailToSessionOfTheWeekTuple._2
+      wWWClassTimetable.addSubject(subjectDetail, sessionOfTheWeek)
+    }
+
+    wWWClassTimetable
+  }
+
 
 }

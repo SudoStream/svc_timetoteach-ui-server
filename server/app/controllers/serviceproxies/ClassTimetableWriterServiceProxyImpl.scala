@@ -28,7 +28,7 @@ class ClassTimetableWriterServiceProxyImpl {
   private val config = ConfigFactory.load()
   val http = Http(system)
   private val classTimetableWriterServiceHostname = config.getString("services.classtimetable-writer-host")
-  private val classTimetableWriterServicePort = config.getString("services.classtimetable-writer-host")
+  private val classTimetableWriterServicePort = config.getString("services.classtimetable-writer-port")
 
 
   def upsertClassTimetables(userId: TimeToTeachUserId, wwwClassName: WwwClassName, wWWClassTimetable: WWWClassTimetable): Future[Boolean] = {

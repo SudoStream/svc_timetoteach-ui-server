@@ -15,10 +15,9 @@ object ClassTimetableConverterToAvro
   def convertJsonClassTimetableToWwwClassTimetable(classTimetableAsJsonString: String): WWWClassTimetable = {
     val classTimetableAsJson: JsValue = Json.parse(classTimetableAsJsonString)
     logger.debug(s"Class Timetable as Json: ${classTimetableAsJson.toString()}")
-
     val schoolDayTimeBoundaryToStartTime = createSchoolTimesFromJson(classTimetableAsJson)
-
-    null
+    val wWWClassTimetable : WWWClassTimetable = WWWClassTimetable(Some(schoolDayTimeBoundaryToStartTime))
+    populateClassTimetable(wWWClassTimetable, classTimetableAsJson)
   }
 
   def convertAvroClassTimeTableToWww(avroTimetable: ClassTimetable): WWWClassTimetable = {
