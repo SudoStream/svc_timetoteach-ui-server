@@ -78,6 +78,7 @@ img {
 #facebook-group-button {
     margin-top: 0;
 }
+
 .nav-login-button {
     margin-left: 0;
     margin-right: 0;
@@ -119,7 +120,12 @@ img {
     margin-bottom: 2rem;
 }
 
+.ttt-icon-writing-main {
+    font-family: 'simplifica', sans-serif;
+}
+
 .ttt-icon-writing {
+    display: none;
     font-family: 'simplifica', sans-serif;
 }
 
@@ -419,7 +425,6 @@ img {
     width: 90%;
 }
 
-
 .small-close {
     font-size: xx-small;
 }
@@ -433,7 +438,6 @@ img {
     margin-left: 2rem;
     width: 40%;
 }
-
 
 #subject-summary-in-timetable .card-header,
 #subject-summary-in-timetable .card-footer {
@@ -494,7 +498,6 @@ img {
     float: right;
 }
 
-
 #class-timetable-subject-aside h2 {
     margin-bottom: 1.7rem;
 }
@@ -510,21 +513,20 @@ img {
 
 .clear-cancel-save-buttons a:link {
     color: white;
-      text-decoration: none;
+    text-decoration: none;
 }
 
 #class-timetable-subject-warning {
     display: none;
 }
 
-#class-timetable-subject-aside{
+#class-timetable-subject-aside {
     display: none;
 }
 
 #class-timetable-clear-cancel-save-buttons {
     display: none;
 }
-
 
 #class-timetable-school-times {
     display: none;
@@ -539,8 +541,11 @@ img {
     height: 128px;
 }
 
-
 @media screen and ( min-width: 991px) {
+
+    .ttt-icon-writing {
+        display: block;
+    }
 
     #ttt-logo-front-page {
         margin-top: 0;
@@ -567,6 +572,7 @@ img {
     .row-for-mobile {
         display: none;
     }
+
     .dashboardFadedBackground {
         min-height: 15rem;
         margin: 0 auto;
@@ -588,7 +594,7 @@ img {
         display: block;
     }
 
-    #class-timetable-subject-aside{
+    #class-timetable-subject-aside {
         display: block;
     }
 
