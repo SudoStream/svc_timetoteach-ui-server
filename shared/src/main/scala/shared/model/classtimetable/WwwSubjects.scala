@@ -20,7 +20,13 @@ object WwwSubjects {
     "subject-soft-start",
     "subject-numeracy",
     "subject-art",
-    "subject-rme"
+    "subject-rme",
+    "subject-play",
+    "subject-modern-languages",
+    "subject-science",
+    "subject-hand-writing",
+    "subject-geography",
+    "subject-history"
   )
 }
 

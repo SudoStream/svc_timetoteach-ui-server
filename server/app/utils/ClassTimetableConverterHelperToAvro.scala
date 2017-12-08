@@ -64,6 +64,13 @@ trait ClassTimetableConverterHelperToAvro {
         case "subject-numeracy" => SubjectName.NUMERACY
         case "subject-art" => SubjectName.ART
         case "subject-rme" => SubjectName.RME
+        case "subject-play"  => SubjectName.PLAY
+        case "subject-modern-languages" => SubjectName.MODERN_LANGUAGES
+        case "subject-science" => SubjectName.SCIENCE
+        case "subject-hand-writing" => SubjectName.HAND_WRITING
+        case "subject-geography" => SubjectName.GEOGRAPHY
+        case "subject-history" => SubjectName.HISTORY
+
       }
     } yield SubjectDetailWrapper(SubjectDetail(
       subjectName,

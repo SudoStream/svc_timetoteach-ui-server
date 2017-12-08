@@ -150,4 +150,18 @@ class WWWClassTimetableTest extends FunSpec with ClassTimetableTestHelper {
     assert(!sessions.isEmpty)
   }
 
+  describe("Add 3 subjects to fill up Monday Morning Session") {
+    it("should then store all 3 subjects as assigned") {
+      val classTimetable: WWWClassTimetable = WWWClassTimetable(None)
+
+      val mathsOnMonday = WwwSubjectDetail(WwwSubjectName("subject-maths"), WwwTimeSlot(LocalTime.of(9, 0), LocalTime.of(9, 30)))
+      classTimetable.addSubject(mathsOnMonday, MondayEarlyMorningSession())
+
+      val mathsOnMondayWithAdditionalInfo = WwwSubjectDetail(
+        mathsOnMonday.subject, mathsOnMonday.timeSlot, "This is additional info")
+
+      assert(classTimetable.editSubject(mathsOnMondayWithAdditionalInfo, MondayEarlyMorningSession()))
+    }
+  }
+
 }

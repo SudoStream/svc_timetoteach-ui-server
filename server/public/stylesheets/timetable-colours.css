@@ -54,7 +54,7 @@
 }
 
 .subject-health {
-    background-color: rgba(237, 72, 167, 0.81);
+    background-color: rgb(255, 2, 3);
     color: black;
 }
 
@@ -64,7 +64,7 @@
 }
 
 .subject-physical-education {
-    background-color: rgba(242, 84, 255, 0.5);
+    background-color: rgba(255, 0, 0, 0.65);
     color: black;
 }
 
@@ -84,8 +84,8 @@
 }
 
 .subject-assembly {
-    background-color: rgba(255, 0, 0, 0.65);
-    color: black;
+    background-color: rgb(81, 93, 102);
+    color: whitesmoke;
 }
 
 .subject-art {
@@ -94,7 +94,33 @@
 }
 
 .subject-topic {
-    background-color: rgb(120, 56, 255);
+    background-color: rgb(86, 5, 255);
+    color: whitesmoke;
+}
+
+.subject-hand-writing {
+    background-color: rgb(112, 255, 154);
+    color: black;
+}
+
+.subject-play {
+    background-color: rgb(255, 233, 27);
+    color: black;
+}
+.subject-science {
+    background-color: rgb(32, 211, 255);
+    color: black;
+}
+.subject-modern-languages {
+    background-color: rgb(145, 89, 255);
+    color: black;
+}
+.subject-geography {
+    background-color: rgba(237, 72, 167, 0.81);
+    color: black;
+}
+.subject-history {
+    background-color: rgba(242, 84, 255, 0.5);
     color: black;
 }
 

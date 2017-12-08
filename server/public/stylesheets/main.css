@@ -96,7 +96,7 @@ img {
     margin: 1rem 0 0;
 }
 
-#stage {
+#home {
     background: url('/assets/images/stage.jpeg') center center no-repeat;
     background-size: cover;
     color: white;
@@ -150,6 +150,10 @@ img {
 
 #stage-caption h2 {
     color: white;
+}
+
+#stage-caption p {
+
 }
 
 .feature-content {
@@ -464,7 +468,7 @@ img {
 }
 
 #class-timetable-subject-aside {
-    margin-top: 2rem;
+    margin-top: 1rem;
 }
 
 #show-subjects-button {
@@ -506,7 +510,7 @@ img {
 }
 
 .clear-cancel-save-buttons {
-    margin-top: 3rem;
+    margin-top: 1.5rem;
     float: right;
 }
 
@@ -546,7 +550,7 @@ img {
 
 @media screen and ( min-width: 991px) {
 
-    #stage {
+    #home {
         background: url('/assets/images/stage.jpeg') center center no-repeat;
         background-size: cover;
         color: white;
