@@ -61,14 +61,17 @@
                     <div class="row row-for-mobile"><br></div>
                     <li class="nav-item nav-login-button">
                     @if(userFirstName.isDefined) {
-                        <a class="btn btn-outline-primary" href="#" onclick="signOut();">Sign out</a>
+                        <a class="btn btn-outline-primary" href="#" onclick="signOut();">Sign Out</a>
                     } else {
-                        <a class="btn btn-outline-primary" href="@routes.Application.login()">Log in</a>
+                        <a class="btn btn-outline-primary" href="@routes.Application.login()">Log In</a>
                     }
                     </li>
                     <li class="nav-item nav-login-button">
-                        <a class="btn btn-outline-primary" href="https://www.facebook.com/groups/305966139892476/">Join Facebook group</a>
+                        <a class="btn btn-outline-primary" href="https://www.facebook.com/groups/305966139892476/">
+                            <img src="@routes.Assets.versioned("icons/FB-f-Logo__blue_29.png")" alt="logo" height="19">
+                            Facebook Group</a>
                     </li>
+
                 </ul>
             </div>
         </nav>
