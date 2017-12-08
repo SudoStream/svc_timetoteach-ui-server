@@ -123,7 +123,7 @@ case class WWWClassTimetable(private val schoolDayTimesOption: Option[Map[School
            |{
            |  "dayOfTheWeek" : "${dayOfWeek.value}",
            |  "sessions" : [
-           |  ${sessions.map(hmm => hmm.toString()).mkString(",")}
+           |  ${sessions.map(sessionBreakdown => sessionBreakdown.toString()).mkString(",")}
            |     ]
            |}
        """.stripMargin

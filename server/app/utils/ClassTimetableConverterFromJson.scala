@@ -51,8 +51,8 @@ trait ClassTimetableConverterFromJson {
         startTimeIso8601 = (sessionJsValue \ "startTimeIso8601").get.asInstanceOf[JsString].value
         endTimeIso8601 = (sessionJsValue \ "endTimeIso8601").get.asInstanceOf[JsString].value
         lessonAdditionalInfo = (sessionJsValue \ "lessonAdditionalInfo").get.asInstanceOf[JsString].value
-        wwwSession: WwwSession = WwwSessions.createWwwSession(startTimeIso8601)
-        wwwSessionOfTheWeek: WwwSessionOfTheWeek = WwwSessionOfTheWeek.createSessionOfTheWeek(dayOfTheWeek, wwwSession).get
+        sessionOfTheWeekString = (sessionJsValue \ "sessionOfTheWeek").get.asInstanceOf[JsString].value
+        wwwSessionOfTheWeek: WwwSessionOfTheWeek = WwwSessionOfTheWeek.createSessionOfTheWeek(sessionOfTheWeekString).get
         wwwSubjectDetail = WwwSubjectDetail(
           WwwSubjectName(subject),
           WwwTimeSlot(LocalTime.parse(startTimeIso8601), LocalTime.parse(endTimeIso8601)),

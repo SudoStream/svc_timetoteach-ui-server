@@ -1,12 +1,8 @@
 package shared.model.classtimetable
 
 object WwwSessionOfTheWeek {
-  def createSessionOfTheWeek(
-                              dayOfWeek: WwwDayOfWeek,
-                              session: WwwSession
-                            ): Option[WwwSessionOfTheWeek] = {
-    val dayAndSession = dayOfWeek.value.toLowerCase + "-" + session.value
-    dayAndSession match {
+  def createSessionOfTheWeek(sessionOfTheWeekString:String): Option[WwwSessionOfTheWeek] = {
+    sessionOfTheWeekString match {
       case "monday-early-morning-session" => Some(MondayEarlyMorningSession())
       case "monday-late-morning-session" => Some(MondayLateMorningSession())
       case "monday-afternoon-session" => Some(MondayAfternoonSession())
@@ -24,6 +20,14 @@ object WwwSessionOfTheWeek {
       case "friday-afternoon-session" => Some(FridayAfternoonSession())
       case _ => None
     }
+
+  }
+  def createSessionOfTheWeek(
+                              dayOfWeek: WwwDayOfWeek,
+                              session: WwwSession
+                            ): Option[WwwSessionOfTheWeek] = {
+    val dayAndSession = dayOfWeek.value.toLowerCase + "-" + session.value
+    createSessionOfTheWeek(dayAndSession)
   }
 }
 

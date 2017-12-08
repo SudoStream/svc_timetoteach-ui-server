@@ -12,13 +12,14 @@ case class WwwSessionBreakdown(sessionOfTheWeek: WwwSessionOfTheWeek, startTime:
   private var subjectsInSession: mutable.ListBuffer[WwwSubjectDetail] = scala.collection.mutable.ListBuffer()
   private val SUBJECT_EMPTY = "subject-empty"
 
-  override def toString(): String = {
+  override def toString: String = {
     {
       for {
         subjectDetail <- subjectsInSession
       } yield
         s"""
           |{
+          |  "sessionOfTheWeek" : "${sessionOfTheWeek.value}",
           |  "subject" : "${subjectDetail.subject.value}",
           |  "startTimeIso8601" : "${subjectDetail.timeSlot.startTime.toString}",
           |  "endTimeIso8601" : "${subjectDetail.timeSlot.endTime.toString}",
