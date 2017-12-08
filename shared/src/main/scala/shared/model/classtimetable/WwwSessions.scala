@@ -11,7 +11,7 @@ object WwwSessions {
 
   def createWwwSession(startTimeIso8601: String) : WwwSession = {
     val startTime = LocalTime.parse(startTimeIso8601)
-    if ( startTime.isAfter(LocalTime.of(8,0)) && startTime.isBefore(LocalTime.of(9,45))) {
+    if ( startTime.isAfter(LocalTime.of(8,0)) && startTime.isBefore(LocalTime.of(10,30))) {
       WwwSession("early-morning-session")
     } else if ( startTime.isAfter(LocalTime.of(12,0)) && startTime.isBefore(LocalTime.of(14,0))) {
       WwwSession("afternoon-session")
