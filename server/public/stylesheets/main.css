@@ -107,7 +107,8 @@ img {
 }
 
 #ttt-logo-front-page {
-    margin-top: 2rem;
+    height: 96px;
+    margin-top: 1rem;
     margin-bottom: 3rem;
 }
 
@@ -153,7 +154,11 @@ img {
 }
 
 #stage-caption p {
+    font-size: small;
+}
 
+#facebook-group-button {
+    font-size: small;
 }
 
 .feature-content {
@@ -561,13 +566,24 @@ img {
     }
 
     #ttt-logo-front-page {
+        height: 128px;
         margin-top: 0;
         margin-bottom: 3rem;
     }
 
     #ttt-h5-front-page {
+        font-size: xx-large;
         margin-bottom: 2rem;
     }
+
+    #stage-caption p {
+        font-size: x-large;
+    }
+
+    #facebook-group-button {
+        font-size: medium;
+    }
+
 
     .about-us-img {
         margin-right: 1rem;
