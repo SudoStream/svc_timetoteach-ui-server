@@ -29,12 +29,13 @@ class ClassTimetableWriterServiceProxyImpl {
   val http = Http(system)
   private val classTimetableWriterServiceHostname = config.getString("services.classtimetable-writer-host")
   private val classTimetableWriterServicePort = config.getString("services.classtimetable-writer-port")
+  private val minikubeRun : Boolean =  sys.props.getOrElse("minikubeEnv","false").toBoolean
+  val protocol: String = if (classTimetableWriterServicePort.toInt > 9000 && !minikubeRun ) "http" else "https"
 
 
   def upsertClassTimetables(userId: TimeToTeachUserId, wwwClassName: WwwClassName, wWWClassTimetable: WWWClassTimetable): Future[Boolean] = {
     logger.debug(s"upsertClassTimetables: ${userId.toString}:${wwwClassName.value}:${wWWClassTimetable.toString}")
 
-    val protocol = if (classTimetableWriterServicePort.toInt > 9000) "http" else "https"
     val uriString = s"$protocol://$classTimetableWriterServiceHostname:$classTimetableWriterServicePort/api/classtimetables/${userId.value}/upsert"
     logger.debug(s"uri for upserting class timetable is $uriString")
     val classTimetableWriterServiceUri = Uri(uriString)

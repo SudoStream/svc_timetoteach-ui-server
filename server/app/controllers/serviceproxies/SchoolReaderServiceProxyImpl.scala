@@ -31,13 +31,16 @@ class SchoolReaderServiceProxyImpl  @Inject()(ws: WSClient) {
   private val config = ConfigFactory.load()
   private val schoolReaderServiceHostname = config.getString("services.school-reader-service-host")
   private val schoolReaderServicePort = config.getString("services.school-reader-service-port")
+  println("\n\n\n" + sys.props.get("minikubeEnv").toString + "\n\n\n")
+  private val minikubeRun : Boolean =  sys.props.getOrElse("minikubeEnv","false").toBoolean
+  val protocol: String = if (schoolReaderServicePort.toInt > 9000 && !minikubeRun ) "http" else "https"
 
   val logger: Logger.type = Logger
 
   def getAllSchoolsFuture: Future[Seq[School]] = {
-    val protocol = if (schoolReaderServicePort.toInt > 9000) "http" else "https"
+
     val uriString = s"$protocol://$schoolReaderServiceHostname:$schoolReaderServicePort/api/schools"
-    logger.debug(s"uri string is $uriString")
+    logger.debug(s"++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ uri string is $uriString")
     val schoolServiceUri = Uri(uriString)
     val req = HttpRequest(GET, uri = schoolServiceUri).withHeaders(Accept(mediaRanges = List(MediaRanges.`*/*`)))
 

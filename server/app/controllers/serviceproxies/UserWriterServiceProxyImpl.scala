@@ -81,6 +81,9 @@ class UserWriterServiceProxyImpl @Inject()(schoolReader: SchoolReaderServiceProx
   //  case class SchoolId(value: String)
   private val userWriterServicePort = config.getString("services.user-writer-port")
   private var theSchools: Map[String, io.sudostream.timetoteach.messages.systemwide.model.School] = Map.empty
+  private val minikubeRun : Boolean =  sys.props.getOrElse("minikubeEnv","false").toBoolean
+  val protocol: String = if (userWriterServicePort.toInt > 9000 && !minikubeRun ) "http" else "https"
+
   populateTheSchools
 
   def convertToUserPreferences(newUserPreferences: InitialUserPreferences): UserPreferences = {
@@ -108,7 +111,6 @@ class UserWriterServiceProxyImpl @Inject()(schoolReader: SchoolReaderServiceProx
   def updateUserPreferences(userId: TimeToTeachUserId, newUserPreferences: InitialUserPreferences): Future[Boolean] = {
     val userPreferences: UserPreferences = convertToUserPreferences(newUserPreferences)
     logger.debug(s"updateUserPreferences: ${userPreferences.toString}")
-    val protocol = if (userWriterServicePort.toInt > 9000) "http" else "https"
     val uriString = s"$protocol://$userWriterServiceHostname:$userWriterServicePort/api/users/${userId.value}/editprefs"
     logger.debug(s"uri for updating user preferences is $uriString")
     val userWriterServiceUri = Uri(uriString)
@@ -141,7 +143,6 @@ class UserWriterServiceProxyImpl @Inject()(schoolReader: SchoolReaderServiceProx
 
   def createNewUser(user: TimeToTeachUser): Future[TimeToTeachUserId] = {
     val userMessage = convertUserToMessage(user)
-    val protocol = if (userWriterServicePort.toInt > 9000) "http" else "https"
     val uriString = s"$protocol://$userWriterServiceHostname:$userWriterServicePort/api/users"
     logger.debug(s"uri string is $uriString")
     val userWriterServiceUri = Uri(uriString)
@@ -188,8 +189,6 @@ class UserWriterServiceProxyImpl @Inject()(schoolReader: SchoolReaderServiceProx
     )
 
     logger.debug(s"Looking up school with id '${user.schoolId}'")
-
-    theSchools.foreach(kv => println(s"key: ${kv._1} : ${kv._2.toString}"))
 
     val theSchool = theSchools.getOrElse(user.schoolId, io.sudostream.timetoteach.messages.systemwide.model.School(
       id = user.schoolId,

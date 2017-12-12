@@ -30,11 +30,11 @@ class UserReaderServiceProxyImpl {
   private val config = ConfigFactory.load()
   private val userReaderServiceHostname = config.getString("services.user-service-host")
   private val userReaderServicePort = config.getString("services.user-service-port")
-
+  private val minikubeRun : Boolean =  sys.props.getOrElse("minikubeEnv","false").toBoolean
+  val protocol: String = if (userReaderServicePort.toInt > 9000 && !minikubeRun ) "http" else "https"
 
   def getUser(timeToTeachUserIdWrapper: TimeToTeachUserId): Future[HttpResponse] = {
     val timeToTeachUserId = timeToTeachUserIdWrapper.value
-    val protocol = if (userReaderServicePort.toInt > 9000) "http" else "https"
     val userServiceUri =
       Uri(s"$protocol://$userReaderServiceHostname:$userReaderServicePort/api/user?" +
         s"timeToTeachUserId=$timeToTeachUserId")
