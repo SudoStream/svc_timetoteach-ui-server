@@ -26,7 +26,7 @@ object ClassTimetableUtil {
     }
 
 
-    None
+    Some(wWWClassTimetable)
   }
 
   def convertSchoolTimesJsArrayToMap(schoolTimesJsArray: js.Array[js.Dynamic]): Option[Map[SchoolDayTimeBoundary, String]] = {
@@ -34,6 +34,7 @@ object ClassTimetableUtil {
       val boundaryNameString = sessionBoundary.sessionBoundaryName.asInstanceOf[String]
       val boundaryName = SchoolDayTimeBoundary.createSchoolDayTimeBoundaryFromString(boundaryNameString)
       val boundaryStartTime = sessionBoundary.boundaryStartTime.asInstanceOf[String]
+      println(s"adding to schools times map : (${boundaryName.value} -> $boundaryStartTime)")
       val newMap = mapSoFar + (boundaryName -> boundaryStartTime)
       if (restSessionBoundaries.isEmpty) {
         Some(newMap)
@@ -47,42 +48,30 @@ object ClassTimetableUtil {
 
   // private val SessionsOfTheWeek: scala.collection.mutable.Map[WwwSessionOfTheWeek, WwwSessionBreakdown]
 
-  def addSujbectsToTimetable(wWWClassTimetable: WWWClassTimetable,  sessionsOfTheDay: js.Array[js.Dynamic]): scala.collection.mutable.Map[WwwSessionOfTheWeek, WwwSessionBreakdown] = {
+  def addSujbectsToTimetable(wWWClassTimetable: WWWClassTimetable, sessionsOfTheDay: js.Array[js.Dynamic]): Unit = {
     val sessionsToBreakdown: scala.collection.mutable.Map[WwwSessionOfTheWeek, WwwSessionBreakdown] = scala.collection.mutable.Map()
 
-    val sessionOfWeekToBreakdownTuples = {
-      for {
-        sessionOfTheDay <- sessionsOfTheDay
+    for (
+      sessionOfTheDay <- sessionsOfTheDay
 
-        wwwSessionOfTheWeek = WwwSessionOfTheWeek.createSessionOfTheWeek(sessionOfTheDay.sessionOfTheWeek.asInstanceOf[String]).get
+    ) {
+      val wwwSessionOfTheWeek = WwwSessionOfTheWeek.createSessionOfTheWeek(sessionOfTheDay.sessionOfTheWeek.asInstanceOf[String]).get
 
-        subject = sessionOfTheDay.subject.asInstanceOf[String]
-        startTimeIso8601 = sessionOfTheDay.startTimeIso8601.asInstanceOf[String]
-        endTimeIso8601 = sessionOfTheDay.endTimeIso8601.asInstanceOf[String]
-        lessonAdditionalInfo = sessionOfTheDay.lessonAdditionalInfo.asInstanceOf[String]
+      val subject = sessionOfTheDay.subject.asInstanceOf[String]
+      val startTimeIso8601 = sessionOfTheDay.startTimeIso8601.asInstanceOf[String]
+      val endTimeIso8601 = sessionOfTheDay.endTimeIso8601.asInstanceOf[String]
+      val lessonAdditionalInfo = sessionOfTheDay.lessonAdditionalInfo.asInstanceOf[String]
 
-        wwwSubjectDetail: WwwSubjectDetail = WwwSubjectDetail(
-          WwwSubjectName(subject),
-          WwwTimeSlot(
-            LocalTimeUtil.convertStringTimeToLocalTime(startTimeIso8601).get,
-            LocalTimeUtil.convertStringTimeToLocalTime(endTimeIso8601).get
-          ),
-          lessonAdditionalInfo
-        )
-      } yield (wwwSessionOfTheWeek, wwwSubjectDetail)
-    }.toList
+      val wwwSubjectDetail: WwwSubjectDetail = WwwSubjectDetail(
+        WwwSubjectName(subject),
+        WwwTimeSlot(
+          LocalTimeUtil.convertStringTimeToLocalTime(startTimeIso8601).get,
+          LocalTimeUtil.convertStringTimeToLocalTime(endTimeIso8601).get
+        ),
+        lessonAdditionalInfo
+      )
 
-    for (sessionOfWeekToBreakdownTuple <- sessionOfWeekToBreakdownTuples) {
-      val wwwSessionOfTheWeek = sessionOfWeekToBreakdownTuple._1
-      val wwwSubjectDetail = sessionOfWeekToBreakdownTuple._2
-
-      sessionsToBreakdown.get(wwwSessionOfTheWeek) match {
-        case Some(sessionBreakdown) =>
-          sessionBreakdown.addSubject(wwwSubjectDetail)
-        case None =>
-          val sessionBreakdown = WwwSessionBreakdown(wwwSessionOfTheWeek,)
-      }
-
+      wWWClassTimetable.addSubject(wwwSubjectDetail, wwwSessionOfTheWeek)
     }
   }
 
