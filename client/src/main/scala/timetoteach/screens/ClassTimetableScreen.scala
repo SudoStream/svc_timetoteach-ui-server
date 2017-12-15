@@ -1,6 +1,5 @@
 package timetoteach.screens
 
-import java.time.LocalTime
 import java.time.temporal.ChronoUnit.MINUTES
 
 import org.scalajs.dom
@@ -26,9 +25,9 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
   val theClassTimetableName = dom.window.localStorage.getItem("timetableClassName")
   val theTimeToTeachUserId = dom.window.localStorage.getItem("timeToTeachUserId")
 
-  val maybeSchoolTimetableTimes : Option[Map[SchoolDayTimeBoundary, String]] = if (
+  val maybeSchoolTimetableTimes: Option[Map[SchoolDayTimeBoundary, String]] = if (
     schoolDayStarts.nonEmpty && schoolDayEnds.nonEmpty && morningBreakStarts.nonEmpty &&
-    morningBreakEnds.nonEmpty && lunchStarts.nonEmpty && lunchEnds.nonEmpty ) {
+      morningBreakEnds.nonEmpty && lunchStarts.nonEmpty && lunchEnds.nonEmpty) {
     Some(Map(
       SchoolDayStarts() -> schoolDayStarts,
       MorningBreakStarts() -> morningBreakStarts,
@@ -676,6 +675,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
       global.console.log(s"Saving the class timetable... ${classTimetable.toString}")
 
       import dom.ext.Ajax
+
       import scala.concurrent.ExecutionContext.Implicits.global
       val theUrl = "/classtimetablesave"
       val theHeaders = Map(

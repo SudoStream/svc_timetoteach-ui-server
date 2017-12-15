@@ -27,7 +27,7 @@ trait WwwAllSessionsOfTheWeek extends WwwSchoolDayTimes {
   private lazy val afternoonSessionStartsHoursMinutes = extractSessionHoursAndMinutes(LunchEnds())
   private lazy val afternoonSessionEndsHoursMinutes = extractSessionHoursAndMinutes(SchoolDayEnds())
 
-  private[classtimetable] val sessionsOfTheWeek: scala.collection.mutable.Map[WwwSessionOfTheWeek, WwwSessionBreakdown] = scala.collection.mutable.Map()
+  private[classtimetable] var sessionsOfTheWeek: scala.collection.mutable.Map[WwwSessionOfTheWeek, WwwSessionBreakdown] = scala.collection.mutable.Map()
   sessionsOfTheWeek += (MondayEarlyMorningSession() ->
     WwwSessionBreakdown(
       MondayEarlyMorningSession(),

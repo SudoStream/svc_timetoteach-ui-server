@@ -137,7 +137,7 @@ class UserSignupController @Inject()(deadbolt: DeadboltActions,
     formValidationResult.fold(errorFunction, successFunction)
   }
 
-    def signedUpCongrats = Action { implicit request: MessagesRequest[AnyContent] =>
+  def signedUpCongrats = Action { implicit request: MessagesRequest[AnyContent] =>
     logger.debug(s"userCreated: ${request.attrs}")
     Ok(views.html.signedupcongrats())
   }
