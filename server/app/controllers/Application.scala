@@ -6,7 +6,7 @@ import javax.inject.Inject
 import be.objectify.deadbolt.scala.cache.HandlerCache
 import be.objectify.deadbolt.scala.{ActionBuilders, DeadboltActions}
 import com.typesafe.config.ConfigFactory
-import controllers.serviceproxies.{SchoolReaderServiceProxyImpl, TimeToTeachUserId, UserReaderServiceProxyImpl, UserWriterServiceProxyImpl}
+import controllers.serviceproxies._
 import io.sudostream.timetoteach.messages.systemwide.model.{User, UserPreferences}
 import models.timetoteach.{CookieNames, InitialUserPreferences}
 import models.timetoteach.classtimetable.SchoolDayTimes
@@ -16,6 +16,7 @@ import play.api.data.Forms.{mapping, _}
 import play.api.mvc._
 import security.MyDeadboltHandler
 import shared.SharedMessages
+import shared.model.classtimetable.WwwClassName
 import shared.util.LocalTimeUtil
 import utils.TemplateUtils.getCookieStringFromRequest
 
@@ -26,6 +27,7 @@ import scala.concurrent.duration._
 class Application @Inject()(userReader: UserReaderServiceProxyImpl,
                             userWriter: UserWriterServiceProxyImpl,
                             schoolsProxy: SchoolReaderServiceProxyImpl,
+                            classTimetableReaderProxy: ClassTimetableReaderServiceProxyImpl,
                             deadbolt: DeadboltActions,
                             handlers: HandlerCache,
                             actionBuilder: ActionBuilders) extends Controller {
@@ -204,7 +206,7 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl,
       case None => defaultSchoolDayTimes
     }
 
-    val futureClassName : Future[String] = futureUserPrefs map {
+    val futureClassName: Future[String] = futureUserPrefs map {
       case Some(userPrefs) => userPrefs.allSchoolTimes.head.userTeachesTheseClasses.head.className
       case None => "<No Class Name>"
     }
@@ -212,12 +214,16 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl,
     for {
       schoolDayTimes <- futureSchoolDayTimes
       className <- futureClassName
+      wwwClassTimetableFuture = classTimetableReaderProxy.
+        readClassTimetable(TimeToTeachUserId(tttUserId), WwwClassName(className))
+      maybeWwwClassTimetable <- wwwClassTimetableFuture
     } yield {
       Ok(views.html.classtimetable(new MyDeadboltHandler(userReader),
         userPictureUri,
         userFirstName,
         userFamilyName,
         schoolDayTimes,
+        maybeWwwClassTimetable,
         className,
         TimeToTeachUserId(tttUserId)
       )(authRequest))

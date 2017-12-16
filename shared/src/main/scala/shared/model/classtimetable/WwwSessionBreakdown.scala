@@ -132,6 +132,7 @@ case class WwwSessionBreakdown(sessionOfTheWeek: WwwSessionOfTheWeek, startTime:
 
   private def canAddSubjectWithinRequestedTimes(proposedTimeSlot: WwwTimeSlot): Boolean = {
     println(s"proposedTimeSlot:- ${proposedTimeSlot.toString}")
+    println(s"subjectsInSession:- ${subjectsInSession.toString}")
     val subjectsWithoutEmpty = subjectsInSession.filterNot(_.subject.value == SUBJECT_EMPTY)
     val emptyTimePeriodsInSession = getEmptyTimePeriodsInGivenSession(subjectsWithoutEmpty)
     println(s"emptyTimePeriodsInSession : ${emptyTimePeriodsInSession.toString()}")

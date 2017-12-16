@@ -33,11 +33,13 @@ trait ClassTimetableConverterHelperFromAvro {
     def buildSessionOfTheWeek(sessionOfTheDay: SessionOfTheDay): WwwSessionOfTheWeek = {
       val dayOfTheWeek = sessionOfTheDay.dayOfTheWeek
 
+
+
       val wwwSession = sessionOfTheDay.sessionName.value match {
-        case "EarlyMorningSession" => WwwSession("early-morning-session")
-        case "LateMorningSession" => WwwSession("late-morning-session")
-        case "AfternoonSession" => WwwSession("afternoon-session")
-        case _ => WwwSession("early-morning-session")
+        case "early-morning-session" => WwwSession("early-morning-session")
+        case "late-morning-session" => WwwSession("late-morning-session")
+        case "afternoon-session" => WwwSession("afternoon-session")
+        case other => throw new RuntimeException(s"Did not expect a wwwSession of '$other'")
       }
       val wwwDayOfTheWeek = dayOfTheWeek match {
         case DayOfTheWeek.MONDAY => WwwDayOfWeek("Monday")

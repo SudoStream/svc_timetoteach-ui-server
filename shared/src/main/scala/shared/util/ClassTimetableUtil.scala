@@ -9,7 +9,8 @@ object ClassTimetableUtil {
 
 
   def createWwwClassTimetableFromJson(wwwClassTimetableAsJson: String): Option[WWWClassTimetable] = {
-    val wwwTimetableDynamic = JSON.parse(wwwClassTimetableAsJson)
+    println(s"createWwwClassTimetableFromJson: ${wwwClassTimetableAsJson.replace("&quot;","\"")}")
+    val wwwTimetableDynamic = JSON.parse(wwwClassTimetableAsJson.replace("&quot;","\""))
 
     val schoolTimesJsArray = wwwTimetableDynamic.schoolTimes.asInstanceOf[js.Array[js.Dynamic]]
     val schoolTimes = convertSchoolTimesJsArrayToMap(schoolTimesJsArray)
@@ -22,14 +23,14 @@ object ClassTimetableUtil {
       sessionInstance <- allSessionsOfTheWeekArray
     ) {
       val sessionsOfTheDay = sessionInstance.sessions.asInstanceOf[js.Array[js.Dynamic]]
-      val wwwSessionsOfTheDay = addSujbectsToTimetable(wWWClassTimetable, sessionsOfTheDay)
+      val wwwSessionsOfTheDay = addSubjectsToTimetable(wWWClassTimetable, sessionsOfTheDay)
     }
 
 
     Some(wWWClassTimetable)
   }
 
-  def convertSchoolTimesJsArrayToMap(schoolTimesJsArray: js.Array[js.Dynamic]): Option[Map[SchoolDayTimeBoundary, String]] = {
+  private def convertSchoolTimesJsArrayToMap(schoolTimesJsArray: js.Array[js.Dynamic]): Option[Map[SchoolDayTimeBoundary, String]] = {
     def loop(sessionBoundary: Dynamic, restSessionBoundaries: List[Dynamic], mapSoFar: Map[SchoolDayTimeBoundary, String]): Option[Map[SchoolDayTimeBoundary, String]] = {
       val boundaryNameString = sessionBoundary.sessionBoundaryName.asInstanceOf[String]
       val boundaryName = SchoolDayTimeBoundary.createSchoolDayTimeBoundaryFromString(boundaryNameString)
@@ -48,13 +49,13 @@ object ClassTimetableUtil {
 
   // private val SessionsOfTheWeek: scala.collection.mutable.Map[WwwSessionOfTheWeek, WwwSessionBreakdown]
 
-  def addSujbectsToTimetable(wWWClassTimetable: WWWClassTimetable, sessionsOfTheDay: js.Array[js.Dynamic]): Unit = {
+  private  def addSubjectsToTimetable(wWWClassTimetable: WWWClassTimetable, sessionsOfTheDay: js.Array[js.Dynamic]): Unit = {
     val sessionsToBreakdown: scala.collection.mutable.Map[WwwSessionOfTheWeek, WwwSessionBreakdown] = scala.collection.mutable.Map()
 
     for (
       sessionOfTheDay <- sessionsOfTheDay
-
     ) {
+      println(s"addSubjectsToTimetable: ${sessionOfTheDay.sessionOfTheWeek.asInstanceOf[String]}")
       val wwwSessionOfTheWeek = WwwSessionOfTheWeek.createSessionOfTheWeek(sessionOfTheDay.sessionOfTheWeek.asInstanceOf[String]).get
 
       val subject = sessionOfTheDay.subject.asInstanceOf[String]

@@ -21,6 +21,7 @@ object ClassTimetableConverterToAvro
   }
 
   def convertAvroClassTimeTableToWww(avroTimetable: ClassTimetable): WWWClassTimetable = {
+    logger.debug(s"convertAvroClassTimeTableToWww: ${avroTimetable.toString}")
     val theSchoolTimes: Option[Map[SchoolDayTimeBoundary, String]] = createSchoolTimes(avroTimetable.schoolTimes)
     val theAllSessionsOfTheWeek: Map[WwwDayOfWeek, List[WwwSessionBreakdown]] = createAllSessionsOfTheWeek(avroTimetable.allSessionsOfTheWeek)
 

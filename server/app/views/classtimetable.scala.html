@@ -1,24 +1,12 @@
 @import be.objectify.deadbolt.scala.AuthenticatedRequest
 @import models.timetoteach.classtimetable.SchoolDayTimes
+@import shared.model.classtimetable._
 @import controllers.serviceproxies.TimeToTeachUserId
-@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], schoolDayTimes: SchoolDayTimes, className: String,tttUserId: TimeToTeachUserId)(implicit request: AuthenticatedRequest[Any])
+@import shared.model.classtimetable.WWWClassTimetable
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], schoolDayTimes: SchoolDayTimes, savedWwwClassTimetable: Option[WWWClassTimetable], className: String, tttUserId: TimeToTeachUserId)(implicit request: AuthenticatedRequest[Any])
 
 @timetoteachAppMain(handler, s"Class Timetable - $className ",
     userPictureUri, userFirstName, userFamilyName) {
-
-    <div class="container">
-        <div id="class-timetable-subject-warning" class="alert alert-warning alert-dismissible fade show" role="alert" >
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-
-            Note: The 'save' button has not been implemented yet. The rest of the screen does work, so feel free to play around.
-            It just means that next time you log in the screen will start with an empty timetable.
-            <br>
-            <br>
-            Click on the little Owl button for help.
-        </div>
-    </div>
 
     <aside id="class-timetable-subject-aside">
         <div class="container text-center class-timetable-subject-nav-background justify-content-center">
@@ -184,33 +172,81 @@
                 <div class="col-sm-1"></div>
                 <div class="col-sm-3">
                     <div class="row">
-                        <div id="timetable-time-school-starts" class="col-sm-1 timetable-time">@schoolDayTimes.schoolDayStarts.toString</div>
+                        <div id="timetable-time-school-starts" class="col-sm-1 timetable-time">
+                        @{
+                            if(savedWwwClassTimetable.isDefined) {
+                                savedWwwClassTimetable.get.schoolDayTimes.getOrElse(SchoolDayStarts(), "09:00")
+                            } else {
+                                schoolDayTimes.schoolDayStarts.toString
+                            }
+                        }
+                        </div>
                         <div class="col-sm-11"></div>
                     </div>
                 </div>
                 <div class="col-sm-1">
                     <div class="row">
-                        <div id="timetable-time-morning-break-starts" class="col-sm-1 timetable-time">@schoolDayTimes.morningBreakStarts.toString</div>
+                        <div id="timetable-time-morning-break-starts" class="col-sm-1 timetable-time">
+                        @{
+                            if(savedWwwClassTimetable.isDefined) {
+                                savedWwwClassTimetable.get.schoolDayTimes.getOrElse(MorningBreakStarts(), "10:30")
+                            } else {
+                                schoolDayTimes.morningBreakStarts.toString
+                            }
+                        }
+                        </div>
                         <div class="col-sm-11"></div>
                     </div>
                 </div>
                 <div class="col-sm-3">
                     <div class="row">
-                        <div id="timetable-time-morning-break-ends" class="col-sm-1 timetable-time">@schoolDayTimes.morningBreakEnds.toString</div>
+                        <div id="timetable-time-morning-break-ends" class="col-sm-1 timetable-time">
+                        @{
+                            if(savedWwwClassTimetable.isDefined) {
+                                savedWwwClassTimetable.get.schoolDayTimes.getOrElse(MorningBreakEnds(), "10:30")
+                            } else {
+                                schoolDayTimes.morningBreakEnds.toString
+                            }
+                        }
+                        </div>
                         <div class="col-sm-11"></div>
                     </div>
                 </div>
                 <div class="col-sm-1">
                     <div class="row">
-                        <div id="timetable-time-lunch-starts" class="col-sm-1 timetable-time">@schoolDayTimes.lunchStarts.toString</div>
+                        <div id="timetable-time-lunch-starts" class="col-sm-1 timetable-time">
+                        @{
+                            if(savedWwwClassTimetable.isDefined) {
+                                savedWwwClassTimetable.get.schoolDayTimes.getOrElse(LunchStarts(), "10:30")
+                            } else {
+                                schoolDayTimes.lunchStarts.toString
+                            }
+                        }
+                        </div>
                         <div class="col-sm-11"></div>
                     </div>
                 </div>
                 <div class="col-sm-3">
                     <div class="row">
-                        <div id="timetable-time-lunch-ends" class="col-sm-1 timetable-time">@schoolDayTimes.lunchEnds.toString</div>
+                        <div id="timetable-time-lunch-ends" class="col-sm-1 timetable-time">
+                        @{
+                            if(savedWwwClassTimetable.isDefined) {
+                                savedWwwClassTimetable.get.schoolDayTimes.getOrElse(LunchEnds(), "10:30")
+                            } else {
+                                schoolDayTimes.lunchEnds.toString
+                            }
+                        }
+                        </div>
                         <div class="col-sm-10"></div>
-                        <div id="timetable-time-school-ends" class="col-sm-1 timetable-time">@schoolDayTimes.schoolDayEnds.toString</div>
+                        <div id="timetable-time-school-ends" class="col-sm-1 timetable-time">
+                        @{
+                            if(savedWwwClassTimetable.isDefined) {
+                                savedWwwClassTimetable.get.schoolDayTimes.getOrElse(SchoolDayEnds(), "10:30")
+                            } else {
+                                schoolDayTimes.schoolDayEnds.toString
+                            }
+                        }
+                        </div>
                     </div>
                 </div>
             </div>
@@ -360,9 +396,7 @@
                 <button id="cancel-class-timetable-button" type="button" class="btn btn-lg btn-secondary">
                     <a href="/app">Cancel</a>
                 </button>
-                <button id="save-class-timetable-button" type="button" class="btn btn-lg btn-primary" data-placement="top"
-                data-toggle="popover" title="Save Button Inactive"
-                data-content="Saving of the class timetable is coming soon! For now the page is in demo status">Save</button>
+                <button id="save-class-timetable-button" type="button" class="btn btn-lg btn-primary">Save</button>
             </div>
         </div>
 
@@ -448,15 +482,22 @@
 
 
     <script>
-        localStorage.setItem("schoolDayStarts", "@{schoolDayTimes.schoolDayStarts.toString}");
-        localStorage.setItem("morningBreakStarts", "@{schoolDayTimes.morningBreakStarts.toString}");
-        localStorage.setItem("morningBreakEnds", "@{schoolDayTimes.morningBreakEnds.toString}");
-        localStorage.setItem("lunchStarts", "@{schoolDayTimes.lunchStarts.toString}");
-        localStorage.setItem("lunchEnds", "@{schoolDayTimes.lunchEnds.toString}");
-        localStorage.setItem("schoolDayEnds", "@{schoolDayTimes.schoolDayEnds.toString}");
+            localStorage.setItem("wwwClassTimetableAsJson", "@{if(savedWwwClassTimetable.isDefined) {
+                    savedWwwClassTimetable.get.toString
+            } else {
+                    "None"
+            }
+            }");
 
-        localStorage.setItem("timetableClassName", "@{className}");
-        localStorage.setItem("timeToTeachUserId", "@{tttUserId.value}");
+            localStorage.setItem("schoolDayStarts", "@{schoolDayTimes.schoolDayStarts.toString}");
+            localStorage.setItem("morningBreakStarts", "@{schoolDayTimes.morningBreakStarts.toString}");
+            localStorage.setItem("morningBreakEnds", "@{schoolDayTimes.morningBreakEnds.toString}");
+            localStorage.setItem("lunchStarts", "@{schoolDayTimes.lunchStarts.toString}");
+            localStorage.setItem("lunchEnds", "@{schoolDayTimes.lunchEnds.toString}");
+            localStorage.setItem("schoolDayEnds", "@{schoolDayTimes.schoolDayEnds.toString}");
+
+            localStorage.setItem("timetableClassName", "@{className}");
+            localStorage.setItem("timeToTeachUserId", "@{tttUserId.value}");
     </script>
 
     <script type="text/javascript">

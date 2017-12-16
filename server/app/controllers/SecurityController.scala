@@ -48,6 +48,8 @@ class SecurityController @Inject()(ws: WSClient,
   private val userServicePort = config.getString("services.user-service-port")
   private val timeToTeachFacebookId = config.getString("login.details.facebook.timetoteach-facebook-id")
   private val timeToTeachFacebookSecret = config.getString("login.details.facebook.timetoteach-facebook-secret")
+  private val minikubeRun : Boolean =  sys.props.getOrElse("minikubeEnv","false").toBoolean
+  val protocol: String = if (userServicePort.toInt > 9000 && !minikubeRun ) "http" else "https"
 
   val logger = Logger
 
@@ -151,7 +153,6 @@ class SecurityController @Inject()(ws: WSClient,
     val payload: Payload = idToken.getPayload
     printDebugInfo(payload)
 
-    val protocol = if (userServicePort.toInt > 9000) "http" else "https"
     val userServiceUri =
       Uri(s"$protocol://$userServiceHostname:$userServicePort/api/user?" +
         s"socialNetworkName=GOOGLE&socialNetworkUserId=${payload.getSubject}")
@@ -250,7 +251,6 @@ class SecurityController @Inject()(ws: WSClient,
     if (resp.status.isSuccess()) {
       logger.info(s"Success status for request.")
 
-      val protocol = if (userServicePort.toInt > 9000) "http" else "https"
       val userServiceUri =
         Uri(s"$protocol://$userServiceHostname:$userServicePort/api/user?" +
           s"socialNetworkName=FACEBOOK&socialNetworkUserId=${facebookUser.userFacebookId}")

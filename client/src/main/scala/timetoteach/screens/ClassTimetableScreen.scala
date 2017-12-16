@@ -7,13 +7,15 @@ import org.scalajs.dom.Event
 import org.scalajs.dom.ext.Ajax.InputData
 import org.scalajs.dom.raw._
 import shared.model.classtimetable._
-import shared.util.LocalTimeUtil
+import shared.util.{ClassTimetableUtil, LocalTimeUtil}
 
 import scala.scalajs.js
 import scala.scalajs.js.Dynamic.global
 import scala.util.{Failure, Success}
 
 object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
+
+  val saveClassTimetableAsJson = dom.window.localStorage.getItem("wwwClassTimetableAsJson")
 
   val schoolDayStarts = dom.window.localStorage.getItem("schoolDayStarts")
   val morningBreakStarts = dom.window.localStorage.getItem("morningBreakStarts")
@@ -40,8 +42,15 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
     None
   }
 
+  var classTimetable: WWWClassTimetable = if (saveClassTimetableAsJson.isEmpty || saveClassTimetableAsJson.toLowerCase == "none") {
+    WWWClassTimetable(maybeSchoolTimetableTimes)
+  } else {
+    ClassTimetableUtil.createWwwClassTimetableFromJson(saveClassTimetableAsJson).getOrElse(
+      WWWClassTimetable(maybeSchoolTimetableTimes))
+  }
 
-  var classTimetable: WWWClassTimetable = WWWClassTimetable(maybeSchoolTimetableTimes)
+  renderClassTimetable()
+
   override def getClassTimetable: WWWClassTimetable = classTimetable
 
   var currentlySelectedSession: Option[WwwSession] = None

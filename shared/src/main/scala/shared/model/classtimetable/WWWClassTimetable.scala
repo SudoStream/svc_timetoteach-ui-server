@@ -5,16 +5,15 @@ case class WWWClassTimetable(private val schoolDayTimesOption: Option[Map[School
 
   override def toString: String = {
 
-    s"""
-       |{
-       |  "schoolTimes" : [
+    s"""|{
+       |  \"schoolTimes\" : [
        |     ${getSchoolDayTimesAsJson()}
        |  ],
-       |  "allSessionsOfTheWeek" : [
+       |  \"allSessionsOfTheWeek\" : [
        |     ${allSessionsOfTheWeekAsJson()}
        |  ]
        |}
-    """.stripMargin
+    """.stripMargin.replace("\n","")
   }
 
   lazy val schoolDayTimes: Map[SchoolDayTimeBoundary, String] = createSchoolDayTimes(schoolDayTimesOption)
