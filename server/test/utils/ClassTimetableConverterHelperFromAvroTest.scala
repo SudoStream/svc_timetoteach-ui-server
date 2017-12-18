@@ -108,7 +108,7 @@ class ClassTimetableConverterHelperFromAvroTest extends Specification {
 
   def createSessionOfTheDayWrapperList(): List[SessionOfTheDayWrapper] = {
     SessionOfTheDayWrapper(SessionOfTheDay(
-      SessionName("EarlyMorningSession"),
+      SessionName("early-morning-session"),
       DayOfTheWeek.MONDAY,
       StartTime("09:00"),
       EndTime("10:30"),
@@ -126,7 +126,7 @@ class ClassTimetableConverterHelperFromAvroTest extends Specification {
         ))
       )
     )) :: SessionOfTheDayWrapper(SessionOfTheDay(
-      SessionName("LateMorningSession"),
+      SessionName("late-morning-session"),
       DayOfTheWeek.MONDAY,
       StartTime("10:45"),
       EndTime("12:00"),
@@ -137,7 +137,7 @@ class ClassTimetableConverterHelperFromAvroTest extends Specification {
         SubjectDetailAdditionalInfo("")
       )))
     )) :: SessionOfTheDayWrapper(SessionOfTheDay(
-      SessionName("AfternoonSession"),
+      SessionName("afternoon-session"),
       DayOfTheWeek.MONDAY,
       StartTime("13:00"),
       EndTime("15:00"),
@@ -148,7 +148,7 @@ class ClassTimetableConverterHelperFromAvroTest extends Specification {
         SubjectDetailAdditionalInfo("")
       )))
     )) :: SessionOfTheDayWrapper(SessionOfTheDay(
-      SessionName("EarlyMorningSession"),
+      SessionName("early-morning-session"),
       DayOfTheWeek.TUESDAY,
       StartTime("09:00"),
       EndTime("10:45"),
@@ -159,7 +159,7 @@ class ClassTimetableConverterHelperFromAvroTest extends Specification {
         SubjectDetailAdditionalInfo("")
       )))
     )) :: SessionOfTheDayWrapper(SessionOfTheDay(
-      SessionName("LateMorningSession"),
+      SessionName("late-morning-session"),
       DayOfTheWeek.TUESDAY,
       StartTime("10:45"),
       EndTime("12:00"),
@@ -170,7 +170,7 @@ class ClassTimetableConverterHelperFromAvroTest extends Specification {
         SubjectDetailAdditionalInfo("")
       )))
     )) :: SessionOfTheDayWrapper(SessionOfTheDay(
-      SessionName("AfternoonSession"),
+      SessionName("afternoon-session"),
       DayOfTheWeek.TUESDAY,
       StartTime("13:00"),
       EndTime("15:00"),
@@ -181,7 +181,7 @@ class ClassTimetableConverterHelperFromAvroTest extends Specification {
         SubjectDetailAdditionalInfo("")
       )))
     )) :: SessionOfTheDayWrapper(SessionOfTheDay(
-      SessionName("EarlyMorningSession"),
+      SessionName("early-morning-session"),
       DayOfTheWeek.WEDNESDAY,
       StartTime("09:00"),
       EndTime("10:45"),
@@ -192,7 +192,7 @@ class ClassTimetableConverterHelperFromAvroTest extends Specification {
         SubjectDetailAdditionalInfo("")
       )))
     )) :: SessionOfTheDayWrapper(SessionOfTheDay(
-      SessionName("LateMorningSession"),
+      SessionName("late-morning-session"),
       DayOfTheWeek.WEDNESDAY,
       StartTime("10:45"),
       EndTime("12:00"),
@@ -203,7 +203,7 @@ class ClassTimetableConverterHelperFromAvroTest extends Specification {
         SubjectDetailAdditionalInfo("")
       )))
     )) :: SessionOfTheDayWrapper(SessionOfTheDay(
-      SessionName("AfternoonSession"),
+      SessionName("afternoon-session"),
       DayOfTheWeek.WEDNESDAY,
       StartTime("13:00"),
       EndTime("15:00"),
@@ -214,7 +214,7 @@ class ClassTimetableConverterHelperFromAvroTest extends Specification {
         SubjectDetailAdditionalInfo("")
       )))
     )) :: SessionOfTheDayWrapper(SessionOfTheDay(
-      SessionName("EarlyMorningSession"),
+      SessionName("early-morning-session"),
       DayOfTheWeek.THURSDAY,
       StartTime("09:00"),
       EndTime("10:45"),
@@ -225,7 +225,7 @@ class ClassTimetableConverterHelperFromAvroTest extends Specification {
         SubjectDetailAdditionalInfo("")
       )))
     )) :: SessionOfTheDayWrapper(SessionOfTheDay(
-      SessionName("LateMorningSession"),
+      SessionName("late-morning-session"),
       DayOfTheWeek.THURSDAY,
       StartTime("10:45"),
       EndTime("12:00"),
@@ -236,7 +236,7 @@ class ClassTimetableConverterHelperFromAvroTest extends Specification {
         SubjectDetailAdditionalInfo("")
       )))
     )) :: SessionOfTheDayWrapper(SessionOfTheDay(
-      SessionName("AfternoonSession"),
+      SessionName("afternoon-session"),
       DayOfTheWeek.THURSDAY,
       StartTime("13:00"),
       EndTime("15:00"),
@@ -247,7 +247,7 @@ class ClassTimetableConverterHelperFromAvroTest extends Specification {
         SubjectDetailAdditionalInfo("")
       )))
     )) :: SessionOfTheDayWrapper(SessionOfTheDay(
-      SessionName("EarlyMorningSession"),
+      SessionName("early-morning-session"),
       DayOfTheWeek.FRIDAY,
       StartTime("09:00"),
       EndTime("10:45"),
@@ -258,7 +258,7 @@ class ClassTimetableConverterHelperFromAvroTest extends Specification {
         SubjectDetailAdditionalInfo("")
       )))
     )) :: SessionOfTheDayWrapper(SessionOfTheDay(
-      SessionName("LateMorningSession"),
+      SessionName("late-morning-session"),
       DayOfTheWeek.FRIDAY,
       StartTime("10:45"),
       EndTime("12:00"),
@@ -269,7 +269,7 @@ class ClassTimetableConverterHelperFromAvroTest extends Specification {
         SubjectDetailAdditionalInfo("")
       )))
     )) :: SessionOfTheDayWrapper(SessionOfTheDay(
-      SessionName("AfternoonSession"),
+      SessionName("afternoon-session"),
       DayOfTheWeek.FRIDAY,
       StartTime("13:00"),
       EndTime("15:00"),

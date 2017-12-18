@@ -31,9 +31,8 @@ trait ClassTimetableConverterHelperFromAvro {
 
   def createAllSessionsOfTheWeek(allSessionsOfTheWeek: List[SessionOfTheDayWrapper]): Map[WwwDayOfWeek, List[WwwSessionBreakdown]] = {
     def buildSessionOfTheWeek(sessionOfTheDay: SessionOfTheDay): WwwSessionOfTheWeek = {
+
       val dayOfTheWeek = sessionOfTheDay.dayOfTheWeek
-
-
 
       val wwwSession = sessionOfTheDay.sessionName.value match {
         case "early-morning-session" => WwwSession("early-morning-session")
