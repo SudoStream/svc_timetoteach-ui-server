@@ -94,7 +94,11 @@ class UserSignupController @Inject()(deadbolt: DeadboltActions,
 
     val successFunction = { data: UserData =>
       if ( data.schoolId == null || data.schoolId.isEmpty ) {
-        errorFunction
+        for {
+          schools <- schoolsFuture
+        } yield {
+          BadRequest(views.html.signupNew(defaultValuesFromCookies, postUrl, userPictureUri, userFirstName, schools))
+        }
       }
       val cookies = request.cookies
 
