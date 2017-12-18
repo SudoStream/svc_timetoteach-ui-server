@@ -5,6 +5,7 @@ import javax.inject.Inject
 import be.objectify.deadbolt.scala.cache.HandlerCache
 import be.objectify.deadbolt.scala.{ActionBuilders, DeadboltActions}
 import controllers.UserSignupController.UserData
+import controllers.email.SignupEmailService
 import controllers.serviceproxies.{SchoolReaderServiceProxyImpl, UserReaderServiceProxyImpl, UserWriterServiceProxyImpl}
 import models.timetoteach._
 import play.api.Logger
@@ -45,7 +46,8 @@ class UserSignupController @Inject()(deadbolt: DeadboltActions,
                                      cc: MessagesControllerComponents,
                                      userWriterServiceProxy: UserWriterServiceProxyImpl,
                                      schoolsProxy: SchoolReaderServiceProxyImpl,
-                                     userReader: UserReaderServiceProxyImpl
+                                     userReader: UserReaderServiceProxyImpl,
+                                     signupEmailService : SignupEmailService
                                     ) extends MessagesAbstractController(cc) {
 
   val logger: Logger = Logger
@@ -121,6 +123,8 @@ class UserSignupController @Inject()(deadbolt: DeadboltActions,
       logger.debug(s"Creating a new user with values : ${theUser.toString}")
 
       val timeToTeachUserIdFuture = userWriterServiceProxy.createNewUser(theUser)
+
+      signupEmailService.sendEmail(theUser)
 
       for {
         timeToTeachUserId <- timeToTeachUserIdFuture
