@@ -93,6 +93,9 @@ class UserSignupController @Inject()(deadbolt: DeadboltActions,
     }
 
     val successFunction = { data: UserData =>
+      if ( data.schoolId == null || data.schoolId.isEmpty ) {
+        errorFunction
+      }
       val cookies = request.cookies
 
       val theUserPictureUri = cookies.get(CookieNames.socialNetworkPicture) match {
