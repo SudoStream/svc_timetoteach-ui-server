@@ -47,7 +47,7 @@ class UserSignupController @Inject()(deadbolt: DeadboltActions,
                                      userWriterServiceProxy: UserWriterServiceProxyImpl,
                                      schoolsProxy: SchoolReaderServiceProxyImpl,
                                      userReader: UserReaderServiceProxyImpl,
-                                     signupEmailService : SignupEmailService
+                                     signupEmailService: SignupEmailService
                                     ) extends MessagesAbstractController(cc) {
 
   val logger: Logger = Logger
@@ -94,54 +94,55 @@ class UserSignupController @Inject()(deadbolt: DeadboltActions,
 
     val successFunction = { data: UserData =>
       logger.info(s"School info is as follows : '${data.schoolId}'")
-      if ( data.schoolId == null || data.schoolId.isEmpty ) {
+      if (data.schoolId == null || data.schoolId.isEmpty) {
         for {
           schools <- schoolsFuture
         } yield {
           BadRequest(views.html.signupNew(defaultValuesFromCookies, postUrl, userPictureUri, userFirstName, schools))
         }
-      }
-      val cookies = request.cookies
+      } else {
+        val cookies = request.cookies
 
-      val theUserPictureUri = cookies.get(CookieNames.socialNetworkPicture) match {
-        case Some(pictureCookie) => pictureCookie.value
-        case None => ""
-      }
+        val theUserPictureUri = cookies.get(CookieNames.socialNetworkPicture) match {
+          case Some(pictureCookie) => pictureCookie.value
+          case None => ""
+        }
 
-      val theSocialNetwork = cookies.get(CookieNames.socialNetworkName) match {
-        case Some(socialNetworkCookie) => socialNetworkCookie.value
-        case None => ""
-      }
+        val theSocialNetwork = cookies.get(CookieNames.socialNetworkName) match {
+          case Some(socialNetworkCookie) => socialNetworkCookie.value
+          case None => ""
+        }
 
-      val theSocialNetworkUserId = cookies.get(CookieNames.socialNetworkUserId) match {
-        case Some(socialUserIdCookie) => socialUserIdCookie.value
-        case None => ""
-      }
+        val theSocialNetworkUserId = cookies.get(CookieNames.socialNetworkUserId) match {
+          case Some(socialUserIdCookie) => socialUserIdCookie.value
+          case None => ""
+        }
 
-      val theUser = TimeToTeachUser(
-        firstName = data.firstName,
-        familyName = data.familyName,
-        emailAddress = data.emailAddress,
-        picture = theUserPictureUri,
-        socialNetworkName = theSocialNetwork,
-        socialNetworkUserId = theSocialNetworkUserId,
-        schoolId = data.schoolId
-      )
+        val theUser = TimeToTeachUser(
+          firstName = data.firstName,
+          familyName = data.familyName,
+          emailAddress = data.emailAddress,
+          picture = theUserPictureUri,
+          socialNetworkName = theSocialNetwork,
+          socialNetworkUserId = theSocialNetworkUserId,
+          schoolId = data.schoolId
+        )
 
-      logger.debug(s"Creating a new user with values : ${theUser.toString}")
+        logger.debug(s"Creating a new user with values : ${theUser.toString}")
 
-      val timeToTeachUserIdFuture = userWriterServiceProxy.createNewUser(theUser)
+        val timeToTeachUserIdFuture = userWriterServiceProxy.createNewUser(theUser)
 
-      signupEmailService.sendEmail(theUser)
+        signupEmailService.sendEmail(theUser)
 
-      for {
-        timeToTeachUserId <- timeToTeachUserIdFuture
-      } yield {
-        logger.debug(s"Time To Teach Id = '${timeToTeachUserId.value.toString}'")
-        Redirect(routes.UserSignupController.signedUpCongrats())
-          .withCookies(
-            Cookie(CookieNames.timetoteachId, timeToTeachUserId.value))
-          .bakeCookies()
+        for {
+          timeToTeachUserId <- timeToTeachUserIdFuture
+        } yield {
+          logger.debug(s"Time To Teach Id = '${timeToTeachUserId.value.toString}'")
+          Redirect(routes.UserSignupController.signedUpCongrats())
+            .withCookies(
+              Cookie(CookieNames.timetoteachId, timeToTeachUserId.value))
+            .bakeCookies()
+        }
       }
     }
 
