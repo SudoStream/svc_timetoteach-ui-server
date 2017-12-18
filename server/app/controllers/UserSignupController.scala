@@ -93,6 +93,7 @@ class UserSignupController @Inject()(deadbolt: DeadboltActions,
     }
 
     val successFunction = { data: UserData =>
+      logger.info(s"School info is as follows : '${data.schoolId}'")
       if ( data.schoolId == null || data.schoolId.isEmpty ) {
         for {
           schools <- schoolsFuture
