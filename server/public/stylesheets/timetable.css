@@ -61,6 +61,7 @@
     height: 5rem;
     border-style: groove;
     border-color: lightgrey;
+    font-size: smaller;
 }
 
 .teacher-cover {

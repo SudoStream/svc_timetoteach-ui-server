@@ -42,6 +42,6 @@ case class WwwSubjectName(value: String) {
       case otherValue: String => otherValue
     }
 
-    translatedValue.replace("subject-","").replace("-"," ").capitalize
+    translatedValue.replace("subject-","").replace("-"," ").split(" ").map(word => word.capitalize).mkString(" ")
   }
 }

@@ -292,8 +292,8 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
             subjectSelected <- currentlySelectedSubject
             sessionSelected <- currentlySelectedSession
             dayOfWeekSelected <- currentlySelectedDayOfWeek
-            subjectNice = subjectSelected.value.replace("subject-", "").replaceAll("-", " ").split(' ').map(_.capitalize).mkString(" ")
-            sessionNice = sessionSelected.value.replaceAll("-", " ").split(' ').map(_.capitalize).mkString(" ")
+            subjectNice = subjectSelected.value.replace("subject-", "").replaceAll("-", " ").split(' ').map(word => word.capitalize).mkString(" ")
+            sessionNice = sessionSelected.value.replaceAll("-", " ").split(' ').map(word => word.capitalize).mkString(" ")
           } yield {
             (subjectNice, sessionNice, dayOfWeekSelected.value)
           }
