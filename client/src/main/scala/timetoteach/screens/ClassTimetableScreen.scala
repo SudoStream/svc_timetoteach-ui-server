@@ -549,7 +549,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
     subjectDiv.style.textShadow = ""
     subjectDiv.style.color = originalColour
     subjectDiv.style.fontWeight = "normal"
-    subjectDiv.style.fontSize = "medium"
+    subjectDiv.style.fontSize = "smaller"
   }
   private def selectThisElement(subjectDiv: HTMLDivElement, justSelectedSubject: WwwSubjectName): Unit = {
 
