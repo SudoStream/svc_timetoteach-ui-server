@@ -48,7 +48,6 @@ h6 {
 
 #submit-lesson-duration {
     margin-top: 0.75rem;
-    /*float: right;*/
 }
 
 #dashboardContent {
@@ -411,17 +410,33 @@ img {
 }
 
 .non-empty-subject .lesson-start-time {
+    position: absolute;
+    top: 0;
+    left: 0;
+
     font-size: xx-small;
-    float: left;
     line-height: 5px;
-    color: #393969;
+    color: darkblue;
+    background: white;
+    padding: 2px;
+    border: 1px solid lightgrey;
+    border-radius: 15%;
+    text-shadow: 0 0;
 }
 
 .non-empty-subject .lesson-end-time {
+    position: absolute;
+    top: 0;
+    right: 0;
+
     font-size: xx-small;
-    float: right;
     line-height: 5px;
-    color: #393969;
+    color: darkblue;
+    background: white;
+    padding: 2px;
+    border: 1px solid lightgrey;
+    border-radius: 15%;
+    text-shadow: 0 0;
 }
 
 .subject-main-header {
@@ -429,12 +444,19 @@ img {
 }
 
 .subject-additional-info {
-    color: #0a0a0a;
-    background-color: lightgoldenrodyellow;
+    font-weight: normal;
+    text-shadow: 0 0;
+    color: black;
+    background-color: #e3e3ff;
     line-height: 1rem;
     font-size: smaller;
-    margin-bottom: 4px;
     width: 90%;
+
+    margin: auto;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 2px;
 }
 
 .small-close {
