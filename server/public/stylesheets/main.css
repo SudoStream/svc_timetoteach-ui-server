@@ -416,10 +416,10 @@ img {
 
     font-size: xx-small;
     line-height: 5px;
-    color: darkblue;
-    background: white;
+    color: darkslateblue;
+    background: ghostwhite;
     padding: 2px;
-    border: 1px solid lightgrey;
+    border: 1px solid darkslateblue;
     border-radius: 15%;
     text-shadow: 0 0;
 }
@@ -431,10 +431,10 @@ img {
 
     font-size: xx-small;
     line-height: 5px;
-    color: darkblue;
-    background: white;
+    color: darkslateblue;
+    background: ghostwhite;
     padding: 2px;
-    border: 1px solid lightgrey;
+    border: 1px solid darkslateblue;
     border-radius: 15%;
     text-shadow: 0 0;
 }
@@ -447,7 +447,7 @@ img {
     font-weight: normal;
     text-shadow: 0 0;
     color: black;
-    background-color: #e3e3ff;
+    background-color: #e3e3df;
     line-height: 1rem;
     font-size: smaller;
     width: 90%;

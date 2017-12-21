@@ -3,44 +3,38 @@
 /* ================= */
 
 .subject-numeracy {
-    background-color: rgba(69, 170, 250, 0.5);
-    color: white;
-    text-shadow: 1px 1px darkgrey;
+    background-color: rgba(69, 170, 250, 0.4);
+    color: black;
     font-weight: bold;
 }
 
 .subject-ict {
     background-color: rgba(104, 255, 250, 0.65);
-    color: white;
-    text-shadow: 1px 1px darkgrey;
+    color: black;
     font-weight: bold;
 }
 
 .subject-writing {
     background-color: rgba(20, 171, 20, 0.5);
     color: black;
-    text-shadow: 1px 1px #e3e3e3;
     font-weight: bold;
 }
 
 .subject-spelling {
     background-color: rgba(138, 227, 3, 0.5);
     color: black;
-    text-shadow: 1px 1px #e3e3e3;
     font-weight: bold;
 }
 
 .subject-reading {
     background-color: rgba(47, 233, 162, 0.5);
     color: black;
-    text-shadow: 1px 1px #e3e3e3;
     font-weight: bold;
 }
 
 .subject-music {
     background-color: rgba(233, 225, 8, 0.5);
     color: black;
-    text-shadow: 1px 1px #e3e3e3;
     font-weight: bold;
 }
 
@@ -48,127 +42,108 @@
     background-color: rgba(211, 211, 211, 0.5);
     font-weight: lighter;
     color: grey;
-    text-shadow: 1px 1px #e3e3e3;
 }
 
 .subject-rme {
     background-color: rgba(255, 81, 0, 0.76);
     color: black;
-    text-shadow: 1px 1px #e3e3e3;
     font-weight: bold;
 }
 
 .subject-teacher-covertime {
     background-color: rgba(171, 165, 188, 0.9);
     color: black;
-    text-shadow: 1px 1px #e3e3e3;
     font-weight: bold;
 }
 
 .subject-health {
-    background-color: rgb(255, 2, 3);
+    background-color: rgba(255, 2, 3,0.8);
     color: black;
-    text-shadow: 1px 1px #e3e3e3;
     font-weight: bold;
 }
 
 .subject-golden-time {
     background-color: rgba(255, 127, 41, 0.5);
     color: black;
-    text-shadow: 1px 1px #e3e3e3;
     font-weight: bold;
 }
 
 .subject-physical-education {
-    background-color: rgba(255, 0, 0, 0.65);
+    background-color: rgba(255, 0, 0, 0.45);
     color: black;
-    text-shadow: 1px 1px #e3e3e3;
     font-weight: bold;
 }
 
 .subject-drama {
     background-color: rgba(203, 148, 0, 0.69);
     color: black;
-    text-shadow: 1px 1px #e3e3e3;
     font-weight: bold;
 }
 
 .subject-other {
     background-color: rgba(233, 233, 233, 1);
     color: black;
-    text-shadow: 1px 1px #e3e3e3;
     font-weight: bold;
 }
 
 .subject-soft-start {
     background-color: rgba(185, 210, 173, 0.2);
     color: black;
-    text-shadow: 1px 1px #e3e3e3;
     font-weight: bold;
 }
 
 .subject-assembly {
     background-color: rgb(81, 93, 102);
     color: white;
-    text-shadow: 1px 1px darkgrey;
     font-weight: bold;
 }
 
 .subject-art {
     background-color: rgba(254, 255, 166, 0.65);
     color: black;
-    text-shadow: 1px 1px #e3e3e3;
     font-weight: bold;
 }
 
 .subject-topic {
-    background-color: rgb(86, 5, 255);
-    color: white;
-    text-shadow: 1px 1px darkgrey;
+    background-color: rgba(99, 5, 205, 0.55);
+    color: black;
     font-weight: bold;
 }
 
 .subject-hand-writing {
     background-color: rgb(112, 255, 154);
     color: black;
-    text-shadow: 1px 1px #e3e3e3;
     font-weight: bold;
 }
 
 .subject-play {
     background-color: rgb(255, 233, 27);
     color: black;
-    text-shadow: 1px 1px #e3e3e3;
     font-weight: bold;
 }
 .subject-maths {
     background-color: rgb(32, 211, 255);
-    color: white;
-    text-shadow: 1px 1px darkgrey;
+    color: black;
     font-weight: bold;
 }
 .subject-science {
-    background-color: rgb(57, 157, 250);
-    color: white;
-    text-shadow: 1px 1px darkgrey;
+    background-color: rgba(57, 157, 250,0.8);
+    color: black;
     font-weight: bold;
 }
 .subject-modern-languages {
-    background-color: rgb(145, 89, 255);
-    color: white;
-    text-shadow: 1px 1px darkgrey;
+    background-color: rgba(145, 89, 255, 0.5);
+    color: black;
     font-weight: bold;
 }
 .subject-geography {
-    background-color: rgba(237, 72, 167, 0.81);
-    color: white;
-    text-shadow: 1px 1px darkgrey;
+    background-color: rgba(237, 72, 167, 0.71);
+    color: black;
     font-weight: bold;
 }
 .subject-history {
     background-color: rgba(242, 84, 255, 0.5);
-    color: white;
-    text-shadow: 1px 1px darkgrey;
+    color: black;
     font-weight: bold;
 }
 
