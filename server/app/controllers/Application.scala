@@ -74,6 +74,10 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl,
     Ok
   }
 
+  def privacy = Action {
+    Ok(views.html.privacy())
+  }
+
   def loggedOutSuccessfully = Action {
     Ok(views.html.loggedOutSuccessfully(showFrontPageSections))
   }
