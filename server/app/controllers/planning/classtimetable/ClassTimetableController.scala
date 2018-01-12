@@ -7,7 +7,7 @@ import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
 import be.objectify.deadbolt.scala.cache.HandlerCache
-import be.objectify.deadbolt.scala.{ActionBuilders, DeadboltActions}
+import be.objectify.deadbolt.scala.{ActionBuilders, AuthenticatedRequest, DeadboltActions}
 import com.typesafe.config.ConfigFactory
 import controllers.serviceproxies.{ClassTimetableReaderServiceProxyImpl, ClassTimetableWriterServiceProxyImpl, TimeToTeachUserId, UserReaderServiceProxyImpl}
 import io.sudostream.timetoteach.messages.systemwide.model.UserPreferences
@@ -32,12 +32,12 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
                                          cc: ControllerComponents,
                                          deadbolt: DeadboltActions,
                                          handlers: HandlerCache,
-                                         actionBuilder: ActionBuilders) extends  AbstractController(cc) {
+                                         actionBuilder: ActionBuilders) extends AbstractController(cc) {
 
   implicit val system: ActorSystem = ActorSystem()
   implicit val executor: ExecutionContextExecutor = system.dispatcher
   implicit val materializer: ActorMaterializer = ActorMaterializer()
-  implicit val timeout: Timeout = Timeout(5 seconds)
+  implicit val timeout: Timeout = Timeout(5.seconds)
   private val config = ConfigFactory.load()
   private val userServiceHostname = config.getString("services.user-service-host")
   private val userServicePort = config.getString("services.user-service-port")
@@ -84,13 +84,8 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
   }
 
 
-  //
-
-  def classTimetable = deadbolt.SubjectPresent()() { authRequest =>
-    val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
-    val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
-    val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
-    val tttUserId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO ID")
+  def classTimetable : Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest =>
+    val (userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: String) = extractCommonHeaders(authRequest)
 
     val futureUserPrefs: Future[Option[UserPreferences]] = userReader.getUserPreferences(TimeToTeachUserId(tttUserId))
 
@@ -139,6 +134,27 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
     }
   }
 
+  private def extractCommonHeaders(authRequest: AuthenticatedRequest[AnyContent]) = {
+    val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
+    val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
+    val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
+    val tttUserId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO ID")
+    (userPictureUri, userFirstName, userFamilyName, tttUserId)
+  }
+
+  def classesHome: Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest =>
+    val (userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: String) = extractCommonHeaders(authRequest)
+
+
+    Future {
+      Ok(views.html.planning.classtimetables.classesHome(new MyDeadboltHandler(userReader),
+        userPictureUri,
+        userFirstName,
+        userFamilyName,
+        TimeToTeachUserId(tttUserId)
+      ))
+    }
+  }
 
 
 }

@@ -27,6 +27,7 @@ GET         /weeklyplanning                   controllers.Application.weeklyPlan
 
 GET         /termlyplanning                   controllers.planning.termly.TermlyPlansController.termlyPlans
 
+GET         /classes                          controllers.planning.classtimetable.ClassTimetableController.classesHome
 GET         /classtimetable                   controllers.planning.classtimetable.ClassTimetableController.classTimetable
 POST        /classtimetablesave               controllers.planning.classtimetable.ClassTimetableController.classTimetableSave
 #########################
