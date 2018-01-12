@@ -1,0 +1,9 @@
+@import controllers.serviceproxies.TimeToTeachUserId
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId)
+
+@timetoteachAppMain(handler, s"Termly Plans",
+    userPictureUri, userFirstName, userFamilyName) {
+    <div class="container">
+        <h1>Termly Plans - under development</h1>
+    </div>
+}

@@ -25,7 +25,8 @@ GET         /classtimetable                   controllers.Application.classTimet
 GET         /initialUserPreferences           controllers.Application.askInitialPreferences
 POST        /initialPreferencesCreated        controllers.Application.initialPreferencesCreated
 GET         /weeklyplanning                   controllers.Application.weeklyPlanning
-GET         /termlyplanning                   controllers.Application.termlyPlanning
+
+GET         /termlyplanning                   controllers.planning.termly.TermlyPlansController.termlyPlans
 
 POST        /classtimetablesave               controllers.ClassTimetableController.classTimetableSave
 #########################
