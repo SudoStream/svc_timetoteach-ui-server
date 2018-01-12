@@ -27,7 +27,6 @@ import scala.concurrent.duration._
 class Application @Inject()(userReader: UserReaderServiceProxyImpl,
                             userWriter: UserWriterServiceProxyImpl,
                             schoolsProxy: SchoolReaderServiceProxyImpl,
-                            classTimetableReaderProxy: ClassTimetableReaderServiceProxyImpl,
                             deadbolt: DeadboltActions,
                             handlers: HandlerCache,
                             actionBuilder: ActionBuilders) extends Controller {
@@ -57,14 +56,6 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl,
   val logger: Logger = Logger
   private val postInitialUserPreferencesUrl = routes.Application.initialPreferencesCreated()
 
-  val defaultSchoolDayTimes = SchoolDayTimes(
-    schoolDayStarts = LocalTime.of(9, 0),
-    morningBreakStarts = LocalTime.of(10, 30),
-    morningBreakEnds = LocalTime.of(10, 45),
-    lunchStarts = LocalTime.of(12, 0),
-    lunchEnds = LocalTime.of(13, 0),
-    schoolDayEnds = LocalTime.of(15, 0)
-  )
 
   def index = Action {
     Ok(views.html.index(showFrontPageSections))
@@ -181,58 +172,6 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl,
     }
   }
 
-  def classTimetable = deadbolt.SubjectPresent()() { authRequest =>
-    val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
-    val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
-    val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
-    val tttUserId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO ID")
-
-    val futureUserPrefs: Future[Option[UserPreferences]] = userReader.getUserPreferences(TimeToTeachUserId(tttUserId))
-
-    val futureSchoolDayTimes: Future[SchoolDayTimes] = futureUserPrefs map {
-      case Some(userPrefs) =>
-        val schoolTimes = userPrefs.allSchoolTimes.head
-        logger.debug(s"classTimetable() : schoolTimes : ${schoolTimes.toString}")
-        SchoolDayTimes(
-          schoolDayStarts = LocalTimeUtil.convertStringTimeToLocalTime(schoolTimes.schoolStartTime).getOrElse(
-            defaultSchoolDayTimes.schoolDayStarts),
-          morningBreakStarts = LocalTimeUtil.convertStringTimeToLocalTime(schoolTimes.morningBreakStartTime).getOrElse(
-            defaultSchoolDayTimes.morningBreakStarts),
-          morningBreakEnds = LocalTimeUtil.convertStringTimeToLocalTime(schoolTimes.morningBreakEndTime).getOrElse(
-            defaultSchoolDayTimes.morningBreakEnds),
-          lunchStarts = LocalTimeUtil.convertStringTimeToLocalTime(schoolTimes.lunchStartTime).getOrElse(
-            defaultSchoolDayTimes.lunchStarts),
-          lunchEnds = LocalTimeUtil.convertStringTimeToLocalTime(schoolTimes.lunchEndTime).getOrElse(
-            defaultSchoolDayTimes.lunchEnds),
-          schoolDayEnds = LocalTimeUtil.convertStringTimeToLocalTime(schoolTimes.schoolEndTime).getOrElse(
-            defaultSchoolDayTimes.schoolDayEnds)
-        )
-      case None => defaultSchoolDayTimes
-    }
-
-    val futureClassName: Future[String] = futureUserPrefs map {
-      case Some(userPrefs) => userPrefs.allSchoolTimes.head.userTeachesTheseClasses.head.className
-      case None => "<No Class Name>"
-    }
-
-    for {
-      schoolDayTimes <- futureSchoolDayTimes
-      className <- futureClassName
-      wwwClassTimetableFuture = classTimetableReaderProxy.
-        readClassTimetable(TimeToTeachUserId(tttUserId), WwwClassName(className))
-      maybeWwwClassTimetable <- wwwClassTimetableFuture
-    } yield {
-      Ok(views.html.classtimetable(new MyDeadboltHandler(userReader),
-        userPictureUri,
-        userFirstName,
-        userFamilyName,
-        schoolDayTimes,
-        maybeWwwClassTimetable,
-        className,
-        TimeToTeachUserId(tttUserId)
-      )(authRequest))
-    }
-  }
 
   def weeklyPlanning = deadbolt.SubjectPresent()() { authRequest =>
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)

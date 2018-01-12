@@ -7,7 +7,7 @@ import be.objectify.deadbolt.scala.cache.HandlerCache
 import controllers.serviceproxies.{TimeToTeachUserId, UserReaderServiceProxyImpl}
 import models.timetoteach.CookieNames
 import play.api.Logger
-import play.api.mvc.{AbstractController, AnyContent, ControllerComponents}
+import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}
 import security.MyDeadboltHandler
 import utils.TemplateUtils.getCookieStringFromRequest
 
@@ -23,7 +23,7 @@ class TermlyPlansController @Inject()(
 
   val logger: Logger = Logger
 
-  def termlyPlans = deadbolt.SubjectPresent()() { authRequest : AuthenticatedRequest[AnyContent] =>
+  def termlyPlans: Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest : AuthenticatedRequest[AnyContent] =>
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
     val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)

@@ -21,14 +21,14 @@ POST        /signout                          controllers.SecurityController.sig
 GET         /signedupcongrats                 controllers.UserSignupController.signedUpCongrats
 
 GET         /app                              controllers.Application.timeToTeachApp
-GET         /classtimetable                   controllers.Application.classTimetable
 GET         /initialUserPreferences           controllers.Application.askInitialPreferences
 POST        /initialPreferencesCreated        controllers.Application.initialPreferencesCreated
 GET         /weeklyplanning                   controllers.Application.weeklyPlanning
 
 GET         /termlyplanning                   controllers.planning.termly.TermlyPlansController.termlyPlans
 
-POST        /classtimetablesave               controllers.ClassTimetableController.classTimetableSave
+GET         /classtimetable                   controllers.planning.classtimetable.ClassTimetableController.classTimetable
+POST        /classtimetablesave               controllers.planning.classtimetable.ClassTimetableController. classTimetableSave
 #########################
 GET         /twitter/auth                     controllers.Twitter.authenticate()
 #GET     /view/:foo/:bar             controllers.Application.view(foo: String, bar: String)
