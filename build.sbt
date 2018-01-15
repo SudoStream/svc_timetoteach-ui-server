@@ -11,7 +11,7 @@ name := "timetoteach"
 val scalaV = "2.11.11"
 
 ///////////////////////////////////////////
-val WWW_TIMETOTEACH_VERSION = "0.0.1-131"
+val WWW_TIMETOTEACH_VERSION = "0.0.1-132"
 ///////////////////////////////////////////
 
 lazy val timetoteach_ui_server = (project in file("server")).settings(
@@ -64,6 +64,7 @@ lazy val shared = (crossProject.crossType(CrossType.Pure) in file("shared")).
   settings(
     scalaVersion := scalaV,
     libraryDependencies ++= Seq(
+      "org.scala-lang.modules" %% "scala-pickling" % "0.10.1",
       "org.scalatest" %%% "scalatest" % "3.0.0" % "test",
       "org.scala-js" %%% "scalajs-java-time" % "0.2.2",
       specs2 % Test

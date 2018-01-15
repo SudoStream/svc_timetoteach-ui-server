@@ -1,12 +1,10 @@
 package shared.model.classdetail
 
 import org.scalatest._
-import shared.model.classdetail.CurriculumLevel.CurriculumLevel
-import shared.model.classtimetable.SchoolDayStarts
 
 class GroupTypeTest extends FunSpec {
   describe("When created a class teacher with name 'Andy' 'Boyle' and no id") {
-    val teacher = Teacher(None,"Andy","Boyle")
+    val teacher = Teacher(None, "Andy", "Boyle")
 
     it("should have no id") {
       assert(teacher.maybeId.isEmpty)
@@ -20,7 +18,7 @@ class GroupTypeTest extends FunSpec {
   }
 
   describe("When created a group with name 'triangles', type of 'maths' and level of 'first'") {
-    val group = Group("triangles", GroupType.Maths, CurriculumLevel.First )
+    val group = Group("triangles", GroupType.Maths, CurriculumLevel.First)
 
     it("should have a name of 'triangles'") {
       assert(group.groupName === "triangles")
@@ -30,6 +28,14 @@ class GroupTypeTest extends FunSpec {
     }
     it("should have a level of 'first'") {
       assert(group.groupLevel === CurriculumLevel.First)
+    }
+  }
+
+  describe("Pickling a teacher") {
+    val teacher = Teacher(None, "Andy", "Boyle")
+
+    it("should work okay") {
+
     }
   }
 

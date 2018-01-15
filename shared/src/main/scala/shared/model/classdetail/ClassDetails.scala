@@ -3,7 +3,7 @@ package shared.model.classdetail
 import shared.model.classdetail.CurriculumLevel.CurriculumLevel
 import shared.model.classdetail.GroupType.GroupType
 
-case class ScottishClassDetails(
+case class ClassDetails(
                                  id: String,
                                  name: String,
                                  groups: List[Group],
