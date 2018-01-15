@@ -1,9 +1,15 @@
 @import controllers.serviceproxies.TimeToTeachUserId
-@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId)
+@import shared.model.classdetail.ClassDetails
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classes: List[ClassDetails])
 
-@timetoteachAppMain(handler, s"Termly Plans",
-    userPictureUri, userFirstName, userFamilyName) {
-    <div class="container">
-    <h1>Classes Home</h1>
-    </div>
+@timetoteachAppMain(handler, s"Classes",
+ userPictureUri, userFirstName, userFamilyName) {
+ <div class="container">
+
+  @if(classes.isEmpty){
+   <h4 id="noClassesMsg">No classes created yet.</h4>
+  }
+
+  <button id="addClass" class="rounded btn btn-primary">Add Class</button>
+ </div>
 }

@@ -1,6 +1,7 @@
 @import "timetable-colours.css";
 @import "timetable.css";
 @import "input-range.css";
+@import "classes.css";
 
 @font-face {
     font-family: 'simplifica';

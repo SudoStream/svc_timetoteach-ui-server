@@ -151,7 +151,8 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
         userPictureUri,
         userFirstName,
         userFamilyName,
-        TimeToTeachUserId(tttUserId)
+        TimeToTeachUserId(tttUserId),
+        List()
       ))
     }
   }
