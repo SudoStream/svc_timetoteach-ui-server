@@ -12,7 +12,7 @@
    <div class="form-row add-new-class-form-row">
     <div class="col-sm-12">
      <label for="className">Class Name</label>
-     <input type="text" id="className" name="className" class="form-control" placeholder="Enter Your Class Name, e.g. P3AB" required>
+     <input type="text" id="className" name="className" class="form-control" placeholder="Enter the class name, e.g. P3AB" required>
     </div>
    </div>
 
@@ -36,6 +36,8 @@
    </div>
 
    <div id="class-timetable-clear-cancel-save-buttons" class="clear-cancel-save-buttons">
+    <button id="clear-subjects-from-class-timetable-button" type="button" class="btn btn btn-secondary">
+     Clear</button>
     <button id="cancel-class-timetable-button" type="button" class="btn btn btn-secondary">
      <a href="@controllers.planning.classtimetable.routes.ClassTimetableController.classesHome()">Cancel</a>
     </button>

@@ -21,3 +21,8 @@
 #add-new-class-groups-button {
     /*background: white;*/
 }
+
+.add-new-group-row {
+    margin-top: 0.75rem;
+    margin-bottom: 0.75rem;
+}
