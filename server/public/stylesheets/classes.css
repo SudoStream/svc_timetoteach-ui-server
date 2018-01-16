@@ -4,6 +4,22 @@
     margin-left: 1rem;
 }
 
-#addClass {
+#addNewClassBtn {
     margin: 2rem 1rem;
+}
+
+.add-new-class-form-section {
+    /*margin-top: 2rem;*/
+    /*margin-bottom: 1rem;*/
+    /*border: 1px solid lightgrey;*/
+    /*padding: 1rem;*/
+}
+
+.add-new-class-form-row {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+#add-new-class-groups-button {
+    background: white;
 }

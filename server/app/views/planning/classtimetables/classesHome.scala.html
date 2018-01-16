@@ -1,15 +1,48 @@
 @import controllers.serviceproxies.TimeToTeachUserId
-@import shared.model.classdetail.ClassDetails
+@import models.timetoteach.classdetails.ClassDetails
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classes: List[ClassDetails])
 
 @timetoteachAppMain(handler, s"Classes",
  userPictureUri, userFirstName, userFamilyName) {
  <div class="container">
 
-  @if(classes.isEmpty){
+  @if(classes.isEmpty) {
    <h4 id="noClassesMsg">No classes created yet.</h4>
   }
 
-  <button id="addClass" class="rounded btn btn-primary">Add Class</button>
+  <a id="addNewClassBtn" class="rounded btn btn-primary" href="@controllers.planning.classtimetable.routes.ClassTimetableController.addNewClass()" role="button">Add New Class</a>
+
+ </div>
+
+  <!-- Modal -->
+ <div class="modal fade" id="addNewClassModal" tabindex="-1" role="dialog" aria-labelledby="addNewClassModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+   <div class="modal-content">
+    <div class="modal-header">
+     <h5 class="modal-title" id="addNewClassModalLabel">Add New Class</h5>
+     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+     </button>
+    </div>
+    <div class="modal-body">
+     <div class="add-new-class-form-section">
+
+      @*<h6 class="text-center text-muted form-header">Class Details</h6>*@
+      <div class="form-row">
+       <div class="col-sm-12">
+        <label for="className">Class Name</label>
+        <input type="text" id="className" name="className" class="form-control" placeholder="Enter Your Class Name, e.g. P3AB" required>
+       </div>
+      </div>
+
+
+     </div>
+    </div>
+    <div class="modal-footer">
+     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+     <button type="button" class="btn btn-primary">Save</button>
+    </div>
+   </div>
+  </div>
  </div>
 }

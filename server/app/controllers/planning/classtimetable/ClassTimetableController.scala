@@ -84,7 +84,7 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
   }
 
 
-  def classTimetable : Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest =>
+  def classTimetable: Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest =>
     val (userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: String) = extractCommonHeaders(authRequest)
 
     val futureUserPrefs: Future[Option[UserPreferences]] = userReader.getUserPreferences(TimeToTeachUserId(tttUserId))
@@ -145,7 +145,6 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
   def classesHome: Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest =>
     val (userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: String) = extractCommonHeaders(authRequest)
 
-
     Future {
       Ok(views.html.planning.classtimetables.classesHome(new MyDeadboltHandler(userReader),
         userPictureUri,
@@ -153,6 +152,19 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
         userFamilyName,
         TimeToTeachUserId(tttUserId),
         List()
+      ))
+    }
+  }
+
+  def addNewClass: Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest =>
+    val (userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: String) = extractCommonHeaders(authRequest)
+
+    Future {
+      Ok(views.html.planning.classtimetables.addNewClass(new MyDeadboltHandler(userReader),
+        userPictureUri,
+        userFirstName,
+        userFamilyName,
+        TimeToTeachUserId(tttUserId)
       ))
     }
   }

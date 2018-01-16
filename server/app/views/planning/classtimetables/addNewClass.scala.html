@@ -1,0 +1,42 @@
+@import controllers.serviceproxies.TimeToTeachUserId
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId)
+
+@timetoteachAppMain(handler, s"Add New Class",
+ userPictureUri, userFirstName, userFamilyName) {
+ <div class="container">
+
+  <div class="add-new-class-form-section">
+
+   <h6 class="text-center text-muted form-header">New Class Details</h6>
+
+   <div class="form-row">
+    <div class="col-sm-12">
+     <label for="className">Class Name</label>
+     <input type="text" id="className" name="className" class="form-control" placeholder="Enter Your Class Name, e.g. P3AB" required>
+    </div>
+   </div>
+
+
+   <div class="form-row add-new-class-form-row">
+    <div class="col-sm-12">
+     <label for="className">Class Groups</label>
+
+     <div id="add-new-class-groups-div"></div>
+     <button id="add-new-class-groups-button" type="button" class="btn btn-sm btn-outline-info">Add New Class Group</button>
+    </div>
+   </div>
+
+
+
+   <div id="class-timetable-clear-cancel-save-buttons" class="clear-cancel-save-buttons">
+    <button id="cancel-class-timetable-button" type="button" class="btn btn btn-secondary">
+     <a href="@controllers.planning.classtimetable.routes.ClassTimetableController.classesHome()">Cancel</a>
+    </button>
+    <button id="save-class-timetable-button" type="button" class="btn btn btn-primary">Save</button>
+   </div>
+
+  </div>
+ </div>
+
+
+}
