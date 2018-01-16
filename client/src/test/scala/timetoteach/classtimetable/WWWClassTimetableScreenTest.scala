@@ -1,4 +1,4 @@
-package timetoteach.screens
+package timetoteach.classtimetable
 
 import org.specs2.matcher.MatchResult
 

@@ -9,13 +9,12 @@
 
    <h6 class="text-center text-muted form-header">New Class Details</h6>
 
-   <div class="form-row">
+   <div class="form-row add-new-class-form-row">
     <div class="col-sm-12">
      <label for="className">Class Name</label>
      <input type="text" id="className" name="className" class="form-control" placeholder="Enter Your Class Name, e.g. P3AB" required>
     </div>
    </div>
-
 
    <div class="form-row add-new-class-form-row">
     <div class="col-sm-12">
@@ -26,7 +25,15 @@
     </div>
    </div>
 
+   <div class="form-row add-new-class-form-row">
+    <div class="col-sm-12">
+     <label for="className">Class Teachers</label>
 
+     <div id="add-new-class-teachers-div"></div>
+
+     <button id="add-new-class-groups-button" type="button" class="btn btn-sm btn-outline-info">Invite or Add New Teacher</button>
+    </div>
+   </div>
 
    <div id="class-timetable-clear-cancel-save-buttons" class="clear-cancel-save-buttons">
     <button id="cancel-class-timetable-button" type="button" class="btn btn btn-secondary">
@@ -39,4 +46,5 @@
  </div>
 
 
+ @scalajs.html.scripts("client", routes.Assets.versioned(_).toString, name => getClass.getResource(s"/public/$name") != null)
 }

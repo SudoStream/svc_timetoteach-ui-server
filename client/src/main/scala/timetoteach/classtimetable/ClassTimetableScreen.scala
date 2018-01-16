@@ -1,4 +1,4 @@
-package timetoteach.screens
+package timetoteach.classtimetable
 
 import java.time.temporal.ChronoUnit.MINUTES
 
