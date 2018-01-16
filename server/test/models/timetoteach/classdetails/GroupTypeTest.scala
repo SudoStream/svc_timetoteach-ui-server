@@ -1,6 +1,7 @@
 package models.timetoteach.classdetails
 
 import org.scalatest.FunSpec
+import shared.model.classdetail._
 
 import scala.pickling.Defaults._
 import scala.pickling.json._

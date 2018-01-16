@@ -1,4 +1,4 @@
-package models.timetoteach.classdetails
+package shared.model.classdetail
 
 case class ClassDetails(
                          id: ClassId,
