@@ -26,6 +26,7 @@ object ClassDetailsAvroConverter {
     ClassDetails(
       ClassId(classDetails.id.id),
       ClassName(classDetails.className.name),
+      classDetails.classTeachersWithWriteAccess,
       groups
     )
   }

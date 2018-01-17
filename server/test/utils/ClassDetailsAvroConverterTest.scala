@@ -27,7 +27,7 @@ class ClassDetailsAvroConverterTest extends FunSpec {
         MathsGroupType,
         FirstLevel)
     ),
-    Nil
+    List("userId_1","userId_2")
   )
 
   describe("ClassDetailsAvroConverter given a pickled ClassDetails") {
@@ -50,6 +50,10 @@ class ClassDetailsAvroConverterTest extends FunSpec {
     it("should convert Pickled Class To Avro with 2 First level group") {
       val classDetailsAvro = convertPickledClassToAvro(classDetails)
       assert(classDetailsAvro.classGroups.count(_.group.groupLevel === ScottishCurriculumLevel.FIRST) === 2)
+    }
+    it("should convert Pickled Class To Avro with 2 teachers with write access") {
+      val classDetailsAvro = convertPickledClassToAvro(classDetails)
+      assert(classDetailsAvro.teacherWithWriteAccess.size === 2)
     }
 
   }

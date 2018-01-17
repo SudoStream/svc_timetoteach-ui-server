@@ -11,20 +11,6 @@ class GroupTypeTest extends FunSpec {
     GroupId(s"groupId_${java.util.UUID.randomUUID()}")
   }
 
-  describe("When created a class teacher with name 'Andy' 'Boyle' and no id") {
-    val teacher = Teacher(None, "Andy", "Boyle")
-
-    it("should have no id") {
-      assert(teacher.maybeId.isEmpty)
-    }
-    it("should have a first name of 'Andy'") {
-      assert(teacher.firstName === "Andy")
-    }
-    it("should have a surname of 'Boyle'") {
-      assert(teacher.surname === "Boyle")
-    }
-  }
-
   describe("When created a group with name 'triangles', type of 'maths' and level of 'first'") {
     val group = Group(createGroupId(), GroupName("triangles"), MathsGroupType, FirstLevel)
 
@@ -55,44 +41,6 @@ class GroupTypeTest extends FunSpec {
     }
   }
 
-  describe("Pickling and then unpickling a teacher with no id") {
-    val teacher = Teacher(None, "Andy", "Boyle")
-    val teacherPickled = teacher.pickle
-    val teacherUnpickled = teacherPickled.unpickle[Teacher]
-
-    it("should have a first name of 'Andy'") {
-      assert(teacherUnpickled.firstName === "Andy")
-    }
-    it("should have a surname of 'Boyle'") {
-      assert(teacherUnpickled.surname === "Boyle")
-    }
-    it("should have an id on 'None'") {
-      assert(teacherUnpickled.maybeId.isEmpty)
-    }
-  }
-
-  describe("Pickling and then unpickling a teacher with an id") {
-    val teacher = Teacher(Some(TeacherId("id123")), "Yvonne", "Boyle")
-    val teacherPickled = teacher.pickle
-
-    it("should have a first name of 'Yvonne'") {
-      val teacherUnpickled = teacherPickled.unpickle[Teacher]
-      assert(teacherUnpickled.firstName === "Yvonne")
-    }
-    it("should have a surname of 'Boyle'") {
-      val teacherUnpickled = teacherPickled.unpickle[Teacher]
-      assert(teacherUnpickled.surname === "Boyle")
-    }
-    it("should have an id defined") {
-      val teacherUnpickled = teacherPickled.unpickle[Teacher]
-      assert(teacherUnpickled.maybeId.isDefined)
-    }
-    it("should have an id on 'id123'") {
-      val teacherUnpickled = teacherPickled.unpickle[Teacher]
-      assert(teacherUnpickled.maybeId.get.id === "id123")
-    }
-  }
-
   describe("Creating a class details with empty teachers") {
     val groups = List(
       Group(createGroupId(), GroupName("Triangles"), MathsGroupType, SecondLevel),
@@ -119,7 +67,7 @@ class GroupTypeTest extends FunSpec {
       ClassId("classId123"),
       ClassName("P3AB"),
       groups,
-      List(Teacher(Some(TeacherId("id12")), "Andy", "Boyle"))
+      List("id12")
     )
 
     val classDetailsPickled = classDetails.pickle
@@ -129,7 +77,7 @@ class GroupTypeTest extends FunSpec {
       assert(classDetailsUnpickled.id.id === "classId123")
     }
     it("should have a one class teacher") {
-      assert(classDetailsUnpickled.classTeachers.size === 1)
+      assert(classDetailsUnpickled.classTeachersWithWriteAccess.size === 1)
     }
     it("should have 6 groups") {
       assert(classDetailsUnpickled.groups.size === 6)

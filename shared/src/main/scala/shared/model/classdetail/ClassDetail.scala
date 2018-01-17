@@ -1,43 +1,52 @@
 package shared.model.classdetail
-import upickle.default.{ReadWriter => RW, macroRW}
+
+import upickle.default.{macroRW, ReadWriter => RW}
 
 case class ClassDetails(
                          id: ClassId,
                          className: ClassName,
                          groups: List[Group],
-                         classTeachers: List[Teacher]
+                         classTeachersWithWriteAccess: List[String]
                        ) {
+  if (classTeachersWithWriteAccess.isEmpty) throw new IllegalArgumentException(
+    "Must have at least 1 teacher with write access"
+  )
 }
 
-object ClassDetails{
+object ClassDetails {
   implicit def rw: RW[ClassDetails] = macroRW
 }
 
 
 case class ClassId(id: String)
-object ClassId{
+
+object ClassId {
   implicit def rw: RW[ClassId] = macroRW
 }
 
 case class ClassName(name: String)
-object ClassName{
+
+object ClassName {
   implicit def rw: RW[ClassName] = macroRW
 }
 
 ////
 
 case class Group(groupId: GroupId, groupName: GroupName, groupType: GroupType, groupLevel: CurriculumLevel)
-object Group{
+
+object Group {
   implicit def rw: RW[Group] = macroRW
 }
 
 case class GroupId(id: String)
-object GroupId{
+
+object GroupId {
   implicit def rw: RW[GroupId] = macroRW
 }
 
 case class GroupName(name: String)
-object GroupName{
+
+object GroupName {
   implicit def rw: RW[GroupName] = macroRW
 }
 
@@ -46,7 +55,8 @@ object GroupName{
 sealed trait GroupType {
   def value: String
 }
-object GroupType{
+
+object GroupType {
   implicit def rw: RW[GroupType] = macroRW
 }
 
@@ -69,6 +79,7 @@ case object OtherGroupType extends GroupType {
 sealed trait CurriculumLevel {
   def value: String
 }
+
 object CurriculumLevel {
   implicit def rw: RW[CurriculumLevel] = macroRW
 }
@@ -96,12 +107,3 @@ case object FourthLevel extends CurriculumLevel {
 
 ////////// Curriculum Level - END//////////////
 
-case class Teacher(maybeId: Option[TeacherId], firstName: String, surname: String)
-object Teacher{
-  implicit def rw: RW[Teacher] = macroRW
-}
-
-case class TeacherId(id: String)
-object TeacherId{
-  implicit def rw: RW[TeacherId] = macroRW
-}
