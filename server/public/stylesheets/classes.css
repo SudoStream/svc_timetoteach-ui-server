@@ -14,15 +14,29 @@
 }
 
 .add-new-class-form-row {
-    margin-top: 2rem;
-    margin-bottom: 1rem;
+    /*margin-top: 2rem;*/
+    margin-bottom: 3rem;
 }
 
-#add-new-class-groups-button {
+.add-new-class-button {
+    margin-top: 0.4rem;
     /*background: white;*/
 }
 
 .add-new-group-row {
     margin-top: 0.75rem;
     margin-bottom: 0.75rem;
+}
+
+.delete-new-class-group-row {
+    /*color: rgb(66,139,202);*/
+    color: rgb(66,139,162);
+}
+
+#add-new-class-form-errors {
+    margin: 1rem 0;
+}
+
+.add-new-class-form-error {
+    margin: 0.25rem 0;
 }
