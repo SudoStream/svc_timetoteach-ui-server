@@ -29,6 +29,8 @@ GET         /termlyplanning                   controllers.planning.termly.Termly
 
 GET         /classes                          controllers.planning.classtimetable.ClassTimetableController.classesHome
 GET         /addnewclass                      controllers.planning.classtimetable.ClassTimetableController.addNewClass
+POST        /savenewclass                     controllers.planning.classtimetable.ClassTimetableController.saveNewClass
+
 GET         /classtimetable                   controllers.planning.classtimetable.ClassTimetableController.classTimetable
 POST        /classtimetablesave               controllers.planning.classtimetable.ClassTimetableController.classTimetableSave
 #########################

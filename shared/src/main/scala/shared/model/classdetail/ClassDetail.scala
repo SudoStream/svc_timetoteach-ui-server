@@ -36,7 +36,6 @@ object GroupId{
   implicit def rw: RW[GroupId] = macroRW
 }
 
-
 case class GroupName(name: String)
 object GroupName{
   implicit def rw: RW[GroupName] = macroRW

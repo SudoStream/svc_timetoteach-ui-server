@@ -1,12 +1,15 @@
 package timetoteach.addnewclass
 
 import org.scalajs.dom
+import org.scalajs.dom.ext.Ajax.InputData
 import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement, HTMLInputElement, HTMLSelectElement}
 import shared.model.classdetail._
 
 import scala.collection.mutable.ListBuffer
 import scala.scalajs.js.Dynamic.global
+import scala.util.{Failure, Success}
 import scalatags.JsDom.all.{`class`, div, _}
+import dom.ext.Ajax
 
 object AddNewClassJsScreen {
 
@@ -221,6 +224,33 @@ object AddNewClassJsScreen {
     }
   }
 
+  def saveNewClass(classDetailsPickled: String): Any = {
+    import scala.concurrent.ExecutionContext.Implicits.global
+
+    val theUrl = "/savenewclass"
+    val theHeaders = Map(
+      "Content-Type" -> "application/x-www-form-urlencoded",
+      "X-Requested-With" -> "Accept"
+    )
+    val theTimeToTeachUserId = dom.window.localStorage.getItem("timeToTeachUserId")
+    val theData = InputData.str2ajax(s"newClassPickled=$classDetailsPickled&tttUserId=$theTimeToTeachUserId")
+
+    Ajax.post(
+      url = theUrl,
+      headers = theHeaders,
+      data = theData
+    ).onComplete {
+      case Success(xhr) =>
+        val responseText = xhr.responseText
+        println(s"response = '$responseText'")
+        dom.window.location.href = "/classes";
+      case Failure(ex) =>
+        dom.window.alert("Something went wrong with creating new class. Specifically : -" +
+          s"\n\n${ex.toString}")
+    }
+
+  }
+
   def saveButton(): Unit = {
     val saveNewClassButton = dom.document.getElementById("save-new-class-button").asInstanceOf[HTMLButtonElement]
     if (saveNewClassButton != null) {
@@ -246,6 +276,7 @@ object AddNewClassJsScreen {
           import upickle.default._
           val classDetailsPickled = write(classDetails)
           println(s"Class Details Pickled: $classDetailsPickled")
+          saveNewClass(classDetailsPickled)
         }
       })
     }

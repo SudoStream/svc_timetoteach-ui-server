@@ -18,6 +18,7 @@ import play.api.data.Form
 import play.api.data.Forms.{mapping, _}
 import play.api.mvc._
 import security.MyDeadboltHandler
+import shared.model.classdetail.ClassDetails
 import shared.model.classtimetable.WwwClassName
 import shared.util.LocalTimeUtil
 import utils.ClassTimetableConverterToAvro.convertJsonClassTimetableToWwwClassTimetable
@@ -54,6 +55,14 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
     schoolDayEnds = LocalTime.of(15, 0)
   )
 
+  val newClassForm = Form(
+    mapping(
+      "newClassPickled" -> text,
+      "tttUserId" -> text
+    )(NewClassJson.apply)(NewClassJson.unapply)
+  )
+
+  case class NewClassJson(newClassPickled: String, tttUserId: String)
 
   val classTimetableForm = Form(
     mapping(
@@ -79,7 +88,7 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
     )
 
     Future {
-      Ok("Hmmmmmmmm doodly doos!")
+      Ok("Saved class timetable!")
     }
   }
 
@@ -156,7 +165,7 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
     }
   }
 
-  def addNewClass: Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest =>
+  def addNewClass(): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest =>
     val (userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: String) = extractCommonHeaders(authRequest)
 
     Future {
@@ -166,6 +175,26 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
         userFamilyName,
         TimeToTeachUserId(tttUserId)
       ))
+    }
+  }
+
+
+  def saveNewClass: Action[AnyContent] = Action.async { implicit request =>
+    val newClassFormBound = newClassForm.bindFromRequest.get
+    logger.debug(s"New Class Pickled = ${newClassFormBound.newClassPickled}")
+    logger.debug(s"TTT User Id = ${newClassFormBound.tttUserId}")
+
+    import upickle.default._
+    val newClassDetails = read[ClassDetails](newClassFormBound.newClassPickled)
+    logger.debug(s"New Class Unpickled = ${newClassDetails.toString}")
+
+    classTimetableWriter.upsertClass(
+      TimeToTeachUserId(newClassFormBound.tttUserId),
+      newClassDetails
+    )
+
+    Future {
+      Ok("Created new class!")
     }
   }
 

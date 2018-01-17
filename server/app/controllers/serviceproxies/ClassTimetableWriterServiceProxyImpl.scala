@@ -8,10 +8,13 @@ import akka.util.Timeout
 import com.google.inject.Singleton
 import com.typesafe.config.ConfigFactory
 import com.typesafe.sslconfig.akka.AkkaSSLConfig
+import io.sudostream.timetoteach.kafka.serializing.systemwide.classes.ClassDetailsSerializer
 import io.sudostream.timetoteach.kafka.serializing.systemwide.classtimetable.ClassTimetableSerializer
 import play.api.Logger
+import shared.model.classdetail.ClassDetails
 import shared.model.classtimetable.{WWWClassTimetable, WwwClassName}
 import utils.ClassTimetableConverterToAvro.convertWwwClassTimeTableToAvro
+import utils.ClassDetailsAvroConverter.convertPickledClassToAvro
 
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContextExecutor, Future}
@@ -61,6 +64,37 @@ class ClassTimetableWriterServiceProxyImpl {
     response onComplete {
       case Success(httpResponse) => logger.info("Class Timetable Updated!")
       case Failure(ex) => logger.error(s"Issue updating Class Timetable: ${ex.getMessage}")
+    }
+
+    response map { httpResponse =>
+      if (httpResponse.status.isSuccess()) true else false
+    }
+  }
+
+  def upsertClass(userId: TimeToTeachUserId, newClass: ClassDetails): Future[Boolean] = {
+    val uriString = s"$protocol://$classTimetableWriterServiceHostname:$classTimetableWriterServicePort/api/classes/${userId.value}/upsert"
+    logger.debug(s"uri for upserting a class is $uriString")
+    val classTimetableWriterServiceUri = Uri(uriString)
+
+    val classDetailsSerializer = new ClassDetailsSerializer
+    val newClassBytes = classDetailsSerializer.serialize("ignore", convertPickledClassToAvro(newClass))
+
+    val postEditClassTimetableRequest = HttpRequest(HttpMethods.POST, uri = classTimetableWriterServiceUri, entity = newClassBytes)
+
+    val badSslConfig = AkkaSSLConfig().mapSettings(s =>
+      s.withLoose(s.loose.withDisableSNI(true))
+        .withLoose(s.loose.withDisableHostnameVerification(true))
+        .withLoose(s.loose.withAcceptAnyCertificate(true))
+    )
+
+    logger.info(s"ssl config = ${badSslConfig.toString}")
+    val badCtx = Http().createClientHttpsContext(badSslConfig)
+
+    val response: Future[HttpResponse] = http.singleRequest(postEditClassTimetableRequest, badCtx)
+
+    response onComplete {
+      case Success(httpResponse) => logger.info("New Class Created/Updated!")
+      case Failure(ex) => logger.error(s"Problem when creating/updating Class Timetable: ${ex.getMessage}")
     }
 
     response map { httpResponse =>
