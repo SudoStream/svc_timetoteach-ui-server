@@ -7,6 +7,10 @@ import scala.pickling.Defaults._
 import scala.pickling.json._
 
 class GroupTypeTest extends FunSpec {
+  def createGroupId() : GroupId = {
+    GroupId(s"groupId_${java.util.UUID.randomUUID()}")
+  }
+
   describe("When created a class teacher with name 'Andy' 'Boyle' and no id") {
     val teacher = Teacher(None, "Andy", "Boyle")
 
@@ -22,7 +26,7 @@ class GroupTypeTest extends FunSpec {
   }
 
   describe("When created a group with name 'triangles', type of 'maths' and level of 'first'") {
-    val group = Group(GroupName("triangles"), MathsGroupType, FirstLevel)
+    val group = Group(createGroupId(), GroupName("triangles"), MathsGroupType, FirstLevel)
 
     it("should have a name of 'triangles'") {
       assert(group.groupName.name === "triangles")
@@ -36,7 +40,7 @@ class GroupTypeTest extends FunSpec {
   }
 
   describe("When pickling and unpickling a group with name 'triangles', type of 'maths' and level of 'first'") {
-    val group = Group(GroupName("triangles"), MathsGroupType, FirstLevel)
+    val group = Group(createGroupId(), GroupName("triangles"), MathsGroupType, FirstLevel)
     val groupPickled = group.pickle
     val groupUnpickled = groupPickled.unpickle[Group]
 
@@ -91,34 +95,24 @@ class GroupTypeTest extends FunSpec {
 
   describe("Creating a class details with empty teachers") {
     val groups = List(
-      Group(GroupName("Triangles"), MathsGroupType, SecondLevel),
-      Group(GroupName("Squares"), MathsGroupType, FirstLevel),
-      Group(GroupName("Circles"), MathsGroupType, FirstLevel),
-      Group(GroupName("Bears"), LiteracyGroupType, SecondLevel),
-      Group(GroupName("Lions"), LiteracyGroupType, SecondLevel),
-      Group(GroupName("Tigers"), LiteracyGroupType, FirstLevel)
+      Group(createGroupId(), GroupName("Triangles"), MathsGroupType, SecondLevel),
+      Group(createGroupId(), GroupName("Squares"), MathsGroupType, FirstLevel),
+      Group(createGroupId(), GroupName("Circles"), MathsGroupType, FirstLevel),
+      Group(createGroupId(), GroupName("Bears"), LiteracyGroupType, SecondLevel),
+      Group(createGroupId(), GroupName("Lions"), LiteracyGroupType, SecondLevel),
+      Group(createGroupId(), GroupName("Tigers"), LiteracyGroupType, FirstLevel)
     )
 
-    it("should throw exception") {
-      assertThrows[IllegalArgumentException] {
-        val classDetails = ClassDetails(
-          ClassId("classId123"),
-          ClassName("P3AB"),
-          groups,
-          List()
-        )
-      }
-    }
   }
 
   describe("Creating a class details with empty teachers, pickled, then unpickled") {
     val groups = List(
-      Group(GroupName("Triangles"), MathsGroupType, SecondLevel),
-      Group(GroupName("Squares"), MathsGroupType, FirstLevel),
-      Group(GroupName("Circles"), MathsGroupType, FirstLevel),
-      Group(GroupName("Bears"), LiteracyGroupType, SecondLevel),
-      Group(GroupName("Lions"), LiteracyGroupType, SecondLevel),
-      Group(GroupName("Tigers"), LiteracyGroupType, FirstLevel)
+      Group(createGroupId(), GroupName("Triangles"), MathsGroupType, SecondLevel),
+      Group(createGroupId(), GroupName("Squares"), MathsGroupType, FirstLevel),
+      Group(createGroupId(), GroupName("Circles"), MathsGroupType, FirstLevel),
+      Group(createGroupId(), GroupName("Bears"), LiteracyGroupType, SecondLevel),
+      Group(createGroupId(), GroupName("Lions"), LiteracyGroupType, SecondLevel),
+      Group(createGroupId(), GroupName("Tigers"), LiteracyGroupType, FirstLevel)
     )
 
     val classDetails = ClassDetails(

@@ -1,4 +1,5 @@
 package shared.model.classdetail
+import upickle.default.{ReadWriter => RW, macroRW}
 
 case class ClassDetails(
                          id: ClassId,
@@ -6,22 +7,48 @@ case class ClassDetails(
                          groups: List[Group],
                          classTeachers: List[Teacher]
                        ) {
-  if (classTeachers.isEmpty) throw new IllegalArgumentException("Must specify at least one teacher")
 }
 
+object ClassDetails{
+  implicit def rw: RW[ClassDetails] = macroRW
+}
+
+
 case class ClassId(id: String)
+object ClassId{
+  implicit def rw: RW[ClassId] = macroRW
+}
 
 case class ClassName(name: String)
+object ClassName{
+  implicit def rw: RW[ClassName] = macroRW
+}
 
 ////
 
-case class Group(groupName: GroupName, groupType: GroupType, groupLevel: CurriculumLevel)
+case class Group(groupId: GroupId, groupName: GroupName, groupType: GroupType, groupLevel: CurriculumLevel)
+object Group{
+  implicit def rw: RW[Group] = macroRW
+}
+
+case class GroupId(id: String)
+object GroupId{
+  implicit def rw: RW[GroupId] = macroRW
+}
+
 
 case class GroupName(name: String)
+object GroupName{
+  implicit def rw: RW[GroupName] = macroRW
+}
+
 
 ////////// Group Type //////////////
 sealed trait GroupType {
   def value: String
+}
+object GroupType{
+  implicit def rw: RW[GroupType] = macroRW
 }
 
 case object MathsGroupType extends GroupType {
@@ -43,6 +70,10 @@ case object OtherGroupType extends GroupType {
 sealed trait CurriculumLevel {
   def value: String
 }
+object CurriculumLevel {
+  implicit def rw: RW[CurriculumLevel] = macroRW
+}
+
 
 case object EarlyLevel extends CurriculumLevel {
   val value = "EarlyLevel"
@@ -67,5 +98,11 @@ case object FourthLevel extends CurriculumLevel {
 ////////// Curriculum Level - END//////////////
 
 case class Teacher(maybeId: Option[TeacherId], firstName: String, surname: String)
+object Teacher{
+  implicit def rw: RW[Teacher] = macroRW
+}
 
 case class TeacherId(id: String)
+object TeacherId{
+  implicit def rw: RW[TeacherId] = macroRW
+}

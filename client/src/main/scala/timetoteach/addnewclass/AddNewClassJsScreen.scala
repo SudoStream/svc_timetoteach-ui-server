@@ -1,8 +1,8 @@
 package timetoteach.addnewclass
 
 import org.scalajs.dom
-import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement, HTMLInputElement}
-import shared.model.classdetail.ClassDetails
+import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement, HTMLInputElement, HTMLSelectElement}
+import shared.model.classdetail._
 
 import scala.collection.mutable.ListBuffer
 import scala.scalajs.js.Dynamic.global
@@ -11,7 +11,6 @@ import scalatags.JsDom.all.{`class`, div, _}
 object AddNewClassJsScreen {
 
   private var classDetails: Option[ClassDetails] = None
-  private var className: Option[String] = None
   private var groupCounter = 0
   private var errorCount = 0
   private var errorMessages: collection.mutable.ListBuffer[String] = new ListBuffer[String]()
@@ -114,15 +113,16 @@ object AddNewClassJsScreen {
     }
   }
 
-  def validateNewClassName(newClassName: HTMLInputElement): Unit = {
+  def validateNewClassName(newClassName: HTMLInputElement): Option[String] = {
     println(s"Validating new class name '${newClassName.value}'")
     if (newClassName.value.isEmpty) {
       newClassName.style.borderColor = "red"
       val errorsDiv = dom.document.getElementById("add-new-class-form-errors").asInstanceOf[HTMLDivElement]
       addErrorToPage("The new class name must not be empty")
+      None
     } else {
       newClassName.style.borderColor = "lightgreen"
-      className = Some(newClassName.value)
+      Some(newClassName.value)
     }
   }
 
@@ -143,32 +143,83 @@ object AddNewClassJsScreen {
     }
   }
 
-  def validateClassGroupName(groupName: HTMLInputElement): Unit = {
+  def validateClassGroupName(groupName: HTMLInputElement): Option[String] = {
     println(s"Validating group name '${groupName.value}'")
     if (groupName.value.isEmpty) {
       groupName.style.borderColor = "red"
       val errorsDiv = dom.document.getElementById("add-new-class-form-errors").asInstanceOf[HTMLDivElement]
       addErrorToPage("Group names must not be empty")
+      None
     } else {
       groupName.style.borderColor = "lightgreen"
-      className = Some(groupName.value)
+      Some(groupName.value)
     }
   }
 
-  def validateClassGroups(): Unit = {
+  def validateSelection(selectedElement: HTMLSelectElement, errorMsg: String): Option[String] = {
+    if (selectedElement.value.contains("...") || selectedElement.value == "Select") {
+      selectedElement.style.borderColor = "red"
+      addErrorToPage(errorMsg)
+      None
+    } else {
+      selectedElement.style.borderColor = "lightgreen"
+      Some(selectedElement.value)
+    }
+  }
+
+  def validateClassGroups(): Option[List[Group]] = {
     var counter = 1
+    val maybeGroups: ListBuffer[Option[Group]] = new ListBuffer[Option[Group]]()
     while (counter <= groupCounter) {
-      val groupName = dom.document.getElementById(s"add-group-name-$counter").asInstanceOf[HTMLInputElement]
-      if ( groupName != null) {
-        println(s"groupName: ${groupName.value}")
-        validateClassGroupName(groupName)
-        val selected = dom.document.getElementById(s"select-curriculum-level-$counter")
-        // TODO
+      val groupNameInputElement = dom.document.getElementById(s"add-group-name-$counter").asInstanceOf[HTMLInputElement]
+      if (groupNameInputElement != null) {
+        val maybeGroup = for {
+          groupName <- validateClassGroupName(groupNameInputElement)
+
+          selectedGroupType = dom.document.getElementById(s"select-group-type-$counter").asInstanceOf[HTMLSelectElement]
+          groupTypeMaybe <- validateSelection(selectedGroupType, "Need to select a group type, e.g. Maths, Literacy etc")
+          groupType = {
+            println(s"groupTypeMaybe = '$groupTypeMaybe'")
+            groupTypeMaybe match {
+              case "Maths" => MathsGroupType
+              case "Literacy" => LiteracyGroupType
+              case _ => OtherGroupType
+            }
+          }
+
+          selectedCurriculumLevel = dom.document.getElementById(s"select-curriculum-level-$counter").asInstanceOf[HTMLSelectElement]
+          groupLevelMaybe <- validateSelection(selectedCurriculumLevel, "Need to select a curriculum level, e.g. Early, First etc")
+          groupLevel = {
+            println(s"groupLevelMaybe = '$groupLevelMaybe'")
+            groupLevelMaybe match {
+              case "Early" => EarlyLevel
+              case "First" => FirstLevel
+              case "Second" => SecondLevel
+              case "Third" => ThirdLevel
+              case "Fourth" => FourthLevel
+            }
+          }
+        } yield Group(GroupId(s"groupId_${java.util.UUID.randomUUID()}"), GroupName(groupName), groupType, groupLevel)
+
+        maybeGroups += maybeGroup
       }
       counter = counter + 1
     }
-  }
 
+    val groups = {
+      for {
+        group <- maybeGroups
+        if group.isDefined
+        groupYes <- group
+      } yield groupYes
+    }.toList
+
+    if (groups.isEmpty) {
+      None
+    } else {
+      Some(groups)
+    }
+  }
 
   def saveButton(): Unit = {
     val saveNewClassButton = dom.document.getElementById("save-new-class-button").asInstanceOf[HTMLButtonElement]
@@ -178,13 +229,24 @@ object AddNewClassJsScreen {
         println("Saving new class ...")
 
         val newClassName = dom.document.getElementById("className").asInstanceOf[HTMLInputElement]
-        validateNewClassName(newClassName)
-        validateClassGroups()
+        val classDetails = for {
+          className <- validateNewClassName(newClassName)
+          groups <- validateClassGroups()
+        } yield ClassDetails(
+          ClassId(s"classId_${java.util.UUID.randomUUID()}"),
+          ClassName(className),
+          groups,
+          Nil
+        )
 
-        val newGroupsDiv = dom.document.getElementById("add-new-class-groups-div").asInstanceOf[HTMLDivElement]
-        newGroupsDiv
-
-        showErrors()
+        if (errorCount > 0) {
+          showErrors()
+        } else {
+          println(s"Class Details: ${classDetails.toString}")
+          import upickle.default._
+          val classDetailsPickled = write(classDetails)
+          println(s"Class Details Pickled: $classDetailsPickled")
+        }
       })
     }
   }
