@@ -7,7 +7,6 @@ case class ClassDetails(
                          classTeachers: List[Teacher]
                        ) {
   if (classTeachers.isEmpty) throw new IllegalArgumentException("Must specify at least one teacher")
-
 }
 
 case class ClassId(id: String)

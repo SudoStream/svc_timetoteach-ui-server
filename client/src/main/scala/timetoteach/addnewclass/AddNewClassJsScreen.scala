@@ -4,13 +4,18 @@ import org.scalajs.dom
 import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement, HTMLInputElement}
 import shared.model.classdetail.ClassDetails
 
+import scala.collection.mutable.ListBuffer
 import scala.scalajs.js.Dynamic.global
 import scalatags.JsDom.all.{`class`, div, _}
 
 object AddNewClassJsScreen {
 
-  private var currentGroups = List[ClassDetails]()
+  private var classDetails: Option[ClassDetails] = None
+  private var className: Option[String] = None
   private var groupCounter = 0
+  private var errorCount = 0
+  private var errorMessages: collection.mutable.ListBuffer[String] = new ListBuffer[String]()
+
 
   def addNewClassGroupsDiv(): Unit = {
     val addNewGroupButton = dom.document.getElementById("add-new-class-groups-button").asInstanceOf[HTMLButtonElement]
@@ -26,6 +31,7 @@ object AddNewClassJsScreen {
           div(`class` := "col-sm-3")(input(
             `type` := "text",
             `class` := "form-control",
+            id := s"add-group-name-$groupCounter",
             `name` := s"add-group-name-$groupCounter",
             placeholder := "Enter group name"
           )),
@@ -33,7 +39,9 @@ object AddNewClassJsScreen {
           div(`class` := "col-sm-1"),
 
           div(`class` := "col-sm-3")(div(
-            select(name := s"select-group-type-$groupCounter",
+            select(
+              name := s"select-group-type-$groupCounter",
+              id := s"select-group-type-$groupCounter",
               `class` := "btn btn-outline-info",
               option(value := "Select", "Select Group Type ... "),
               option(value := "Maths", "Maths"),
@@ -43,7 +51,9 @@ object AddNewClassJsScreen {
           )),
 
           div(`class` := "col-sm-3")(div(
-            select(name := s"select-curriculum-level-$groupCounter",
+            select(
+              id := s"select-curriculum-level-$groupCounter",
+              name := s"select-curriculum-level-$groupCounter",
               `class` := "btn btn-outline-info",
               option(value := "Select", "Select Curriculum Level ... "),
               option(value := "Early", "Early"),
@@ -71,7 +81,7 @@ object AddNewClassJsScreen {
 
         val newGroupsDiv = dom.document.getElementById("add-new-class-groups-div").asInstanceOf[HTMLDivElement]
         newGroupsDiv.appendChild(child)
-        addDeleteNewGroupRowBehaviour()
+        addDeleteNewGroupRowBehaviour(s"delete-new-class-group-row-button-$groupCounter")
       })
 
     } else {
@@ -79,32 +89,29 @@ object AddNewClassJsScreen {
     }
   }
 
-  def addDeleteNewGroupRowBehaviour(): Unit = {
-    var counter = 1
-    while (counter <= groupCounter) {
-      val deleteNewGroupRowButton =
-        dom.document.getElementById(s"delete-new-class-group-row-button-$counter").asInstanceOf[HTMLButtonElement]
-
-      if (deleteNewGroupRowButton != null) {
-        deleteNewGroupRowButton.addEventListener("click", (e: dom.Event) => {
-          println("Delete row of new group ...")
-          val rowToDelete = deleteNewGroupRowButton.parentElement.parentElement.parentElement
-          val newGroupsDiv = dom.document.getElementById("add-new-class-groups-div").asInstanceOf[HTMLDivElement]
-          newGroupsDiv.removeChild(rowToDelete)
-          addDeleteNewGroupRowBehaviour()
-        })
-      }
-      counter = counter + 1
+  def addDeleteNewGroupRowBehaviour(deleteButtonId: String): Unit = {
+    val deleteNewGroupRowButton = dom.document.getElementById(deleteButtonId).asInstanceOf[HTMLButtonElement]
+    if (deleteNewGroupRowButton != null) {
+      deleteNewGroupRowButton.addEventListener("click", (e: dom.Event) => {
+        println(s"Delete row of new group ($deleteButtonId)...")
+        if (deleteNewGroupRowButton != null) {
+          deleteNewGroupRowButton.parentElement.parentElement.parentElement.removeChild(deleteNewGroupRowButton.parentElement.parentElement)
+        }
+      })
     }
 
   }
 
   def addErrorToPage(errorText: String): Unit = {
-    val errorsDiv = dom.document.getElementById("add-new-class-form-errors").asInstanceOf[HTMLDivElement]
-    val newErrorDiv = div(`class` := "add-new-class-form-error alert alert-danger fade show text-center")(p(errorText))
-    val newError = dom.document.createElement("div")
-    newError.innerHTML = newErrorDiv.toString()
-    errorsDiv.appendChild(newError)
+    errorCount = errorCount + 1
+    if (!errorMessages.contains(errorText)) {
+      errorMessages += errorText
+      val errorsDiv = dom.document.getElementById("add-new-class-form-errors").asInstanceOf[HTMLDivElement]
+      val newErrorDiv = div(`class` := "add-new-class-form-error alert alert-danger fade show text-center")(errorText)
+      val newError = dom.document.createElement("div")
+      newError.innerHTML = newErrorDiv.toString()
+      errorsDiv.appendChild(newError)
+    }
   }
 
   def validateNewClassName(newClassName: HTMLInputElement): Unit = {
@@ -115,31 +122,69 @@ object AddNewClassJsScreen {
       addErrorToPage("The new class name must not be empty")
     } else {
       newClassName.style.borderColor = "lightgreen"
+      className = Some(newClassName.value)
     }
   }
 
   def clearFormErrors(): Unit = {
+    errorCount = 0
+    errorMessages.clear()
     val errorsDiv = dom.document.getElementById("add-new-class-form-errors").asInstanceOf[HTMLDivElement]
     while (errorsDiv.hasChildNodes()) {
       errorsDiv.removeChild(errorsDiv.lastChild)
+    }
+    errorsDiv.style.display = "none"
+  }
+
+  def showErrors(): Unit = {
+    if (errorCount > 0) {
+      val errorsDiv = dom.document.getElementById("add-new-class-form-errors").asInstanceOf[HTMLDivElement]
+      errorsDiv.style.display = "block"
+    }
+  }
+
+  def validateClassGroupName(groupName: HTMLInputElement): Unit = {
+    println(s"Validating group name '${groupName.value}'")
+    if (groupName.value.isEmpty) {
+      groupName.style.borderColor = "red"
+      val errorsDiv = dom.document.getElementById("add-new-class-form-errors").asInstanceOf[HTMLDivElement]
+      addErrorToPage("Group names must not be empty")
+    } else {
+      groupName.style.borderColor = "lightgreen"
+      className = Some(groupName.value)
+    }
+  }
+
+  def validateClassGroups(): Unit = {
+    var counter = 1
+    while (counter <= groupCounter) {
+      val groupName = dom.document.getElementById(s"add-group-name-$counter").asInstanceOf[HTMLInputElement]
+      if ( groupName != null) {
+        println(s"groupName: ${groupName.value}")
+        validateClassGroupName(groupName)
+        val selected = dom.document.getElementById(s"select-curriculum-level-$counter")
+        // TODO
+      }
+      counter = counter + 1
     }
   }
 
 
   def saveButton(): Unit = {
-    clearFormErrors()
-
     val saveNewClassButton = dom.document.getElementById("save-new-class-button").asInstanceOf[HTMLButtonElement]
     if (saveNewClassButton != null) {
       saveNewClassButton.addEventListener("click", (e: dom.Event) => {
+        clearFormErrors()
         println("Saving new class ...")
 
         val newClassName = dom.document.getElementById("className").asInstanceOf[HTMLInputElement]
         validateNewClassName(newClassName)
-
+        validateClassGroups()
 
         val newGroupsDiv = dom.document.getElementById("add-new-class-groups-div").asInstanceOf[HTMLDivElement]
         newGroupsDiv
+
+        showErrors()
       })
     }
   }
