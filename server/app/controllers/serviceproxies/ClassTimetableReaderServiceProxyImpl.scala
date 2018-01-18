@@ -8,11 +8,13 @@ import akka.util.Timeout
 import com.google.inject.Singleton
 import com.typesafe.config.ConfigFactory
 import com.typesafe.sslconfig.akka.AkkaSSLConfig
+import duplicate.model.ClassDetails
+import io.sudostream.timetoteach.kafka.serializing.systemwide.classes.ClassDetailsCollectionDeserializer
 import io.sudostream.timetoteach.kafka.serializing.systemwide.classtimetable.ClassTimetableDeserializer
-import io.sudostream.timetoteach.kafka.serializing.systemwide.model.SchoolsDeserializer
+import io.sudostream.timetoteach.messages.systemwide.model.classes.ClassDetailsCollection
 import play.api.Logger
 import shared.model.classtimetable.{WWWClassTimetable, WwwClassName}
-import utils.ClassTimetableConverterToAvro
+import utils.{ClassDetailsAvroConverter, ClassTimetableConverterToAvro}
 
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContextExecutor, Future}
@@ -98,5 +100,70 @@ class ClassTimetableReaderServiceProxyImpl {
     }
   }
 
+  def extractClassesAssociatedWithTeacher(userId: TimeToTeachUserId): Future[List[ClassDetails]] = {
+    logger.debug(s"extractClassesAssociatedWithTeacher: ${userId.toString}")
+
+    val uriString =
+      s"$protocol://$classTimetableReaderServiceHostname:$classTimetableReaderServicePort/api/classes/user/${userId.value}?" +
+        s"timeToTeachUserId=${userId.value}"
+
+    logger.debug(s"uri for extracting classes for teacher is $uriString")
+
+    val classTimetableReaderServiceUri = Uri(uriString)
+    val wwwClassTimetableRequest = HttpRequest(HttpMethods.GET, uri = classTimetableReaderServiceUri)
+
+    val badSslConfig = AkkaSSLConfig().mapSettings(s =>
+      s.withLoose(s.loose.withDisableSNI(true))
+        .withLoose(s.loose.withDisableHostnameVerification(true))
+        .withLoose(s.loose.withAcceptAnyCertificate(true))
+    )
+
+    logger.info(s"ssl config = ${badSslConfig.toString}")
+    val badCtx = Http().createClientHttpsContext(badSslConfig)
+
+    val response: Future[HttpResponse] = http.singleRequest(wwwClassTimetableRequest, badCtx)
+
+    response onComplete {
+      case Success(httpResponse) =>
+        logger.debug("Classes bytes received for teacher")
+
+      case Failure(ex) => logger.error(s"Issue updating Class Timetable: ${ex.getMessage}")
+    }
+
+    val eventualFutureClassDetails = response map { httpResponse =>
+      extractClassesFromHttpResponse(httpResponse)
+    }
+
+    eventualFutureClassDetails.flatMap {
+      res =>
+        res
+    }
+  }
+
+  def extractClassesFromHttpResponse(httpResponse: HttpResponse): Future[List[ClassDetails]] = {
+    if (httpResponse.status.isSuccess()) {
+      val smallTimeout = 3000.millis
+      val dataFuture = httpResponse.entity.toStrict(smallTimeout) map {
+        httpEntity =>
+          httpEntity.getData()
+      }
+      val futureClassDetailsCollection = dataFuture map {
+        databytes =>
+          val bytesAsArray = databytes.toArray
+          val classDetailsCollectionDeserializer = new ClassDetailsCollectionDeserializer
+          classDetailsCollectionDeserializer.deserialize("ignore", bytesAsArray)
+      }
+
+      futureClassDetailsCollection map {
+        classDetailsCollection =>
+          ClassDetailsAvroConverter.convertAvroClassDetailsCollectionToModel(classDetailsCollection)
+      }
+    } else {
+      logger.warn(s"Issue finding classes for teacher : ${httpResponse.toString()}")
+      Future {
+        Nil
+      }
+    }
+  }
 
 }

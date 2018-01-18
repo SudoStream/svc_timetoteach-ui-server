@@ -8,9 +8,21 @@
 
   @if(classes.isEmpty) {
    <h4 id="noClassesMsg">No classes created yet.</h4>
+  } else {
+   <table>
+    <tr>
+     <th>Class Name</th>
+    </tr>
+    @for(classDetail <- classes) {
+     <tr>
+      <td>@classDetail.className.name</td>
+     </tr>
+    }
+   </table>
   }
 
-  <a id="addNewClassBtn" class="rounded btn btn-primary" href="@controllers.planning.classtimetable.routes.ClassTimetableController.addNewClass()" role="button">Add New Class</a>
+  <a id="addNewClassBtn" class="rounded btn btn-primary" href="@controllers.planning.classtimetable.routes.ClassTimetableController.addNewClass()" role="button">
+   Add New Class</a>
 
  </div>
 

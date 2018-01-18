@@ -32,4 +32,45 @@ object ClassDetailsAvroConverter {
     )
   }
 
+  def convertAvroGroupsToModel(classGroups: List[ClassGroupsWrapper]): List[duplicate.model.Group] = {
+    for {
+      groupWrapper <- classGroups
+      groupAvro = groupWrapper.group
+      groupType = groupAvro.groupType match {
+        case GroupType.LITERACY => duplicate.model.LiteracyGroupType
+        case GroupType.MATHS => duplicate.model.MathsGroupType
+        case _ => duplicate.model.OtherGroupType
+      }
+      groupLevel = groupAvro.groupLevel match {
+        case ScottishCurriculumLevel.EARLY => duplicate.model.EarlyLevel
+        case ScottishCurriculumLevel.FIRST => duplicate.model.FirstLevel
+        case ScottishCurriculumLevel.SECOND => duplicate.model.SecondLevel
+        case ScottishCurriculumLevel.THIRD => duplicate.model.ThirdLevel
+        case ScottishCurriculumLevel.FOURTH => duplicate.model.FourthLevel
+      }
+    } yield duplicate.model.Group(
+      duplicate.model.GroupId(groupAvro.groupId.value),
+      duplicate.model.GroupName(groupAvro.groupName.value),
+      groupType,
+      groupLevel
+    )
+  }
+
+  def convertAvroClassDetailsCollectionToModel(classDetailsCollection: ClassDetailsCollection): List[duplicate.model.ClassDetails] = {
+    val classDetailsListAvroStyle = classDetailsCollection.values.map { classDetailsWrapper => classDetailsWrapper.classDetails }
+
+    for {
+      classDetails <- classDetailsListAvroStyle
+      classId = classDetails.classId.value
+      className = classDetails.className.value
+      groups = convertAvroGroupsToModel(classDetails.classGroups)
+    } yield duplicate.model.ClassDetails(
+      duplicate.model.ClassId(classId),
+      duplicate.model.ClassName(className),
+      groups,
+      classDetails.teachersWithWriteAccess
+    )
+  }
+
+
 }

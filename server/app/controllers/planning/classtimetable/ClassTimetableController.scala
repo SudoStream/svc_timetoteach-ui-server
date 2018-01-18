@@ -10,6 +10,7 @@ import be.objectify.deadbolt.scala.cache.HandlerCache
 import be.objectify.deadbolt.scala.{ActionBuilders, AuthenticatedRequest, DeadboltActions}
 import com.typesafe.config.ConfigFactory
 import controllers.serviceproxies.{ClassTimetableReaderServiceProxyImpl, ClassTimetableWriterServiceProxyImpl, TimeToTeachUserId, UserReaderServiceProxyImpl}
+import duplicate.model.ClassDetails
 import io.sudostream.timetoteach.messages.systemwide.model.UserPreferences
 import models.timetoteach.CookieNames
 import models.timetoteach.classtimetable.SchoolDayTimes
@@ -18,7 +19,6 @@ import play.api.data.Form
 import play.api.data.Forms.{mapping, _}
 import play.api.mvc._
 import security.MyDeadboltHandler
-import duplicate.model.ClassDetails
 import shared.model.classtimetable.WwwClassName
 import shared.util.LocalTimeUtil
 import utils.ClassTimetableConverterToAvro.convertJsonClassTimetableToWwwClassTimetable
@@ -154,15 +154,19 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
   def classesHome: Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest =>
     val (userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: String) = extractCommonHeaders(authRequest)
 
-    Future {
-      Ok(views.html.planning.classtimetables.classesHome(new MyDeadboltHandler(userReader),
-        userPictureUri,
-        userFirstName,
-        userFamilyName,
-        TimeToTeachUserId(tttUserId),
-        List()
-      ))
-    }
+    {
+      for {
+        classesAssociatedWithTeacher <- classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
+      } yield Future {
+        Ok(views.html.planning.classtimetables.classesHome(new MyDeadboltHandler(userReader),
+          userPictureUri,
+          userFirstName,
+          userFamilyName,
+          TimeToTeachUserId(tttUserId),
+          classesAssociatedWithTeacher
+        ))
+      }
+    }.flatMap(res => res)
   }
 
   def addNewClass(): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest =>
