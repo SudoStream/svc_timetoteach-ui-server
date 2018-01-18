@@ -1,19 +1,19 @@
 package timetoteach.addnewclass
 
 import org.scalajs.dom
+import org.scalajs.dom.ext.Ajax
 import org.scalajs.dom.ext.Ajax.InputData
 import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement, HTMLInputElement, HTMLSelectElement}
-import shared.model.classdetail._
+import duplicate.model._
 
 import scala.collection.mutable.ListBuffer
+import scala.scalajs.js
 import scala.scalajs.js.Dynamic.global
 import scala.util.{Failure, Success}
 import scalatags.JsDom.all.{`class`, div, _}
-import dom.ext.Ajax
 
 object AddNewClassJsScreen {
 
-  private var classDetails: Option[ClassDetails] = None
   private var groupCounter = 0
   private var errorCount = 0
   private var errorMessages: collection.mutable.ListBuffer[String] = new ListBuffer[String]()
@@ -259,24 +259,32 @@ object AddNewClassJsScreen {
         println("Saving new class ...")
 
         val newClassName = dom.document.getElementById("className").asInstanceOf[HTMLInputElement]
-        val classDetails = for {
+        val maybeClassDetails = for {
           className <- validateNewClassName(newClassName)
           groups <- validateClassGroups()
         } yield ClassDetails(
           ClassId(s"classId_${java.util.UUID.randomUUID()}"),
           ClassName(className),
           groups,
-          Nil
+          List(dom.window.localStorage.getItem("timeToTeachUserId"))
         )
 
         if (errorCount > 0) {
           showErrors()
         } else {
-          println(s"Class Details: ${classDetails.toString}")
-          import upickle.default._
-          val classDetailsPickled = write(classDetails)
-          println(s"Class Details Pickled: $classDetailsPickled")
-          saveNewClass(classDetailsPickled)
+          maybeClassDetails match {
+            case Some(classDetails) =>
+              println(s"Class Details: ${classDetails.toString}")
+              import upickle.default._
+              import upickle.default.{ReadWriter => RW, macroRW}
+
+              val classDetailsPickled = write[ClassDetails](classDetails)
+              println(s"Class Details Pickled: $classDetailsPickled")
+              saveNewClass(classDetailsPickled)
+            case None =>
+              println("ERROR: Problem getting class details")
+          }
+
         }
       })
     }

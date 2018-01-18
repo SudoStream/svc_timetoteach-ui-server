@@ -18,7 +18,7 @@ import play.api.data.Form
 import play.api.data.Forms.{mapping, _}
 import play.api.mvc._
 import security.MyDeadboltHandler
-import shared.model.classdetail.ClassDetails
+import duplicate.model.ClassDetails
 import shared.model.classtimetable.WwwClassName
 import shared.util.LocalTimeUtil
 import utils.ClassTimetableConverterToAvro.convertJsonClassTimetableToWwwClassTimetable
@@ -178,25 +178,25 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
     }
   }
 
-
   def saveNewClass: Action[AnyContent] = Action.async { implicit request =>
     val newClassFormBound = newClassForm.bindFromRequest.get
     logger.debug(s"New Class Pickled = ${newClassFormBound.newClassPickled}")
     logger.debug(s"TTT User Id = ${newClassFormBound.tttUserId}")
 
+
     import upickle.default._
     val newClassDetails = read[ClassDetails](newClassFormBound.newClassPickled)
-    logger.debug(s"New Class Unpickled = ${newClassDetails.toString}")
 
+    logger.debug(s"New Class Unpickled = ${newClassDetails.toString}")
     classTimetableWriter.upsertClass(
       TimeToTeachUserId(newClassFormBound.tttUserId),
-      newClassDetails
+      newClassDetails.asInstanceOf[ClassDetails]
     )
 
     Future {
       Ok("Created new class!")
     }
-  }
 
+  }
 
 }

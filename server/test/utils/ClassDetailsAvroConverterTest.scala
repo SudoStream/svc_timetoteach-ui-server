@@ -2,7 +2,7 @@ package utils
 
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumLevel
 import org.scalatest._
-import shared.model.classdetail._
+import duplicate.model._
 import utils.ClassDetailsAvroConverter.convertPickledClassToAvro
 
 class ClassDetailsAvroConverterTest extends FunSpec {
@@ -27,7 +27,7 @@ class ClassDetailsAvroConverterTest extends FunSpec {
         MathsGroupType,
         FirstLevel)
     ),
-    List("userId_1","userId_2")
+    List("userId_1", "userId_2")
   )
 
   describe("ClassDetailsAvroConverter given a pickled ClassDetails") {
@@ -53,7 +53,7 @@ class ClassDetailsAvroConverterTest extends FunSpec {
     }
     it("should convert Pickled Class To Avro with 2 teachers with write access") {
       val classDetailsAvro = convertPickledClassToAvro(classDetails)
-      assert(classDetailsAvro.teacherWithWriteAccess.size === 2)
+      assert(classDetailsAvro.teachersWithWriteAccess.size === 2)
     }
 
   }

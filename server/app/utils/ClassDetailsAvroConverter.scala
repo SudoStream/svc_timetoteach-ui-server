@@ -5,7 +5,7 @@ import io.sudostream.timetoteach.messages.systemwide.model.classes._
 
 object ClassDetailsAvroConverter {
 
-  def convertPickledClassToAvro(classDetails: shared.model.classdetail.ClassDetails): ClassDetails = {
+  def convertPickledClassToAvro(classDetails: duplicate.model.ClassDetails): ClassDetails = {
     val groups = for {
       groupUnpickled <- classDetails.groups
       groupId = GroupId(groupUnpickled.groupId.id)
@@ -21,7 +21,8 @@ object ClassDetailsAvroConverter {
         case "ThirdLevel" => ScottishCurriculumLevel.THIRD
         case "FourthLevel" => ScottishCurriculumLevel.FOURTH
       }
-    } yield ClassGroupsWrapper(ClassGroup(groupId, groupType, groupLevel))
+      groupName = GroupName(groupUnpickled.groupName.name)
+    } yield ClassGroupsWrapper(ClassGroup(groupId, groupName, groupType, groupLevel))
 
     ClassDetails(
       ClassId(classDetails.id.id),

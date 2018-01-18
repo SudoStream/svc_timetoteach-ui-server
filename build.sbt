@@ -11,7 +11,7 @@ name := "timetoteach"
 val scalaV = "2.11.11"
 
 ///////////////////////////////////////////
-val WWW_TIMETOTEACH_VERSION = "0.0.1-141"
+val WWW_TIMETOTEACH_VERSION = "0.0.1-142"
 ///////////////////////////////////////////
 
 lazy val timetoteach_ui_server = (project in file("server")).settings(
@@ -33,13 +33,15 @@ lazy val timetoteach_ui_server = (project in file("server")).settings(
   libraryDependencies ++= Seq(
     guice,
     ws,
-    "io.sudostream.timetoteach" %% "messages" % "0.0.11-38",
-    "org.scala-lang.modules" %% "scala-pickling" % "0.10.1",
+    "io.sudostream.timetoteach" %% "messages" % "0.0.11-40",
     "com.google.api-client" % "google-api-client" % "1.22.0",
     "be.objectify" %% "deadbolt-scala" % "2.6.0",
     "com.vmunier" %% "scalajs-scripts" % "1.1.0",
     "com.typesafe.play" %% "play-mailer" % "6.0.1",
     "com.typesafe.play" %% "play-mailer-guice" % "6.0.1",
+    "com.lihaoyi" %% "upickle" % "0.5.1",
+
+    //test
     "org.scalatest" %% "scalatest" % "3.0.4" % "test",
     specs2 % Test
   ),
@@ -52,11 +54,12 @@ lazy val client = (project in file("client")).settings(
   scalaVersion := scalaV,
   scalaJSUseMainModuleInitializer := true,
   libraryDependencies ++= Seq(
-    "com.lihaoyi" %%% "upickle" % "0.5.1",
     "org.scala-js" %%% "scalajs-dom" % "0.9.1",
     "be.doeraene" %%% "scalajs-jquery" % "0.9.2",
     "com.lihaoyi" %%% "scalatags" % "0.6.7",
     "org.scalactic" %% "scalactic" % "3.0.4",
+    "com.lihaoyi" %%% "upickle" % "0.5.1",
+    //test
     "org.scalatest" %% "scalatest" % "3.0.4" % "test",
     specs2 % Test
   )
@@ -67,7 +70,6 @@ lazy val shared = (crossProject.crossType(CrossType.Pure) in file("shared")).
   settings(
     scalaVersion := scalaV,
     libraryDependencies ++= Seq(
-      "com.lihaoyi" %%% "upickle" % "0.5.1",
       "org.scalatest" %%% "scalatest" % "3.0.0" % "test",
       "org.scala-js" %%% "scalajs-java-time" % "0.2.2",
       specs2 % Test

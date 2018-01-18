@@ -11,10 +11,10 @@ import com.typesafe.sslconfig.akka.AkkaSSLConfig
 import io.sudostream.timetoteach.kafka.serializing.systemwide.classes.ClassDetailsSerializer
 import io.sudostream.timetoteach.kafka.serializing.systemwide.classtimetable.ClassTimetableSerializer
 import play.api.Logger
-import shared.model.classdetail.ClassDetails
 import shared.model.classtimetable.{WWWClassTimetable, WwwClassName}
-import utils.ClassTimetableConverterToAvro.convertWwwClassTimeTableToAvro
+import duplicate.model.ClassDetails
 import utils.ClassDetailsAvroConverter.convertPickledClassToAvro
+import utils.ClassTimetableConverterToAvro.convertWwwClassTimeTableToAvro
 
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContextExecutor, Future}
@@ -32,8 +32,8 @@ class ClassTimetableWriterServiceProxyImpl {
   val http = Http(system)
   private val classTimetableWriterServiceHostname = config.getString("services.classtimetable-writer-host")
   private val classTimetableWriterServicePort = config.getString("services.classtimetable-writer-port")
-  private val minikubeRun : Boolean =  sys.props.getOrElse("minikubeEnv","false").toBoolean
-  val protocol: String = if (classTimetableWriterServicePort.toInt > 9000 && !minikubeRun ) "http" else "https"
+  private val minikubeRun: Boolean = sys.props.getOrElse("minikubeEnv", "false").toBoolean
+  val protocol: String = if (classTimetableWriterServicePort.toInt > 9000 && !minikubeRun) "http" else "https"
 
 
   def upsertClassTimetables(userId: TimeToTeachUserId, wwwClassName: WwwClassName, wWWClassTimetable: WWWClassTimetable): Future[Boolean] = {

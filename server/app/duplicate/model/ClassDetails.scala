@@ -1,4 +1,4 @@
-package shared.model.classdetail
+package duplicate.model
 
 import upickle.default.{macroRW, ReadWriter => RW}
 
@@ -13,50 +13,49 @@ case class ClassDetails(
   )
 }
 
-object ClassDetails {
+object ClassDetails{
   implicit def rw: RW[ClassDetails] = macroRW
 }
 
-
 case class ClassId(id: String)
-
-object ClassId {
+object ClassId{
   implicit def rw: RW[ClassId] = macroRW
 }
 
 case class ClassName(name: String)
-
-object ClassName {
+object ClassName{
   implicit def rw: RW[ClassName] = macroRW
 }
 
 ////
 
 case class Group(groupId: GroupId, groupName: GroupName, groupType: GroupType, groupLevel: CurriculumLevel)
-
-object Group {
+object Group{
   implicit def rw: RW[Group] = macroRW
 }
 
 case class GroupId(id: String)
-
-object GroupId {
+object GroupId{
   implicit def rw: RW[GroupId] = macroRW
 }
 
-case class GroupName(name: String)
 
-object GroupName {
+case class GroupName(name: String)
+object GroupName{
   implicit def rw: RW[GroupName] = macroRW
 }
 
-
 ////////// Group Type //////////////
+//object GroupType extends Enumeration {
+//  type GroupType = Value
+//  val Maths, Literacy, Other = Value
+//}
+
+
 sealed trait GroupType {
   def value: String
 }
-
-object GroupType {
+object GroupType{
   implicit def rw: RW[GroupType] = macroRW
 }
 
@@ -76,14 +75,18 @@ case object OtherGroupType extends GroupType {
 
 
 ////////// Curriculum Level //////////////
+//object CurriculumLevel extends Enumeration {
+//  type CurriculumLevel = Value
+//  val EarlyLevel, FirstLevel, SecondLevel, ThirdLevel, FourthLevel = Value
+//}
+
+
 sealed trait CurriculumLevel {
   def value: String
 }
-
-object CurriculumLevel {
+object CurriculumLevel{
   implicit def rw: RW[CurriculumLevel] = macroRW
 }
-
 
 case object EarlyLevel extends CurriculumLevel {
   val value = "EarlyLevel"
@@ -104,6 +107,6 @@ case object ThirdLevel extends CurriculumLevel {
 case object FourthLevel extends CurriculumLevel {
   val value = "FourthLevel"
 }
-
-////////// Curriculum Level - END//////////////
-
+//
+//////// Curriculum Level - END//////////////
+//

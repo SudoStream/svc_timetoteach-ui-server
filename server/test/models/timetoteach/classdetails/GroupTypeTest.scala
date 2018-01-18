@@ -1,10 +1,7 @@
 package models.timetoteach.classdetails
 
 import org.scalatest.FunSpec
-import shared.model.classdetail._
-
-import scala.pickling.Defaults._
-import scala.pickling.json._
+import duplicate.model._
 
 class GroupTypeTest extends FunSpec {
   def createGroupId() : GroupId = {
@@ -13,22 +10,6 @@ class GroupTypeTest extends FunSpec {
 
   describe("When created a group with name 'triangles', type of 'maths' and level of 'first'") {
     val group = Group(createGroupId(), GroupName("triangles"), MathsGroupType, FirstLevel)
-
-    it("should have a name of 'triangles'") {
-      assert(group.groupName.name === "triangles")
-    }
-    it("should have a type of 'maths'") {
-      assert(group.groupType === MathsGroupType)
-    }
-    it("should have a level of 'first'") {
-      assert(group.groupLevel === FirstLevel)
-    }
-  }
-
-  describe("When pickling and unpickling a group with name 'triangles', type of 'maths' and level of 'first'") {
-    val group = Group(createGroupId(), GroupName("triangles"), MathsGroupType, FirstLevel)
-    val groupPickled = group.pickle
-    val groupUnpickled = groupPickled.unpickle[Group]
 
     it("should have a name of 'triangles'") {
       assert(group.groupName.name === "triangles")
@@ -69,19 +50,6 @@ class GroupTypeTest extends FunSpec {
       groups,
       List("id12")
     )
-
-    val classDetailsPickled = classDetails.pickle
-    val classDetailsUnpickled = classDetailsPickled.unpickle[ClassDetails]
-
-    it("should have a class id of 'classId123'") {
-      assert(classDetailsUnpickled.id.id === "classId123")
-    }
-    it("should have a one class teacher") {
-      assert(classDetailsUnpickled.classTeachersWithWriteAccess.size === 1)
-    }
-    it("should have 6 groups") {
-      assert(classDetailsUnpickled.groups.size === 6)
-    }
   }
 
 }

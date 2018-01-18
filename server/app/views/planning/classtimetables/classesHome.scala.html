@@ -1,5 +1,5 @@
 @import controllers.serviceproxies.TimeToTeachUserId
-@import shared.model.classdetail.ClassDetails
+@import duplicate.model.ClassDetails
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classes: List[ClassDetails])
 
 @timetoteachAppMain(handler, s"Classes",
