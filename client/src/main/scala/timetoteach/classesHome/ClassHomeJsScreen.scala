@@ -2,9 +2,10 @@ package timetoteach.classesHome
 
 import org.scalajs.dom
 import org.scalajs.dom.html.Div
-import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement}
+import org.scalajs.dom.raw.HTMLButtonElement
 
 import scala.scalajs.js
+import scala.util.{Failure, Success}
 import scalatags.JsDom
 import scalatags.JsDom.all.{`class`, div, span, _}
 
@@ -47,11 +48,29 @@ object ClassHomeJsScreen {
     val yesDeleteTheClassButton = dom.document.getElementById("yes-delete-the-class-btn").asInstanceOf[HTMLButtonElement]
     yesDeleteTheClassButton.addEventListener("click", (e: dom.Event) => {
       println(s"YES to deleting class ${classNameToDelete.getOrElse("[NO CLASS FOUND]")}")
-
-      //TODO: call correct delete route from here
-
       val $ = js.Dynamic.global.$
       $("#modalAreYouSureWantToDeleteClass").modal("hide")
+
+      import dom.ext.Ajax
+
+      import scala.concurrent.ExecutionContext.Implicits.global
+      val theUrl = s"/deleteclass/${currentUserId.getOrElse("NONE")}/${classIdToDelete.getOrElse("NONE")}"
+      val theHeaders = Map(
+        "X-Requested-With" -> "Accept"
+      )
+
+      Ajax.delete(
+        url = theUrl,
+        headers = theHeaders
+      ).onComplete {
+        case Success(xhr) =>
+          val response = xhr.responseText
+          println(s"Successfully deleted class : $response")
+          dom.window.location.href = "/classes";
+        case Failure(ex) =>
+          dom.window.alert("Something went wrong with deleting class timetable. Specifically : -" +
+            s"\n\n${ex.getMessage}")
+      }
     })
   }
 
@@ -84,7 +103,7 @@ object ClassHomeJsScreen {
             p("Are you sure you want to delete the class, ", strong(classNameToDelete.getOrElse("").toString), "?")
           ),
           div(`class` := "modal-footer")(
-            button(`id`:= "yes-delete-the-class-btn",  `type` := "button", `class` := "btn btn-primary")("Yes"),
+            button(`id` := "yes-delete-the-class-btn", `type` := "button", `class` := "btn btn-primary")("Yes"),
             button(`type` := "button", `class` := "btn btn-secondary", attr("data-dismiss") := "modal")("No")
           )
         )

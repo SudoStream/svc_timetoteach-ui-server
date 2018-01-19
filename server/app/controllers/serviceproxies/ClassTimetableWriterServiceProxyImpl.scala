@@ -8,11 +8,11 @@ import akka.util.Timeout
 import com.google.inject.Singleton
 import com.typesafe.config.ConfigFactory
 import com.typesafe.sslconfig.akka.AkkaSSLConfig
+import duplicate.model.ClassDetails
 import io.sudostream.timetoteach.kafka.serializing.systemwide.classes.ClassDetailsSerializer
 import io.sudostream.timetoteach.kafka.serializing.systemwide.classtimetable.ClassTimetableSerializer
 import play.api.Logger
 import shared.model.classtimetable.{WWWClassTimetable, WwwClassName}
-import duplicate.model.ClassDetails
 import utils.ClassDetailsAvroConverter.convertPickledClassToAvro
 import utils.ClassTimetableConverterToAvro.convertWwwClassTimeTableToAvro
 
@@ -100,6 +100,37 @@ class ClassTimetableWriterServiceProxyImpl {
     response map { httpResponse =>
       if (httpResponse.status.isSuccess()) true else false
     }
+  }
+
+  def deleteClass(userId: TimeToTeachUserId, classId: String): Future[HttpResponse] = {
+    val uriString = s"$protocol://$classTimetableWriterServiceHostname:$classTimetableWriterServicePort" +
+      s"/api/classes/${userId.value}/$classId"
+    logger.debug(s"\n\nuri for deleting the class is $uriString")
+    val classTimetableWriterServiceUri = Uri(uriString)
+    val postEditClassTimetableRequest = HttpRequest(HttpMethods.DELETE, uri = classTimetableWriterServiceUri)
+
+    val badSslConfig = AkkaSSLConfig().mapSettings(s =>
+      s.withLoose(s.loose.withDisableSNI(true))
+        .withLoose(s.loose.withDisableHostnameVerification(true))
+        .withLoose(s.loose.withAcceptAnyCertificate(true))
+    )
+
+    logger.info(s"ssl config = ${badSslConfig.toString}")
+    val badCtx = Http().createClientHttpsContext(badSslConfig)
+
+    val eventualResponse: Future[HttpResponse] = http.singleRequest(postEditClassTimetableRequest, badCtx)
+
+    eventualResponse onComplete {
+      case Success(httpResponse) =>
+        if (httpResponse.status.isSuccess()) {
+          logger.info(s"Class $classId Deleted Successfully!")
+        } else {
+          logger.error("Failed to delete class $classId!")
+        }
+      case Failure(ex) => logger.error(s"Problem when deleting class $classId : ${ex.getMessage}")
+    }
+
+    eventualResponse
   }
 
 }

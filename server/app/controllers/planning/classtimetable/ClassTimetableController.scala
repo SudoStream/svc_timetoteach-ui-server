@@ -26,6 +26,7 @@ import utils.TemplateUtils.getCookieStringFromRequest
 
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContextExecutor, Future}
+import scala.util.{Failure, Success}
 
 class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWriterServiceProxyImpl,
                                          userReader: UserReaderServiceProxyImpl,
@@ -200,7 +201,28 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
     Future {
       Ok("Created new class!")
     }
+  }
 
+  def deleteClass(tttUserId: String, classId: String): Action[AnyContent] = Action.async { implicit request =>
+    logger.info(s"request for deleteClass: ${request.toString()}")
+    logger.debug(s"Attempting to delete class '$classId' for user '$tttUserId'")
+
+    val eventualResponse = classTimetableWriter.deleteClass(TimeToTeachUserId(tttUserId), classId)
+
+    eventualResponse.onComplete {
+      case Success(httpResponse) =>
+        if (httpResponse.status.isSuccess()) {
+          logger.info(s"Succees Deleting class '$classId' for user '$tttUserId'")
+        } else {
+          logger.error(s"Problem class '$classId' for user '$tttUserId'")
+        }
+      case Failure(ex) =>
+        logger.error(s"Failed Response Deleting class '$classId' for user '$tttUserId'. Exception is ${ex.getMessage}")
+    }
+
+    for {
+      response <- eventualResponse
+    } yield Status(response.status.intValue())
   }
 
 }

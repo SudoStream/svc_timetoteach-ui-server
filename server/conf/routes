@@ -3,36 +3,37 @@
 # ~~~~
 
 # Home page
-GET         /                                 controllers.Application.index
-GET         /health                           controllers.Application.health
-GET         /privacy                          controllers.Application.privacy
+GET           /                                       controllers.Application.index
+GET           /health                                 controllers.Application.health
+GET           /privacy                                controllers.Application.privacy
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file                     controllers.Assets.versioned(path="/public", file: Asset)
+GET           /assets/*file                           controllers.Assets.versioned(path="/public", file: Asset)
 
-GET         /login                            controllers.Application.login
-GET         /loggedout                        controllers.Application.loggedOutSuccessfully
-GET         /signup                           controllers.UserSignupController.signupStep1
-GET         /signupsteptwo                    controllers.UserSignupController.signupStep2
-POST        /usercreated                      controllers.UserSignupController.userCreated
-GET         /profile                          controllers.Application.profile
-POST        /tokensignin                      controllers.SecurityController.tokensignin
-POST        /facebooktokensignin              controllers.SecurityController.facebookTokenSignIn
-POST        /signout                          controllers.SecurityController.signout
-GET         /signedupcongrats                 controllers.UserSignupController.signedUpCongrats
+GET           /login                                  controllers.Application.login
+GET           /loggedout                              controllers.Application.loggedOutSuccessfully
+GET           /signup                                 controllers.UserSignupController.signupStep1
+GET           /signupsteptwo                          controllers.UserSignupController.signupStep2
+POST          /usercreated                            controllers.UserSignupController.userCreated
+GET           /profile                                controllers.Application.profile
+POST          /tokensignin                            controllers.SecurityController.tokensignin
+POST          /facebooktokensignin                    controllers.SecurityController.facebookTokenSignIn
+POST          /signout                                controllers.SecurityController.signout
+GET           /signedupcongrats                       controllers.UserSignupController.signedUpCongrats
 
-GET         /app                              controllers.Application.timeToTeachApp
-GET         /initialUserPreferences           controllers.Application.askInitialPreferences
-POST        /initialPreferencesCreated        controllers.Application.initialPreferencesCreated
-GET         /weeklyplanning                   controllers.Application.weeklyPlanning
+GET           /app                                    controllers.Application.timeToTeachApp
+GET           /initialUserPreferences                 controllers.Application.askInitialPreferences
+POST          /initialPreferencesCreated              controllers.Application.initialPreferencesCreated
+GET           /weeklyplanning                         controllers.Application.weeklyPlanning
 
-GET         /termlyplanning                   controllers.planning.termly.TermlyPlansController.termlyPlans
+GET           /termlyplanning                         controllers.planning.termly.TermlyPlansController.termlyPlans
 
-GET         /classes                          controllers.planning.classtimetable.ClassTimetableController.classesHome
-GET         /addnewclass                      controllers.planning.classtimetable.ClassTimetableController.addNewClass
-POST        /savenewclass                     controllers.planning.classtimetable.ClassTimetableController.saveNewClass
+GET           /classes                                controllers.planning.classtimetable.ClassTimetableController.classesHome
+GET           /addnewclass                            controllers.planning.classtimetable.ClassTimetableController.addNewClass
+POST          /savenewclass                           controllers.planning.classtimetable.ClassTimetableController.saveNewClass
+DELETE        /deleteclass/:tttUserId/:classId        controllers.planning.classtimetable.ClassTimetableController.deleteClass(tttUserId, classId)
 
-GET         /classtimetable                   controllers.planning.classtimetable.ClassTimetableController.classTimetable
-POST        /classtimetablesave               controllers.planning.classtimetable.ClassTimetableController.classTimetableSave
+GET           /classtimetable                         controllers.planning.classtimetable.ClassTimetableController.classTimetable
+POST          /classtimetablesave                     controllers.planning.classtimetable.ClassTimetableController.classTimetableSave
 #########################
-GET         /twitter/auth                     controllers.Twitter.authenticate()
+GET           /twitter/auth                           controllers.Twitter.authenticate()
 #GET     /view/:foo/:bar             controllers.Application.view(foo: String, bar: String)
