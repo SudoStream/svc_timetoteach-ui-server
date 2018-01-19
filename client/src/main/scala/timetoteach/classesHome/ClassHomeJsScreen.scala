@@ -44,7 +44,12 @@ object ClassHomeJsScreen {
   def addYesDeleteTheClassBehaviour(): Unit = {
     val yesDeleteTheClassButton = dom.document.getElementById("yes-delete-the-class-btn").asInstanceOf[HTMLButtonElement]
     yesDeleteTheClassButton.addEventListener("click", (e: dom.Event) => {
-      // TODO:
+      println(s"YES to deleting class ${classNameToDelete.getOrElse("[NO CLASS FOUND]")}")
+
+      //TODO: call correct delete route from here
+
+      val $ = js.Dynamic.global.$
+      $("#modalAreYouSureWantToDeleteClass").modal("hide")
     })
   }
 
