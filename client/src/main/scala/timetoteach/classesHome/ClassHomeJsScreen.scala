@@ -16,6 +16,7 @@ object ClassHomeJsScreen {
 
   private var classIdToDelete: Option[String] = None
   private var classNameToDelete: Option[String] = None
+  private var currentUserId: Option[String] = None
 
   def deleteClassBehaviour(): Unit = {
     val deleteTeacherClassButtons = dom.document.getElementsByClassName("delete-teacher-class-btn")
@@ -26,6 +27,7 @@ object ClassHomeJsScreen {
       deleteTeacherClassButton.addEventListener("click", (e: dom.Event) => {
         val classId = deleteTeacherClassButton.getAttribute("data-class-id")
         val className = deleteTeacherClassButton.getAttribute("data-class-name")
+        currentUserId = Some(deleteTeacherClassButton.getAttribute("data-user-id"))
         classIdToDelete = Some(classId)
         classNameToDelete = Some(className)
         println(s"Deleting the class $classId")
