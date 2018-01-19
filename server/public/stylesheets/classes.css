@@ -5,11 +5,11 @@
 }
 
 #addNewClassBtn {
-    margin: 2rem 1rem;
+    margin: 1rem 0;
 }
 
 .add-new-class-form-section {
-    margin-top: 1.5rem;
+    margin-top: 0.5rem;
     margin-bottom: 1rem;
 }
 
@@ -29,7 +29,7 @@
 
 .delete-new-class-group-row {
     /*color: rgb(66,139,202);*/
-    color: rgb(66,139,162);
+    color: rgb(66, 139, 162);
 }
 
 #add-new-class-form-errors {
@@ -39,4 +39,35 @@
 
 .add-new-class-form-error {
     margin: 0.25rem 0;
+}
+
+#teachers-classes {
+    margin-top: 2rem;
+    padding-bottom: 12rem;
+}
+
+.teachers-classes-edit-btn {
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+    margin-right: 2rem;
+}
+
+.teachers-classes-btn {
+    /*margin: 0.25rem;*/
+}
+
+.teachers-classes-goto-btn {
+    float: left;
+}
+
+.teachers-classes-delete-btn {
+    float: right;
+}
+
+.teacher-classes-deck {
+    margin-bottom: 2rem;
+}
+
+.teacher-classes-card{
+    margin-bottom: 0.25rem;
 }

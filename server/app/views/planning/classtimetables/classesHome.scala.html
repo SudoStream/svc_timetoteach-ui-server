@@ -4,57 +4,55 @@
 
 @timetoteachAppMain(handler, s"Classes",
  userPictureUri, userFirstName, userFamilyName) {
+
  <div class="container">
+  <a id="addNewClassBtn" class="rounded btn btn-primary" href="@controllers.planning.classtimetable.routes.ClassTimetableController.addNewClass()" role="button">
+   Add New Class</a>
 
   @if(classes.isEmpty) {
    <h4 id="noClassesMsg">No classes created yet.</h4>
   } else {
-   <table>
-    <tr>
-     <th>Class Name</th>
-    </tr>
-    @for(classDetail <- classes) {
-     <tr>
-      <td>@classDetail.className.name</td>
-     </tr>
-    }
-   </table>
-  }
+   <div id="teachers-classes">
 
-  <a id="addNewClassBtn" class="rounded btn btn-primary" href="@controllers.planning.classtimetable.routes.ClassTimetableController.addNewClass()" role="button">
-   Add New Class</a>
-
- </div>
-
-  <!-- Modal -->
- <div class="modal fade" id="addNewClassModal" tabindex="-1" role="dialog" aria-labelledby="addNewClassModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-   <div class="modal-content">
-    <div class="modal-header">
-     <h5 class="modal-title" id="addNewClassModalLabel">Add New Class</h5>
-     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
-     </button>
-    </div>
-    <div class="modal-body">
-     <div class="add-new-class-form-section">
-
-      @*<h6 class="text-center text-muted form-header">Class Details</h6>*@
-      <div class="form-row">
-       <div class="col-sm-12">
-        <label for="className">Class Name</label>
-        <input type="text" id="className" name="className" class="form-control" placeholder="Enter Your Class Name, e.g. P3AB" required>
+    <div class="row">
+     <div class="card-deck teacher-classes-deck">
+     @for((classDetail, index) <- classes.zipWithIndex) {
+      <div class="card teacher-classes-card" style="width: 18rem;">
+       <div class="card-header">
+        @classDetail.className.name
+       <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+       </button>
+       </div>
+       <img class="card-img-top" src="@routes.Assets.versioned(s"images/classes/classroom-${index + 1 % 5}.jpeg")"
+       alt="Class Image" height="192px">
+       <div class="card-body">
+        <p class="card-text">some description about class ...</p>
+        <div class="row">
+         <div class="col-lg-2"></div>
+         <div class="col-lg-8">
+          <button class="rounded btn btn-outline-info btn-block teachers-classes-btn teachers-classes-goto-btn" data-class-id="@classDetail.id.id" role="button">Go To Class</button>
+         </div>
+         <div class="col-lg-2"></div>
+        </div>
        </div>
       </div>
 
-
-     </div>
+      @if((index + 1) % 3 == 0) {
+      </div>
     </div>
-    <div class="modal-footer">
-     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-     <button type="button" class="btn btn-primary">Save</button>
-    </div>
+    <div class="row">
+     <div class="card-deck">
+    }
+    }
    </div>
   </div>
+
  </div>
+}
+
+
+ </div>
+
+
 }
