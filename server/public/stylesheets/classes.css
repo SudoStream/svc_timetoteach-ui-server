@@ -5,7 +5,7 @@
 }
 
 #addNewClassBtn {
-    margin: 1rem 0;
+    margin: 0.25rem 0;
 }
 
 .add-new-class-form-section {
@@ -57,7 +57,7 @@
 }
 
 .teachers-classes-goto-btn {
-    float: left;
+    /*float: left;*/
 }
 
 .teachers-classes-delete-btn {
