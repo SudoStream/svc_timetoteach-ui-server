@@ -78,7 +78,7 @@ object AddNewClassJsScreen {
             )
           ),
           div(`class` := "row")(
-            div(`class` := "col-sm-6")(input(
+            div(`class` := "col-sm-11 new-class-group-description")(input(
               `type` := "text",
               `class` := "form-control",
               id := s"add-group-description-$groupCounter",

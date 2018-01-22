@@ -1,6 +1,7 @@
 
-#noClassesMsg {
-    margin-top: 2rem;
+.noClassesMsg {
+    margin-left: 0rem;
+    margin-top: 7rem;
 }
 
 #addNewClassBtn {
@@ -24,8 +25,11 @@
 }
 
 .add-new-group-row {
-    margin-top: 0.75rem;
-    margin-bottom: 0.75rem;
+    border: 1px solid lightgrey;
+    background: rgba(0, 0, 0, 0.03);
+    padding: 1.5rem 0.5rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
 }
 
 .delete-new-class-group-row {
@@ -79,4 +83,8 @@
 .teacher-classes-card{
     background: #f6f6ff;
     margin: 0.4rem 0;
+}
+
+.new-class-group-description {
+    margin-top: 0.8rem;
 }
