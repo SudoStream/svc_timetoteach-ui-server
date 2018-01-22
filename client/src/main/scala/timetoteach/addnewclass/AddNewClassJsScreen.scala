@@ -1,13 +1,12 @@
 package timetoteach.addnewclass
 
+import duplicate.model._
 import org.scalajs.dom
 import org.scalajs.dom.ext.Ajax
 import org.scalajs.dom.ext.Ajax.InputData
 import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement, HTMLInputElement, HTMLSelectElement}
-import duplicate.model._
 
 import scala.collection.mutable.ListBuffer
-import scala.scalajs.js
 import scala.scalajs.js.Dynamic.global
 import scala.util.{Failure, Success}
 import scalatags.JsDom.all.{`class`, div, _}
@@ -171,56 +170,62 @@ object AddNewClassJsScreen {
   }
 
   def validateClassGroups(): Option[List[Group]] = {
-    var counter = 1
-    val maybeGroups: ListBuffer[Option[Group]] = new ListBuffer[Option[Group]]()
-    while (counter <= groupCounter) {
-      val groupNameInputElement = dom.document.getElementById(s"add-group-name-$counter").asInstanceOf[HTMLInputElement]
-      if (groupNameInputElement != null) {
-        val maybeGroup = for {
-          groupName <- validateClassGroupName(groupNameInputElement)
-
-          selectedGroupType = dom.document.getElementById(s"select-group-type-$counter").asInstanceOf[HTMLSelectElement]
-          groupTypeMaybe <- validateSelection(selectedGroupType, "Need to select a group type, e.g. Maths, Literacy etc")
-          groupType = {
-            println(s"groupTypeMaybe = '$groupTypeMaybe'")
-            groupTypeMaybe match {
-              case "Maths" => MathsGroupType
-              case "Literacy" => LiteracyGroupType
-              case _ => OtherGroupType
-            }
-          }
-
-          selectedCurriculumLevel = dom.document.getElementById(s"select-curriculum-level-$counter").asInstanceOf[HTMLSelectElement]
-          groupLevelMaybe <- validateSelection(selectedCurriculumLevel, "Need to select a curriculum level, e.g. Early, First etc")
-          groupLevel = {
-            println(s"groupLevelMaybe = '$groupLevelMaybe'")
-            groupLevelMaybe match {
-              case "Early" => EarlyLevel
-              case "First" => FirstLevel
-              case "Second" => SecondLevel
-              case "Third" => ThirdLevel
-              case "Fourth" => FourthLevel
-            }
-          }
-        } yield Group(GroupId(s"groupId_${java.util.UUID.randomUUID()}"), GroupName(groupName), groupType, groupLevel)
-
-        maybeGroups += maybeGroup
-      }
-      counter = counter + 1
-    }
-
-    val groups = {
-      for {
-        group <- maybeGroups
-        if group.isDefined
-        groupYes <- group
-      } yield groupYes
-    }.toList
-
-    if (groups.isEmpty) {
-      None
+    if (groupCounter == 0) {
+      println("returning empty list for groups")
+      Some(Nil)
     } else {
-      Some(groups)
+
+      var counter = 1
+      val maybeGroups: ListBuffer[Option[Group]] = new ListBuffer[Option[Group]]()
+      while (counter <= groupCounter) {
+        val groupNameInputElement = dom.document.getElementById(s"add-group-name-$counter").asInstanceOf[HTMLInputElement]
+        if (groupNameInputElement != null) {
+          val maybeGroup = for {
+            groupName <- validateClassGroupName(groupNameInputElement)
+
+            selectedGroupType = dom.document.getElementById(s"select-group-type-$counter").asInstanceOf[HTMLSelectElement]
+            groupTypeMaybe <- validateSelection(selectedGroupType, "Need to select a group type, e.g. Maths, Literacy etc")
+            groupType = {
+              println(s"groupTypeMaybe = '$groupTypeMaybe'")
+              groupTypeMaybe match {
+                case "Maths" => MathsGroupType
+                case "Literacy" => LiteracyGroupType
+                case _ => OtherGroupType
+              }
+            }
+
+            selectedCurriculumLevel = dom.document.getElementById(s"select-curriculum-level-$counter").asInstanceOf[HTMLSelectElement]
+            groupLevelMaybe <- validateSelection(selectedCurriculumLevel, "Need to select a curriculum level, e.g. Early, First etc")
+            groupLevel = {
+              println(s"groupLevelMaybe = '$groupLevelMaybe'")
+              groupLevelMaybe match {
+                case "Early" => EarlyLevel
+                case "First" => FirstLevel
+                case "Second" => SecondLevel
+                case "Third" => ThirdLevel
+                case "Fourth" => FourthLevel
+              }
+            }
+          } yield Group(GroupId(s"groupId_${java.util.UUID.randomUUID()}"), GroupName(groupName), groupType, groupLevel)
+
+          maybeGroups += maybeGroup
+        }
+        counter = counter + 1
+      }
+
+      val groups = {
+        for {
+          group <- maybeGroups
+          if group.isDefined
+          groupYes <- group
+        } yield groupYes
+      }.toList
+
+      if (groups.isEmpty) {
+        None
+      } else {
+        Some(groups)
+      }
     }
   }
 
@@ -275,8 +280,7 @@ object AddNewClassJsScreen {
           maybeClassDetails match {
             case Some(classDetails) =>
               println(s"Class Details: ${classDetails.toString}")
-              import upickle.default._
-              import upickle.default.{ReadWriter => RW, macroRW}
+              import upickle.default.{ReadWriter => RW, _}
 
               val classDetailsPickled = write[ClassDetails](classDetails)
               println(s"Class Details Pickled: $classDetailsPickled")

@@ -1,11 +1,11 @@
 
 #noClassesMsg {
     margin-top: 2rem;
-    margin-left: 1rem;
 }
 
 #addNewClassBtn {
-    margin: 0.25rem 0;
+    margin-top: 2rem;
+    margin-bottom: 0.25rem;
 }
 
 .add-new-class-form-section {
