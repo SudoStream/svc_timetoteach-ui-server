@@ -28,52 +28,63 @@ object AddNewClassJsScreen {
 
         // Add a new line with drop downs etc
         // e.g. [Enter Group Name] / [Select Group Type] / [Select Group Level]
-        val newAddGroupRow = div(`class` := "row add-new-group-row")(
-          div(`class` := "col-sm-3")(input(
-            `type` := "text",
-            `class` := "form-control",
-            id := s"add-group-name-$groupCounter",
-            `name` := s"add-group-name-$groupCounter",
-            placeholder := "Enter group name"
-          )),
+        val newAddGroupRow = div(`class` := "add-new-group-row")(
+          div(`class` := "row")(
+            div(`class` := "col-sm-3")(input(
+              `type` := "text",
+              `class` := "form-control",
+              id := s"add-group-name-$groupCounter",
+              `name` := s"add-group-name-$groupCounter",
+              placeholder := "Enter group name"
+            )),
 
-          div(`class` := "col-sm-1"),
+            div(`class` := "col-sm-1"),
 
-          div(`class` := "col-sm-3")(div(
-            select(
-              name := s"select-group-type-$groupCounter",
-              id := s"select-group-type-$groupCounter",
-              `class` := "btn btn-outline-info",
-              option(value := "Select", "Select Group Type ... "),
-              option(value := "Maths", "Maths"),
-              option(value := "Literacy", "Literacy"),
-              option(value := "Other", "Other")
+            div(`class` := "col-sm-3")(div(
+              select(
+                name := s"select-group-type-$groupCounter",
+                id := s"select-group-type-$groupCounter",
+                `class` := "btn btn-outline-info",
+                option(value := "Select", "Select Group Type ... "),
+                option(value := "Maths", "Maths"),
+                option(value := "Literacy", "Literacy"),
+                option(value := "Other", "Other")
+              )
+            )),
+
+            div(`class` := "col-sm-3")(div(
+              select(
+                id := s"select-curriculum-level-$groupCounter",
+                name := s"select-curriculum-level-$groupCounter",
+                `class` := "btn btn-outline-info",
+                option(value := "Select", "Select Curriculum Level ... "),
+                option(value := "Early", "Early"),
+                option(value := "First", "First"),
+                option(value := "Second", "Second"),
+                option(value := "Third", "Third"),
+                option(value := "Fourth", "Fourth")
+              )
+            )),
+
+            div(`class` := "col-sm-1")(
+              button(
+                id := s"delete-new-class-group-row-button-$groupCounter",
+                `type` := "button",
+                `class` := "close delete-new-class-group-row",
+                attr("data-counter-value") := s"$groupCounter",
+                attr("aria-label") := "delete")(
+                span(attr("aria-hidden") := "true")(raw("&times;"))
+              )
             )
-          )),
-
-          div(`class` := "col-sm-3")(div(
-            select(
-              id := s"select-curriculum-level-$groupCounter",
-              name := s"select-curriculum-level-$groupCounter",
-              `class` := "btn btn-outline-info",
-              option(value := "Select", "Select Curriculum Level ... "),
-              option(value := "Early", "Early"),
-              option(value := "First", "First"),
-              option(value := "Second", "Second"),
-              option(value := "Third", "Third"),
-              option(value := "Fourth", "Fourth")
-            )
-          )),
-
-          div(`class` := "col-sm-1")(
-            button(
-              id := s"delete-new-class-group-row-button-$groupCounter",
-              `type` := "button",
-              `class` := "close delete-new-class-group-row",
-              attr("data-counter-value") := s"$groupCounter",
-              attr("aria-label") := "delete")(
-              span(attr("aria-hidden") := "true")(raw("&times;"))
-            )
+          ),
+          div(`class` := "row")(
+            div(`class` := "col-sm-6")(input(
+              `type` := "text",
+              `class` := "form-control",
+              id := s"add-group-description-$groupCounter",
+              `name` := s"add-group-description-$groupCounter",
+              placeholder := "Enter group description"
+            ))
           )
         )
 
@@ -96,7 +107,7 @@ object AddNewClassJsScreen {
       deleteNewGroupRowButton.addEventListener("click", (e: dom.Event) => {
         println(s"Delete row of new group ($deleteButtonId)...")
         if (deleteNewGroupRowButton != null) {
-          deleteNewGroupRowButton.parentElement.parentElement.parentElement.removeChild(deleteNewGroupRowButton.parentElement.parentElement)
+          deleteNewGroupRowButton.parentElement.parentElement.parentElement.parentElement.removeChild(deleteNewGroupRowButton.parentElement.parentElement.parentElement)
         }
       })
     }
@@ -128,6 +139,13 @@ object AddNewClassJsScreen {
     }
   }
 
+  def validateNewClassDescription(newClassDescription: HTMLInputElement): Option[String] = {
+    newClassDescription.style.borderColor = "lightgreen"
+    println(s"Class description is ${newClassDescription.value}")
+    Some(newClassDescription.value)
+  }
+
+
   def clearFormErrors(): Unit = {
     errorCount = 0
     errorMessages.clear()
@@ -143,6 +161,12 @@ object AddNewClassJsScreen {
       val errorsDiv = dom.document.getElementById("add-new-class-form-errors").asInstanceOf[HTMLDivElement]
       errorsDiv.style.display = "block"
     }
+  }
+
+  def validateClassGroupDescription(groupDescription: HTMLInputElement): Option[String] = {
+    println(s"Validating group description '${groupDescription.value}'")
+    groupDescription.style.borderColor = "lightgreen"
+    Some(groupDescription.value)
   }
 
   def validateClassGroupName(groupName: HTMLInputElement): Option[String] = {
@@ -183,6 +207,9 @@ object AddNewClassJsScreen {
           val maybeGroup = for {
             groupName <- validateClassGroupName(groupNameInputElement)
 
+            groupDescriptionInputElement = dom.document.getElementById(s"add-group-description-$counter").asInstanceOf[HTMLInputElement]
+            groupDescription <- validateClassGroupDescription(groupDescriptionInputElement)
+
             selectedGroupType = dom.document.getElementById(s"select-group-type-$counter").asInstanceOf[HTMLSelectElement]
             groupTypeMaybe <- validateSelection(selectedGroupType, "Need to select a group type, e.g. Maths, Literacy etc")
             groupType = {
@@ -206,7 +233,7 @@ object AddNewClassJsScreen {
                 case "Fourth" => FourthLevel
               }
             }
-          } yield Group(GroupId(s"groupId_${java.util.UUID.randomUUID()}"), GroupName(groupName), groupType, groupLevel)
+          } yield Group(GroupId(s"groupId_${java.util.UUID.randomUUID()}"), GroupName(groupName), groupDescription, groupType, groupLevel)
 
           maybeGroups += maybeGroup
         }
@@ -266,10 +293,14 @@ object AddNewClassJsScreen {
         val newClassName = dom.document.getElementById("className").asInstanceOf[HTMLInputElement]
         val maybeClassDetails = for {
           className <- validateNewClassName(newClassName)
+
+          newClassDescription = dom.document.getElementById("classDescription").asInstanceOf[HTMLInputElement]
+          classDescription <- validateNewClassDescription(newClassDescription)
           groups <- validateClassGroups()
         } yield ClassDetails(
           ClassId(s"classId_${java.util.UUID.randomUUID()}"),
           ClassName(className),
+          classDescription,
           groups,
           List(dom.window.localStorage.getItem("timeToTeachUserId"))
         )

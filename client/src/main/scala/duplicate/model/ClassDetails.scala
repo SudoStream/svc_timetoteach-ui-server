@@ -5,6 +5,7 @@ import upickle.default.{macroRW, ReadWriter => RW}
 case class ClassDetails(
                          id: ClassId,
                          className: ClassName,
+                         classDescription: String,
                          groups: List[Group],
                          classTeachersWithWriteAccess: List[String]
                        ) {
@@ -29,7 +30,11 @@ object ClassName{
 
 ////
 
-case class Group(groupId: GroupId, groupName: GroupName, groupType: GroupType, groupLevel: CurriculumLevel)
+case class Group(groupId: GroupId,
+                 groupName: GroupName,
+                 groupDescription: String,
+                 groupType: GroupType,
+                 groupLevel: CurriculumLevel)
 object Group{
   implicit def rw: RW[Group] = macroRW
 }

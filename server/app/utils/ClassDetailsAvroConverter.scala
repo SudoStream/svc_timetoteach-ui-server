@@ -1,5 +1,6 @@
 package utils
 
+import duplicate.model.Group
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumLevel
 import io.sudostream.timetoteach.messages.systemwide.model.classes._
 
@@ -7,7 +8,7 @@ object ClassDetailsAvroConverter {
 
   def convertPickledClassToAvro(classDetails: duplicate.model.ClassDetails): ClassDetails = {
     val groups = for {
-      groupUnpickled <- classDetails.groups
+      groupUnpickled: Group <- classDetails.groups
       groupId = GroupId(groupUnpickled.groupId.id)
       groupType = groupUnpickled.groupType.value match {
         case "Maths" => GroupType.MATHS
@@ -22,12 +23,14 @@ object ClassDetailsAvroConverter {
         case "FourthLevel" => ScottishCurriculumLevel.FOURTH
       }
       groupName = GroupName(groupUnpickled.groupName.name)
-    } yield ClassGroupsWrapper(ClassGroup(groupId, groupName, groupType, groupLevel))
+      groupDescription = groupUnpickled.groupDescription
+    } yield ClassGroupsWrapper(ClassGroup(groupId, groupName, groupDescription, groupType, groupLevel))
 
     ClassDetails(
       ClassId(classDetails.id.id),
       ClassName(classDetails.className.name),
       classDetails.classTeachersWithWriteAccess,
+      classDetails.classDescription,
       groups
     )
   }
@@ -51,6 +54,7 @@ object ClassDetailsAvroConverter {
     } yield duplicate.model.Group(
       duplicate.model.GroupId(groupAvro.groupId.value),
       duplicate.model.GroupName(groupAvro.groupName.value),
+      groupAvro.groupDescription,
       groupType,
       groupLevel
     )
@@ -63,10 +67,12 @@ object ClassDetailsAvroConverter {
       classDetails <- classDetailsListAvroStyle
       classId = classDetails.classId.value
       className = classDetails.className.value
+      classDescription = classDetails.classDescription
       groups = convertAvroGroupsToModel(classDetails.classGroups)
     } yield duplicate.model.ClassDetails(
       duplicate.model.ClassId(classId),
       duplicate.model.ClassName(className),
+      classDescription,
       groups,
       classDetails.teachersWithWriteAccess
     )

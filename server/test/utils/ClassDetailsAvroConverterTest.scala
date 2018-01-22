@@ -10,25 +10,30 @@ class ClassDetailsAvroConverterTest extends FunSpec {
   private val classDetails = ClassDetails(
     ClassId("id123"),
     ClassName("P1AB"),
+    "My new class",
     List(
       Group(
         GroupId("groupId1"),
         GroupName("Triangles"),
+        "",
         MathsGroupType,
         EarlyLevel),
       Group(
         GroupId("groupId2"),
         GroupName("Squares"),
+        "",
         MathsGroupType,
         FirstLevel),
       Group(
         GroupId("groupId2"),
         GroupName("Circles"),
+        "",
         MathsGroupType,
         FirstLevel)
     ),
     List("userId_1", "userId_2")
   )
+
 
   describe("ClassDetailsAvroConverter given a pickled ClassDetails") {
     it("should convert Pickled Class To Avro with class id 123") {
