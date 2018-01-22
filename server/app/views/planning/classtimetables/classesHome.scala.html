@@ -6,23 +6,37 @@
  userPictureUri, userFirstName, userFamilyName) {
 
  <div class="container">
-  <a id="addNewClassBtn" class="rounded btn btn-primary" href="@controllers.planning.classtimetable.routes.ClassTimetableController.addNewClass()" role="button">
-   Add New Class</a>
 
-  @if(classes.isEmpty) {
-   <h4 id="noClassesMsg">No classes created yet.</h4>
-  } else {
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link active" id="2017_2018-tab" data-toggle="tab" href="#2017_2018" role="tab" aria-controls="2017_2018" aria-selected="true">2017-18</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#elprofile" role="tab" aria-controls="profile" aria-selected="false">2016-17</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="contact-tab" data-toggle="tab" href="#elcontact" role="tab" aria-controls="contact" aria-selected="false">2015-2016</a>
+  </li>
+</ul>
+<div class="tab-content" id="myTabContent">
+  <div class="tab-pane fade show active" id="2017_2018" role="tabpanel" aria-labelledby="2017_2018-tab">
+
    <div id="teachers-classes">
+   <a id="addNewClassBtn" class="rounded btn btn-primary" href="@controllers.planning.classtimetable.routes.ClassTimetableController.addNewClass()" role="button">
+    Add New Class</a>
 
-    <div class="row">
-     <div class="card-deck teacher-classes-deck">
-     @for((classDetail, index) <- classes.zipWithIndex) {
-      <div class=@if(classes.size > 1){
-       "col-xl-3 col-lg-4 col-md-6 col-sm-12"
+   @if(classes.isEmpty) {
+    <h4 id="noClassesMsg">No classes created yet.</h4>
+   } else {
+     <div class="row">
+      <div class="card-deck teacher-classes-deck">
+      @for((classDetail, index) <- classes.zipWithIndex) {
+       <div class=@if(classes.size > 1){
+        "col-xl-3 col-lg-4 col-md-6 col-sm-12"
       }else{
-       "col-5"
-      }
-      >
+        "col-5"
+       }
+       >
        <div class="card teacher-classes-card" >
         <div class="card-header">
          @classDetail.className.name
@@ -47,12 +61,27 @@
         </div>
        </div>
       </div>
-     }
+      }
      </div>
     </div>
 
-   </div>
-  }
+
+ }
+
+</div>
+</div>
+  <div class="tab-pane fade" id="elprofile" role="tabpanel" aria-labelledby="profile-tab">
+      <div id="teachers-classes">
+   No Classes for this year
+      </div>
+  </div>
+  <div class="tab-pane fade" id="elcontact" role="tabpanel" aria-labelledby="contact-tab">
+      <div id="teachers-classes">
+          No Classes for this year
+      </div>
+  </div>
+</div>
+
 
   <div id="divForModalAreYouSureWantToDeleteClass"></div>
  </div>

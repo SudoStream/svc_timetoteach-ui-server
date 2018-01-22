@@ -4,8 +4,9 @@
 }
 
 #addNewClassBtn {
-    margin-top: 2rem;
-    margin-bottom: 0.25rem;
+    margin-left: 1rem;
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .add-new-class-form-section {
@@ -42,8 +43,14 @@
 }
 
 #teachers-classes {
-    margin-top: 2rem;
-    padding-bottom: 12rem;
+    background: white;
+    border-left: 1px solid #d9d9d9;
+    border-right: 1px solid #d9d9d9;
+    border-bottom: 1px solid #d9d9d9;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 1rem;
+    padding-bottom: 20rem;
 }
 
 .teachers-classes-edit-btn {
@@ -65,9 +72,11 @@
 }
 
 .teacher-classes-deck {
+    margin-left: 0;
     margin-bottom: 2rem;
 }
 
 .teacher-classes-card{
+    background: #f6f6ff;
     margin: 0.4rem 0;
 }
