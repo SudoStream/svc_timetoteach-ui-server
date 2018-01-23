@@ -62,14 +62,14 @@ class UserReaderServiceProxyImpl {
     }
   }
 
-
   def getUserDetails(timeToTeachUserIdWrapper: TimeToTeachUserId): Future[Option[User]] = {
     val eventualOptionFuture: Future[Future[Option[User]]] = getUser(timeToTeachUserIdWrapper) map {
       resp => processHttpResponseGetUser(resp)
     }
 
     eventualOptionFuture flatMap {
-      res => res
+      res =>
+        res
     }
   }
 

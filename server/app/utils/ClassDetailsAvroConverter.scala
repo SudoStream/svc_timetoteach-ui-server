@@ -3,6 +3,9 @@ package utils
 import duplicate.model.Group
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumLevel
 import io.sudostream.timetoteach.messages.systemwide.model.classes._
+import models.timetoteach.School
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 object ClassDetailsAvroConverter {
 
@@ -23,14 +26,15 @@ object ClassDetailsAvroConverter {
         case "FourthLevel" => ScottishCurriculumLevel.FOURTH
       }
       groupName = GroupName(groupUnpickled.groupName.name)
-      groupDescription = groupUnpickled.groupDescription
+      groupDescription = GroupDescription(groupUnpickled.groupDescription.name)
     } yield ClassGroupsWrapper(ClassGroup(groupId, groupName, groupDescription, groupType, groupLevel))
 
     ClassDetails(
       ClassId(classDetails.id.id),
+      SchoolId(classDetails.schoolDetails.id),
       ClassName(classDetails.className.name),
+      ClassDescription(classDetails.classDescription.name),
       classDetails.classTeachersWithWriteAccess,
-      classDetails.classDescription,
       groups
     )
   }
@@ -54,25 +58,37 @@ object ClassDetailsAvroConverter {
     } yield duplicate.model.Group(
       duplicate.model.GroupId(groupAvro.groupId.value),
       duplicate.model.GroupName(groupAvro.groupName.value),
-      groupAvro.groupDescription,
+      duplicate.model.GroupDescription(groupAvro.groupDescription.value),
       groupType,
       groupLevel
     )
   }
 
-  def convertAvroClassDetailsCollectionToModel(classDetailsCollection: ClassDetailsCollection): List[duplicate.model.ClassDetails] = {
+  def convertAvroClassDetailsCollectionToModel(classDetailsCollection: ClassDetailsCollection,
+                                               schools: Seq[School]): List[duplicate.model.ClassDetails] = {
     val classDetailsListAvroStyle = classDetailsCollection.values.map { classDetailsWrapper => classDetailsWrapper.classDetails }
 
     for {
       classDetails <- classDetailsListAvroStyle
       classId = classDetails.classId.value
+      schoolId = classDetails.schoolId.value
       className = classDetails.className.value
-      classDescription = classDetails.classDescription
+      classDescription = classDetails.classDescription.value
       groups = convertAvroGroupsToModel(classDetails.classGroups)
+      schoolDetailsForClassSeq = schools.filter(theSchool => theSchool.id == schoolId)
+      schoolDetailsForClass = schoolDetailsForClassSeq.head
     } yield duplicate.model.ClassDetails(
       duplicate.model.ClassId(classId),
+      duplicate.model.SchoolDetails(
+        schoolDetailsForClass.id,
+        schoolDetailsForClass.name,
+        schoolDetailsForClass.address,
+        schoolDetailsForClass.postCode,
+        schoolDetailsForClass.telephone,
+        schoolDetailsForClass.localAuthority.value.toString,
+        schoolDetailsForClass.country.value.toString),
       duplicate.model.ClassName(className),
-      classDescription,
+      duplicate.model.ClassDescription(classDescription),
       groups,
       classDetails.teachersWithWriteAccess
     )

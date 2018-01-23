@@ -1,13 +1,13 @@
 @import controllers.serviceproxies.TimeToTeachUserId
 @import duplicate.model.ClassDetails
-@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classes: List[ClassDetails])
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classes: List[ClassDetails], schoolsForTeacher: List[models.timetoteach.School])
 
 @timetoteachAppMain(handler, s"Classes",
  userPictureUri, userFirstName, userFamilyName) {
 
  <div class="container">
 
-<ul class="nav nav-tabs" id="myTab" role="tablist">
+<ul class="nav nav-tabs" id="tabForHomeClasses" role="tablist">
   <li class="nav-item">
     <a class="nav-link active" id="2017_2018-tab" data-toggle="tab" href="#2017_2018" role="tab" aria-controls="2017_2018" aria-selected="true">2017-18</a>
   </li>
@@ -18,7 +18,7 @@
     <a class="nav-link" id="contact-tab" data-toggle="tab" href="#elcontact" role="tab" aria-controls="contact" aria-selected="false">2015-2016</a>
   </li>
 </ul>
-<div class="tab-content" id="myTabContent">
+<div class="classes-home-tab-content" id="myTabContent">
   <div class="tab-pane fade show active" id="2017_2018" role="tabpanel" aria-labelledby="2017_2018-tab">
 
    <div id="teachers-classes">
@@ -41,18 +41,19 @@
        >
        <div class="card teacher-classes-card" >
         <div class="card-header">
-         @classDetail.className.name
+            <span class="classNameCardHeader">@classDetail.className.name</span>
         <button type="button" class="close delete-teacher-class-btn"
         data-class-id="@classDetail.id.id"
         data-class-name="@classDetail.className.name"
         data-user-id="@tttUserId.value">
          <span aria-hidden="true">&times;</span>
         </button>
+        <p>@classDetail.schoolDetails.name, @classDetail.schoolDetails.localAuthority</p>
         </div>
         <img class="card-img-top" src="@routes.Assets.versioned(s"images/classes/classroom-${index + 1 % 5}.jpeg")"
         alt="Class Image" height="192px">
         <div class="card-body">
-         <p class="card-text">@classDetail.classDescription</p>
+         <p class="card-text">@classDetail.classDescription.name</p>
          <div class="row">
           <div class="mx-auto">
            <div class="col-sm-12 col-md-10 col-xl-8">

@@ -9,7 +9,7 @@ class GroupTypeTest extends FunSpec {
   }
 
   describe("When created a group with name 'triangles', type of 'maths' and level of 'first'") {
-    val group = Group(createGroupId(), GroupName("triangles"), "The Triangles Group", MathsGroupType, FirstLevel)
+    val group = Group(createGroupId(), GroupName("triangles"), GroupDescription("The Triangles Group"), MathsGroupType, FirstLevel)
 
     it("should have a name of 'triangles'") {
       assert(group.groupName.name === "triangles")
@@ -24,30 +24,39 @@ class GroupTypeTest extends FunSpec {
 
   describe("Creating a class details with empty teachers") {
     val groups = List(
-      Group(createGroupId(), GroupName("Triangles"), "", MathsGroupType, SecondLevel),
-      Group(createGroupId(), GroupName("Squares"), "", MathsGroupType, FirstLevel),
-      Group(createGroupId(), GroupName("Circles"),"",  MathsGroupType, FirstLevel),
-      Group(createGroupId(), GroupName("Bears"), "", LiteracyGroupType, SecondLevel),
-      Group(createGroupId(), GroupName("Lions"), "", LiteracyGroupType, SecondLevel),
-      Group(createGroupId(), GroupName("Tigers"),"",  LiteracyGroupType, FirstLevel)
+      Group(createGroupId(), GroupName("Triangles"), GroupDescription(""), MathsGroupType, SecondLevel),
+      Group(createGroupId(), GroupName("Squares"), GroupDescription(""), MathsGroupType, FirstLevel),
+      Group(createGroupId(), GroupName("Circles"),GroupDescription(""),  MathsGroupType, FirstLevel),
+      Group(createGroupId(), GroupName("Bears"), GroupDescription(""), LiteracyGroupType, SecondLevel),
+      Group(createGroupId(), GroupName("Lions"), GroupDescription(""), LiteracyGroupType, SecondLevel),
+      Group(createGroupId(), GroupName("Tigers"),GroupDescription(""),  LiteracyGroupType, FirstLevel)
     )
 
   }
 
   describe("Creating a class details with empty teachers, pickled, then unpickled") {
     val groups = List(
-      Group(createGroupId(), GroupName("Triangles"), "", MathsGroupType, SecondLevel),
-      Group(createGroupId(), GroupName("Squares"), "", MathsGroupType, FirstLevel),
-      Group(createGroupId(), GroupName("Circles"),"",  MathsGroupType, FirstLevel),
-      Group(createGroupId(), GroupName("Bears"), "", LiteracyGroupType, SecondLevel),
-      Group(createGroupId(), GroupName("Lions"), "", LiteracyGroupType, SecondLevel),
-      Group(createGroupId(), GroupName("Tigers"),"",  LiteracyGroupType, FirstLevel)
+      Group(createGroupId(), GroupName("Triangles"), GroupDescription(""), MathsGroupType, SecondLevel),
+      Group(createGroupId(), GroupName("Squares"), GroupDescription(""), MathsGroupType, FirstLevel),
+      Group(createGroupId(), GroupName("Circles"),GroupDescription(""),  MathsGroupType, FirstLevel),
+      Group(createGroupId(), GroupName("Bears"), GroupDescription(""), LiteracyGroupType, SecondLevel),
+      Group(createGroupId(), GroupName("Lions"), GroupDescription(""), LiteracyGroupType, SecondLevel),
+      Group(createGroupId(), GroupName("Tigers"),GroupDescription(""),  LiteracyGroupType, FirstLevel)
     )
 
     val classDetails = ClassDetails(
       ClassId("classId123"),
+      SchoolDetails(
+        "school123",
+        "schoolName",
+        "schoolAddr",
+        "schoolPostCode",
+        "schoolTel",
+        "schoolLa",
+        "schoolCountry"
+      ),
       ClassName("P3AB"),
-      "My New Class!",
+      ClassDescription("My New Class!"),
       groups,
       List("id12")
     )

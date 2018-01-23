@@ -14,15 +14,17 @@ import com.typesafe.config.ConfigFactory
 import com.typesafe.sslconfig.akka.AkkaSSLConfig
 import io.sudostream.timetoteach.kafka.serializing.systemwide.model.SchoolsDeserializer
 import io.sudostream.timetoteach.messages.systemwide.model.SingleSchoolWrapper
+import models.timetoteach
 import models.timetoteach.{Country, LocalAuthority, School}
 import play.api.Logger
-import play.api.libs.ws.{WSClient, WSRequest}
+import play.api.libs.ws.WSClient
 
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContextExecutor, Future}
+import scala.util.{Failure, Success}
 
 @Singleton
-class SchoolReaderServiceProxyImpl  @Inject()(ws: WSClient) {
+class SchoolReaderServiceProxyImpl @Inject()(ws: WSClient) {
   implicit val system: ActorSystem = ActorSystem()
   implicit val executor: ExecutionContextExecutor = system.dispatcher
   implicit val materializer: ActorMaterializer = ActorMaterializer()
@@ -32,13 +34,70 @@ class SchoolReaderServiceProxyImpl  @Inject()(ws: WSClient) {
   private val schoolReaderServiceHostname = config.getString("services.school-reader-service-host")
   private val schoolReaderServicePort = config.getString("services.school-reader-service-port")
   println("\n\n\n" + sys.props.get("minikubeEnv").toString + "\n\n\n")
-  private val minikubeRun : Boolean =  sys.props.getOrElse("minikubeEnv","false").toBoolean
-  val protocol: String = if (schoolReaderServicePort.toInt > 9000 && !minikubeRun ) "http" else "https"
+  private val minikubeRun: Boolean = sys.props.getOrElse("minikubeEnv", "false").toBoolean
+  val protocol: String = if (schoolReaderServicePort.toInt > 9000 && !minikubeRun) "http" else "https"
 
   val logger: Logger.type = Logger
 
-  def getAllSchoolsFuture: Future[Seq[School]] = {
+  private var schoolIdToSchoolMap: Map[String, School] = Map.empty
+  populateTheSchools
 
+  private def populateTheSchools = {
+    val theSchoolsFuture: Future[Seq[timetoteach.School]] = getAllSchoolsFuture
+
+    theSchoolsFuture.onComplete {
+      case Success(seqSchools) =>
+        this.synchronized(schoolIdToSchoolMap = seqSchools map {
+          school => school.id -> school
+        } toMap
+        )
+
+        logger.debug(s"${schoolIdToSchoolMap.size} future schools gotted for cache")
+
+      case Failure(t) =>
+        t.printStackTrace()
+        logger.error(s"Failed to get schools on loadup. The error was ... ${t.toString} \n\n" + t.getStackTrace.map {
+          line => line.toString
+        }.toString)
+    }
+  }
+
+  def getAllSchools(): Option[List[School]] = {
+    logger.debug(s"okay so ... getAllSchools() schoolIdToSchoolMap size = ${schoolIdToSchoolMap.size}")
+
+    var counter = 0
+    while (schoolIdToSchoolMap.isEmpty && counter < 5) {
+      populateTheSchools
+      logger.info("No schools in cache ... populating now.")
+      Thread.sleep(1000L * counter + 1)
+      counter = counter + 1
+    }
+
+    if (schoolIdToSchoolMap.isEmpty) {
+      logger.info("Empty .. returning None")
+      None
+    } else {
+      val schools = schoolIdToSchoolMap.values.toList
+      logger.info(s"Cool we have ${schools.size} to return")
+      Some(schools)
+    }
+  }
+
+  def getSchoolWithId(schoolIdToSearchFor: String): Option[School] = {
+    if (schoolIdToSchoolMap.isEmpty) {
+      None
+    } else {
+      val schoolsWithId = schoolIdToSchoolMap.filter(school => school._1 == schoolIdToSearchFor)
+      if (schoolsWithId.values.toList.lengthCompare(1) != 0) {
+        None
+      } else {
+        Some(schoolsWithId.head._2)
+      }
+    }
+  }
+
+
+  def getAllSchoolsFuture: Future[Seq[School]] = {
     val uriString = s"$protocol://$schoolReaderServiceHostname:$schoolReaderServicePort/api/schools"
     logger.debug(s"++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ uri string is $uriString")
     val schoolServiceUri = Uri(uriString)
@@ -65,7 +124,7 @@ class SchoolReaderServiceProxyImpl  @Inject()(ws: WSClient) {
                 val theCountry = singleSchoolWrapper.school.country.toString.toUpperCase
                 School(
                   id = singleSchoolWrapper.school.id,
-                  name = singleSchoolWrapper.school.name,
+                  name = singleSchoolWrapper.school.name.replace("'",""),
                   address = singleSchoolWrapper.school.address,
                   postCode = singleSchoolWrapper.school.postCode,
                   telephone = singleSchoolWrapper.school.telephone,

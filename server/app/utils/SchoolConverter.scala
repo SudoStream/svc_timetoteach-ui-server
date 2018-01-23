@@ -6,6 +6,20 @@ import models.timetoteach.{Country, LocalAuthority, School}
 
 object SchoolConverter {
 
+  def convertMessageSchoolToLocalSchool(schoolToConvert: io.sudostream.timetoteach.messages.systemwide.model.School):
+  School = {
+    School(
+      id = schoolToConvert.id,
+      name = schoolToConvert.name,
+      address = schoolToConvert.address,
+      postCode = schoolToConvert.postCode,
+      telephone = schoolToConvert.telephone,
+      localAuthority = convertLocalAuthorityToModelVersion(schoolToConvert.localAuthority),
+      country = convertCountryToModelVersion(schoolToConvert.country)
+    )
+  }
+
+
   def convertLocalSchoolToMessageSchool(schoolToConvert: School):
   io.sudostream.timetoteach.messages.systemwide.model.School = {
     io.sudostream.timetoteach.messages.systemwide.model.School(
@@ -18,6 +32,7 @@ object SchoolConverter {
       country = convertCountryToMessageVersion(schoolToConvert.country)
     )
   }
+
   def convertLocalAuthorityToMessageVersion(localAuthority: LocalAuthority):
   io.sudostream.timetoteach.messages.systemwide.model.LocalAuthority = {
     localAuthority.value.toUpperCase match {
@@ -57,6 +72,48 @@ object SchoolConverter {
       case _ => model.LocalAuthority.UNKNOWN
     }
   }
+
+  def convertLocalAuthorityToModelVersion(localAuthority: io.sudostream.timetoteach.messages.systemwide.model.LocalAuthority):
+  LocalAuthority = {
+    localAuthority match {
+      case model.LocalAuthority.SCOTLAND__ABERDEEN_CITY => LocalAuthority("ABERDEEN_CITY")
+      case model.LocalAuthority.SCOTLAND__ABERDEENSHIRE => LocalAuthority("ABERDEENSHIRE")
+      case model.LocalAuthority.SCOTLAND__ANGUS => LocalAuthority("ANGUS")
+      case model.LocalAuthority.SCOTLAND__ARGYLL_AND_BUTE => LocalAuthority("ARGYLL_AND_BUTE")
+      case model.LocalAuthority.SCOTLAND__COMHAIRLE_NAN_EILEAN_SIAR => LocalAuthority("COMHAIRLE_NAN_EILEAN_SIAR")
+      case model.LocalAuthority.SCOTLAND__CLACKMANNANSHIRE => LocalAuthority("CLACKMANNANSHIRE")
+      case model.LocalAuthority.SCOTLAND__DUMFRIES_AND_GALLOWAY => LocalAuthority("DUMFRIES_AND_GALLOWAY")
+      case model.LocalAuthority.SCOTLAND__DUNDEE_CITY => LocalAuthority("DUNDEE_CITY")
+      case model.LocalAuthority.SCOTLAND__EAST_AYRSHIRE => LocalAuthority("EAST_AYRSHIRE")
+      case model.LocalAuthority.SCOTLAND__EAST_DUMBARTONSHIRE => LocalAuthority("EAST_DUMBARTONSHIRE")
+      case model.LocalAuthority.SCOTLAND__EDINBURGH_CITY => LocalAuthority("EDINBURGH_CITY")
+      case model.LocalAuthority.SCOTLAND__EAST_LOTHIAN => LocalAuthority("EAST_LOTHIAN")
+      case model.LocalAuthority.SCOTLAND__EAST_RENFREWSHIRE => LocalAuthority("EAST_RENFREWSHIRE")
+      case model.LocalAuthority.SCOTLAND__FALKIRK => LocalAuthority("FALKIRK")
+      case model.LocalAuthority.SCOTLAND__FIFE => LocalAuthority("FIFE")
+      case model.LocalAuthority.SCOTLAND__GLASGOW => LocalAuthority("GLASGOW")
+      case model.LocalAuthority.SCOTLAND__HIGHLAND => LocalAuthority("HIGHLAND")
+      case model.LocalAuthority.SCOTLAND__INVERCLYDE => LocalAuthority("INVERCLYDE")
+      case model.LocalAuthority.SCOTLAND__MIDLOTHIAN => LocalAuthority("MIDLOTHIAN")
+      case model.LocalAuthority.SCOTLAND__MORAY => LocalAuthority("MORAY")
+      case model.LocalAuthority.SCOTLAND__NORTH_AYRSHIRE => LocalAuthority("NORTH_AYRSHIRE")
+      case model.LocalAuthority.SCOTLAND__NORTH_LANARKSHIRE => LocalAuthority("NORTH_LANARKSHIRE")
+      case model.LocalAuthority.SCOTLAND__ORKNEY => LocalAuthority("ORKNEY")
+      case model.LocalAuthority.SCOTLAND__PERTH_AND_KINROSS => LocalAuthority("PERTH_AND_KINROSS")
+      case model.LocalAuthority.SCOTLAND__RENFREWSHIRE => LocalAuthority("RENFREWSHIRE")
+      case model.LocalAuthority.SCOTLAND__SCOTTISH_BORDERS => LocalAuthority("SCOTTISH_BORDERS")
+      case model.LocalAuthority.SCOTLAND__SHETLAND_ISLANDS => LocalAuthority("SHETLAND_ISLANDS")
+      case model.LocalAuthority.SCOTLAND__SOUTH_AYRSHIRE => LocalAuthority("SOUTH_AYRSHIRE")
+      case model.LocalAuthority.SCOTLAND__SOUTH_LANARKSHIRE => LocalAuthority("SOUTH_LANARKSHIRE")
+      case model.LocalAuthority.SCOTLAND__STIRLING => LocalAuthority("STIRLING")
+      case model.LocalAuthority.SCOTLAND__WEST_DUMBARTONSHIRE => LocalAuthority("WEST_DUMBARTONSHIRE")
+      case model.LocalAuthority.SCOTLAND__WEST_LOTHIAN => LocalAuthority("WEST_LOTHIAN")
+      case model.LocalAuthority.OTHER => LocalAuthority("OTHER")
+      case _ => LocalAuthority("UNKNOWN")
+    }
+  }
+
+
   def convertCountryToMessageVersion(country: Country):
   io.sudostream.timetoteach.messages.systemwide.model.Country = {
     country.value.toUpperCase match {
@@ -69,5 +126,19 @@ object SchoolConverter {
       case _ => model.Country.UNKNOWN
     }
   }
+
+  def convertCountryToModelVersion(country: io.sudostream.timetoteach.messages.systemwide.model.Country):
+  Country = {
+    country match {
+      case model.Country.EIRE => Country("EIRE")
+      case model.Country.ENGLAND => Country("ENGLAND")
+      case model.Country.NORTHERN_IRELAND => Country("NORTHERN_IRELAND")
+      case model.Country.SCOTLAND => Country("SCOTLAND")
+      case model.Country.WALES => Country("WALES")
+      case model.Country.OTHER => Country("OTHER")
+      case _ => Country("UNKNOWN")
+    }
+  }
+
 }
 

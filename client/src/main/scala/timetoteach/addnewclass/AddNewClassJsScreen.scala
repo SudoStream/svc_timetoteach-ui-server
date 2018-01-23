@@ -233,7 +233,7 @@ object AddNewClassJsScreen {
                 case "Fourth" => FourthLevel
               }
             }
-          } yield Group(GroupId(s"groupId_${java.util.UUID.randomUUID()}"), GroupName(groupName), groupDescription, groupType, groupLevel)
+          } yield Group(GroupId(s"groupId_${java.util.UUID.randomUUID()}"), GroupName(groupName), GroupDescription(groupDescription), groupType, groupLevel)
 
           maybeGroups += maybeGroup
         }
@@ -289,6 +289,22 @@ object AddNewClassJsScreen {
       saveNewClassButton.addEventListener("click", (e: dom.Event) => {
         clearFormErrors()
         println("Saving new class ...")
+        val theSchoolId = dom.window.localStorage.getItem("schoolId")
+        val theSchoolName = dom.window.localStorage.getItem("schoolName")
+        val theSchoolAddress = dom.window.localStorage.getItem("schoolAddress")
+        val theSchoolPostCode = dom.window.localStorage.getItem("schoolPostCode")
+        val thechoolTel = dom.window.localStorage.getItem("schoolTelephone")
+        val theSchoolLA = dom.window.localStorage.getItem("schoolLocalAuthority")
+        val theSchoolCountry = dom.window.localStorage.getItem("schoolCountry")
+
+        println(s"theSchoolId = '$theSchoolId'")
+        println(s"theSchoolName = '$theSchoolName'")
+        println(s"theSchoolAddress = '$theSchoolAddress'")
+        println(s"theSchoolPostCode = '$theSchoolPostCode'")
+        println(s"thechoolTel = '$thechoolTel'")
+        println(s"theSchoolLA = '$theSchoolLA'")
+        println(s"theSchoolCountry  = '$theSchoolCountry'")
+
 
         val newClassName = dom.document.getElementById("className").asInstanceOf[HTMLInputElement]
         val maybeClassDetails = for {
@@ -299,8 +315,17 @@ object AddNewClassJsScreen {
           groups <- validateClassGroups()
         } yield ClassDetails(
           ClassId(s"classId_${java.util.UUID.randomUUID()}"),
+          SchoolDetails(
+            theSchoolId,
+            theSchoolName,
+            theSchoolAddress,
+            theSchoolPostCode,
+            thechoolTel,
+            theSchoolLA,
+            theSchoolCountry
+          ),
           ClassName(className),
-          classDescription,
+          ClassDescription(classDescription),
           groups,
           List(dom.window.localStorage.getItem("timeToTeachUserId"))
         )
@@ -314,7 +339,7 @@ object AddNewClassJsScreen {
               import upickle.default.{ReadWriter => RW, _}
 
               val classDetailsPickled = write[ClassDetails](classDetails)
-              println(s"Class Details Pickled: $classDetailsPickled")
+              println(s"Class Details Pickled: ###$classDetailsPickled###")
               saveNewClass(classDetailsPickled)
             case None =>
               println("ERROR: Problem getting class details")

@@ -9,11 +9,12 @@ import akka.util.Timeout
 import be.objectify.deadbolt.scala.cache.HandlerCache
 import be.objectify.deadbolt.scala.{ActionBuilders, AuthenticatedRequest, DeadboltActions}
 import com.typesafe.config.ConfigFactory
-import controllers.serviceproxies.{ClassTimetableReaderServiceProxyImpl, ClassTimetableWriterServiceProxyImpl, TimeToTeachUserId, UserReaderServiceProxyImpl}
+import controllers.serviceproxies._
 import duplicate.model.ClassDetails
-import io.sudostream.timetoteach.messages.systemwide.model.UserPreferences
-import models.timetoteach.CookieNames
+import io.sudostream.timetoteach.messages.systemwide.model
+import io.sudostream.timetoteach.messages.systemwide.model.{User, UserPreferences}
 import models.timetoteach.classtimetable.SchoolDayTimes
+import models.timetoteach.{CookieNames, School}
 import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms.{mapping, _}
@@ -31,6 +32,7 @@ import scala.util.{Failure, Success}
 class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWriterServiceProxyImpl,
                                          userReader: UserReaderServiceProxyImpl,
                                          classTimetableReaderProxy: ClassTimetableReaderServiceProxyImpl,
+                                         schoolsReader: SchoolReaderServiceProxyImpl,
                                          cc: ControllerComponents,
                                          deadbolt: DeadboltActions,
                                          handlers: HandlerCache,
@@ -154,40 +156,71 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
 
   def classesHome: Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest =>
     val (userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: String) = extractCommonHeaders(authRequest)
+    val futureMaybeUser = userReader.getUserDetails(TimeToTeachUserId(tttUserId))
 
     {
       for {
         classesAssociatedWithTeacher <- classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
+        maybeUser <- futureMaybeUser
+        user: User = maybeUser match {
+          case Some(theUser) => theUser
+          case None => null
+        }
+        userSchoolsWrappers = user.schools
+        userSchoolIds = userSchoolsWrappers.map(theSchoolWrapper => theSchoolWrapper.school.id)
+        allSchools = schoolsReader.getAllSchools().getOrElse(Nil)
       } yield Future {
         Ok(views.html.planning.classtimetables.classesHome(new MyDeadboltHandler(userReader),
           userPictureUri,
           userFirstName,
           userFamilyName,
           TimeToTeachUserId(tttUserId),
-          classesAssociatedWithTeacher
+          classesAssociatedWithTeacher,
+          allSchools.filter(school => userSchoolIds.contains(school.id))
         ))
       }
     }.flatMap(res => res)
   }
 
+
   def addNewClass(): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest =>
     val (userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: String) = extractCommonHeaders(authRequest)
+    val futureMaybeUser = userReader.getUserDetails(TimeToTeachUserId(tttUserId))
 
-    Future {
-      Ok(views.html.planning.classtimetables.addNewClass(new MyDeadboltHandler(userReader),
-        userPictureUri,
-        userFirstName,
-        userFamilyName,
-        TimeToTeachUserId(tttUserId)
-      ))
-    }
+    {
+      for {
+        classesAssociatedWithTeacher <- classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
+        maybeUser <- futureMaybeUser
+        user: User = maybeUser match {
+          case Some(theUser) => theUser
+          case None => null
+        }
+        userSchools: List[model.School] = user.schools.map { schoolWrapper => schoolWrapper.school }
+        userSchoolIds = userSchools.map {
+          theSchool =>
+            if (theSchool.id == "b3a608f1-eb84-437d-844e-3af547cde77c") {
+              logger.debug(s"the user school id ==> '${theSchool.id}'")
+            }
+            theSchool.id
+        }
+        allTheSchools: List[School] = schoolsReader.getAllSchools().getOrElse(Nil)
+        allUserSchools: List[School] = allTheSchools.filter { eachSchool => userSchoolIds.contains(eachSchool.id) }
+      } yield Future {
+        Ok(views.html.planning.classtimetables.addNewClass(new MyDeadboltHandler(userReader),
+          userPictureUri,
+          userFirstName,
+          userFamilyName,
+          TimeToTeachUserId(tttUserId),
+          allUserSchools
+        ))
+      }
+    }.flatMap(res => res)
   }
 
   def saveNewClass: Action[AnyContent] = Action.async { implicit request =>
     val newClassFormBound = newClassForm.bindFromRequest.get
-    logger.debug(s"New Class Pickled = ${newClassFormBound.newClassPickled}")
+    logger.debug(s"New Class Pickled = #${newClassFormBound.newClassPickled}#")
     logger.debug(s"TTT User Id = ${newClassFormBound.tttUserId}")
-
 
     import upickle.default._
     val newClassDetails = read[ClassDetails](newClassFormBound.newClassPickled)

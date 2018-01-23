@@ -1,33 +1,42 @@
 package utils
 
+import duplicate.model._
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumLevel
 import org.scalatest._
-import duplicate.model._
 import utils.ClassDetailsAvroConverter.convertPickledClassToAvro
 
 class ClassDetailsAvroConverterTest extends FunSpec {
 
   private val classDetails = ClassDetails(
     ClassId("id123"),
+    SchoolDetails(
+      "school123",
+      "schoolName",
+      "schoolAddr",
+      "schoolPostCode",
+      "schoolTel",
+      "schoolLa",
+      "schoolCountry"
+    ),
     ClassName("P1AB"),
-    "My new class",
+    ClassDescription("My new class"),
     List(
       Group(
         GroupId("groupId1"),
         GroupName("Triangles"),
-        "",
+        GroupDescription(""),
         MathsGroupType,
         EarlyLevel),
       Group(
         GroupId("groupId2"),
         GroupName("Squares"),
-        "",
+        GroupDescription(""),
         MathsGroupType,
         FirstLevel),
       Group(
         GroupId("groupId2"),
         GroupName("Circles"),
-        "",
+        GroupDescription(""),
         MathsGroupType,
         FirstLevel)
     ),

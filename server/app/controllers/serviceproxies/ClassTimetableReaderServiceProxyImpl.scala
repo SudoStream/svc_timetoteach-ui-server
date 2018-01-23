@@ -1,5 +1,7 @@
 package controllers.serviceproxies
 
+import javax.inject.Inject
+
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.{HttpMethods, HttpRequest, HttpResponse, Uri}
@@ -11,7 +13,7 @@ import com.typesafe.sslconfig.akka.AkkaSSLConfig
 import duplicate.model.ClassDetails
 import io.sudostream.timetoteach.kafka.serializing.systemwide.classes.ClassDetailsCollectionDeserializer
 import io.sudostream.timetoteach.kafka.serializing.systemwide.classtimetable.ClassTimetableDeserializer
-import io.sudostream.timetoteach.messages.systemwide.model.classes.ClassDetailsCollection
+import models.timetoteach.School
 import play.api.Logger
 import shared.model.classtimetable.{WWWClassTimetable, WwwClassName}
 import utils.{ClassDetailsAvroConverter, ClassTimetableConverterToAvro}
@@ -21,7 +23,8 @@ import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.util.{Failure, Success}
 
 @Singleton
-class ClassTimetableReaderServiceProxyImpl {
+class ClassTimetableReaderServiceProxyImpl @Inject()(schoolReader: SchoolReaderServiceProxyImpl) {
+
   implicit val system: ActorSystem = ActorSystem()
   implicit val executor: ExecutionContextExecutor = system.dispatcher
   implicit val materializer: ActorMaterializer = ActorMaterializer()
@@ -33,6 +36,8 @@ class ClassTimetableReaderServiceProxyImpl {
   private val classTimetableReaderServicePort = config.getString("services.classtimetable-reader-port")
   private val minikubeRun: Boolean = sys.props.getOrElse("minikubeEnv", "false").toBoolean
   val protocol: String = if (classTimetableReaderServicePort.toInt > 9000 && !minikubeRun) "http" else "https"
+
+  val schoolsFuture = schoolReader.getAllSchoolsFuture
 
   def readClassTimetable(userId: TimeToTeachUserId, wwwClassName: WwwClassName): Future[Option[WWWClassTimetable]] = {
     logger.debug(s"readClassTimetable: ${userId.toString}:${wwwClassName.value}")
@@ -154,10 +159,16 @@ class ClassTimetableReaderServiceProxyImpl {
           classDetailsCollectionDeserializer.deserialize("ignore", bytesAsArray)
       }
 
-      futureClassDetailsCollection map {
-        classDetailsCollection =>
-          ClassDetailsAvroConverter.convertAvroClassDetailsCollectionToModel(classDetailsCollection)
-      }
+
+      {
+        for {
+          schools <- schoolsFuture
+        } yield futureClassDetailsCollection map {
+          classDetailsCollection =>
+            ClassDetailsAvroConverter.convertAvroClassDetailsCollectionToModel(classDetailsCollection,
+              schools)
+        }
+      }.flatMap(res => res)
     } else {
       logger.warn(s"Issue finding classes for teacher : ${httpResponse.toString()}")
       Future {

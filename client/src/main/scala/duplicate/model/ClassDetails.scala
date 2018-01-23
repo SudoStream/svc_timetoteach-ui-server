@@ -4,8 +4,9 @@ import upickle.default.{macroRW, ReadWriter => RW}
 
 case class ClassDetails(
                          id: ClassId,
+                         schoolDetails: SchoolDetails,
                          className: ClassName,
-                         classDescription: String,
+                         classDescription: ClassDescription,
                          groups: List[Group],
                          classTeachersWithWriteAccess: List[String]
                        ) {
@@ -13,9 +14,22 @@ case class ClassDetails(
     "Must have at least 1 teacher with write access"
   )
 }
-
 object ClassDetails{
   implicit def rw: RW[ClassDetails] = macroRW
+}
+
+case class SchoolDetails(
+                     id: String,
+                     name: String,
+                     address: String,
+                     postCode: String,
+                     telephone: String,
+                     localAuthority: String,
+                     country: String
+                   )
+
+object SchoolDetails{
+  implicit def rw: RW[SchoolDetails] = macroRW
 }
 
 case class ClassId(id: String)
@@ -28,13 +42,14 @@ object ClassName{
   implicit def rw: RW[ClassName] = macroRW
 }
 
+case class ClassDescription(name: String)
+object ClassDescription{
+  implicit def rw: RW[ClassDescription] = macroRW
+}
+
 ////
 
-case class Group(groupId: GroupId,
-                 groupName: GroupName,
-                 groupDescription: String,
-                 groupType: GroupType,
-                 groupLevel: CurriculumLevel)
+case class Group(groupId: GroupId, groupName: GroupName, groupDescription: GroupDescription, groupType: GroupType, groupLevel: CurriculumLevel)
 object Group{
   implicit def rw: RW[Group] = macroRW
 }
@@ -49,6 +64,12 @@ case class GroupName(name: String)
 object GroupName{
   implicit def rw: RW[GroupName] = macroRW
 }
+
+case class GroupDescription(name: String)
+object GroupDescription{
+  implicit def rw: RW[GroupDescription] = macroRW
+}
+
 
 ////////// Group Type //////////////
 //object GroupType extends Enumeration {

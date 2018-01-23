@@ -1,5 +1,5 @@
 @import controllers.serviceproxies.TimeToTeachUserId
-@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId)
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, schoolsForTeacher: List[models.timetoteach.School] )
 
 @timetoteachAppMain(handler, s"Add New Class",
  userPictureUri, userFirstName, userFamilyName) {
@@ -66,7 +66,14 @@
 
 
  <script>
-         localStorage.setItem("timeToTeachUserId", "@{tttUserId.value}");
+   localStorage.setItem("timeToTeachUserId", "@{tttUserId.value}");
+   localStorage.setItem("schoolId", "@{schoolsForTeacher.head.id}");
+   localStorage.setItem("schoolName", "@{schoolsForTeacher.head.name}");
+   localStorage.setItem("schoolAddress", "@{schoolsForTeacher.head.address}");
+   localStorage.setItem("schoolPostCode", "@{schoolsForTeacher.head.postCode}");
+   localStorage.setItem("schoolTelephone", "@{schoolsForTeacher.head.telephone}");
+   localStorage.setItem("schoolLocalAuthority", "@{schoolsForTeacher.head.localAuthority.value}");
+   localStorage.setItem("schoolCountry", "@{schoolsForTeacher.head.country.value}");
  </script>
 
  @scalajs.html.scripts("client", routes.Assets.versioned(_).toString, name => getClass.getResource(s"/public/$name") != null)
