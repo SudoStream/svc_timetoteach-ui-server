@@ -1,0 +1,27 @@
+@import controllers.serviceproxies.TimeToTeachUserId
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: Option[duplicate.model.ClassDetails])
+
+@timetoteachAppMain(handler, s"Manage Class",
+    userPictureUri, userFirstName, userFamilyName) {
+    <div class="container">
+
+        <div class="manage-class-form-section">
+
+            <a class="btn btn-primary" role="button" href="@controllers.planning.classtimetable.routes.ClassTimetableController.classesHome()">Back To Classes Home</a>
+            <button type="button" class="btn btn-success">Class Timetable</button>
+
+            <h6 class="text-center text-muted form-header manage-class-details-header">Class Details</h6>
+
+            <p>Class Name: @{
+                if(classDetails.isDefined) {
+                    classDetails.get.className.name
+                } else {
+                    "No Class Found"
+                }
+            }</p>
+
+        </div>
+    </div>
+
+    @scalajs.html.scripts("client", routes.Assets.versioned(_).toString, name => getClass.getResource(s"/public/$name") != null)
+}

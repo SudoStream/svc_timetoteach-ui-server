@@ -29,6 +29,7 @@ GET           /termlyplanning                         controllers.planning.terml
 
 GET           /classes                                controllers.planning.classtimetable.ClassTimetableController.classesHome
 GET           /addnewclass                            controllers.planning.classtimetable.ClassTimetableController.addNewClass
+GET           /manageclass/:classId                   controllers.planning.classtimetable.ClassTimetableController.manageClass(classId)
 POST          /savenewclass                           controllers.planning.classtimetable.ClassTimetableController.saveNewClass
 DELETE        /deleteclass/:tttUserId/:classId        controllers.planning.classtimetable.ClassTimetableController.deleteClass(tttUserId, classId)
 

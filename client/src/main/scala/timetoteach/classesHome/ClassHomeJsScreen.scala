@@ -13,6 +13,7 @@ object ClassHomeJsScreen {
 
   def loadJavascript(): Unit = {
     deleteClassBehaviour()
+    goToClassBehaviour()
   }
 
   private var classIdToDelete: Option[String] = None
@@ -42,6 +43,22 @@ object ClassHomeJsScreen {
       })
       index = index + 1
     }
+  }
+
+  def goToClassBehaviour(): Unit = {
+    val gotoClassButtons = dom.document.getElementsByClassName("teachers-classes-goto-btn")
+    val nodeListSize = gotoClassButtons.length
+    var index = 0
+    while (index < nodeListSize) {
+      val deleteTeacherClassButton = gotoClassButtons(index).asInstanceOf[HTMLButtonElement]
+      deleteTeacherClassButton.addEventListener("click", (e: dom.Event) => {
+        val classId = deleteTeacherClassButton.getAttribute("data-class-id")
+        println(s"goto class ... $classId")
+        dom.window.location.href = s"/manageclass/$classId";
+      })
+      index = index + 1
+    }
+
   }
 
   def addYesDeleteTheClassBehaviour(): Unit = {

@@ -217,6 +217,25 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
     }.flatMap(res => res)
   }
 
+  def manageClass(classId: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest =>
+    val (userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: String) = extractCommonHeaders(authRequest)
+    val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
+
+    for {
+      classes <- eventualClasses
+      classDetails = classes.headOption
+    } yield {
+      Ok(views.html.planning.classtimetables.manageClass(new MyDeadboltHandler(userReader),
+        userPictureUri,
+        userFirstName,
+        userFamilyName,
+        TimeToTeachUserId(tttUserId),
+        classDetails
+      ))
+    }
+  }
+
+
   def saveNewClass: Action[AnyContent] = Action.async { implicit request =>
     val newClassFormBound = newClassForm.bindFromRequest.get
     logger.debug(s"New Class Pickled = #${newClassFormBound.newClassPickled}#")
