@@ -1,6 +1,6 @@
 
 .noClassesMsg {
-    margin-left: 0rem;
+    margin-left: 0;
     margin-top: 7rem;
 }
 
@@ -46,7 +46,7 @@
     margin: 0.25rem 0;
 }
 
-#teachers-classes {
+.teachers-classes {
     background: white;
     border-left: 1px solid #d9d9d9;
     border-right: 1px solid #d9d9d9;

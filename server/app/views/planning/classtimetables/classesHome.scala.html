@@ -24,80 +24,73 @@
          </ul>
      </div>
 
-             <ul class="nav nav-tabs" id="tabForHomeClasses" role="tablist">
-  <li class="nav-item">
-    <a class="nav-link active" id="2017_2018-tab" data-toggle="tab" href="#2017_2018" role="tab" aria-controls="2017_2018" aria-selected="true">2017-18</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#elprofile" role="tab" aria-controls="profile" aria-selected="false">2016-17</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" id="contact-tab" data-toggle="tab" href="#elcontact" role="tab" aria-controls="contact" aria-selected="false">2015-2016</a>
-  </li>
-</ul>
-<div class="classes-home-tab-content" id="myTabContent">
-  <div class="tab-pane fade show active" id="2017_2018" role="tabpanel" aria-labelledby="2017_2018-tab">
+     <ul class="nav nav-tabs" id="tabForHomeClasses" role="tablist">
+         <li class="nav-item">
+             <a class="nav-link active" id="2017_2018-tab" data-toggle="tab" href="#2017_2018" role="tab" aria-controls="2017_2018" aria-selected="true">2017-2018</a>
+         </li>
+         <li class="nav-item">
+             <a class="nav-link" id="2016_2017-tab" data-toggle="tab" href="#2016_2017" role="tab" aria-controls="2016_2017" aria-selected="false">2016-2017</a>
+         </li>
+         <li class="nav-item">
+            <a class="nav-link" id="2015-2016-tab" data-toggle="tab" href="#2015_2016" role="tab" aria-controls="2015_2016" aria-selected="false">2015-2016</a>
+         </li>
+     </ul>
 
-   <div id="teachers-classes">
+     <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active teachers-classes" id="2017_2018" role="tabpanel" aria-labelledby="2017_2018-tab">
+            <div class="">@if(classes.isEmpty) {
+                <div class="teacher-classes-deck">
+                    <h5 class="noClassesMsg text-center">No classes created yet.</h5>
+                </div>
+            } else {
+                <div class="row">
+                    <div class="card-deck teacher-classes-deck">
+                        @for((classDetail, index) <- classes.zipWithIndex) {
+                            <div class=@if(classes.size > 1){
+                                    "col-xl-3 col-lg-4 col-md-6 col-sm-12"
+                                }else{
+                                    "col-5"
+                                }>
+                                <div class="card teacher-classes-card" >
+                                    <div class="card-header">
+                                        <span class="classNameCardHeader">@classDetail.className.name</span>
+                                        <button type="button" class="close delete-teacher-class-btn"
+                                            data-class-id="@classDetail.id.id"
+                                            data-class-name="@classDetail.className.name"
+                                            data-user-id="@tttUserId.value">
 
-   @if(classes.isEmpty) {
-       <div class="teacher-classes-deck">
-           <h5 class="noClassesMsg text-center">No classes created yet.</h5>
-       </div>
-   } else {
-     <div class="row">
-      <div class="card-deck teacher-classes-deck">
-      @for((classDetail, index) <- classes.zipWithIndex) {
-       <div class=@if(classes.size > 1){
-        "col-xl-3 col-lg-4 col-md-6 col-sm-12"
-      }else{
-        "col-5"
-       }
-       >
-       <div class="card teacher-classes-card" >
-        <div class="card-header">
-            <span class="classNameCardHeader">@classDetail.className.name</span>
-        <button type="button" class="close delete-teacher-class-btn"
-        data-class-id="@classDetail.id.id"
-        data-class-name="@classDetail.className.name"
-        data-user-id="@tttUserId.value">
-         <span aria-hidden="true">&times;</span>
-        </button>
-        <p>@classDetail.schoolDetails.name, @classDetail.schoolDetails.localAuthority</p>
-        </div>
-        <img class="card-img-top" src="@routes.Assets.versioned(s"images/classes/classroom-${index + 1 % 5}.jpeg")"
-        alt="Class Image" height="150px">
-        <div class="card-body">
-         <div class="row">
-          <div class="mx-auto">
-           <div class="col-sm-12 col-md-10 col-xl-8">
-            <button class="rounded btn btn-outline-info teachers-classes-btn teachers-classes-goto-btn" data-class-id="@classDetail.id.id" role="button">Manage Class</button>
-           </div>
-          </div>
-         </div>
-        </div>
-       </div>
-      </div>
-      }
-     </div>
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+
+                        <p>@classDetail.schoolDetails.name, @classDetail.schoolDetails.localAuthority</p>
+                        </div>
+                        <img class="card-img-top" src="@routes.Assets.versioned(s"images/classes/classroom-${index + 1 % 5}.jpeg")"
+                        alt="Class Image" height="150px">
+                        <div class="card-body">
+                         <div class="row">
+                          <div class="mx-auto">
+                           <div class="col-sm-12 col-md-10 col-xl-8">
+                            <button class="rounded btn btn-outline-info teachers-classes-btn teachers-classes-goto-btn" data-class-id="@classDetail.id.id" role="button">Manage Class</button>
+                           </div>
+                          </div>
+                         </div>
+                        </div>
+                       </div>
+                      </div>
+                      }
+                     </div>
+                    </div>
+                 }</div>
     </div>
-
-
- }
-
-</div>
-</div>
-  <div class="tab-pane fade" id="elprofile" role="tabpanel" aria-labelledby="profile-tab">
-      <div id="teachers-classes">
-          <p class="noClassesMsg  text-center">No Classes for this year</p>
+      <div class="tab-pane fade teachers-classes" id="2016_2017" role="tabpanel" aria-labelledby="2016_2017-tab">
+              <p class="noClassesMsg text-center">No Classes for this year</p>
       </div>
-  </div>
-  <div class="tab-pane fade" id="elcontact" role="tabpanel" aria-labelledby="contact-tab">
-      <div id="teachers-classes">
-          <p class="noClassesMsg text-center">No Classes for this year</p>
+      <div class="tab-pane fade teachers-classes" id="2015_2016" role="tabpanel" aria-labelledby="2015-2016-tab">
+          <div class="">
+              <p class="noClassesMsg text-center">No Classes for this year</p>
+          </div>
       </div>
-  </div>
-</div>
+    </div>
 
 
   <div id="divForModalAreYouSureWantToDeleteClass"></div>
