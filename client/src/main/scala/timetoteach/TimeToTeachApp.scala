@@ -4,6 +4,7 @@ import org.scalajs.dom
 import timetoteach.addnewclass.AddNewClassJsScreen
 import timetoteach.classesHome.ClassHomeJsScreen
 import timetoteach.classtimetable.ClassTimetableScreen
+import timetoteach.signup.SignupJs
 
 import scala.scalajs.js
 
@@ -19,6 +20,9 @@ object TimeToTeachApp extends js.JSApp {
     }
     if (currentPathname == "/classes") {
       ClassHomeJsScreen.loadJavascript()
+    }
+    if ( currentPathname == "/signupsteptwo") {
+      SignupJs.loadJavascript()
     }
   }
 

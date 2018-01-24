@@ -4,10 +4,14 @@ import duplicate.model.Group
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumLevel
 import io.sudostream.timetoteach.messages.systemwide.model.classes._
 import models.timetoteach.School
+import play.api.Logger
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 object ClassDetailsAvroConverter {
+
+  val logger: Logger.type = Logger
 
   def convertPickledClassToAvro(classDetails: duplicate.model.ClassDetails): ClassDetails = {
     val groups = for {
@@ -67,6 +71,9 @@ object ClassDetailsAvroConverter {
   def convertAvroClassDetailsCollectionToModel(classDetailsCollection: ClassDetailsCollection,
                                                schools: Seq[School]): List[duplicate.model.ClassDetails] = {
     val classDetailsListAvroStyle = classDetailsCollection.values.map { classDetailsWrapper => classDetailsWrapper.classDetails }
+
+    logger.debug(s"classDetailsListAvroStyle size = ${classDetailsListAvroStyle.size}")
+    logger.debug(s"schools size = ${schools.size}")
 
     for {
       classDetails <- classDetailsListAvroStyle

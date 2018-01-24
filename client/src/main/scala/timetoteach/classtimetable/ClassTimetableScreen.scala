@@ -24,7 +24,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
   val lunchEnds = dom.window.localStorage.getItem("lunchEnds")
   val schoolDayEnds = dom.window.localStorage.getItem("schoolDayEnds")
 
-  val theClassTimetableName = dom.window.localStorage.getItem("timetableClassName")
+  val theClassTimetableName = dom.window.localStorage.getItem("timetableClassId")
   val theTimeToTeachUserId = dom.window.localStorage.getItem("timeToTeachUserId")
 
   val maybeSchoolTimetableTimes: Option[Map[SchoolDayTimeBoundary, String]] = if (
@@ -691,10 +691,10 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
         "Content-Type" -> "application/x-www-form-urlencoded",
         "X-Requested-With" -> "Accept"
       )
-      val theClassTimetableName = dom.window.localStorage.getItem("timetableClassName")
+      val theClassTimetableId = dom.window.localStorage.getItem("timetableClassId")
       val theTimeToTeachUserId = dom.window.localStorage.getItem("timeToTeachUserId")
       val theData = InputData.str2ajax(s"classTimetable=${classTimetable.toString}&" +
-        s"className=$theClassTimetableName&tttUserId=$theTimeToTeachUserId")
+        s"classId=$theClassTimetableId&tttUserId=$theTimeToTeachUserId")
 
       Ajax.post(
         url = theUrl,
@@ -704,7 +704,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
         case Success(xhr) =>
           val hello = xhr.responseText
           println(s"hello === $hello")
-          dom.window.location.href = "/app";
+          dom.window.location.href = s"/manageclass/$theClassTimetableId";
         case Failure(ex) =>
           dom.window.alert("Something went wrong with saving class timetable. Specificically : -" +
             s"\n\n${ex.toString}")

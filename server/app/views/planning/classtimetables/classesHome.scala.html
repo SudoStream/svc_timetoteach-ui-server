@@ -7,7 +7,24 @@
 
  <div class="container">
 
-<ul class="nav nav-tabs" id="tabForHomeClasses" role="tablist">
+     <div class="classes-home-section">
+
+     <div class="d-flex">
+         <ul class="nav mr-auto justify-content-between">
+             <li class="nav-item manage-class-nav-item-leftmost">
+                 <a class="btn btn-primary" role="button" href="@routes.Application.timeToTeachApp()">
+                     Dashboard</a>
+             </li>
+         </ul>
+
+         <ul class="nav justify-content-end">
+             <a id="addNewClassBtn" class="rounded btn btn-success manage-class-nav-item-rightmost"
+             href="@controllers.planning.classtimetable.routes.ClassTimetableController.addNewClass()" role="button">
+                 Add New Class</a>
+         </ul>
+     </div>
+
+             <ul class="nav nav-tabs" id="tabForHomeClasses" role="tablist">
   <li class="nav-item">
     <a class="nav-link active" id="2017_2018-tab" data-toggle="tab" href="#2017_2018" role="tab" aria-controls="2017_2018" aria-selected="true">2017-18</a>
   </li>
@@ -22,8 +39,6 @@
   <div class="tab-pane fade show active" id="2017_2018" role="tabpanel" aria-labelledby="2017_2018-tab">
 
    <div id="teachers-classes">
-   <a id="addNewClassBtn" class="rounded btn btn-primary" href="@controllers.planning.classtimetable.routes.ClassTimetableController.addNewClass()" role="button">
-    Add New Class</a>
 
    @if(classes.isEmpty) {
        <div class="teacher-classes-deck">
@@ -51,13 +66,12 @@
         <p>@classDetail.schoolDetails.name, @classDetail.schoolDetails.localAuthority</p>
         </div>
         <img class="card-img-top" src="@routes.Assets.versioned(s"images/classes/classroom-${index + 1 % 5}.jpeg")"
-        alt="Class Image" height="192px">
+        alt="Class Image" height="150px">
         <div class="card-body">
-         <p class="card-text">@classDetail.classDescription.name</p>
          <div class="row">
           <div class="mx-auto">
            <div class="col-sm-12 col-md-10 col-xl-8">
-            <button class="rounded btn btn-outline-info teachers-classes-btn teachers-classes-goto-btn" data-class-id="@classDetail.id.id" role="button">Go To Class</button>
+            <button class="rounded btn btn-outline-info teachers-classes-btn teachers-classes-goto-btn" data-class-id="@classDetail.id.id" role="button">Manage Class</button>
            </div>
           </div>
          </div>
@@ -87,6 +101,8 @@
 
 
   <div id="divForModalAreYouSureWantToDeleteClass"></div>
+
+    </div>
  </div>
 
 

@@ -5,18 +5,18 @@
 }
 
 #addNewClassBtn {
-    margin-left: 1rem;
-    margin-top: 1rem;
-    margin-bottom: 1.5rem;
+    /*margin-left: 1rem;*/
+    /*margin-top: 1rem;*/
+    /*margin-bottom: 1.5rem;*/
 }
 
 .add-new-class-form-section {
-    margin-top: 2rem;
-    margin-bottom: 1rem;
+    margin-top: 1rem;
+    padding-bottom: 10rem;
 }
 
 .add-new-class-form-row {
-    margin-bottom: 3rem;
+    margin-bottom: 1.5rem;
 }
 
 .add-new-class-button {
@@ -98,10 +98,60 @@
 }
 
 .manage-class-form-section {
-    margin-top: 2rem;
-    margin-bottom: 1rem;
+    margin-top: 1rem;
+}
+
+.manage-class-form-row {
+    margin-bottom: 1.5rem;
 }
 
 .manage-class-details-header {
     margin-top: 2rem;
+}
+
+.add-new-class-label {
+    /*font-weight: bold;*/
+}
+
+.manage-class-section {
+    margin-top: 3rem;
+}
+
+.manage-class-nav-item-on-left {
+    margin-left: 1rem;
+}
+
+.manage-class-nav-item-on-right {
+    margin-right: 1rem;
+}
+
+.classes-home-section {
+    margin-top: 1rem;
+}
+
+.add-new-class-header {
+    margin-top: 1rem;
+    margin-bottom: 1.8rem;
+}
+
+.manage-class-group-header {
+    margin-top: 0.5rem;
+}
+
+.manage-class-group-row {
+    margin-top: 0.5rem;
+}
+
+.save-new-class-button {
+    margin-bottom: 5rem;
+}
+
+.empty-div-with-bottom {
+    margin-top: 2rem;
+    margin-bottom: 10rem;
+}
+
+.app-nav-section {
+    margin-top: 1rem;
+    margin-bottom: 2rem;
 }

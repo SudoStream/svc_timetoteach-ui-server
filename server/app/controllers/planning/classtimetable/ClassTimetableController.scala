@@ -20,7 +20,7 @@ import play.api.data.Form
 import play.api.data.Forms.{mapping, _}
 import play.api.mvc._
 import security.MyDeadboltHandler
-import shared.model.classtimetable.WwwClassName
+import shared.model.classtimetable.{WwwClassId, WwwClassName}
 import shared.util.LocalTimeUtil
 import utils.ClassTimetableConverterToAvro.convertJsonClassTimetableToWwwClassTimetable
 import utils.TemplateUtils.getCookieStringFromRequest
@@ -70,23 +70,23 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
   val classTimetableForm = Form(
     mapping(
       "classTimetable" -> text,
-      "className" -> text,
+      "classId" -> text,
       "tttUserId" -> text
     )(ClassTimeTableJson.apply)(ClassTimeTableJson.unapply)
   )
 
-  case class ClassTimeTableJson(classTimetable: String, className: String, tttUserId: String)
+  case class ClassTimeTableJson(classTimetable: String, classId: String, tttUserId: String)
 
   def classTimetableSave: Action[AnyContent] = Action.async { implicit request =>
     val classTimetableFormBound = classTimetableForm.bindFromRequest.get
     logger.debug(s"Class Timetable As Json = ${classTimetableFormBound.classTimetable}")
-    logger.debug(s"Class Name As Json = ${classTimetableFormBound.className}")
+    logger.debug(s"Class Id As Json = ${classTimetableFormBound.classId}")
     logger.debug(s"TTT User Id = ${classTimetableFormBound.tttUserId}")
 
     val wwwClassTimetable = convertJsonClassTimetableToWwwClassTimetable(classTimetableFormBound.classTimetable)
     classTimetableWriter.upsertClassTimetables(
       TimeToTeachUserId(classTimetableFormBound.tttUserId),
-      WwwClassName(classTimetableFormBound.className),
+      WwwClassId(classTimetableFormBound.classId),
       wwwClassTimetable
     )
 
@@ -96,9 +96,9 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
   }
 
 
-  def classTimetable: Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest =>
+  def classTimetable(classId: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest =>
     val (userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: String) = extractCommonHeaders(authRequest)
-
+    val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
     val futureUserPrefs: Future[Option[UserPreferences]] = userReader.getUserPreferences(TimeToTeachUserId(tttUserId))
 
     val futureSchoolDayTimes: Future[SchoolDayTimes] = futureUserPrefs map {
@@ -128,10 +128,14 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
     }
 
     for {
+      classes <- eventualClasses
+      classDetailsList = classes.filter(theClass => theClass.id.id == classId)
+      maybeClassDetails: Option[ClassDetails] = classDetailsList.headOption
+      if maybeClassDetails.isDefined
+      classDetails = maybeClassDetails.get
       schoolDayTimes <- futureSchoolDayTimes
-      className <- futureClassName
       wwwClassTimetableFuture = classTimetableReaderProxy.
-        readClassTimetable(TimeToTeachUserId(tttUserId), WwwClassName(className))
+        readClassTimetable(TimeToTeachUserId(tttUserId), WwwClassId(classDetails.id.id))
       maybeWwwClassTimetable <- wwwClassTimetableFuture
     } yield {
       Ok(views.html.planning.classtimetables.classtimetable(new MyDeadboltHandler(userReader),
@@ -140,8 +144,8 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
         userFamilyName,
         schoolDayTimes,
         maybeWwwClassTimetable,
-        className,
-        TimeToTeachUserId(tttUserId)
+        TimeToTeachUserId(tttUserId),
+        classDetails
       )(authRequest))
     }
   }
@@ -223,7 +227,8 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
 
     for {
       classes <- eventualClasses
-      classDetails = classes.headOption
+      classDetailsList = classes.filter(theClass => theClass.id.id == classId)
+      classDetails = classDetailsList.headOption
     } yield {
       Ok(views.html.planning.classtimetables.manageClass(new MyDeadboltHandler(userReader),
         userPictureUri,

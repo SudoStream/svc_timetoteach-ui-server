@@ -287,6 +287,7 @@ object AddNewClassJsScreen {
     val saveNewClassButton = dom.document.getElementById("save-new-class-button").asInstanceOf[HTMLButtonElement]
     if (saveNewClassButton != null) {
       saveNewClassButton.addEventListener("click", (e: dom.Event) => {
+        saveNewClassButton.disabled = true
         clearFormErrors()
         println("Saving new class ...")
         val theSchoolId = dom.window.localStorage.getItem("schoolId")

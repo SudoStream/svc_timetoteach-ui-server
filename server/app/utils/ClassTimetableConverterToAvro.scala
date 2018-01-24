@@ -2,7 +2,7 @@ package utils
 
 import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.sessions.SessionOfTheDayWrapper
 import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.time.ClassTimetableSchoolTimes
-import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.{ClassName, ClassTimetable, TimeToTeachId}
+import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.{ClassId, ClassTimetable, TimeToTeachId}
 import play.api.Logger
 import play.api.libs.json._
 import shared.model.classtimetable._
@@ -29,13 +29,13 @@ object ClassTimetableConverterToAvro
     addAllSessionsToClassTimetable(theAllSessionsOfTheWeek, wwwClassTimetable)
   }
 
-  def convertWwwClassTimeTableToAvro(tttUserId: String, wwwClassName: WwwClassName, wwwTimetable: WWWClassTimetable): ClassTimetable = {
+  def convertWwwClassTimeTableToAvro(tttUserId: String, wwwClassId: WwwClassId, wwwTimetable: WWWClassTimetable): ClassTimetable = {
     val theSchoolTimes: ClassTimetableSchoolTimes = createSchoolTimes(wwwTimetable.schoolDayTimes)
     val theAllSessionsOfTheWeek: List[SessionOfTheDayWrapper] = createAllSessionsOfTheWeek(wwwTimetable.allSessionsOfTheWeekInOrderByDay)
 
     ClassTimetable(
       TimeToTeachId(tttUserId),
-      ClassName(wwwClassName.value),
+      ClassId(wwwClassId.value),
       schoolTimes = theSchoolTimes,
       allSessionsOfTheWeek = theAllSessionsOfTheWeek
     )

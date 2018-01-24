@@ -15,7 +15,7 @@ import io.sudostream.timetoteach.kafka.serializing.systemwide.classes.ClassDetai
 import io.sudostream.timetoteach.kafka.serializing.systemwide.classtimetable.ClassTimetableDeserializer
 import models.timetoteach.School
 import play.api.Logger
-import shared.model.classtimetable.{WWWClassTimetable, WwwClassName}
+import shared.model.classtimetable.{WWWClassTimetable, WwwClassId, WwwClassName}
 import utils.{ClassDetailsAvroConverter, ClassTimetableConverterToAvro}
 
 import scala.concurrent.duration._
@@ -39,12 +39,12 @@ class ClassTimetableReaderServiceProxyImpl @Inject()(schoolReader: SchoolReaderS
 
   val schoolsFuture = schoolReader.getAllSchoolsFuture
 
-  def readClassTimetable(userId: TimeToTeachUserId, wwwClassName: WwwClassName): Future[Option[WWWClassTimetable]] = {
-    logger.debug(s"readClassTimetable: ${userId.toString}:${wwwClassName.value}")
+  def readClassTimetable(userId: TimeToTeachUserId, wwwClassId: WwwClassId): Future[Option[WWWClassTimetable]] = {
+    logger.debug(s"readClassTimetable: ${userId.toString}:${wwwClassId.value}")
 
     val uriString =
       s"$protocol://$classTimetableReaderServiceHostname:$classTimetableReaderServicePort/api/classtimetables?" +
-        s"className=${wwwClassName.value}&timeToTeachUserId=${userId.value}"
+        s"classId=${wwwClassId.value}&timeToTeachUserId=${userId.value}"
     logger.debug(s"uri for upserting class timetable is $uriString")
 
     val classTimetableReaderServiceUri = Uri(uriString)

@@ -41,12 +41,6 @@
 
             <div class="collapse navbar-collapse" id="startupNavbar">
                 <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="@routes.Application.timeToTeachApp()">Dashboard</a>
-                    </li>
 
                     @if(userPictureUri.isDefined) {
                         <li class="nav-item">
@@ -74,15 +68,15 @@
         <div id="appBackground">
             <div id="mainAppTopMargin"></div>
 
-            <div class="container">
-                <div id="class-timetable-subject-warning" class="alert alert-info alert-dismissible fade show text-center" role="alert" >
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+            @*<div class="container">*@
+                @*<div id="class-timetable-subject-warning" class="alert alert-info alert-dismissible fade show text-center" role="alert" >*@
+                    @*<button type="button" class="close" data-dismiss="alert" aria-label="Close">*@
+                        @*<span aria-hidden="true">&times;</span>*@
+                    @*</button>*@
 
-                    <p>Note: This is a development version of Time To Teach Zone. It is for playing around with and giving an opportunity for early feedback</p>
-                </div>
-            </div>
+                    @*<p>Note: This is a development version of Time To Teach Zone. It is for playing around with and giving an opportunity for early feedback</p>*@
+                @*</div>*@
+            @*</div>*@
 
             @content
         </div>

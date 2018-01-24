@@ -12,7 +12,7 @@ import duplicate.model.ClassDetails
 import io.sudostream.timetoteach.kafka.serializing.systemwide.classes.ClassDetailsSerializer
 import io.sudostream.timetoteach.kafka.serializing.systemwide.classtimetable.ClassTimetableSerializer
 import play.api.Logger
-import shared.model.classtimetable.{WWWClassTimetable, WwwClassName}
+import shared.model.classtimetable.{WWWClassTimetable, WwwClassId, WwwClassName}
 import utils.ClassDetailsAvroConverter.convertPickledClassToAvro
 import utils.ClassTimetableConverterToAvro.convertWwwClassTimeTableToAvro
 
@@ -36,14 +36,14 @@ class ClassTimetableWriterServiceProxyImpl {
   val protocol: String = if (classTimetableWriterServicePort.toInt > 9000 && !minikubeRun) "http" else "https"
 
 
-  def upsertClassTimetables(userId: TimeToTeachUserId, wwwClassName: WwwClassName, wWWClassTimetable: WWWClassTimetable): Future[Boolean] = {
-    logger.debug(s"upsertClassTimetables: ${userId.toString}:${wwwClassName.value}:${wWWClassTimetable.toString}")
+  def upsertClassTimetables(userId: TimeToTeachUserId, wwwClassId: WwwClassId, wWWClassTimetable: WWWClassTimetable): Future[Boolean] = {
+    logger.debug(s"upsertClassTimetables: ${userId.value}:${wwwClassId.value}:${wWWClassTimetable.toString}")
 
     val uriString = s"$protocol://$classTimetableWriterServiceHostname:$classTimetableWriterServicePort/api/classtimetables/${userId.value}/upsert"
     logger.debug(s"uri for upserting class timetable is $uriString")
     val classTimetableWriterServiceUri = Uri(uriString)
 
-    val classTimetable = convertWwwClassTimeTableToAvro(userId.value, wwwClassName, wWWClassTimetable)
+    val classTimetable = convertWwwClassTimeTableToAvro(userId.value, wwwClassId, wWWClassTimetable)
 
     val userClassTimetableSerializer = new ClassTimetableSerializer
     val classTimetableBytes = userClassTimetableSerializer.serialize("ignore", classTimetable)
