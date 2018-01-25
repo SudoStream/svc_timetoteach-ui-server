@@ -94,60 +94,88 @@ class UserSignupController @Inject()(deadbolt: DeadboltActions,
 
     val successFunction = { data: UserData =>
       logger.info(s"School info is as follows : '${data.schoolId}'")
-      if (data.schoolId == null || data.schoolId.isEmpty) {
-        for {
-          schools <- schoolsFuture
-        } yield {
-          BadRequest(views.html.signupNew(defaultValuesFromCookies, postUrl, userPictureUri, userFirstName, schools))
-        }
-      } else {
-        val cookies = request.cookies
 
-        val theUserPictureUri = cookies.get(CookieNames.socialNetworkPicture) match {
-          case Some(pictureCookie) => pictureCookie.value
-          case None => ""
-        }
-
-        val theSocialNetwork = cookies.get(CookieNames.socialNetworkName) match {
-          case Some(socialNetworkCookie) => socialNetworkCookie.value
-          case None => ""
-        }
-
-        val theSocialNetworkUserId = cookies.get(CookieNames.socialNetworkUserId) match {
-          case Some(socialUserIdCookie) => socialUserIdCookie.value
-          case None => ""
-        }
-
-        val theUser = TimeToTeachUser(
-          firstName = data.firstName,
-          familyName = data.familyName,
-          emailAddress = data.emailAddress,
-          picture = theUserPictureUri,
-          socialNetworkName = theSocialNetwork,
-          socialNetworkUserId = theSocialNetworkUserId,
-          schoolId = data.schoolId
-        )
-
-        logger.debug(s"Creating a new user with values : ${theUser.toString}")
-
-        val timeToTeachUserIdFuture = userWriterServiceProxy.createNewUser(theUser)
-
-        signupEmailService.sendEmail(theUser)
-
-        for {
-          timeToTeachUserId <- timeToTeachUserIdFuture
-        } yield {
-          logger.debug(s"Time To Teach Id = '${timeToTeachUserId.value.toString}'")
-          Redirect(routes.UserSignupController.signedUpCongrats())
-            .withCookies(
-              Cookie(CookieNames.timetoteachId, timeToTeachUserId.value))
-            .bakeCookies()
-        }
+      Future {
+        Redirect(routes.UserSignupController.creatingNewUser())
+          .withCookies(
+            Cookie(CookieNames.userDataFirstName, data.firstName),
+            Cookie(CookieNames.userDataFamilyName, data.familyName),
+            Cookie(CookieNames.userDataEmailAddress, data.emailAddress),
+            Cookie(CookieNames.userDataSchoolId, data.schoolId)
+          )
       }
+
     }
 
     val formValidationResult = UserSignupController.userForm.bindFromRequest
     formValidationResult.fold(errorFunction, successFunction)
+  }
+
+  def creatingNewUser(): Action[AnyContent] = Action.async { implicit request =>
+    val schoolsFuture = schoolsProxy.getAllSchoolsFuture
+    val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, request).getOrElse("")
+    val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, request).getOrElse("")
+    val firstName = request.cookies.get(CookieNames.userDataFirstName).get.value
+    val familyName = request.cookies.get(CookieNames.userDataFamilyName).get.value
+    val emailAddress = request.cookies.get(CookieNames.userDataEmailAddress).get.value
+    val schoolId = request.cookies.get(CookieNames.userDataSchoolId).get.value
+
+    if (schoolId == null || schoolId.isEmpty) {
+      for {
+        schools <- schoolsFuture
+      } yield {
+        BadRequest(views.html.signupNew(createUserDefaultValues(request), postUrl, userPictureUri, userFirstName, schools))
+      }
+    } else {
+      val cookies = request.cookies
+
+      val theUserPictureUri = cookies.get(CookieNames.socialNetworkPicture) match {
+        case Some(pictureCookie) => pictureCookie.value
+        case None => ""
+      }
+
+      val theSocialNetwork = cookies.get(CookieNames.socialNetworkName) match {
+        case Some(socialNetworkCookie) => socialNetworkCookie.value
+        case None => ""
+      }
+
+      val theSocialNetworkUserId = cookies.get(CookieNames.socialNetworkUserId) match {
+        case Some(socialUserIdCookie) => socialUserIdCookie.value
+        case None => ""
+      }
+
+      val theUser = TimeToTeachUser(
+        firstName = firstName,
+        familyName = familyName,
+        emailAddress = emailAddress,
+        picture = theUserPictureUri,
+        socialNetworkName = theSocialNetwork,
+        socialNetworkUserId = theSocialNetworkUserId,
+        schoolId = schoolId
+      )
+
+      logger.debug(s"Creating a new user with values : ${theUser.toString}")
+
+      val timeToTeachUserIdFuture = userWriterServiceProxy.createNewUser(theUser)
+
+//      signupEmailService.sendEmail(theUser)
+
+      for {
+        timeToTeachUserId <- timeToTeachUserIdFuture
+      } yield {
+        logger.debug(s"Time To Teach Id = '${timeToTeachUserId.value.toString}'")
+        Redirect(routes.UserSignupController.signedUpCongrats())
+          .withCookies(
+            Cookie(CookieNames.timetoteachId, timeToTeachUserId.value))
+          .discardingCookies(
+            DiscardingCookie(CookieNames.userDataFirstName),
+            DiscardingCookie(CookieNames.userDataFamilyName),
+            DiscardingCookie(CookieNames.userDataEmailAddress),
+            DiscardingCookie(CookieNames.userDataSchoolId)
+          )
+          .bakeCookies()
+      }
+    }
   }
 
   def signedUpCongrats = Action { implicit request: MessagesRequest[AnyContent] =>

@@ -12,6 +12,7 @@ GET           /assets/*file                           controllers.Assets.version
 GET           /login                                  controllers.Application.login
 GET           /loggedout                              controllers.Application.loggedOutSuccessfully
 GET           /signup                                 controllers.UserSignupController.signupStep1
+GET           /creatingnewuser                        controllers.UserSignupController.creatingNewUser
 GET           /signupsteptwo                          controllers.UserSignupController.signupStep2
 POST          /usercreated                            controllers.UserSignupController.userCreated
 GET           /profile                                controllers.Application.profile

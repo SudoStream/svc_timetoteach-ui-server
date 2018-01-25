@@ -40,13 +40,7 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl,
       "morningBreakEndTime" -> nonEmptyText,
       "lunchStartTime" -> nonEmptyText,
       "lunchEndTime" -> nonEmptyText,
-      "schoolEndTime" -> nonEmptyText,
-      "className" -> nonEmptyText,
-      "checkEarlyCurriculum" -> text,
-      "checkFirstCurriculum" -> text,
-      "checkSecondCurriculum" -> text,
-      "checkThirdCurriculum" -> text,
-      "checkFourthCurriculum" -> text
+      "schoolEndTime" -> nonEmptyText
     )(InitialUserPreferences.apply)(InitialUserPreferences.unapply)
   )
 

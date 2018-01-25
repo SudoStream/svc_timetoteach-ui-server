@@ -23,51 +23,8 @@ import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.util.{Failure, Success}
 
-object UserWriterServiceProxyImpl {
-  def createCustomLevelWrappers(newUserPreferences: InitialUserPreferences): List[CurriculumLevelWrapper] = {
-    val customerLevelWrappers0 = if (newUserPreferences.checkEarlyCurriculum != "Off")
-      List(CurriculumLevelWrapper(
-        CurriculumLevel(
-          country = Country.SCOTLAND,
-          scottishCurriculumLevel = Some(ScottishCurriculumLevel.EARLY)
-        ))) else Nil
-
-    val customerLevelWrappers1 = if (newUserPreferences.checkFirstCurriculum != "Off")
-      List(CurriculumLevelWrapper(
-        CurriculumLevel(
-          country = Country.SCOTLAND,
-          scottishCurriculumLevel = Some(ScottishCurriculumLevel.FIRST)
-        ))) else Nil
-
-    val customerLevelWrappers2 = if (newUserPreferences.checkSecondCurriculum != "Off")
-      List(CurriculumLevelWrapper(
-        CurriculumLevel(
-          country = Country.SCOTLAND,
-          scottishCurriculumLevel = Some(ScottishCurriculumLevel.SECOND)
-        ))) else Nil
-
-    val customerLevelWrappers3 = if (newUserPreferences.checkThirdCurriculum != "Off")
-      List(CurriculumLevelWrapper(
-        CurriculumLevel(
-          country = Country.SCOTLAND,
-          scottishCurriculumLevel = Some(ScottishCurriculumLevel.THIRD)
-        ))) else Nil
-
-    val customerLevelWrappers4 = if (newUserPreferences.checkThirdCurriculum != "Off")
-      List(CurriculumLevelWrapper(
-        CurriculumLevel(
-          country = Country.SCOTLAND,
-          scottishCurriculumLevel = Some(ScottishCurriculumLevel.FOURTH)
-        ))) else Nil
-
-    customerLevelWrappers0 ::: customerLevelWrappers1 ::: customerLevelWrappers2 ::: customerLevelWrappers3 ::: customerLevelWrappers4 ::: Nil
-  }
-}
-
 @Singleton
 class UserWriterServiceProxyImpl @Inject()(schoolReader: SchoolReaderServiceProxyImpl) {
-
-  import UserWriterServiceProxyImpl._
 
   implicit val system: ActorSystem = ActorSystem()
   implicit val executor: ExecutionContextExecutor = system.dispatcher
@@ -81,8 +38,8 @@ class UserWriterServiceProxyImpl @Inject()(schoolReader: SchoolReaderServiceProx
   //  case class SchoolId(value: String)
   private val userWriterServicePort = config.getString("services.user-writer-port")
   private var theSchools: Map[String, io.sudostream.timetoteach.messages.systemwide.model.School] = Map.empty
-  private val minikubeRun : Boolean =  sys.props.getOrElse("minikubeEnv","false").toBoolean
-  val protocol: String = if (userWriterServicePort.toInt > 9000 && !minikubeRun ) "http" else "https"
+  private val minikubeRun: Boolean = sys.props.getOrElse("minikubeEnv", "false").toBoolean
+  val protocol: String = if (userWriterServicePort.toInt > 9000 && !minikubeRun) "http" else "https"
 
   populateTheSchools
 
@@ -96,13 +53,7 @@ class UserWriterServiceProxyImpl @Inject()(schoolReader: SchoolReaderServiceProx
           morningBreakEndTime = newUserPreferences.morningBreakEndTime,
           lunchStartTime = newUserPreferences.lunchStartTime,
           lunchEndTime = newUserPreferences.lunchEndTime,
-          schoolEndTime = newUserPreferences.schoolEndTime,
-          userTeachesTheseClasses = List(
-            SchoolClass(
-              className = newUserPreferences.className,
-              curriculumLevels = createCustomLevelWrappers(newUserPreferences)
-            )
-          )
+          schoolEndTime = newUserPreferences.schoolEndTime
         )
       )
     )
@@ -201,7 +152,10 @@ class UserWriterServiceProxyImpl @Inject()(schoolReader: SchoolReaderServiceProx
     ))
 
     io.sudostream.timetoteach.messages.systemwide.model.User(
-      timeToTeachId = "user_" + java.util.UUID.randomUUID(),
+      timeToTeachId = "user_" +
+        user.firstName.hashCode.toString + user.familyName.hashCode.toString +
+        theSocialNetworkIds.socialNetworkId.socialNetwork.toString.hashCode +
+        theSocialNetworkIds.socialNetworkId.id.hashCode.toString,
       socialNetworkIds = List(theSocialNetworkIds),
       fullName = user.firstName + " " + user.familyName,
       givenName = if (user.firstName.isEmpty) None else Some(user.firstName),

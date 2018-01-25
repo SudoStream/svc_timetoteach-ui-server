@@ -8,4 +8,10 @@ object CookieNames {
   val socialNetworkPicture = "socialNetworkPicture"
   val socialNetworkFamilyName = "socialNetworkFamilyName"
   val socialNetworkGivenName = "socialNetworkGivenName"
+
+  val userDataFirstName = "userDataFirstName"
+  val userDataFamilyName = "userDataFamilyName"
+  val userDataEmailAddress = "userDataEmailAddress"
+  val userDataSchoolId = "userDataSchoolId"
+
 }

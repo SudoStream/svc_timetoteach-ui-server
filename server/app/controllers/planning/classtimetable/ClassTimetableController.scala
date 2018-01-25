@@ -20,7 +20,7 @@ import play.api.data.Form
 import play.api.data.Forms.{mapping, _}
 import play.api.mvc._
 import security.MyDeadboltHandler
-import shared.model.classtimetable.{WwwClassId, WwwClassName}
+import shared.model.classtimetable.WwwClassId
 import shared.util.LocalTimeUtil
 import utils.ClassTimetableConverterToAvro.convertJsonClassTimetableToWwwClassTimetable
 import utils.TemplateUtils.getCookieStringFromRequest
@@ -120,11 +120,6 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
             defaultSchoolDayTimes.schoolDayEnds)
         )
       case None => defaultSchoolDayTimes
-    }
-
-    val futureClassName: Future[String] = futureUserPrefs map {
-      case Some(userPrefs) => userPrefs.allSchoolTimes.head.userTeachesTheseClasses.head.className
-      case None => "<No Class Name>"
     }
 
     for {
