@@ -223,7 +223,9 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
     for {
       classes <- eventualClasses
       classDetailsList = classes.filter(theClass => theClass.id.id == classId)
-      classDetails = classDetailsList.headOption
+      maybeClassDetails = classDetailsList.headOption
+      if maybeClassDetails.isDefined
+      classDetails = maybeClassDetails.get
     } yield {
       Ok(views.html.planning.classtimetables.manageClass(new MyDeadboltHandler(userReader),
         userPictureUri,

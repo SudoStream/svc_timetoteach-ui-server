@@ -1,7 +1,7 @@
 @import controllers.serviceproxies.TimeToTeachUserId
-@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: Option[duplicate.model.ClassDetails])
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails)
 
-@timetoteachAppMain(handler, s"Manage Class",
+@timetoteachAppMain(handler, s"Manage Class - " + classDetails.className.name,
     userPictureUri, userFirstName, userFamilyName) {
     <div class="container">
 
@@ -21,16 +21,18 @@
 
                     <li class="nav-item manage-class-nav-item-on-left">
                         <a id="manage-class-goto-timetable" class="btn btn-primary" role="button"
-                        href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(classDetails.get.id.id)">
+                        href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(classDetails.id.id)">
                             Timetable</a>
                     </li>
 
                     <li class="nav-item manage-class-nav-item-on-left">
-                        <button id="manage-class-goto-timetable" type="button" class="btn btn-primary" disabled="true">Termly Plans</button>
+                        <button id="manage-class-goto-timetable" type="button" class="btn btn-primary" disabled="true">
+                            Termly Plans</button>
                     </li>
 
                     <li class="nav-item manage-class-nav-item-on-left">
-                        <button id="manage-class-goto-timetable" type="button" class="btn btn-primary" disabled="true">Weekly Plans</button>
+                        <button id="manage-class-goto-timetable" type="button" class="btn btn-primary" disabled="true">
+                            Weekly Plans</button>
                     </li>
 
                 </ul>
@@ -42,7 +44,8 @@
                     </li>
 
                     <li class="nav-item manage-class-nav-item-rightmost">
-                        <button id="manage-class-delete" type="button" class="btn btn-danger" disabled="true">Delete Class</button>
+                        <button id="manage-class-delete" type="button" class="btn btn-danger" disabled="true">
+                            Delete Class</button>
                     </li>
                 </ul>
             </div>
@@ -52,15 +55,7 @@
                     <div class="col-md-3">
                         <label class="add-new-class-label text-muted" for="className">Name</label>
                         <input type="text" id="className" name="className" class="form-control form-control-sm" disabled="true"
-                        placeholder="@{
-                            if(classDetails.isDefined) {
-                                classDetails.get.className.name
-                            }
-                            else {
-                                "No Class Found"
-                            }
-                        }
-                        ">
+                        placeholder="@{classDetails.className.name}">
                     </div>
                     <div class="col-md-9"></div>
                 </div>
@@ -69,14 +64,7 @@
                     <div class="col-md-12">
                         <label class="add-new-class-label text-muted" for="classDescription">Description</label>
                         <input type="text" id="classDescription" name="classDescription" class="form-control form-control-sm" disabled="true"
-                        placeholder="@{
-                            if(classDetails.isDefined) {
-                                classDetails.get.classDescription.name
-                            } else {
-                                "No Class Found"
-                            }
-                        }
-                        " >
+                        placeholder="@{classDetails.classDescription.name}">
                     </div>
                 </div>
 
@@ -91,47 +79,21 @@
                             <div class="col-md-2 text-muted"><small>Level</small></div>
                             <div class="col-md-2"></div>
                         </div>
-                        @if(classDetails.isDefined) {
-                            @for(group <- classDetails.get.groups) {
+                            @for(group <- classDetails.groups) {
                                 @if(group.groupType.value.toLowerCase == "maths") {
                                     <div class="form-row manage-class-group-row">
                                         <div class="col-md-3">
                                             <input type="text" name="groupName" class="form-control form-control-sm" disabled="true"
-                                            placeholder="@{
-                                                if(classDetails.isDefined) {
-                                                    group.groupName.name
-                                                } else {
-                                                    "No Class Found"
-                                                }
-
-                                            }
-                                            ">
+                                            placeholder="@{group.groupName.name}">
                                         </div>
                                         <div class="col-md-5">
                                             <input type="text" name="groupDescription" class="form-control form-control-sm" disabled="true"
-                                            placeholder="@{
-                                                if(classDetails.isDefined) {
-                                                    group.groupDescription.name
-                                                } else {
-                                                    "No Class Found"
-                                                }
-
-                                            }
-                                            ">
+                                            placeholder="@{group.groupDescription.name}">
                                         </div>
                                         <div class="col-md-2">
                                             <input type="text" name="groupType" class="form-control form-control-sm" disabled="true"
-                                            placeholder="@{
-                                                if(classDetails.isDefined) {
-                                                    group.groupLevel.value.toLowerCase.capitalize.replace("level", "")
-                                                } else {
-                                                    "No Class Found"
-                                                }
-
-                                            }
-                                            ">
+                                            placeholder="@group.groupLevel.value.toLowerCase.capitalize.replace("level", "")">
                                         </div>
-
                                         <div class="col-md-2">
                                             <button id="manage-class-edit" type="button" class="btn btn-sm btn-info" disabled="true">
                                                 Group Plans
@@ -141,10 +103,6 @@
                                     </div>
                                 }
                             }
-                        } else {
-                            <p>there</p>
-                            "No Class Found"
-                        }
                     </div>
                     <div class="col-md-2"></div>
                     <div class="col-md-5">
@@ -158,45 +116,20 @@
                             <div class="col-md-2"></div>
                         </div>
 
-                        @if(classDetails.isDefined) {
-                            @for(group <- classDetails.get.groups) {
+                            @for(group <- classDetails.groups) {
                                 @if(group.groupType.value.toLowerCase == "literacy") {
                                     <div class="form-row manage-class-group-row">
                                         <div class="col-md-3">
                                             <input type="text" name="groupName" class="form-control form-control-sm" disabled="true"
-                                            placeholder="@{
-                                                if(classDetails.isDefined) {
-                                                    group.groupName.name
-                                                } else {
-                                                    "No Class Found"
-                                                }
-
-                                            }
-                                            ">
+                                            placeholder="@{group.groupName.name}">
                                         </div>
                                         <div class="col-md-5">
                                             <input type="text" name="groupDescription" class="form-control form-control-sm" disabled="true"
-                                            placeholder="@{
-                                                if(classDetails.isDefined) {
-                                                    group.groupDescription.name
-                                                } else {
-                                                    "No Class Found"
-                                                }
-
-                                            }
-                                            ">
+                                            placeholder="@{group.groupDescription.name}">
                                         </div>
                                         <div class="col-md-2">
                                             <input type="text" name="groupType" class="form-control form-control-sm" disabled="true"
-                                            placeholder="@{
-                                                if(classDetails.isDefined) {
-                                                    group.groupLevel.value.toLowerCase.capitalize.replace("level", "")
-                                                } else {
-                                                    "No Class Found"
-                                                }
-
-                                            }
-                                            ">
+                                            placeholder="@{group.groupLevel.value.toLowerCase.capitalize.replace("level", "")}">
                                         </div>
 
                                         <div class="col-md-2">
@@ -207,45 +140,24 @@
                                     </div>
                                 }
                             }
-                        } else {
-                            <p>there</p>
-                            "No Class Found"
-                        }
                     </div>
                 </div>
 
                 <div class="form-row add-new-class-form-row">
                     <div class="col-md-6">
 
-                    @if(classDetails.isDefined) {
-                        @if(classDetails.get.groups.count(aGroup => aGroup.groupLevel.value.toLowerCase == "other") > 0) {
+                        @if(classDetails.groups.count(aGroup => aGroup.groupLevel.value.toLowerCase == "other") > 0) {
                             <label class="manage-class-desription-label manage-class-group-header">Other Groups</label>
-                            @for(group <- classDetails.get.groups) {
+                            @for(group <- classDetails.groups) {
                                 @if(group.groupType.value.toLowerCase == "other") {
                                     <div class="form-row manage-class-group-row">
                                         <div class="col-md-6">
                                             <input type="text" name="groupName" class="form-control form-control-sm" disabled="true"
-                                            placeholder="@{
-                                                if(classDetails.isDefined) {
-                                                    group.groupName.name
-                                                } else {
-                                                    "No Class Found"
-                                                }
-
-                                            }
-                                            ">
+                                            placeholder="@{group.groupName.name}">
                                         </div>
                                         <div class="col-md-4">
                                             <input type="text" name="groupType" class="form-control form-control-sm" disabled="true"
-                                            placeholder="@{
-                                                if(classDetails.isDefined) {
-                                                    group.groupLevel.value.toLowerCase.capitalize.replace("level", "")
-                                                } else {
-                                                    "No Class Found"
-                                                }
-
-                                            }
-                                            ">
+                                            placeholder="@{group.groupLevel.value.toLowerCase.capitalize.replace("level", "")}">
                                         </div>
                                         @*<div class="col-md-1">*@
                                         @*<button type="button" class="close" aria-label="Close">*@
@@ -256,10 +168,6 @@
                                 }
                             }
                         }
-                    } else {
-                        <p>there</p>
-                        "No Class Found"
-                    }
                     </div>
                 </div>
 
