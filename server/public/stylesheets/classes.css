@@ -198,7 +198,7 @@
 
     }
     .in-app-menu-medium-and-up {
-        display: flex
+        display: block
     ;
     }
     .in-app-menu-small-devices {
@@ -208,7 +208,7 @@
 
 @media screen and ( min-width: 1200px) {
     .in-app-menu-medium-and-up {
-        display: flex;
+        display: block;
     }
     .in-app-menu-small-devices {
         display: none;

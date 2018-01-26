@@ -60,8 +60,8 @@ trait ClassTimetableScreenHtmlGenerator {
     val html = sortedDays.map {
       day =>
         val dayOfTheWeekRowContainer = div(`class` := "row dayoftheweek-row align-items-center")
-        val dayOfTheWeekRow = div(`class` := "col-sm-1 text-secondary timetable-dayofweek-header align-self-center")(day.shortValue)
-        val sessionContainer = div(`class` := "col-sm-3")
+        val dayOfTheWeekRow = div(`class` := "col-sm-1 text-secondary timetable-dayofweek-header align-self-center")(day.value)
+        val sessionContainer = div(`class` := "col-sm-3 timetable-session-container")
         val sessionRow = div(`class` := "row")
         val break = div(`class` := "col-sm-1 small-column")
 

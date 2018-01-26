@@ -39,6 +39,8 @@
     background: none;
     text-shadow: 1px 1px #ccc;
     font-size: medium;
+    min-width: 100%;
+    margin-top: 2rem;
 }
 
 #class-timetable-section .dayoftheweek-row {
@@ -105,7 +107,19 @@
     display: none;
 }
 
+.timetable-session-container {
+    min-width: 100%;
+}
+
+.buttons-on-the-right {
+    float: right;
+}
+
 @media screen and ( min-width: 991px) {
+    .timetable-session-container {
+        min-width: 5%;
+    }
+
     #class-timetable-section .dayoftheweek-row {
         background: rgba(0, 0, 0, 0.05);
         text-align: center;
@@ -116,6 +130,7 @@
         background: none;
         text-shadow: 1px 1px #ccc;
         font-size: small;
+        min-width: 1%;
     }
 
 }
