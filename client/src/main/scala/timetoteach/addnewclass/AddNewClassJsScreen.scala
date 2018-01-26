@@ -275,7 +275,11 @@ object AddNewClassJsScreen {
       case Success(xhr) =>
         val responseText = xhr.responseText
         println(s"response = '$responseText'")
-        dom.window.location.href = "/classes";
+        dom.window.setTimeout(() => {
+          println(s"lets goto classes")
+          dom.window.location.href = "/classes"
+        }, 100)
+        println(s"Can you see this?")
       case Failure(ex) =>
         dom.window.alert("Something went wrong with creating new class. Specifically : -" +
           s"\n\n${ex.toString}")
