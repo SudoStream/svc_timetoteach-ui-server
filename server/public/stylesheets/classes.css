@@ -155,3 +155,34 @@
     margin-top: 1rem;
     margin-bottom: 2rem;
 }
+
+.in-app-menu-medium-and-up {
+    display: none;
+}
+
+.in-app-menu-small-devices {
+    display: block;
+}
+
+.in-app-menu-small-devices-row {
+    margin-bottom: 0.5rem;
+}
+
+@media screen and ( min-width: 991px) {
+    .in-app-menu-medium-and-up {
+        display: block;
+    }
+    .in-app-menu-small-devices {
+        display: none;
+    }
+}
+
+@media screen and ( min-width: 1200px) {
+    .in-app-menu-medium-and-up {
+        display: block;
+    }
+    .in-app-menu-small-devices {
+        display: none;
+    }
+}
+

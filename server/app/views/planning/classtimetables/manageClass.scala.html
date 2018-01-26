@@ -3,51 +3,82 @@
 
 @timetoteachAppMain(handler, s"Manage Class - " + classDetails.className.name,
     userPictureUri, userFirstName, userFamilyName) {
+
+    <div class="in-app-menu-small-devices">
+        <li class="nav-item nav-login-button">
+            <a class="btn btn-primary" role="button" href="@routes.Application.timeToTeachApp()">
+                Dashboard</a>
+        </li>
+
+        <li class="nav-item nav-login-button">
+            <a class="btn btn-primary" role="button" href="@controllers.planning.classtimetable.routes.ClassTimetableController.classesHome()">
+                Classes</a>
+        </li>
+
+        <li class="nav-item nav-login-button">
+            <a id="manage-class-goto-timetable" class="btn btn-primary" role="button"
+            href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(classDetails.id.id)">
+                Timetable</a>
+        </li>
+
+        <li class="nav-item nav-login-button">
+            <button id="manage-class-goto-timetable" type="button" class="btn btn-primary" disabled="true">
+                Termly Plans</button>
+        </li>
+
+        <li class="nav-item nav-login-button">
+            <button id="manage-class-goto-timetable" type="button" class="btn btn-primary" disabled="true">
+                Weekly Plans</button>
+        </li>
+    </div>
+} {
     <div class="container">
 
         <div class="manage-class-form-section">
 
-            <div class="d-flex">
-                <ul class="nav mr-auto justify-content-between">
-                    <li class="nav-item manage-class-nav-item-leftmost">
-                        <a class="btn btn-primary" role="button" href="@routes.Application.timeToTeachApp()">
-                            Dashboard</a>
-                    </li>
+            <div class="in-app-menu-medium-and-up">
+                <div class="d-flex ">
+                    <ul class="nav mr-auto justify-content-between">
+                        <li class="nav-item manage-class-nav-item-leftmost">
+                            <a class="btn btn-primary" role="button" href="@routes.Application.timeToTeachApp()">
+                                Dashboard</a>
+                        </li>
 
-                    <li class="nav-item manage-class-nav-item-on-left">
-                        <a class="btn btn-primary" role="button" href="@controllers.planning.classtimetable.routes.ClassTimetableController.classesHome()">
-                            Classes</a>
-                    </li>
+                        <li class="nav-item manage-class-nav-item-on-left">
+                            <a class="btn btn-primary" role="button" href="@controllers.planning.classtimetable.routes.ClassTimetableController.classesHome()">
+                                Classes</a>
+                        </li>
 
-                    <li class="nav-item manage-class-nav-item-on-left">
-                        <a id="manage-class-goto-timetable" class="btn btn-primary" role="button"
-                        href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(classDetails.id.id)">
-                            Timetable</a>
-                    </li>
+                        <li class="nav-item manage-class-nav-item-on-left">
+                            <a id="manage-class-goto-timetable" class="btn btn-primary" role="button"
+                            href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(classDetails.id.id)">
+                                Timetable</a>
+                        </li>
 
-                    <li class="nav-item manage-class-nav-item-on-left">
-                        <button id="manage-class-goto-timetable" type="button" class="btn btn-primary" disabled="true">
-                            Termly Plans</button>
-                    </li>
+                        <li class="nav-item manage-class-nav-item-on-left">
+                            <button id="manage-class-goto-timetable" type="button" class="btn btn-primary" disabled="true">
+                                Termly Plans</button>
+                        </li>
 
-                    <li class="nav-item manage-class-nav-item-on-left">
-                        <button id="manage-class-goto-timetable" type="button" class="btn btn-primary" disabled="true">
-                            Weekly Plans</button>
-                    </li>
+                        <li class="nav-item manage-class-nav-item-on-left">
+                            <button id="manage-class-goto-timetable" type="button" class="btn btn-primary" disabled="true">
+                                Weekly Plans</button>
+                        </li>
 
-                </ul>
+                    </ul>
 
-                <ul class="nav justify-content-end">
-                    <li class="nav-item manage-class-nav-item-on-right">
-                        <button id="manage-class-edit" type="button" class="btn btn-info" disabled="true">
-                            Edit Class</button>
-                    </li>
+                    <ul class="nav justify-content-end">
+                        <li class="nav-item manage-class-nav-item-on-right">
+                            <button id="manage-class-edit" type="button" class="btn btn-info" disabled="true">
+                                Edit Class</button>
+                        </li>
 
-                    <li class="nav-item manage-class-nav-item-rightmost">
-                        <button id="manage-class-delete" type="button" class="btn btn-danger" disabled="true">
-                            Delete Class</button>
-                    </li>
-                </ul>
+                        <li class="nav-item manage-class-nav-item-rightmost">
+                            <button id="manage-class-delete" type="button" class="btn btn-danger" disabled="true">
+                                Delete Class</button>
+                        </li>
+                    </ul>
+                </div>
             </div>
 
             <div class="manage-class-section">
@@ -55,7 +86,9 @@
                     <div class="col-md-3">
                         <label class="add-new-class-label text-muted" for="className">Name</label>
                         <input type="text" id="className" name="className" class="form-control form-control-sm" disabled="true"
-                        placeholder="@{classDetails.className.name}">
+                        placeholder="@{
+                            classDetails.className.name
+                        }">
                     </div>
                     <div class="col-md-9"></div>
                 </div>
@@ -64,7 +97,9 @@
                     <div class="col-md-12">
                         <label class="add-new-class-label text-muted" for="classDescription">Description</label>
                         <input type="text" id="classDescription" name="classDescription" class="form-control form-control-sm" disabled="true"
-                        placeholder="@{classDetails.classDescription.name}">
+                        placeholder="@{
+                            classDetails.classDescription.name
+                        }">
                     </div>
                 </div>
 
@@ -79,30 +114,34 @@
                             <div class="col-md-2 text-muted"><small>Level</small></div>
                             <div class="col-md-2"></div>
                         </div>
-                            @for(group <- classDetails.groups) {
-                                @if(group.groupType.value.toLowerCase == "maths") {
-                                    <div class="form-row manage-class-group-row">
-                                        <div class="col-md-3">
-                                            <input type="text" name="groupName" class="form-control form-control-sm" disabled="true"
-                                            placeholder="@{group.groupName.name}">
-                                        </div>
-                                        <div class="col-md-5">
-                                            <input type="text" name="groupDescription" class="form-control form-control-sm" disabled="true"
-                                            placeholder="@{group.groupDescription.name}">
-                                        </div>
-                                        <div class="col-md-2">
-                                            <input type="text" name="groupType" class="form-control form-control-sm" disabled="true"
-                                            placeholder="@group.groupLevel.value.toLowerCase.capitalize.replace("level", "")">
-                                        </div>
-                                        <div class="col-md-2">
-                                            <button id="manage-class-edit" type="button" class="btn btn-sm btn-info" disabled="true">
-                                                Group Plans
-                                            </button>
-                                        </div>
-
+                        @for(group <- classDetails.groups) {
+                            @if(group.groupType.value.toLowerCase == "maths") {
+                                <div class="form-row manage-class-group-row">
+                                    <div class="col-md-3">
+                                        <input type="text" name="groupName" class="form-control form-control-sm" disabled="true"
+                                        placeholder="@{
+                                            group.groupName.name
+                                        }">
                                     </div>
-                                }
+                                    <div class="col-md-5">
+                                        <input type="text" name="groupDescription" class="form-control form-control-sm" disabled="true"
+                                        placeholder="@{
+                                            group.groupDescription.name
+                                        }">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="text" name="groupType" class="form-control form-control-sm" disabled="true"
+                                        placeholder="@group.groupLevel.value.toLowerCase.capitalize.replace("level", "")">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button id="manage-class-edit" type="button" class="btn btn-sm btn-info" disabled="true">
+                                            Group Plans
+                                        </button>
+                                    </div>
+
+                                </div>
                             }
+                        }
                     </div>
                     <div class="col-md-2"></div>
                     <div class="col-md-5">
@@ -116,58 +155,68 @@
                             <div class="col-md-2"></div>
                         </div>
 
-                            @for(group <- classDetails.groups) {
-                                @if(group.groupType.value.toLowerCase == "literacy") {
-                                    <div class="form-row manage-class-group-row">
-                                        <div class="col-md-3">
-                                            <input type="text" name="groupName" class="form-control form-control-sm" disabled="true"
-                                            placeholder="@{group.groupName.name}">
-                                        </div>
-                                        <div class="col-md-5">
-                                            <input type="text" name="groupDescription" class="form-control form-control-sm" disabled="true"
-                                            placeholder="@{group.groupDescription.name}">
-                                        </div>
-                                        <div class="col-md-2">
-                                            <input type="text" name="groupType" class="form-control form-control-sm" disabled="true"
-                                            placeholder="@{group.groupLevel.value.toLowerCase.capitalize.replace("level", "")}">
-                                        </div>
-
-                                        <div class="col-md-2">
-                                            <button id="manage-class-edit" type="button" class="btn btn-sm btn-info" disabled="true">
-                                                Group Plans
-                                            </button>
-                                        </div>
+                        @for(group <- classDetails.groups) {
+                            @if(group.groupType.value.toLowerCase == "literacy") {
+                                <div class="form-row manage-class-group-row">
+                                    <div class="col-md-3">
+                                        <input type="text" name="groupName" class="form-control form-control-sm" disabled="true"
+                                        placeholder="@{
+                                            group.groupName.name
+                                        }">
                                     </div>
-                                }
+                                    <div class="col-md-5">
+                                        <input type="text" name="groupDescription" class="form-control form-control-sm" disabled="true"
+                                        placeholder="@{
+                                            group.groupDescription.name
+                                        }">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="text" name="groupType" class="form-control form-control-sm" disabled="true"
+                                        placeholder="@{
+                                            group.groupLevel.value.toLowerCase.capitalize.replace("level", "")
+                                        }">
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <button id="manage-class-edit" type="button" class="btn btn-sm btn-info" disabled="true">
+                                            Group Plans
+                                        </button>
+                                    </div>
+                                </div>
                             }
+                        }
                     </div>
                 </div>
 
                 <div class="form-row add-new-class-form-row">
                     <div class="col-md-6">
 
-                        @if(classDetails.groups.count(aGroup => aGroup.groupLevel.value.toLowerCase == "other") > 0) {
-                            <label class="manage-class-desription-label manage-class-group-header">Other Groups</label>
-                            @for(group <- classDetails.groups) {
-                                @if(group.groupType.value.toLowerCase == "other") {
-                                    <div class="form-row manage-class-group-row">
-                                        <div class="col-md-6">
-                                            <input type="text" name="groupName" class="form-control form-control-sm" disabled="true"
-                                            placeholder="@{group.groupName.name}">
-                                        </div>
-                                        <div class="col-md-4">
-                                            <input type="text" name="groupType" class="form-control form-control-sm" disabled="true"
-                                            placeholder="@{group.groupLevel.value.toLowerCase.capitalize.replace("level", "")}">
-                                        </div>
-                                        @*<div class="col-md-1">*@
-                                        @*<button type="button" class="close" aria-label="Close">*@
-                                        @*<span aria-hidden="true">&times;</span>*@
-                                        @*</button>*@
-                                        @*</div>*@
+                    @if(classDetails.groups.count(aGroup => aGroup.groupLevel.value.toLowerCase == "other") > 0) {
+                        <label class="manage-class-desription-label manage-class-group-header">Other Groups</label>
+                        @for(group <- classDetails.groups) {
+                            @if(group.groupType.value.toLowerCase == "other") {
+                                <div class="form-row manage-class-group-row">
+                                    <div class="col-md-6">
+                                        <input type="text" name="groupName" class="form-control form-control-sm" disabled="true"
+                                        placeholder="@{
+                                            group.groupName.name
+                                        }">
                                     </div>
-                                }
+                                    <div class="col-md-4">
+                                        <input type="text" name="groupType" class="form-control form-control-sm" disabled="true"
+                                        placeholder="@{
+                                            group.groupLevel.value.toLowerCase.capitalize.replace("level", "")
+                                        }">
+                                    </div>
+                                    @*<div class="col-md-1">*@
+                                    @*<button type="button" class="close" aria-label="Close">*@
+                                    @*<span aria-hidden="true">&times;</span>*@
+                                    @*</button>*@
+                                    @*</div>*@
+                                </div>
                             }
                         }
+                    }
                     </div>
                 </div>
 
