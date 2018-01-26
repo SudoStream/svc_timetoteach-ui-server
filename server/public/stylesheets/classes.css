@@ -135,7 +135,8 @@
 }
 
 .manage-class-group-header {
-    margin-top: 0.5rem;
+    margin-top: 1rem;
+    margin-bottom: 0.4rem;
 }
 
 .manage-class-group-row {
@@ -166,11 +167,39 @@
 
 .in-app-menu-small-devices-row {
     margin-bottom: 0.5rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
 }
 
-@media screen and ( min-width: 991px) {
+.the-group-plans-button {
+    /*display: block;*/
+}
+
+.float-right {
+    float: right;
+}
+
+.manage-new-group-row {
+    border: 1px solid lightgrey;
+    background: rgba(0, 0, 0, 0.03);
+    padding: 0.2rem 0.2rem;
+    margin-top: 0.2rem;
+    margin-bottom: 1rem;
+}
+
+
+@media screen and ( min-width: 990px) {
+    .manage-new-group-row {
+        border: 0;
+        background: rgba(0, 0, 0, 0);
+        padding: 0;
+        margin-top: 0;
+        margin-bottom: 0;
+
+    }
     .in-app-menu-medium-and-up {
-        display: block;
+        display: flex
+    ;
     }
     .in-app-menu-small-devices {
         display: none;
@@ -179,7 +208,7 @@
 
 @media screen and ( min-width: 1200px) {
     .in-app-menu-medium-and-up {
-        display: block;
+        display: flex;
     }
     .in-app-menu-small-devices {
         display: none;
