@@ -110,11 +110,13 @@
                         <div class="text-center">
                             <label class="manage-class-desription-label manage-class-group-header">Maths Groups</label>
                         </div>
-                        <div class="row in-app-menu-medium-and-up">
-                            <div class="col-lg-3 text-muted"><small>Group</small></div>
-                            <div class="col-lg-5 text-muted"><small>Description</small></div>
-                            <div class="col-lg-2 text-muted"><small>Level</small></div>
-                            <div class="col-lg-2"></div>
+                        <div class="in-app-menu-medium-and-up">
+                            <div class="row">
+                                <div class="col-lg-3 text-muted"><small>Group</small></div>
+                                <div class="col-lg-5 text-muted"><small>Description</small></div>
+                                <div class="col-lg-2 text-muted"><small>Level</small></div>
+                                <div class="col-lg-2"></div>
+                            </div>
                         </div>
                         @for(group <- classDetails.groups) {
                             @if(group.groupType.value.toLowerCase == "maths") {
@@ -193,11 +195,13 @@
                         <div class="text-center">
                             <label class="manage-class-desription-label manage-class-group-header">Literacy Groups</label>
                         </div>
-                        <div class="row in-app-menu-medium-and-up">
-                            <div class="col-lg-3 text-muted"><small>Group</small></div>
-                            <div class="col-lg-5 text-muted"><small>Description</small></div>
-                            <div class="col-lg-2 text-muted"><small>Level</small></div>
-                            <div class="col-lg-2"></div>
+                        <div class="in-app-menu-medium-and-up">
+                            <div class="row">
+                                <div class="col-lg-3 text-muted"><small>Group</small></div>
+                                <div class="col-lg-5 text-muted"><small>Description</small></div>
+                                <div class="col-lg-2 text-muted"><small>Level</small></div>
+                                <div class="col-lg-2"></div>
+                            </div>
                         </div>
 
                         @for(group <- classDetails.groups) {
