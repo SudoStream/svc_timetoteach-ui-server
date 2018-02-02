@@ -1,10 +1,73 @@
 @import controllers.serviceproxies.TimeToTeachUserId
-@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId)
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, teacherSchoolToClasses: Map[String, List[duplicate.model.ClassDetails]])
 
 @timetoteachAppMain(handler, s"Termly Plans",
     userPictureUri, userFirstName, userFamilyName) {
-    <li></li>}{
+
+    <div class="in-app-menu-small-devices">
+        <li class="nav-item nav-login-button">
+            <a class="btn btn-outline-primary" role="button" href="@routes.Application.timeToTeachApp()">
+                Dashboard</a>
+        </li>
+
+        <li class="nav-item nav-login-button">
+            <a class="btn btn-outline-primary" role="button" href="@controllers.planning.classtimetable.routes.ClassTimetableController.classesHome()">
+                Classes</a>
+        </li>
+
+
+    </div>
+} {
     <div class="container">
-    <h1>Termly Plans - under development</h1>
+        <div class="manage-class-form-section">
+            <div class="in-app-menu-medium-and-up">
+                <div class="d-flex ">
+                    <ul class="nav mr-auto justify-content-between">
+                        <li class="nav-item manage-class-nav-item-leftmost">
+                            <a class="btn btn-outline-primary" role="button" href="@routes.Application.timeToTeachApp()">
+                                Dashboard</a>
+                        </li>
+                        <li class="nav-item manage-class-nav-item-on-left">
+                            <a class="btn btn-outline-primary" role="button" href="@controllers.planning.classtimetable.routes.ClassTimetableController.classesHome()">
+                                Classes</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="termly-plans-overview-of-all-classes-section">
+        @for(schoolName_to_class <- teacherSchoolToClasses) {
+            <div class="text-center termly-plans-overview-school-name"><h5>@schoolName_to_class._1</h5></div>
+            <div class="termly-plans-overview-headers">
+                <div class="row">
+                    <div class="col-lg-2"><small class="text-muted">Class Name</small></div>
+                    <div class="col-lg-2"><small class="text-muted">Progress</small></div>
+                    <div class="col-lg-6"><small class="text-muted">Teachers</small></div>
+                </div>
+            </div>
+
+            @for(teacherClass <- schoolName_to_class._2) {
+                <div class="termly-plans-overview-row">
+                    <div class="row">
+                        <div class="col-xs-3 col-lg-2">
+                            <a class="btn btn-sm btn-primary btn-block" role="button" href="#">@teacherClass.className.name</a>
+                        </div>
+                        <div class="col-xs-3 col-lg-2">
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-striped" role="progressbar" style="width: 0" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                        <div class="col-xs-0 col-lg-6">@userFirstName @userFamilyName</div>
+                        <div class="col-xs-3 col-lg-2">
+                            <button class="btn btn-sm btn-outline-success btn-block" role="button" href="#" disabled="true">Share Plan</button>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        </div>
+
     </div>
 }

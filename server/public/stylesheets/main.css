@@ -2,6 +2,7 @@
 @import "timetable.css";
 @import "input-range.css";
 @import "classes.css";
+@import "termlyplans.css";
 
 @font-face {
     font-family: 'simplifica';

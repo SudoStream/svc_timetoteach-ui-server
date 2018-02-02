@@ -46,6 +46,7 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl,
 
   private val config = ConfigFactory.load()
   private val showFrontPageSections = if (config.getString("feature.toggles.front-page-feature-sections") == "true") true else false
+  private val generalDevelopmentToggle = if (config.getString("feature.toggles.general-development-toggle") == "true") true else false
 
   val logger: Logger = Logger
   private val postInitialUserPreferencesUrl = routes.Application.initialPreferencesCreated()
@@ -77,7 +78,8 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl,
         SharedMessages.httpMainTitle,
         userPictureUri,
         userFirstName,
-        userFamilyName)(authRequest))
+        userFamilyName,
+        generalDevelopmentToggle)(authRequest))
     }
   }
 
@@ -114,7 +116,8 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl,
                 SharedMessages.httpMainTitle,
                 userPictureUri,
                 userFirstName,
-                userFamilyName)(authRequest))
+                userFamilyName,
+                generalDevelopmentToggle)(authRequest))
 
             } else {
               // TODO: Redirect

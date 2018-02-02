@@ -1,0 +1,19 @@
+#termly-plans-overview-of-all-classes-section {
+    padding: 0.5rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    /*background-color: #f6f6ff;*/
+    background: rgba(250, 250, 250, 0.45);
+    border: 1px solid lightgrey;
+}
+.termly-plans-overview-school-name {
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+}
+.termly-plans-overview-row {
+    margin-bottom: 1rem;
+}
+
+.termly-plans-overview-headers{
+    margin-bottom: 0.6rem;
+}
