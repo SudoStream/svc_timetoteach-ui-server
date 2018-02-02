@@ -6,28 +6,29 @@
 
     <div class="in-app-menu-small-devices">
         <li class="nav-item nav-login-button">
-            <a class="btn btn-outline-primary" role="button" href="@routes.Application.timeToTeachApp()">
+            <a class="btn btn-outline-primary btn-block" role="button" href="@routes.Application.timeToTeachApp()">
                 Dashboard</a>
         </li>
 
         <li class="nav-item nav-login-button">
-            <a class="btn btn-outline-primary" role="button" href="@controllers.planning.classtimetable.routes.ClassTimetableController.classesHome()">
-                Classes</a>
+            <a class="btn btn-outline-primary btn-block" role="button" href="@controllers.planning.classtimetable.routes.ClassTimetableController.classesHome()">
+                Classes Home</a>
         </li>
 
         <li class="nav-item nav-login-button">
-            <a id="manage-class-goto-timetable" class="btn btn-outline-primary" role="button"
+            <a id="manage-class-goto-timetable" class="btn btn-outline-primary btn-block" role="button"
             href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(classDetails.id.id)">
-                Timetable</a>
+                Class Timetable</a>
         </li>
 
         <li class="nav-item nav-login-button">
-            <button id="manage-class-goto-timetable" type="button" class="btn btn-outline-primary" disabled="true">
-                Termly Plans</button>
+            <a id="manage-class-goto-timetable" class="btn btn-outline-primary btn-block" role="button"
+            href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(classDetails.id.id)">
+                Termly Plans</a>
         </li>
 
         <li class="nav-item nav-login-button">
-            <button id="manage-class-goto-timetable" type="button" class="btn btn-outline-primary" disabled="true">
+            <button id="manage-class-goto-timetable" type="button" class="btn btn-outline-primary  btn-block" disabled="true">
                 Weekly Plans</button>
         </li>
     </div>
@@ -46,22 +47,23 @@
 
                         <li class="nav-item manage-class-nav-item-on-left">
                             <a class="btn btn-outline-primary" role="button" href="@controllers.planning.classtimetable.routes.ClassTimetableController.classesHome()">
-                                Classes</a>
+                                Classes Home</a>
                         </li>
 
                         <li class="nav-item manage-class-nav-item-on-left">
-                            <a id="manage-class-goto-timetable" class="btn btn-outline-primary" role="button"
+                            <a id="manage-class-goto-timetable" class="btn btn-info" role="button"
                             href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(classDetails.id.id)">
-                                Timetable</a>
+                                Class Timetable</a>
                         </li>
 
                         <li class="nav-item manage-class-nav-item-on-left">
-                            <button id="manage-class-goto-timetable" type="button" class="btn btn-outline-primary" disabled="true">
-                                Termly Plans</button>
+                            <a class="btn btn-info" role="button"
+                            href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(classDetails.id.id)">
+                                Termly Plans</a>
                         </li>
 
                         <li class="nav-item manage-class-nav-item-on-left">
-                            <button id="manage-class-goto-timetable" type="button" class="btn btn-outline-primary" disabled="true">
+                            <button id="manage-class-goto-timetable" type="button" class="btn btn-info" disabled="true">
                                 Weekly Plans</button>
                         </li>
 

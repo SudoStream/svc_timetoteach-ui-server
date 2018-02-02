@@ -2,28 +2,45 @@
 @import duplicate.model.ClassDetails
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classes: List[ClassDetails], schoolsForTeacher: List[models.timetoteach.School])
 
-@timetoteachAppMain(handler, s"Classes",
+@timetoteachAppMain(handler, s"Classes Home",
  userPictureUri, userFirstName, userFamilyName) {
-    <li></li>}{
+    <div class="in-app-menu-small-devices">
+        <li class="nav-item nav-login-button">
+            <a class="btn btn-outline-primary btn-block" role="button" href="@routes.Application.timeToTeachApp()">
+                Dashboard</a>
+        </li>
+
+        <li class="nav-item nav-login-button">
+            <a class="btn btn-outline-primary btn-block" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlans()">
+                Termly Plans Home</a>
+        </li>
+    </div>
+}{
 
  <div class="container">
 
      <div class="classes-home-section">
 
-     <div class="d-flex">
-         <ul class="nav mr-auto justify-content-between">
-             <li class="nav-item manage-class-nav-item-leftmost">
-                 <a class="btn btn-outline-primary" role="button" href="@routes.Application.timeToTeachApp()">
-                     Dashboard</a>
-             </li>
-         </ul>
+         <div class="in-app-menu-medium-and-up">
+             <div class="d-flex">
+                 <ul class="nav mr-auto justify-content-between">
+                     <li class="nav-item manage-class-nav-item-leftmost">
+                         <a class="btn btn-outline-primary" role="button" href="@routes.Application.timeToTeachApp()">
+                             Dashboard</a>
+                     </li>
+                     <li class="nav-item manage-class-nav-item-on-left">
+                         <a class="btn btn-outline-primary" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlans()">
+                             Termly Plans Home</a>
+                     </li>
+                 </ul>
 
-         <ul class="nav justify-content-end">
-             <a id="addNewClassBtn" class="rounded btn btn-success manage-class-nav-item-rightmost"
-             href="@controllers.planning.classtimetable.routes.ClassTimetableController.addNewClass()" role="button">
-                 Add New Class</a>
-         </ul>
-     </div>
+                 <ul class="nav justify-content-end">
+                     <a id="addNewClassBtn" class="rounded btn btn-success manage-class-nav-item-rightmost"
+                     href="@controllers.planning.classtimetable.routes.ClassTimetableController.addNewClass()" role="button">
+                         Add New Class</a>
+                 </ul>
+             </div>
+         </div>
 
      <ul class="nav nav-tabs" id="tabForHomeClasses" role="tablist">
          <li class="nav-item">

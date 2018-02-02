@@ -10,19 +10,19 @@
 
     <div class="in-app-menu-small-devices">
         <li class="nav-item nav-login-button">
-            <a class="btn btn-outline-primary" role="button" href="@routes.Application.timeToTeachApp()">
+            <a class="btn btn-outline-primary  btn-block" role="button" href="@routes.Application.timeToTeachApp()">
                 Dashboard</a>
         </li>
 
         <li class="nav-item nav-login-button">
-            <a class="btn btn-outline-primary" role="button" href="@controllers.planning.classtimetable.routes.ClassTimetableController.classesHome()">
-                Classes</a>
+            <a class="btn btn-outline-primary btn-block" role="button" href="@controllers.planning.classtimetable.routes.ClassTimetableController.classesHome()">
+                Classes Home</a>
         </li>
 
         <li class="nav-item nav-login-button">
-            <a class="btn btn-outline-primary" role="button"
+            <a class="btn btn-outline-primary btn-block" role="button"
             href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(classDetails.id.id)">
-            @classDetails.className.name</a>
+            @classDetails.className.name Setup</a>
         </li>
     </div>
 
@@ -41,28 +41,17 @@
 
                         <li class="nav-item manage-class-nav-item-on-left">
                             <a class="btn btn-outline-primary" role="button" href="@controllers.planning.classtimetable.routes.ClassTimetableController.classesHome()">
-                                Classes</a>
+                                Classes Home</a>
                         </li>
 
                         <li class="nav-item manage-class-nav-item-on-left">
-                            <a class="btn btn-outline-primary" role="button"
+                            <a class="btn btn-info" role="button"
                             href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(classDetails.id.id)">
-                            @classDetails.className.name</a>
+                            @classDetails.className.name Setup</a>
                         </li>
 
                     </ul>
 
-                    <ul class="nav justify-content-end buttons-on-the-right">
-                        <li class="nav-item manage-class-nav-item-on-right">
-                            <button id="manage-class-edit" type="button" class="btn btn-info" disabled="true">
-                                Edit Class</button>
-                        </li>
-
-                        <li class="nav-item manage-class-nav-item-rightmost">
-                            <button id="manage-class-delete" type="button" class="btn btn-danger" disabled="true">
-                                Delete Class</button>
-                        </li>
-                    </ul>
                 </div>
             </div>
         </div>

@@ -27,6 +27,7 @@ POST          /initialPreferencesCreated              controllers.Application.in
 GET           /weeklyplanning                         controllers.Application.weeklyPlanning
 
 GET           /termlyplanning                         controllers.planning.termly.TermlyPlansController.termlyPlans
+GET           /termlyplanningforclass/:classId        controllers.planning.termly.TermlyPlansController.termlyPlansForClass(classId)
 
 GET           /classes                                controllers.planning.classtimetable.ClassTimetableController.classesHome
 GET           /addnewclass                            controllers.planning.classtimetable.ClassTimetableController.addNewClass
