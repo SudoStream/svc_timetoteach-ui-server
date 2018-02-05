@@ -26,3 +26,24 @@
 .termly-plans-overview-datum {
     margin-bottom: 1.2rem;
 }
+
+.termly-plans-overview-section {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.termly-plans-overview-section-header {
+    margin-bottom: 1.5rem;
+}
+
+.termly-plans-overview-section-row {
+    margin-bottom: 1.5rem;
+}
+
+.termly-plans-collapse-conatiner {
+    max-width: 90%;
+}
+
+.termly-plans-group-row {
+    margin-bottom: 1rem;
+}

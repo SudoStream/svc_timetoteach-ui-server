@@ -72,8 +72,38 @@ class TermlyPlansController @Inject()(
         classDetails
       ))
     }
-
   }
+
+
+  def termlyPlansForGroup(classId: String, subject: String, groupId: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest: AuthenticatedRequest[AnyContent] =>
+    val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
+    val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
+    val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
+    val tttUserId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO ID")
+
+    val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
+
+    for {
+      classes <- eventualClasses
+      classDetailsList = classes.filter(theClass => theClass.id.id == classId)
+      maybeClassDetails: Option[ClassDetails] = classDetailsList.headOption
+      if maybeClassDetails.isDefined
+      classDetails = maybeClassDetails.get
+    } yield {
+      Ok(views.html.planning.termly.termlyPlansForGroup(new MyDeadboltHandler(userReader),
+        userPictureUri,
+        userFirstName,
+        userFamilyName,
+        TimeToTeachUserId(tttUserId),
+        classDetails,
+        classDetails.groups.filter( group => group.groupId.id == groupId).head,
+        subject
+      ))
+    }
+  }
+
+
+
 }
 
 object TermlyPlansController {
@@ -88,7 +118,7 @@ object TermlyPlansController {
         val schoolNameOfClassToAdd = nextClassToAdd.schoolDetails.name
         val maybeClasses = currentMap.get(schoolNameOfClassToAdd)
         val newClassesList = maybeClasses match {
-          case Some(currentClasses) =>  nextClassToAdd :: currentClasses
+          case Some(currentClasses) => nextClassToAdd :: currentClasses
           case None => nextClassToAdd :: Nil
         }
         buildSchoolNameToClassesMapLoop(currentMap + (schoolNameOfClassToAdd -> newClassesList), remainingClasses.tail)
@@ -98,3 +128,5 @@ object TermlyPlansController {
     buildSchoolNameToClassesMapLoop(Map(), classes)
   }
 }
+
+
