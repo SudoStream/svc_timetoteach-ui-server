@@ -107,3 +107,7 @@ case object Literacy extends CurriculumArea {
 case object Numeracy extends CurriculumArea {
   val value = "NUMERACY"
 }
+
+case object NotDefined extends CurriculumArea {
+  val value = "NOT_DEFINED"
+}

@@ -14,6 +14,7 @@ import scala.concurrent.Future
 @Singleton
 class EsOsAndBenchmarksBuilderImpl @Inject()(esAndOsReader: EsAndOsReaderServiceProxyImpl)
   extends EsOsAndBenchmarksBuilder {
+  val logger: Logger = Logger
 
   import EsOsAndBenchmarksBuilderImpl.buildTheEsOsAndBenchmarks
 
@@ -34,8 +35,15 @@ class EsOsAndBenchmarksBuilderImpl @Inject()(esAndOsReader: EsAndOsReaderService
   override def buildEsOsAndBenchmarks(curriculumLevel: CurriculumLevel,
                                       curriculumAreaName: CurriculumArea):
   Future[Option[EsAndOsPlusBenchmarksForSubjectAndLevel]] = {
-    Future {
-      None
+    logger.info(s"Building Es,Os and benchmarks for $curriculumLevel|$curriculumAreaName")
+    allEsOsAndBenchmarks map {
+      case Some(allEsAndOs) =>
+        allEsAndOs.get(curriculumLevel) match {
+          case Some(curriculumLevelMap) =>
+            curriculumLevelMap.get(curriculumAreaName)
+          case None => None
+        }
+      case None => None
     }
   }
 

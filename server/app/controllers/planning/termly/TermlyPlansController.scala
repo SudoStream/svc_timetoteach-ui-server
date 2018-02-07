@@ -5,6 +5,7 @@ import javax.inject.Inject
 import be.objectify.deadbolt.scala.cache.HandlerCache
 import be.objectify.deadbolt.scala.{AuthenticatedRequest, DeadboltActions}
 import controllers.serviceproxies.{ClassTimetableReaderServiceProxyImpl, TimeToTeachUserId, UserReaderServiceProxyImpl}
+import curriculum.scotland.EsOsAndBenchmarksBuilderImpl
 import duplicate.model.ClassDetails
 import models.timetoteach.CookieNames
 import play.api.Logger
@@ -20,6 +21,7 @@ class TermlyPlansController @Inject()(
                                        cc: ControllerComponents,
                                        userReader: UserReaderServiceProxyImpl,
                                        classTimetableReaderProxy: ClassTimetableReaderServiceProxyImpl,
+                                       esAndOsReader: EsOsAndBenchmarksBuilderImpl,
                                        handlers: HandlerCache,
                                        deadbolt: DeadboltActions) extends AbstractController(cc) {
 
@@ -76,6 +78,7 @@ class TermlyPlansController @Inject()(
 
 
   def termlyPlansForGroup(classId: String, subject: String, groupId: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest: AuthenticatedRequest[AnyContent] =>
+    import utils.CurriulumConverterUtil._
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
     val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
@@ -89,6 +92,11 @@ class TermlyPlansController @Inject()(
       maybeClassDetails: Option[ClassDetails] = classDetailsList.headOption
       if maybeClassDetails.isDefined
       classDetails = maybeClassDetails.get
+      group = classDetails.groups.filter(group => group.groupId.id == groupId).head
+      relevantEsAndOs <- esAndOsReader.buildEsOsAndBenchmarks(
+        group.groupLevel,
+        convertSubjectToCurriculumArea(subject)
+      )
     } yield {
       Ok(views.html.planning.termly.termlyPlansForGroup(new MyDeadboltHandler(userReader),
         userPictureUri,
@@ -96,13 +104,12 @@ class TermlyPlansController @Inject()(
         userFamilyName,
         TimeToTeachUserId(tttUserId),
         classDetails,
-        classDetails.groups.filter( group => group.groupId.id == groupId).head,
+        group,
         subject,
-        null
+        relevantEsAndOs
       ))
     }
   }
-
 
 
 }
