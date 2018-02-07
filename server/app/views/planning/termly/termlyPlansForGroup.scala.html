@@ -74,7 +74,9 @@
             @if(maybeEsOsAndBenchmarks.isDefined) {
                 <p>Woohoo!</p>
             } else {
-                <p>BooHoo!</p>
+                <div class="alert alert-warning" role="alert">
+                    No Es & Os or Benchmarks defined for level='@{groupDetails.groupLevel.value.replace("Level","")}' & subject='@{subject}'
+                </div>
             }
 
 
