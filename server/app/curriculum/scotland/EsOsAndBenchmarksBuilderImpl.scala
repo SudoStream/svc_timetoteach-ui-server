@@ -52,18 +52,9 @@ object EsOsAndBenchmarksBuilderImpl extends EsOsAndBenchmarksBuilderHelper {
                                      ): Option[Map[CurriculumLevel, Map[CurriculumArea, EsAndOsPlusBenchmarksForSubjectAndLevel]]] = {
 
       val maybeCurrentMapForCurriculumLevel = currentMap.get(nextEsAndOsBySubSection.scottishCurriculumLevel)
-      val newMapForCurriculumLevel: Map[CurriculumArea, EsAndOsPlusBenchmarksForSubjectAndLevel] = maybeCurrentMapForCurriculumLevel match {
-        case Some(currentMapForCurriculumLevel) => currentMapForCurriculumLevel // TODO
-        case None =>
-          Map(convertScottishCurriculumAreaName(nextEsAndOsBySubSection.curriculumAreaName) -> createNewEsAndOsPlusBenchmarksForSubjectAndLevel(nextEsAndOsBySubSection))
-      }
+      val newMapForCurriculumLevel = createNewVersionOfMap(nextEsAndOsBySubSection, maybeCurrentMapForCurriculumLevel)
       val newMap = currentMap + (convertScottishCurriculumLevel(nextEsAndOsBySubSection.scottishCurriculumLevel) -> newMapForCurriculumLevel)
-
-      if (restScottishEsAndOsBySubSection.isEmpty) {
-        Some(newMap)
-      } else {
-        buildTheEsOsAndBenchmarksLoop(restScottishEsAndOsBySubSection.head, restScottishEsAndOsBySubSection.tail, newMap)
-      }
+      loop(buildTheEsOsAndBenchmarksLoop, restScottishEsAndOsBySubSection, newMap)
     }
 
     if (scottishEsAndOsData.allExperiencesAndOutcomes.isEmpty) None
@@ -76,6 +67,27 @@ object EsOsAndBenchmarksBuilderImpl extends EsOsAndBenchmarksBuilderHelper {
     }
   }
 
+  private def loop(buildTheEsOsAndBenchmarksLoop: (ScottishEsAndOsBySubSection, List[ScottishEsAndOsBySubSection], Map[CurriculumLevel, Map[CurriculumArea, EsAndOsPlusBenchmarksForSubjectAndLevel]]) => Option[Map[CurriculumLevel, Map[CurriculumArea, EsAndOsPlusBenchmarksForSubjectAndLevel]]],
+                          restScottishEsAndOsBySubSection: List[ScottishEsAndOsBySubSection],
+                          newMap: Map[CurriculumLevel, Map[CurriculumArea, EsAndOsPlusBenchmarksForSubjectAndLevel]]) = {
+    if (restScottishEsAndOsBySubSection.isEmpty) {
+      Some(newMap)
+    } else {
+      buildTheEsOsAndBenchmarksLoop(restScottishEsAndOsBySubSection.head, restScottishEsAndOsBySubSection.tail, newMap)
+    }
+  }
+
+  private def createNewVersionOfMap(nextEsAndOsBySubSection: ScottishEsAndOsBySubSection,
+                                    maybeCurrentMapForCurriculumLevel: Option[Map[CurriculumArea, EsAndOsPlusBenchmarksForSubjectAndLevel]])
+  : Map[CurriculumArea, EsAndOsPlusBenchmarksForSubjectAndLevel] = {
+
+    val newMapForCurriculumLevel: Map[CurriculumArea, EsAndOsPlusBenchmarksForSubjectAndLevel] = maybeCurrentMapForCurriculumLevel match {
+      case Some(currentMapForCurriculumLevel) => currentMapForCurriculumLevel // TODO
+      case None =>
+        Map(convertScottishCurriculumAreaName(nextEsAndOsBySubSection.curriculumAreaName) -> createNewEsAndOsPlusBenchmarksForSubjectAndLevel(nextEsAndOsBySubSection))
+    }
+    newMapForCurriculumLevel
+  }
 
   private def convertToBulletPoints(bulletPoints: List[String]): List[EAndOBulletPoint] = {
     for {
