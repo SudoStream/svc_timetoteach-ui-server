@@ -71,7 +71,7 @@ trait EsOsAndBenchmarksBuilderHelper {
         Map(esAndOsBySubSection.eAndOSetSubSectionName.getOrElse(NO_SUBSECTION_NAME) ->
           EandOSetSubSection(
             esAndOsBySubSection.eAndOSetSubSectionAuxiliaryText.getOrElse(""),
-            esAndOsBySubSection.experienceAndOutcomes,
+            esAndOsBySubSection.allExperienceAndOutcomesAtTheSubSectionLevel,
             esAndOsBySubSection.associatedBenchmarks
           )
         )

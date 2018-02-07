@@ -13,7 +13,7 @@ trait CreateEsAndOs {
       allExperiencesAndOutcomes = List(
 
         ScottishEsAndOsBySubSection(
-          experienceAndOutcomes = List(
+          allExperienceAndOutcomesAtTheSubSectionLevel = List(
             SingleScottishExperienceAndOutcome(
               code = "MNU 0-01a",
               eAndOLines = List(
@@ -38,7 +38,7 @@ trait CreateEsAndOs {
         ),
 
         ScottishEsAndOsBySubSection(
-          experienceAndOutcomes = List(
+          allExperienceAndOutcomesAtTheSubSectionLevel = List(
             SingleScottishExperienceAndOutcome(
               code = "MNU 1-01a",
               eAndOLines = List(
@@ -63,7 +63,7 @@ trait CreateEsAndOs {
         ),
 
         ScottishEsAndOsBySubSection(
-          experienceAndOutcomes = List(
+          allExperienceAndOutcomesAtTheSubSectionLevel = List(
             SingleScottishExperienceAndOutcome(
               code = "MNU 0-02a",
               eAndOLines = List(

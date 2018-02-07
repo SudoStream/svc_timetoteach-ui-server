@@ -102,21 +102,21 @@ object EsOsAndBenchmarksBuilderImpl extends EsOsAndBenchmarksBuilderHelper {
                     eAndOSetSubSection
                   case None => EandOSetSubSection(
                     nextEsAndOsBySubSection.eAndOSetSubSectionAuxiliaryText.getOrElse(""),
-                    nextEsAndOsBySubSection.experienceAndOutcomes,
+                    nextEsAndOsBySubSection.allExperienceAndOutcomesAtTheSubSectionLevel,
                     nextEsAndOsBySubSection.associatedBenchmarks
                   )
                 }
 
                 subSectionMap + (nextEsAndOsBySubSection.eAndOSetSubSectionName.getOrElse(NO_SUBSECTION_NAME) -> EandOSetSubSection(
                   nextEsAndOsBySubSection.eAndOSetSubSectionAuxiliaryText.getOrElse(""),
-                  nextEsAndOsBySubSection.experienceAndOutcomes,
+                  nextEsAndOsBySubSection.allExperienceAndOutcomesAtTheSubSectionLevel,
                   nextEsAndOsBySubSection.associatedBenchmarks
                 ))
 
               case None =>
                 Map(nextEsAndOsBySubSection.eAndOSetSubSectionName.getOrElse(NO_SUBSECTION_NAME) -> EandOSetSubSection(
                   nextEsAndOsBySubSection.eAndOSetSubSectionAuxiliaryText.getOrElse(""),
-                  nextEsAndOsBySubSection.experienceAndOutcomes,
+                  nextEsAndOsBySubSection.allExperienceAndOutcomesAtTheSubSectionLevel,
                   nextEsAndOsBySubSection.associatedBenchmarks
                 ))
             }
