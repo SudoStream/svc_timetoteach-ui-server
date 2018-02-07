@@ -1,84 +1,153 @@
 @import controllers.serviceproxies.TimeToTeachUserId
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails, groupDetails: duplicate.model.Group, subject: String, maybeEsOsAndBenchmarks: Option[duplicate.model.esandos.EsAndOsPlusBenchmarksForSubjectAndLevel])
 
-    @timetoteachAppMain(handler, s"${classDetails.className.name} Termly Plans - $subject - ${groupDetails.groupName.name.capitalize}",
-        userPictureUri, userFirstName, userFamilyName) {
-        <div class="in-app-menu-small-devices">
-            <li class="nav-item nav-login-button">
-                <a class="btn btn-outline-primary btn-block" role="button" href="@routes.Application.timeToTeachApp()">
-                    Dashboard</a>
-            </li>
+@timetoteachAppMain(handler, s"${classDetails.className.name} Termly Plans - $subject - ${groupDetails.groupName.name.capitalize}",
+    userPictureUri, userFirstName, userFamilyName) {
+    <div class="in-app-menu-small-devices">
+        <li class="nav-item nav-login-button">
+            <a class="btn btn-outline-primary btn-block" role="button" href="@routes.Application.timeToTeachApp()">
+                Dashboard</a>
+        </li>
 
-            <li class="nav-item nav-login-button ">
-                <a class="btn btn-outline-primary btn-block" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlans()">
-                    Termly Plans Home</a>
-            </li>
+        <li class="nav-item nav-login-button ">
+            <a class="btn btn-outline-primary btn-block" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlans()">
+                Termly Plans Home</a>
+        </li>
 
-            <li class="nav-item nav-login-button ">
-                <a class="btn btn-outline-primary btn-block" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(classDetails.id.id)">
-                    @classDetails.className.name Termly Plans</a>
-            </li>
+        <li class="nav-item nav-login-button ">
+            <a class="btn btn-outline-primary btn-block" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(classDetails.id.id)">
+                @classDetails.className.name Termly Plans</a>
+        </li>
 
-            <li class="nav-item nav-login-button">
-                <a class="btn btn-outline-primary btn-block" role="button"
-                href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(classDetails.id.id)">
-                    Manage @classDetails.className.name</a>
-            </li>
+        <li class="nav-item nav-login-button">
+            <a class="btn btn-outline-primary btn-block" role="button"
+            href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(classDetails.id.id)">
+                Manage @classDetails.className.name</a>
+        </li>
 
-            <li class="nav-item nav-login-button">
-                <a id="manage-class-goto-timetable" class="btn btn-outline-primary btn-block" role="button"
-                href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(classDetails.id.id)">
-                    Class Timetable</a>
-            </li>
+        <li class="nav-item nav-login-button">
+            <a id="manage-class-goto-timetable" class="btn btn-outline-primary btn-block" role="button"
+            href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(classDetails.id.id)">
+                Class Timetable</a>
+        </li>
 
+    </div>
+} {
+    <div class="container">
+        <div class="manage-class-form-section">
+            <div class="in-app-menu-medium-and-up">
+                <div class="d-flex ">
+                    <ul class="nav mr-auto justify-content-between">
+                        <li class="nav-item manage-class-nav-item-leftmost">
+                            <a class="btn btn-outline-primary" role="button" href="@routes.Application.timeToTeachApp()">
+                                Dashboard</a>
+                        </li>
+                        <li class="nav-item manage-class-nav-item-on-left">
+                            <a class="btn btn-outline-primary" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlans()">
+                                Termly Plans Home</a>
+                        </li>
+                        <li class="nav-item manage-class-nav-item-on-left">
+                            <a class="btn btn-outline-primary" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(classDetails.id.id)">
+                                @classDetails.className.name Termly Plans</a>
+                        </li>
+                        <li class="nav-item manage-class-nav-item-on-left">
+                            <a class="btn btn-info" role="button"
+                            href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(classDetails.id.id)">
+                                Manage @classDetails.className.name</a>
+                        </li>
+                        <li class="nav-item manage-class-nav-item-on-left">
+                            <a id="manage-class-goto-timetable" class="btn btn-info" role="button"
+                            href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(classDetails.id.id)">
+                                Class Timetable</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
-    } {
-        <div class="container">
-            <div class="manage-class-form-section">
-                <div class="in-app-menu-medium-and-up">
-                    <div class="d-flex ">
-                        <ul class="nav mr-auto justify-content-between">
-                            <li class="nav-item manage-class-nav-item-leftmost">
-                                <a class="btn btn-outline-primary" role="button" href="@routes.Application.timeToTeachApp()">
-                                    Dashboard</a>
-                            </li>
-                            <li class="nav-item manage-class-nav-item-on-left">
-                                <a class="btn btn-outline-primary" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlans()">
-                                    Termly Plans Home</a>
-                            </li>
-                            <li class="nav-item manage-class-nav-item-on-left">
-                                <a class="btn btn-outline-primary" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(classDetails.id.id)">
-                                    @classDetails.className.name Termly Plans</a>
-                            </li>
-                            <li class="nav-item manage-class-nav-item-on-left">
-                                <a class="btn btn-info" role="button"
-                                href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(classDetails.id.id)">
-                                    Manage @classDetails.className.name</a>
-                            </li>
-                            <li class="nav-item manage-class-nav-item-on-left">
-                                <a id="manage-class-goto-timetable" class="btn btn-info" role="button"
-                                href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(classDetails.id.id)">
-                                    Class Timetable</a>
-                            </li>
-                        </ul>
+
+
+        <div class="termly-plans-overview-section">
+            <h4 class="termly-plans-overview-section-header">
+                Select areas which you intend to cover this term in @subject</h4>
+        </div>
+
+        @if(maybeEsOsAndBenchmarks.isDefined) {
+
+            @for((esAndOsSectionMap, sectionIndex) <- maybeEsOsAndBenchmarks.get.setSectionNameToSubSections.zipWithIndex) {
+                <a class="btn btn-primary termly-plans-es-and-os-section" data-toggle="collapse" href="#section_@sectionIndex" role="button"
+                aria-expanded="false" aria-controls="section_@sectionIndex">
+                @esAndOsSectionMap._1
+                </a>
+
+                <div class="collapse" id="section_@sectionIndex">
+                    <div class="card card-body">
+                    @for((subjectSectionMap, subSectionIndex) <- esAndOsSectionMap._2.zipWithIndex) {
+                        <a class="btn btn-secondary termly-plans-es-and-os-subsection " data-toggle="collapse" href="#subsection_@subSectionIndex" role="button"
+                        aria-expanded="false" aria-controls="subsection_@subSectionIndex">
+                        @subjectSectionMap._1
+                        </a>
+
+                        <div class="collapse" id="subsection_@subSectionIndex">
+                            <div class="card card-body">
+                                @if(subjectSectionMap._2.auxiliaryText.nonEmpty) {
+                                    <h6>@subjectSectionMap._2.auxiliaryText</h6>
+                                }
+                            <div class="row text-center">
+                                <div class="col-lg-6"><small class="text-muted">Experiences & Outcomes</small></div>
+                                <div class="col-lg-6"><small class="text-muted">Benchmarks</small></div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-6">
+                                @for(eAndO <- subjectSectionMap._2.eAndOs) {
+                                    <div class="row">
+                                        <div class="col-lg-3">
+                                        @eAndO.code
+                                        </div>
+                                        <div class="col-lg-9">
+                                        @for(sentence <- eAndO.eAndOSentences) {
+                                            <p>@sentence.value</p>
+                                            @if(sentence.bulletPoints.nonEmpty) {
+                                                <ul>
+                                                }
+                                            @for(bullet <- sentence.bulletPoints) {
+                                                @if(bullet.value.nonEmpty) {
+                                                    <li>@bullet.value</li>
+                                                }
+                                            }
+                                            @if(sentence.bulletPoints.nonEmpty) {
+                                            </ul>
+                                            }
+                                        }
+                                        </div>
+                                    </div>
+                                }
+                                </div>
+                                <div class="col-lg-6">
+                                @for(benchmark <- subjectSectionMap._2.benchmarks) {
+                                    <p>@benchmark.value</p>
+                                }
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                    }
+
                     </div>
                 </div>
-            </div>
 
-
-            <div class="termly-plans-overview-section">
-                <h4 class="termly-plans-overview-section-header">
-                    Select areas which you intend to cover this term in @subject</h4>
-            </div>
-
-            @if(maybeEsOsAndBenchmarks.isDefined) {
-                <p>Woohoo!</p>
-            } else {
-                <div class="alert alert-warning" role="alert">
-                    No Es & Os or Benchmarks defined for level='@{groupDetails.groupLevel.value.replace("Level","")}' & subject='@{subject}'
-                </div>
             }
 
+        } else {
+            <div class="alert alert-warning" role="alert">
+                No Es & Os or Benchmarks defined for level='@{
+                groupDetails.groupLevel.value.replace("Level", "")
+            }' & subject='@{
+                subject
+            }'
+            </div>
+        }
 
-        </div>
-    }
+
+    </div>
+}
