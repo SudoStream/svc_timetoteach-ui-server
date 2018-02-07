@@ -70,6 +70,13 @@ class EsOsAndBenchmarksBuilderImplTest extends FunSpec with CreateEsAndOs {
       val maybeMergedEsOsAndBenchmarks = EsOsAndBenchmarksBuilderImpl.buildTheEsOsAndBenchmarks(scottishEsAndOsData)
       assert(maybeMergedEsOsAndBenchmarks.get(EarlyLevel)(Mathematics).setSectionNameToSubSections("Number, money and measure").get("Number and number processes").isDefined)
     }
+    it("should have [ScottishCurriculumLevel.EARLY][ScottishCurriculumAraName.MATHEMATICS] with section" +
+      " 'Number, money and measure' & sub-section 'Number and number processes' has 14 benchmarks") {
+      val scottishEsAndOsData: ScottishEsAndOsData = createScottishEsAndOsData()
+      val maybeMergedEsOsAndBenchmarks = EsOsAndBenchmarksBuilderImpl.buildTheEsOsAndBenchmarks(scottishEsAndOsData)
+      assert(maybeMergedEsOsAndBenchmarks.get(EarlyLevel)(Mathematics).setSectionNameToSubSections("Number, money and measure")("Number and number processes").benchmarks.size === 14)
+    }
+
 
   }
 
