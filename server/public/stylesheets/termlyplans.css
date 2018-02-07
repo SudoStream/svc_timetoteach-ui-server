@@ -33,7 +33,7 @@
 }
 
 .termly-plans-overview-section-header {
-    margin-bottom: 1.5rem;
+    margin-top: 3rem;
 }
 
 .termly-plans-overview-section-row {
@@ -49,9 +49,24 @@
 }
 
 .termly-plans-es-and-os-section {
-    margin-bottom: 0.5rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.3rem;
 }
 
 .termly-plans-es-and-os-subsection {
-    margin-bottom: 0.25rem;
+    margin-top: 0.15rem;
+    margin-bottom: 0.15rem;
+}
+
+.termly-plans-es-and-os-code {
+    font-size: smaller;
+    font-weight: bold;
+}
+
+.termly-plans-es-and-os-content {
+    font-size: small;
+}
+
+.termly-plans-es-and-os-header {
+    font-weight: bold;
 }

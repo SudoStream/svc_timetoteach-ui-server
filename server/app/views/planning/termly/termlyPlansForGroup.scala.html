@@ -68,43 +68,44 @@
 
         <div class="termly-plans-overview-section">
             <h4 class="termly-plans-overview-section-header">
-                Select areas which you intend to cover this term in @subject</h4>
+                Select Es & Os AND/OR Benchmarks which you intend to cover this term for @subject</h4>
         </div>
 
         @if(maybeEsOsAndBenchmarks.isDefined) {
 
             @for((esAndOsSectionMap, sectionIndex) <- maybeEsOsAndBenchmarks.get.setSectionNameToSubSections.zipWithIndex) {
-                <a class="btn btn-primary termly-plans-es-and-os-section" data-toggle="collapse" href="#section_@sectionIndex" role="button"
+                <a class="btn btn-secondary termly-plans-es-and-os-section" data-toggle="collapse" href="#section_@sectionIndex" role="button"
                 aria-expanded="false" aria-controls="section_@sectionIndex">
                 @esAndOsSectionMap._1
                 </a>
+                <br>
 
                 <div class="collapse" id="section_@sectionIndex">
                     <div class="card card-body">
                     @for((subjectSectionMap, subSectionIndex) <- esAndOsSectionMap._2.zipWithIndex) {
-                        <a class="btn btn-secondary termly-plans-es-and-os-subsection " data-toggle="collapse" href="#subsection_@subSectionIndex" role="button"
-                        aria-expanded="false" aria-controls="subsection_@subSectionIndex">
+                        <a class="btn btn-light termly-plans-es-and-os-subsection " data-toggle="collapse" href="#section_@{sectionIndex}_subsection_@subSectionIndex" role="button"
+                        aria-expanded="false" aria-controls="section_@{sectionIndex}_subsection_@subSectionIndex">
                         @subjectSectionMap._1
                         </a>
 
-                        <div class="collapse" id="subsection_@subSectionIndex">
+                        <div class="collapse" id="section_@{sectionIndex}_subsection_@subSectionIndex">
                             <div class="card card-body">
                                 @if(subjectSectionMap._2.auxiliaryText.nonEmpty) {
                                     <h6>@subjectSectionMap._2.auxiliaryText</h6>
                                 }
                             <div class="row text-center">
-                                <div class="col-lg-6"><small class="text-muted">Experiences & Outcomes</small></div>
-                                <div class="col-lg-6"><small class="text-muted">Benchmarks</small></div>
+                                <div class="col-lg-6 termly-plans-es-and-os-header">Experiences & Outcomes</div>
+                                <div class="col-lg-6 termly-plans-es-and-os-header">Benchmarks</div>
                             </div>
 
                             <div class="row">
                                 <div class="col-lg-6">
                                 @for(eAndO <- subjectSectionMap._2.eAndOs) {
                                     <div class="row">
-                                        <div class="col-lg-3">
+                                        <div class="col-lg-3 termly-plans-es-and-os-code">
                                         @eAndO.code
                                         </div>
-                                        <div class="col-lg-9">
+                                        <div class="col-lg-9 termly-plans-es-and-os-content">
                                         @for(sentence <- eAndO.eAndOSentences) {
                                             <p>@sentence.value</p>
                                             @if(sentence.bulletPoints.nonEmpty) {
@@ -123,7 +124,7 @@
                                     </div>
                                 }
                                 </div>
-                                <div class="col-lg-6">
+                                <div class="col-lg-6 termly-plans-es-and-os-content">
                                 @for(benchmark <- subjectSectionMap._2.benchmarks) {
                                     <p>@benchmark.value</p>
                                 }
