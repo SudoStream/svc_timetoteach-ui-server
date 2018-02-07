@@ -97,7 +97,8 @@ class TermlyPlansController @Inject()(
         TimeToTeachUserId(tttUserId),
         classDetails,
         classDetails.groups.filter( group => group.groupId.id == groupId).head,
-        subject
+        subject,
+        null
       ))
     }
   }

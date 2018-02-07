@@ -1,5 +1,5 @@
 @import controllers.serviceproxies.TimeToTeachUserId
-@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails, groupDetails: duplicate.model.Group, subject: String)
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails, groupDetails: duplicate.model.Group, subject: String, esOsAndBenchmarks: duplicate.model.esandos.EsAndOsPlusBenchmarksForSubjectAndLevel)
 
 @timetoteachAppMain(handler, s"${classDetails.className.name} Termly Plans - $subject - ${groupDetails.groupName.name.capitalize}",
     userPictureUri, userFirstName, userFamilyName) {
