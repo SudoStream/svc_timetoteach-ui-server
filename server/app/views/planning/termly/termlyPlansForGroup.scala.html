@@ -124,7 +124,8 @@
                             <div class="row">
                                 <div class="col-lg-6">
                                 @for(eAndO <- subjectSectionMap._2.eAndOs) {
-                                    <div class="row termly-plans-es-and-os-code-and-eando-row termly-plans-eobenchmark-row">
+                                    <div class="row termly-plans-es-and-os-code-and-eando-row termly-plans-eobenchmark-row"
+                                        data-eando-code="@eAndO.code">
                                         <div class="col-lg-3 termly-plans-es-and-os-code">
                                         @eAndO.code
                                         </div>
@@ -149,7 +150,8 @@
                                 </div>
                                 <div class="col-lg-6 termly-plans-es-and-os-content">
                                 @for(benchmark <- subjectSectionMap._2.benchmarks) {
-                                    <div class="termly-plans-es-and-os-benchmark termly-plans-eobenchmark-row">@benchmark.value</div>
+                                    <div class="termly-plans-es-and-os-benchmark termly-plans-eobenchmark-row"
+                                    data-benchmark="@benchmark.value">@benchmark.value</div>
                                 }
                                 </div>
                             </div>
