@@ -19,6 +19,34 @@ object ClassGroupPlanningJsScreen {
     clickOnEandO()
     clickOnBenchmark()
     saveButton()
+    clearButton()
+  }
+
+  def clearButton(): Unit = {
+    val clearButton = dom.document.getElementById("clear-termly-groups-button").asInstanceOf[HTMLButtonElement]
+    clearButton.addEventListener("click", (e: dom.Event) => {
+      selectedEsAndOs.clear()
+      selectedBenchmarks.clear()
+      setDefaultsForAllButtonsByClass("termly-plans-es-and-os-code-and-eando-row")
+      setDefaultsForAllButtonsByClass("termly-plans-es-and-os-benchmark")
+    })
+  }
+
+  private def setDefaultsForAllButtonsByClass(classValue: String) : Unit = {
+    val element = dom.document.getElementsByClassName(classValue)
+    val nodeListSize = element.length
+    var index = 0
+    while (index < nodeListSize) {
+      val theDiv = element(index).asInstanceOf[HTMLDivElement]
+      setButtonDefaults(theDiv)
+      index = index + 1
+    }
+  }
+
+  private def setButtonDefaults(theDiv: HTMLDivElement) : Unit = {
+    theDiv.style.backgroundColor = eAndORowBackgroundNormalColor.getOrElse("white")
+    theDiv.style.color = eAndORowForegroundNormalColor.getOrElse("grey")
+    theDiv.style.borderRadius = eAndORowBorderRadius.getOrElse("0")
   }
 
   def saveButton(): Unit = {
@@ -43,9 +71,7 @@ object ClassGroupPlanningJsScreen {
         global.console.log(s"Selected E and O code '$eAndOCode'")
         if (selectedEsAndOs.contains(eAndOCode)) {
           selectedEsAndOs.remove(eAndOCode)
-          theDiv.style.backgroundColor = eAndORowBackgroundNormalColor.getOrElse("white")
-          theDiv.style.color = eAndORowForegroundNormalColor.getOrElse("grey")
-          theDiv.style.borderRadius = eAndORowBorderRadius.getOrElse("0")
+          setButtonDefaults(theDiv)
         } else {
           selectedEsAndOs.add(eAndOCode)
           theDiv.style.backgroundColor = "#016ecd"
@@ -71,9 +97,7 @@ object ClassGroupPlanningJsScreen {
         global.console.log(s"Selected Benchmark '$benchmarkValue'")
         if (selectedBenchmarks.contains(benchmarkValue)) {
           selectedBenchmarks.remove(benchmarkValue)
-          theDiv.style.backgroundColor = eAndORowBackgroundNormalColor.getOrElse("white")
-          theDiv.style.color = eAndORowForegroundNormalColor.getOrElse("grey")
-          theDiv.style.borderRadius = eAndORowBorderRadius.getOrElse("0")
+          setButtonDefaults(theDiv)
         } else {
           selectedBenchmarks.add(benchmarkValue)
           theDiv.style.backgroundColor = "#016ecd"

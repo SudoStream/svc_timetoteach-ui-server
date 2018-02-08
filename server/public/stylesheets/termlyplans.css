@@ -76,6 +76,19 @@
 }
 
 #save-termly-groups-button {
-    margin-top: 5rem;
+    margin-top: 3rem;
     margin-bottom: 10rem;
+}
+
+#clear-termly-groups-button{
+    margin-top: 3rem;
+    margin-bottom: 10rem;
+}
+
+.termly-plans-es-and-os-code-and-eando-row {
+    margin-bottom: 0.1rem;
+}
+
+.termly-plans-es-and-os-benchmark {
+    margin-bottom: 0.1rem;
 }
