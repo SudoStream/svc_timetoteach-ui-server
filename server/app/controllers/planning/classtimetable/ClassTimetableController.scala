@@ -247,14 +247,14 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
     val newClassDetails = read[ClassDetails](newClassFormBound.newClassPickled)
 
     logger.debug(s"New Class Unpickled = ${newClassDetails.toString}")
-    classTimetableWriter.upsertClass(
+    val upserted = classTimetableWriter.upsertClass(
       TimeToTeachUserId(newClassFormBound.tttUserId),
       newClassDetails.asInstanceOf[ClassDetails]
     )
 
-    Future {
-      Ok("Created new class!")
-    }
+    for {
+      done <- upserted
+    } yield Ok("Created new class!")
   }
 
   def deleteClass(tttUserId: String, classId: String): Action[AnyContent] = Action.async { implicit request =>

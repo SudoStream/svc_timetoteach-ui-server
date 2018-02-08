@@ -278,7 +278,7 @@ object AddNewClassJsScreen {
         dom.window.setTimeout(() => {
           println(s"lets goto classes")
           dom.window.location.href = "/classes"
-        }, 100)
+        }, 10)
         println(s"Can you see this?")
       case Failure(ex) =>
         dom.window.alert("Something went wrong with creating new class. Specifically : -" +

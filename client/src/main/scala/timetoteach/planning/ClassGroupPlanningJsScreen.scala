@@ -1,9 +1,15 @@
 package timetoteach.planning
 
+import duplicate.model.TermlyPlansToSave
 import org.scalajs.dom
+import org.scalajs.dom.ext.Ajax
+import org.scalajs.dom.ext.Ajax.InputData
 import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement}
+import upickle.default.write
 
 import scala.scalajs.js.Dynamic.global
+import scala.util.{Failure, Success}
+import scalatags.JsDom.all.s
 
 object ClassGroupPlanningJsScreen {
 
@@ -32,7 +38,7 @@ object ClassGroupPlanningJsScreen {
     })
   }
 
-  private def setDefaultsForAllButtonsByClass(classValue: String) : Unit = {
+  private def setDefaultsForAllButtonsByClass(classValue: String): Unit = {
     val element = dom.document.getElementsByClassName(classValue)
     val nodeListSize = element.length
     var index = 0
@@ -43,7 +49,7 @@ object ClassGroupPlanningJsScreen {
     }
   }
 
-  private def setButtonDefaults(theDiv: HTMLDivElement) : Unit = {
+  private def setButtonDefaults(theDiv: HTMLDivElement): Unit = {
     theDiv.style.backgroundColor = eAndORowBackgroundNormalColor.getOrElse("white")
     theDiv.style.color = eAndORowForegroundNormalColor.getOrElse("grey")
     theDiv.style.borderRadius = eAndORowBorderRadius.getOrElse("0")
@@ -52,10 +58,53 @@ object ClassGroupPlanningJsScreen {
   def saveButton(): Unit = {
     val saveButton = dom.document.getElementById("save-termly-groups-button").asInstanceOf[HTMLButtonElement]
     saveButton.addEventListener("click", (e: dom.Event) => {
+      saveButton.disabled = true
+
       global.console.log("Selected:\n" +
         s"E&O Codes: ${selectedEsAndOs.toString()}\n" +
         s"Benchmarks: ${selectedBenchmarks.mkString("\n")}"
       )
+
+      val groupTermlyPlans = TermlyPlansToSave(
+        eAndOCodes = selectedEsAndOs.toList,
+        benchmarks = selectedBenchmarks.toList
+      )
+
+      val groupTermlyPlansPickled = write[TermlyPlansToSave](groupTermlyPlans)
+
+      val classId = dom.window.localStorage.getItem("classId")
+      val subject = dom.window.localStorage.getItem("subject")
+      val groupId = dom.window.localStorage.getItem("groupId")
+
+
+      import scala.concurrent.ExecutionContext.Implicits.global
+      val theUrl = s"/termlysaveplanningforsubjectandgroup/$classId/$subject/$groupId"
+      val theHeaders = Map(
+        "Content-Type" -> "application/x-www-form-urlencoded",
+        "X-Requested-With" -> "Accept"
+      )
+      val theData = InputData.str2ajax(s"groupTermlyPlansPickled=$groupTermlyPlansPickled")
+
+      Ajax.post(
+        url = theUrl,
+        headers = theHeaders,
+        data = theData
+      ).onComplete {
+        case Success(xhr) =>
+          val responseText = xhr.responseText
+          println(s"response = '$responseText'")
+          dom.window.setTimeout(() => {
+            println(s"lets goto group planning overview")
+            dom.window.location.href = "/classes"
+          }, 100)
+        case Failure(ex) =>
+          dom.window.alert("Something went wrong with saving group termly plans. Specifically : -" +
+            s"\n\n${ex.toString}")
+      }
+
+
+
+
     })
   }
 
