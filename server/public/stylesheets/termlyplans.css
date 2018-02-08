@@ -34,6 +34,7 @@
 
 .termly-plans-overview-section-header {
     margin-top: 3rem;
+    margin-bottom: 1.5rem;
 }
 
 .termly-plans-overview-section-row {
@@ -73,4 +74,9 @@
 
 .termly-plans-eobenchmark-row {
     padding: 0.25rem 1rem;
+}
+
+#save-termly-groups-button {
+    margin-top: 5rem;
+    margin-bottom: 10rem;
 }
