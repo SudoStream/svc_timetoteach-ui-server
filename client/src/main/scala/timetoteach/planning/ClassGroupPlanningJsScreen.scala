@@ -1,20 +1,20 @@
 package timetoteach.planning
 
-import duplicate.model.TermlyPlansToSave
+import duplicate.model.{EandOsWithBenchmarks, TermlyPlansToSave}
 import org.scalajs.dom
 import org.scalajs.dom.ext.Ajax
 import org.scalajs.dom.ext.Ajax.InputData
 import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement}
 import upickle.default.write
 
+import scala.collection.mutable
 import scala.scalajs.js.Dynamic.global
 import scala.util.{Failure, Success}
-import scalatags.JsDom.all.s
 
 object ClassGroupPlanningJsScreen {
 
-  var selectedEsAndOs: scala.collection.mutable.Set[String] = scala.collection.mutable.Set.empty[String]
-  var selectedBenchmarks: scala.collection.mutable.Set[String] = scala.collection.mutable.Set.empty[String]
+  var selectedEsAndOsWithBenchmarks: scala.collection.mutable.Map[String, scala.collection.mutable.Map[String,
+    (scala.collection.mutable.Set[String], scala.collection.mutable.Set[String])]] = scala.collection.mutable.Map.empty
 
   var eAndORowBackgroundNormalColor: Option[String] = None
   var eAndORowForegroundNormalColor: Option[String] = None
@@ -31,8 +31,7 @@ object ClassGroupPlanningJsScreen {
   def clearButton(): Unit = {
     val clearButton = dom.document.getElementById("clear-termly-groups-button").asInstanceOf[HTMLButtonElement]
     clearButton.addEventListener("click", (e: dom.Event) => {
-      selectedEsAndOs.clear()
-      selectedBenchmarks.clear()
+      selectedEsAndOsWithBenchmarks.clear()
       setDefaultsForAllButtonsByClass("termly-plans-es-and-os-code-and-eando-row")
       setDefaultsForAllButtonsByClass("termly-plans-es-and-os-benchmark")
     })
@@ -55,24 +54,36 @@ object ClassGroupPlanningJsScreen {
     theDiv.style.borderRadius = eAndORowBorderRadius.getOrElse("0")
   }
 
+  def convertEsAndOsToListFormat(selectedEsAndOsWithBenchmarks: mutable.Map[String, mutable.Map[String, (mutable.Set[String], mutable.Set[String])]]): List[EandOsWithBenchmarks] = {
+    {
+      for {
+        section <- selectedEsAndOsWithBenchmarks.keys
+        subsection <- selectedEsAndOsWithBenchmarks(section).keys
+        esAndOsToBenchmarksTuple = selectedEsAndOsWithBenchmarks(section)(subsection)
+      } yield EandOsWithBenchmarks(
+        esAndOsToBenchmarksTuple._1.toList,
+        esAndOsToBenchmarksTuple._2.toList
+      )
+    }.toList
+  }
+
   def saveButton(): Unit = {
     val saveButton = dom.document.getElementById("save-termly-groups-button").asInstanceOf[HTMLButtonElement]
     saveButton.addEventListener("click", (e: dom.Event) => {
       saveButton.disabled = true
 
       global.console.log("Selected:\n" +
-        s"E&O Codes: ${selectedEsAndOs.toString()}\n" +
-        s"Benchmarks: ${selectedBenchmarks.mkString("\n")}"
+        s"E&O Codes With Benchmarks: |||${selectedEsAndOsWithBenchmarks.toString()}|||\n"
       )
 
       val tttUserId = dom.window.localStorage.getItem("tttUserId")
       val schoolId = dom.window.localStorage.getItem("schoolId")
 
+      val esAndOsWithTheirBenchmarks: List[EandOsWithBenchmarks] = convertEsAndOsToListFormat(selectedEsAndOsWithBenchmarks)
+
       val groupTermlyPlans = TermlyPlansToSave(
-        schoolId = schoolId,
         tttUserId = tttUserId,
-        eAndOCodes = selectedEsAndOs.toList,
-        benchmarks = selectedBenchmarks.toList
+        esAndOsWithTheirBenchmarks
       )
 
       val groupTermlyPlansPickled = write[TermlyPlansToSave](groupTermlyPlans)
@@ -107,8 +118,6 @@ object ClassGroupPlanningJsScreen {
       }
 
 
-
-
     })
   }
 
@@ -121,12 +130,27 @@ object ClassGroupPlanningJsScreen {
 
       theDiv.addEventListener("click", (e: dom.Event) => {
         val eAndOCode = theDiv.getAttribute("data-eando-code")
+        val curriculumSection = theDiv.getAttribute("data-curriculum-section")
+        val curriculumSubSection = theDiv.getAttribute("data-curriculum-subsection")
+
         global.console.log(s"Selected E and O code '$eAndOCode'")
-        if (selectedEsAndOs.contains(eAndOCode)) {
-          selectedEsAndOs.remove(eAndOCode)
+
+        if ((selectedEsAndOsWithBenchmarks.nonEmpty &&
+          selectedEsAndOsWithBenchmarks.isDefinedAt(curriculumSection) &&
+          selectedEsAndOsWithBenchmarks(curriculumSection).isDefinedAt(curriculumSubSection)) &&
+          selectedEsAndOsWithBenchmarks(curriculumSection)(curriculumSubSection)._1.contains(eAndOCode)) {
+          selectedEsAndOsWithBenchmarks(curriculumSection)(curriculumSubSection)._1.remove(eAndOCode)
           setButtonDefaults(theDiv)
         } else {
-          selectedEsAndOs.add(eAndOCode)
+          if (!selectedEsAndOsWithBenchmarks.isDefinedAt(curriculumSection)) {
+            selectedEsAndOsWithBenchmarks = selectedEsAndOsWithBenchmarks + (curriculumSection -> mutable.Map.empty)
+          }
+          if (!selectedEsAndOsWithBenchmarks(curriculumSection).isDefinedAt(curriculumSubSection)) {
+            selectedEsAndOsWithBenchmarks(curriculumSection)(curriculumSubSection) = (scala.collection.mutable.Set.empty, scala.collection.mutable.Set.empty)
+          }
+
+          selectedEsAndOsWithBenchmarks(curriculumSection)(curriculumSubSection)._1.add(eAndOCode)
+          global.console.log(s"Should be now .. values of Es and Os are ... ${selectedEsAndOsWithBenchmarks(curriculumSection)(curriculumSubSection)._1.toString()}")
           theDiv.style.backgroundColor = "#016ecd"
           theDiv.style.color = "white"
           theDiv.style.borderRadius = "7px"
@@ -147,12 +171,19 @@ object ClassGroupPlanningJsScreen {
 
       theDiv.addEventListener("click", (e: dom.Event) => {
         val benchmarkValue = theDiv.getAttribute("data-benchmark")
+        val curriculumSection = theDiv.getAttribute("data-curriculum-section")
+        val curriculumSubSection = theDiv.getAttribute("data-curriculum-subsection")
+
         global.console.log(s"Selected Benchmark '$benchmarkValue'")
-        if (selectedBenchmarks.contains(benchmarkValue)) {
-          selectedBenchmarks.remove(benchmarkValue)
+        if (
+          (selectedEsAndOsWithBenchmarks.nonEmpty &&
+            selectedEsAndOsWithBenchmarks.isDefinedAt(curriculumSection) &&
+            selectedEsAndOsWithBenchmarks(curriculumSection).isDefinedAt(curriculumSubSection)) &&
+            selectedEsAndOsWithBenchmarks(curriculumSection)(curriculumSubSection)._1.contains(benchmarkValue)) {
+          selectedEsAndOsWithBenchmarks(curriculumSection)(curriculumSubSection)._2.remove(benchmarkValue)
           setButtonDefaults(theDiv)
         } else {
-          selectedBenchmarks.add(benchmarkValue)
+          selectedEsAndOsWithBenchmarks(curriculumSection)(curriculumSubSection)._2.add(benchmarkValue)
           theDiv.style.backgroundColor = "#016ecd"
           theDiv.style.color = "white"
           theDiv.style.borderRadius = "7px"
@@ -184,9 +215,19 @@ object ClassGroupPlanningJsScreen {
 
         val eAndOCode = theDiv.getAttribute("data-eando-code")
         val benchmarkValue = theDiv.getAttribute("data-benchmark")
+        val curriculumSection = theDiv.getAttribute("data-curriculum-section")
+        val curriculumSubSection = theDiv.getAttribute("data-curriculum-subsection")
 
-        if ((eAndOCode != null && eAndOCode.nonEmpty && !selectedEsAndOs.contains(eAndOCode)) ||
-          (benchmarkValue != null && benchmarkValue.nonEmpty && !selectedBenchmarks.contains(benchmarkValue))) {
+        if ((eAndOCode != null && eAndOCode.nonEmpty &&
+          (selectedEsAndOsWithBenchmarks.isEmpty ||
+            !selectedEsAndOsWithBenchmarks.isDefinedAt(curriculumSection) ||
+            !selectedEsAndOsWithBenchmarks(curriculumSection).isDefinedAt(curriculumSubSection) ||
+            !selectedEsAndOsWithBenchmarks(curriculumSection)(curriculumSubSection)._1.contains(eAndOCode))) ||
+          (benchmarkValue != null && benchmarkValue.nonEmpty &&
+            (selectedEsAndOsWithBenchmarks.isEmpty ||
+              !selectedEsAndOsWithBenchmarks.isDefinedAt(curriculumSection) ||
+              !selectedEsAndOsWithBenchmarks(curriculumSection).isDefinedAt(curriculumSubSection) ||
+              !selectedEsAndOsWithBenchmarks(curriculumSection)(curriculumSubSection)._2.contains(benchmarkValue)))) {
           theDiv.style.backgroundColor = "grey"
           theDiv.style.color = "white"
           theDiv.style.borderRadius = "7px"
@@ -196,8 +237,18 @@ object ClassGroupPlanningJsScreen {
       theDiv.addEventListener("mouseleave", (e: dom.Event) => {
         val eAndOCode = theDiv.getAttribute("data-eando-code")
         val benchmarkValue = theDiv.getAttribute("data-benchmark")
-        if ((eAndOCode != null && eAndOCode.nonEmpty && !selectedEsAndOs.contains(eAndOCode)) ||
-          (benchmarkValue != null && benchmarkValue.nonEmpty && !selectedBenchmarks.contains(benchmarkValue))) {
+        val curriculumSection = theDiv.getAttribute("data-curriculum-section")
+        val curriculumSubSection = theDiv.getAttribute("data-curriculum-subsection")
+        if ((eAndOCode != null && eAndOCode.nonEmpty &&
+          (selectedEsAndOsWithBenchmarks.isEmpty ||
+            !selectedEsAndOsWithBenchmarks.isDefinedAt(curriculumSection) ||
+            !selectedEsAndOsWithBenchmarks(curriculumSection).isDefinedAt(curriculumSubSection) ||
+            !selectedEsAndOsWithBenchmarks(curriculumSection)(curriculumSubSection)._1.contains(eAndOCode))) ||
+          (benchmarkValue != null && benchmarkValue.nonEmpty &&
+            (selectedEsAndOsWithBenchmarks.isEmpty ||
+              !selectedEsAndOsWithBenchmarks.isDefinedAt(curriculumSection) ||
+              !selectedEsAndOsWithBenchmarks(curriculumSection).isDefinedAt(curriculumSubSection) ||
+              !selectedEsAndOsWithBenchmarks(curriculumSection)(curriculumSubSection)._2.contains(benchmarkValue)))) {
           theDiv.style.backgroundColor = eAndORowBackgroundNormalColor.getOrElse("white")
           theDiv.style.color = eAndORowForegroundNormalColor.getOrElse("grey")
           theDiv.style.borderRadius = eAndORowBorderRadius.getOrElse("0")

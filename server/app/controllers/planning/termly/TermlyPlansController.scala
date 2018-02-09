@@ -135,7 +135,7 @@ class TermlyPlansController @Inject()(
     val termlyPlansToSave: TermlyPlansToSave = read[TermlyPlansToSave](termlyPlansForGroup.groupTermlyPlansPickled)
     logger.debug(s"Termly plans Unpickled = ${termlyPlansToSave.toString}")
 
-    val termlyPlansAsModel = termsPlanHelper.convertTermlyPlanToModel(termlyPlansToSave, Some(GroupId(groupId)), subject)
+    val termlyPlansAsModel = termsPlanHelper.convertTermlyPlanToModel(classId, termlyPlansToSave, Some(GroupId(groupId)), subject)
     val savedPlan = planningWriterService.saveSubjectTermlyPlan(termlyPlansAsModel)
 
     for {

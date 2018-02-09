@@ -68,7 +68,7 @@ class MongoDbConnectionImpl extends MongoDbConnection with MiniKubeHelper {
     MongoClient(mongoSslClientSettings)
   }
 
-  lazy val mongoDbClient: MongoClient = createMongoClient
+  private lazy val mongoDbClient: MongoClient = createMongoClient
 
   ensureIndexes()
 
@@ -80,9 +80,8 @@ class MongoDbConnectionImpl extends MongoDbConnection with MiniKubeHelper {
   override def ensureIndexes(): Unit = {
     val mainIndex = BsonDocument(
       TermlyPlanningSchema.TTT_USER_ID -> 1,
-      TermlyPlanningSchema.SCHOOL_ID -> 1,
+      TermlyPlanningSchema.CLASS_ID -> 1,
       TermlyPlanningSchema.GROUP_ID -> 1,
-      TermlyPlanningSchema.CREATED_TIMESTAMP -> 1,
       TermlyPlanningSchema.SUBJECT_NAME -> 1
     )
     logger.info(s"Ensuring index created : ${mainIndex.toString}")

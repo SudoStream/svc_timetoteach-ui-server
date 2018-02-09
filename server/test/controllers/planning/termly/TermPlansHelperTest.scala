@@ -3,7 +3,7 @@ package controllers.planning.termly
 import java.time.LocalDateTime
 
 import controllers.serviceproxies.TermServiceProxyImpl
-import duplicate.model.TermlyPlansToSave
+import duplicate.model.{EandOsWithBenchmarks, TermlyPlansToSave}
 import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.subjectdetail.SubjectName
 import models.timetoteach.planning.{GroupId, PlanType}
 import models.timetoteach.term.SchoolTermName
@@ -12,6 +12,7 @@ import org.scalatest.FunSpec
 class TermPlansHelperTest extends FunSpec {
 
   private val SCHOOL_ID = "school3333"
+  private val CLASS_ID = "classId12312321"
   private val USER_ID = "userId123"
   private val E_AND_O_CODES = List("CODE1", "CODE2")
   private val BENCHMARKS = List("Benchmark1", "Benchmark2", "Benchmark3")
@@ -21,11 +22,13 @@ class TermPlansHelperTest extends FunSpec {
   describe("Given a TermlyPlansToSave, a group id and a subject 'maths', TermPlansHelper.convertTermlyPlanToModel(...)") {
     val planHelper = new TermPlansHelper(new TermServiceProxyImpl)
     val subjectTermlyPlan = planHelper.convertTermlyPlanToModel(
+      CLASS_ID,
       TermlyPlansToSave(
-        SCHOOL_ID,
         USER_ID,
-        E_AND_O_CODES,
-        BENCHMARKS
+        List(EandOsWithBenchmarks(
+          E_AND_O_CODES,
+          BENCHMARKS
+        ))
       ),
       Some(GroupId(GROUP_ID)),
       SUBJECT_MATHS
@@ -47,12 +50,16 @@ class TermPlansHelperTest extends FunSpec {
       assert(subjectTermlyPlan.subject === SubjectName.MATHS)
     }
 
-    it("should create a SubjectTermlyPlan with 3 benchmarks") {
-      assert(subjectTermlyPlan.selectedBenchmarks.size === 3)
+    it("should create a SubjectTermlyPlan with 1 full list of esos with benchmarks") {
+      assert(subjectTermlyPlan.eandOsWithBenchmarks.size === 1)
     }
 
     it("should create a SubjectTermlyPlan with 2 es and os") {
-      assert(subjectTermlyPlan.selectedEsAndOsCodes.size === 2)
+      assert(subjectTermlyPlan.eandOsWithBenchmarks.head.eAndOCodes.size === 2)
+    }
+
+    it("should create a SubjectTermlyPlan with 3 benchmarks") {
+      assert(subjectTermlyPlan.eandOsWithBenchmarks.head.benchmarks.size === 3)
     }
 
   }

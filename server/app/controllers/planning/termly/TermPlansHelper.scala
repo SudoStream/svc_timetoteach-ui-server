@@ -6,7 +6,7 @@ import javax.inject.{Inject, Singleton}
 import controllers.serviceproxies.TermServiceProxy
 import duplicate.model.TermlyPlansToSave
 import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.subjectdetail.SubjectName
-import models.timetoteach.{SchoolId, TimeToTeachUserId}
+import models.timetoteach.{ClassId, TimeToTeachUserId}
 import models.timetoteach.planning.{GroupId, PlanType, SubjectTermlyPlan}
 
 @Singleton
@@ -15,6 +15,7 @@ class TermPlansHelper @Inject()(termService: TermServiceProxy) {
   import TermPlansHelper._
 
   def convertTermlyPlanToModel(
+                              classId: String,
                                 termlyPlansToSave: TermlyPlansToSave,
                                 maybeGroupId: Option[GroupId],
                                 subjectName: String
@@ -30,12 +31,11 @@ class TermPlansHelper @Inject()(termService: TermServiceProxy) {
       termlyPlansToSave.tttUserId,
       planType,
       thisTerm,
-      termlyPlansToSave.schoolId,
+      classId,
       maybeGroupId,
       subjectName,
       LocalDateTime.now(),
-      termlyPlansToSave.eAndOCodes,
-      termlyPlansToSave.benchmarks
+      termlyPlansToSave.eandOsWithBenchmarks
     )
   }
 
@@ -43,8 +43,8 @@ class TermPlansHelper @Inject()(termService: TermServiceProxy) {
 
 object TermPlansHelper {
 
-  implicit def schoolIdStringToSchoolId(schoolId: String) : SchoolId = {
-    SchoolId(schoolId)
+  implicit def schoolIdStringToSchoolId(schoolId: String) : ClassId = {
+    ClassId(schoolId)
   }
 
   implicit def convertSubjectStringToSubjectName(subjectName: String): SubjectName = {

@@ -2,8 +2,9 @@ package models.timetoteach.planning
 
 import java.time.LocalDateTime
 
+import duplicate.model.EandOsWithBenchmarks
 import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.subjectdetail.SubjectName
-import models.timetoteach.{SchoolId, TimeToTeachUserId}
+import models.timetoteach.{ClassId, TimeToTeachUserId}
 import models.timetoteach.planning.PlanType.PlanType
 import models.timetoteach.term.SchoolTerm
 
@@ -11,12 +12,11 @@ case class SubjectTermlyPlan(
                               tttUserId: TimeToTeachUserId,
                               planType: PlanType,
                               schoolTerm: SchoolTerm,
-                              schoolId: SchoolId,
+                              classId: ClassId,
                               maybeGroupId: Option[GroupId],
                               subject: SubjectName,
                               createdTime: LocalDateTime,
-                              selectedEsAndOsCodes: List[String],
-                              selectedBenchmarks: List[String]
+                              eandOsWithBenchmarks: List[EandOsWithBenchmarks]
                             )
 
 object PlanType extends Enumeration {

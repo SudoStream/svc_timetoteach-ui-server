@@ -1,5 +1,6 @@
 package potentialmicroservice.planning.dao
 
+import duplicate.model.EandOsWithBenchmarks
 import models.timetoteach.planning.SubjectTermlyPlan
 import org.mongodb.scala.bson.collection.immutable.Document
 import org.mongodb.scala.bson.{BsonArray, BsonDocument, BsonString}
@@ -22,7 +23,7 @@ trait PlanWriterDaoHelper {
 
     Document(
       TTT_USER_ID -> planToSave.tttUserId.value,
-      SCHOOL_ID -> planToSave.schoolId.value,
+      CLASS_ID -> planToSave.classId.value,
       PLAN_TYPE -> planToSave.planType.toString,
       GROUP_ID -> groupIdValue,
       SUBJECT_NAME -> planToSave.subject.toString,
@@ -33,12 +34,22 @@ trait PlanWriterDaoHelper {
         SCHOOL_TERM_FIRST_DAY -> planToSave.schoolTerm.termFirstDay.toString,
         SCHOOL_TERM_LAST_DAY -> planToSave.schoolTerm.termLastDay.toString
       ),
-      SELECTED_ES_AND_OS -> convertListOfStringToBsonArray(planToSave.selectedEsAndOsCodes),
-      SELECTED_BENCHMARKS -> convertListOfStringToBsonArray(planToSave.selectedBenchmarks)
+      SELECTED_ES_AND_OS_WITH_BENCHMARKS -> convertListOfEsAndOsToBsonArray(planToSave.eandOsWithBenchmarks)
     )
   }
 
-  private def convertListOfStringToBsonArray(listOfStrings: List[String]): BsonArray = {
+  private def convertListOfEsAndOsToBsonArray(eandOsWithBenchmarksList: List[EandOsWithBenchmarks]): BsonArray = {
+    BsonArray({
+      for {
+        osWithBenchmarks <- eandOsWithBenchmarksList
+      } yield BsonDocument(
+        SELECTED_ES_AND_OS -> convertListOfStringToBsonArray(osWithBenchmarks.eAndOCodes),
+        SELECTED_BENCHMARKS -> convertListOfStringToBsonArray(osWithBenchmarks.benchmarks)
+      )
+    })
+  }
+
+    private def convertListOfStringToBsonArray(listOfStrings: List[String]): BsonArray = {
     BsonArray({
       for {
         element <- listOfStrings

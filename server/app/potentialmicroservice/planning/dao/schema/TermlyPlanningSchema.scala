@@ -3,7 +3,7 @@ package potentialmicroservice.planning.dao.schema
 object TermlyPlanningSchema {
   val _ID = "_id"
   val TTT_USER_ID = "tttUserId"
-  val SCHOOL_ID = "schoolId"
+  val CLASS_ID = "classId"
   val PLAN_TYPE = "planType"
   val GROUP_ID = "groupId"
   val SUBJECT_NAME = "subjectName"
@@ -16,8 +16,7 @@ object TermlyPlanningSchema {
   val SCHOOL_TERM_FIRST_DAY = "schoolTermFirstDay"
   val SCHOOL_TERM_LAST_DAY = "schoolTermLastDay"
 
-
+  val SELECTED_ES_AND_OS_WITH_BENCHMARKS = "selectedEsAndOsWithBenchmarks"
   val SELECTED_ES_AND_OS = "selectedEsAndOs"
   val SELECTED_BENCHMARKS = "selectedBenchmarks"
-
 }
