@@ -12,6 +12,7 @@ import com.google.inject.Singleton
 import com.typesafe.config.ConfigFactory
 import com.typesafe.sslconfig.akka.AkkaSSLConfig
 import io.sudostream.timetoteach.messages.systemwide.model.{User, UserPreferences}
+import models.timetoteach.TimeToTeachUserId
 import org.apache.avro.io.{Decoder, DecoderFactory}
 import org.apache.avro.specific.SpecificDatumReader
 import play.api.Logger

@@ -3,8 +3,9 @@ package security
 import be.objectify.deadbolt.scala.models.Subject
 import be.objectify.deadbolt.scala.{AuthenticatedRequest, DeadboltHandler, DynamicResourceHandler}
 import com.typesafe.config.ConfigFactory
-import controllers.serviceproxies.{TimeToTeachUserId, UserReaderServiceProxyImpl}
+import controllers.serviceproxies.UserReaderServiceProxyImpl
 import models.User
+import models.timetoteach.TimeToTeachUserId
 import play.api.Logger
 import play.api.mvc.{Request, Result, Results}
 

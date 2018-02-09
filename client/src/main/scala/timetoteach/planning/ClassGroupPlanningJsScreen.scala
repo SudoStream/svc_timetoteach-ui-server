@@ -95,7 +95,7 @@ object ClassGroupPlanningJsScreen {
           println(s"response = '$responseText'")
           dom.window.setTimeout(() => {
             println(s"lets goto group planning overview")
-            dom.window.location.href = "/classes"
+            dom.window.location.href = s"/termlyplanningforclass/$classId"
           }, 100)
         case Failure(ex) =>
           dom.window.alert("Something went wrong with saving group termly plans. Specifically : -" +

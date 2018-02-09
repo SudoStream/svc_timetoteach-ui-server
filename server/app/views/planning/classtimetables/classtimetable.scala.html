@@ -1,7 +1,7 @@
 @import be.objectify.deadbolt.scala.AuthenticatedRequest
 @import models.timetoteach.classtimetable.SchoolDayTimes
 @import shared.model.classtimetable._
-@import controllers.serviceproxies.TimeToTeachUserId
+@import models.timetoteach.TimeToTeachUserId
 @import shared.model.classtimetable.WWWClassTimetable
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], schoolDayTimes: SchoolDayTimes, savedWwwClassTimetable: Option[WWWClassTimetable], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails)(implicit request: AuthenticatedRequest[Any])
 

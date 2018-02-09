@@ -12,10 +12,9 @@ import com.google.inject.Singleton
 import com.typesafe.config.ConfigFactory
 import com.typesafe.sslconfig.akka.AkkaSSLConfig
 import io.sudostream.timetoteach.kafka.serializing.systemwide.model.{UserPreferencesSerializer, UserSerializer}
-import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumLevel
 import io.sudostream.timetoteach.messages.systemwide.model._
 import models.timetoteach
-import models.timetoteach.{InitialUserPreferences, TimeToTeachUser}
+import models.timetoteach.{InitialUserPreferences, TimeToTeachUser, TimeToTeachUserId}
 import play.api.Logger
 import utils.SchoolConverter.convertLocalSchoolToMessageSchool
 
@@ -196,4 +195,4 @@ class UserWriterServiceProxyImpl @Inject()(schoolReader: SchoolReaderServiceProx
   }
 }
 
-case class TimeToTeachUserId(value: String)
+

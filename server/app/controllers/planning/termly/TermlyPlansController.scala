@@ -4,10 +4,10 @@ import javax.inject.Inject
 
 import be.objectify.deadbolt.scala.cache.HandlerCache
 import be.objectify.deadbolt.scala.{AuthenticatedRequest, DeadboltActions}
-import controllers.serviceproxies.{ClassTimetableReaderServiceProxyImpl, TimeToTeachUserId, UserReaderServiceProxyImpl}
+import controllers.serviceproxies.{ClassTimetableReaderServiceProxyImpl, PlanningWriterServiceProxy, UserReaderServiceProxyImpl}
 import curriculum.scotland.EsOsAndBenchmarksBuilderImpl
 import duplicate.model.{ClassDetails, TermlyPlansToSave}
-import models.timetoteach.CookieNames
+import models.timetoteach.{CookieNames, TimeToTeachUserId}
 import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms.{mapping, _}
@@ -26,6 +26,7 @@ class TermlyPlansController @Inject()(
                                        classTimetableReaderProxy: ClassTimetableReaderServiceProxyImpl,
                                        esAndOsReader: EsOsAndBenchmarksBuilderImpl,
                                        handlers: HandlerCache,
+                                       planningWriterService: PlanningWriterServiceProxy,
                                        deadbolt: DeadboltActions) extends AbstractController(cc) {
 
   import TermlyPlansController.buildSchoolNameToClassesMap
@@ -131,16 +132,16 @@ class TermlyPlansController @Inject()(
     val termlyPlansToSave = read[TermlyPlansToSave](termlyPlansForGroup.groupTermlyPlansPickled)
 
     logger.debug(s"Termly plans Unpickled = ${termlyPlansToSave.toString}")
-//    val upserted = classTimetableWriter.upsertClass(
-//      TimeToTeachUserId(termlyPlansForGroup.tttUserId),
-//      termlyPlansToSave.asInstanceOf[ClassDetails]
-//    )
+    //    val upserted = classTimetableWriter.upsertClass(
+    //      TimeToTeachUserId(termlyPlansForGroup.tttUserId),
+    //      termlyPlansToSave.asInstanceOf[ClassDetails]
+    //    )
 
     //    for {
-//      done <- upserted
-//    } yield
+    //      done <- upserted
+    //    } yield
 
-    Future{
+    Future {
       Ok("Saved termly plans!")
     }
 

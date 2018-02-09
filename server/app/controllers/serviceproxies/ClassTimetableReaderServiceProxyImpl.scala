@@ -13,6 +13,7 @@ import com.typesafe.sslconfig.akka.AkkaSSLConfig
 import duplicate.model.ClassDetails
 import io.sudostream.timetoteach.kafka.serializing.systemwide.classes.ClassDetailsCollectionDeserializer
 import io.sudostream.timetoteach.kafka.serializing.systemwide.classtimetable.ClassTimetableDeserializer
+import models.timetoteach.TimeToTeachUserId
 import play.api.Logger
 import shared.model.classtimetable.{WWWClassTimetable, WwwClassId}
 import utils.{ClassDetailsAvroConverter, ClassTimetableConverterToAvro}

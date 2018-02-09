@@ -7,22 +7,19 @@ import be.objectify.deadbolt.scala.cache.HandlerCache
 import be.objectify.deadbolt.scala.{ActionBuilders, DeadboltActions}
 import com.typesafe.config.ConfigFactory
 import controllers.serviceproxies._
-import io.sudostream.timetoteach.messages.systemwide.model.{User, UserPreferences}
-import models.timetoteach.{CookieNames, InitialUserPreferences}
-import models.timetoteach.classtimetable.SchoolDayTimes
+import io.sudostream.timetoteach.messages.systemwide.model.User
+import models.timetoteach.{CookieNames, InitialUserPreferences, TimeToTeachUserId}
 import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms.{mapping, _}
 import play.api.mvc._
 import security.MyDeadboltHandler
 import shared.SharedMessages
-import shared.model.classtimetable.WwwClassName
-import shared.util.LocalTimeUtil
 import utils.TemplateUtils.getCookieStringFromRequest
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
+import scala.concurrent.{Await, Future}
 
 class Application @Inject()(userReader: UserReaderServiceProxyImpl,
                             userWriter: UserWriterServiceProxyImpl,

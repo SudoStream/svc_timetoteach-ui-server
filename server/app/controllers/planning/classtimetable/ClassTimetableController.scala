@@ -14,7 +14,7 @@ import duplicate.model.ClassDetails
 import io.sudostream.timetoteach.messages.systemwide.model
 import io.sudostream.timetoteach.messages.systemwide.model.{User, UserPreferences}
 import models.timetoteach.classtimetable.SchoolDayTimes
-import models.timetoteach.{CookieNames, School}
+import models.timetoteach.{CookieNames, School, TimeToTeachUserId}
 import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms.{mapping, _}
