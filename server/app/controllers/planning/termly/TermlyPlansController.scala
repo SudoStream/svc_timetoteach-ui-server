@@ -4,9 +4,10 @@ import javax.inject.Inject
 
 import be.objectify.deadbolt.scala.cache.HandlerCache
 import be.objectify.deadbolt.scala.{AuthenticatedRequest, DeadboltActions}
-import controllers.serviceproxies.{ClassTimetableReaderServiceProxyImpl, PlanningWriterServiceProxy, UserReaderServiceProxyImpl}
+import controllers.serviceproxies.{ClassTimetableReaderServiceProxyImpl, PlanningWriterServiceProxy, TermServiceProxy, UserReaderServiceProxyImpl}
 import curriculum.scotland.EsOsAndBenchmarksBuilderImpl
 import duplicate.model.{ClassDetails, TermlyPlansToSave}
+import models.timetoteach.planning.GroupId
 import models.timetoteach.{CookieNames, TimeToTeachUserId}
 import play.api.Logger
 import play.api.data.Form
@@ -27,6 +28,7 @@ class TermlyPlansController @Inject()(
                                        esAndOsReader: EsOsAndBenchmarksBuilderImpl,
                                        handlers: HandlerCache,
                                        planningWriterService: PlanningWriterServiceProxy,
+                                       termsPlanHelper: TermPlansHelper,
                                        deadbolt: DeadboltActions) extends AbstractController(cc) {
 
   import TermlyPlansController.buildSchoolNameToClassesMap
@@ -121,30 +123,24 @@ class TermlyPlansController @Inject()(
     )(TermlyPlansToSaveJson.apply)(TermlyPlansToSaveJson.unapply)
   )
 
-  case class TermlyPlansToSaveJson(groupTermlyPlansPickled: String)
+  case class TermlyPlansToSaveJson(
+                                    groupTermlyPlansPickled: String
+                                  )
 
   def savePlansForGroup(classId: String, subject: String, groupId: String): Action[AnyContent] = Action.async { implicit request =>
-    // TODO: This
     val termlyPlansForGroup = termlyPlansToSaveForm.bindFromRequest.get
     logger.debug(s"Termly Plans Pickled = #${termlyPlansForGroup.groupTermlyPlansPickled}#")
 
     import upickle.default._
-    val termlyPlansToSave = read[TermlyPlansToSave](termlyPlansForGroup.groupTermlyPlansPickled)
-
+    val termlyPlansToSave: TermlyPlansToSave = read[TermlyPlansToSave](termlyPlansForGroup.groupTermlyPlansPickled)
     logger.debug(s"Termly plans Unpickled = ${termlyPlansToSave.toString}")
-    //    val upserted = classTimetableWriter.upsertClass(
-    //      TimeToTeachUserId(termlyPlansForGroup.tttUserId),
-    //      termlyPlansToSave.asInstanceOf[ClassDetails]
-    //    )
 
-    //    for {
-    //      done <- upserted
-    //    } yield
+    val termlyPlansAsModel = termsPlanHelper.convertTermlyPlanToModel(termlyPlansToSave, Some(GroupId(groupId)), subject)
+    val savedPlan = planningWriterService.saveSubjectTermlyPlan(termlyPlansAsModel)
 
-    Future {
-      Ok("Saved termly plans!")
-    }
-
+    for {
+      done <- savedPlan
+    } yield Ok("Saved termly plans!")
   }
 
   def termlyOverviewForGroup(classId: String, subject: String, groupId: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest: AuthenticatedRequest[AnyContent] =>

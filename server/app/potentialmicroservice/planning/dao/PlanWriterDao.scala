@@ -1,11 +1,11 @@
-package controllers.serviceproxies
+package potentialmicroservice.planning.dao
 
-import com.google.inject.ImplementedBy
 import models.timetoteach.planning.SubjectTermlyPlan
 
 import scala.concurrent.Future
 
-@ImplementedBy(classOf[PlanningWriterServiceProxyImpl])
-trait PlanningWriterServiceProxy {
+trait PlanWriterDao {
+
   def saveSubjectTermlyPlan(planToSave: SubjectTermlyPlan): Future[Boolean]
+
 }

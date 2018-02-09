@@ -3,7 +3,7 @@ package models.timetoteach.planning
 import java.time.LocalDateTime
 
 import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.subjectdetail.SubjectName
-import models.timetoteach.TimeToTeachUserId
+import models.timetoteach.{SchoolId, TimeToTeachUserId}
 import models.timetoteach.planning.PlanType.PlanType
 import models.timetoteach.term.SchoolTerm
 
@@ -11,6 +11,7 @@ case class SubjectTermlyPlan(
                               tttUserId: TimeToTeachUserId,
                               planType: PlanType,
                               schoolTerm: SchoolTerm,
+                              schoolId: SchoolId,
                               maybeGroupId: Option[GroupId],
                               subject: SubjectName,
                               createdTime: LocalDateTime,

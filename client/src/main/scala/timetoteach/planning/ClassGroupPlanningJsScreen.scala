@@ -65,7 +65,12 @@ object ClassGroupPlanningJsScreen {
         s"Benchmarks: ${selectedBenchmarks.mkString("\n")}"
       )
 
+      val tttUserId = dom.window.localStorage.getItem("tttUserId")
+      val schoolId = dom.window.localStorage.getItem("schoolId")
+
       val groupTermlyPlans = TermlyPlansToSave(
+        schoolId = schoolId,
+        tttUserId = tttUserId,
         eAndOCodes = selectedEsAndOs.toList,
         benchmarks = selectedBenchmarks.toList
       )
@@ -75,7 +80,6 @@ object ClassGroupPlanningJsScreen {
       val classId = dom.window.localStorage.getItem("classId")
       val subject = dom.window.localStorage.getItem("subject")
       val groupId = dom.window.localStorage.getItem("groupId")
-
 
       import scala.concurrent.ExecutionContext.Implicits.global
       val theUrl = s"/termlysaveplanningforsubjectandgroup/$classId/$subject/$groupId"
@@ -96,7 +100,7 @@ object ClassGroupPlanningJsScreen {
           dom.window.setTimeout(() => {
             println(s"lets goto group planning overview")
             dom.window.location.href = s"/termlyplanningforclass/$classId"
-          }, 100)
+          }, 10)
         case Failure(ex) =>
           dom.window.alert("Something went wrong with saving group termly plans. Specifically : -" +
             s"\n\n${ex.toString}")

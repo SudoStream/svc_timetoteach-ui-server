@@ -13,3 +13,5 @@ case class School(
 case class Country(value: String)
 
 case class LocalAuthority(value: String)
+
+case class SchoolId(value: String)

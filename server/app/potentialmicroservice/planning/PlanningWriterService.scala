@@ -1,11 +1,11 @@
-package controllers.serviceproxies
+package potentialmicroservice.planning
 
-import com.google.inject.ImplementedBy
 import models.timetoteach.planning.SubjectTermlyPlan
 
 import scala.concurrent.Future
 
-@ImplementedBy(classOf[PlanningWriterServiceProxyImpl])
-trait PlanningWriterServiceProxy {
+trait PlanningWriterService {
+
   def saveSubjectTermlyPlan(planToSave: SubjectTermlyPlan): Future[Boolean]
+
 }
