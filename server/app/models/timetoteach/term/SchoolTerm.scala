@@ -6,7 +6,7 @@ import models.timetoteach.term.SchoolTermName.SchoolTermName
 
 case class SchoolTerm(
                        schoolYear: SchoolYear,
-                       termType: SchoolTermName,
+                       schoolTermName: SchoolTermName,
                        termFirstDay: LocalDate,
                        termLastDay: LocalDate
                      )

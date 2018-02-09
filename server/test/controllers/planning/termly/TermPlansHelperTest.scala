@@ -40,7 +40,7 @@ class TermPlansHelperTest extends FunSpec {
     }
 
     it("should create a SubjectTermlyPlan with a school term of spring second term") {
-      assert(subjectTermlyPlan.schoolTerm.termType === SchoolTermName.SPRING_SECOND_TERM)
+      assert(subjectTermlyPlan.schoolTerm.schoolTermName === SchoolTermName.SPRING_SECOND_TERM)
     }
 
     it("should create a SubjectTermlyPlan with a subject of maths") {
