@@ -31,7 +31,7 @@ trait PlanWriterDaoHelper {
         SCHOOL_YEAR -> schoolYearValue,
         SCHOOL_TERM_NAME -> planToSave.schoolTerm.schoolTermName.toString,
         SCHOOL_TERM_FIRST_DAY -> planToSave.schoolTerm.termFirstDay.toString,
-        SCHOOL_TERM_LAST_DAY -> planToSave.schoolTerm.termFirstDay.toString
+        SCHOOL_TERM_LAST_DAY -> planToSave.schoolTerm.termLastDay.toString
       ),
       SELECTED_ES_AND_OS -> convertListOfStringToBsonArray(planToSave.selectedEsAndOsCodes),
       SELECTED_BENCHMARKS -> convertListOfStringToBsonArray(planToSave.selectedBenchmarks)

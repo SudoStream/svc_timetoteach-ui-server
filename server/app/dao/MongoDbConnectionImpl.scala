@@ -27,6 +27,8 @@ class MongoDbConnectionImpl extends MongoDbConnection with MiniKubeHelper {
   private val termlyPlanningCollectionName = config.getString("mongodb.termly-planning-collection-name")
 
   private val isLocalMongoDb: Boolean = config.getString("mongodb.localmongodb").toBoolean
+  logger.info(s"======================================================== isLocalMongoDb: '$isLocalMongoDb'")
+
 
   private def createMongoClient: MongoClient = {
     if (isLocalMongoDb || isMinikubeRun) {
