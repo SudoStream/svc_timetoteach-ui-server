@@ -1,4 +1,4 @@
-package potentialmicroservice.planning.dao.schema
+package potentialmicroservice.planning.schema
 
 object TermlyPlanningSchema {
   val _ID = "_id"

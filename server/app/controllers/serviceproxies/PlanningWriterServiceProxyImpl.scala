@@ -4,7 +4,7 @@ import javax.inject.{Inject, Singleton}
 
 import models.timetoteach.planning.SubjectTermlyPlan
 import org.mongodb.scala.Completed
-import potentialmicroservice.planning.PlanningWriterService
+import potentialmicroservice.planning.writer.PlanningWriterService
 
 import scala.concurrent.Future
 

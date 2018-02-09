@@ -1,4 +1,4 @@
-package potentialmicroservice.planning.dao
+package potentialmicroservice.planning.writer.dao
 
 import javax.inject.{Inject, Singleton}
 

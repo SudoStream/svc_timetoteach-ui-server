@@ -1,4 +1,4 @@
-package potentialmicroservice.planning.dao
+package potentialmicroservice.planning.writer.dao
 
 import duplicate.model.EandOsWithBenchmarks
 import models.timetoteach.planning.SubjectTermlyPlan
@@ -6,7 +6,7 @@ import org.mongodb.scala.bson.collection.immutable.Document
 import org.mongodb.scala.bson.{BsonArray, BsonDocument, BsonString}
 
 trait PlanWriterDaoHelper {
-  import potentialmicroservice.planning.dao.schema.TermlyPlanningSchema._
+  import potentialmicroservice.planning.schema.TermlyPlanningSchema._
 
   def convertTermlyPlanToMongoDbDocument(planToSave: SubjectTermlyPlan): Document = {
 

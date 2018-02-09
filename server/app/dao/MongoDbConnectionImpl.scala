@@ -9,7 +9,7 @@ import org.mongodb.scala.bson.BsonDocument
 import org.mongodb.scala.connection.{NettyStreamFactoryFactory, SslSettings}
 import org.mongodb.scala.{Document, MongoClient, MongoClientSettings, MongoCollection, ServerAddress}
 import play.api.Logger
-import potentialmicroservice.planning.dao.schema.TermlyPlanningSchema
+import potentialmicroservice.planning.schema.TermlyPlanningSchema
 
 import scala.collection.JavaConverters._
 import scala.util.{Failure, Success}

@@ -1,4 +1,4 @@
-package potentialmicroservice.planning.dao
+package potentialmicroservice.planning.writer.dao
 
 import com.google.inject.ImplementedBy
 import models.timetoteach.planning.SubjectTermlyPlan
