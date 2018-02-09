@@ -5,11 +5,15 @@ import javax.inject.Singleton
 
 import com.mongodb.connection.ClusterSettings
 import com.typesafe.config.ConfigFactory
+import org.mongodb.scala.bson.BsonDocument
 import org.mongodb.scala.connection.{NettyStreamFactoryFactory, SslSettings}
 import org.mongodb.scala.{Document, MongoClient, MongoClientSettings, MongoCollection, ServerAddress}
 import play.api.Logger
+import potentialmicroservice.planning.dao.schema.TermlyPlanningSchema
 
 import scala.collection.JavaConverters._
+import scala.util.{Failure, Success}
+import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
 class MongoDbConnectionImpl extends MongoDbConnection with MiniKubeHelper {
@@ -20,16 +24,13 @@ class MongoDbConnectionImpl extends MongoDbConnection with MiniKubeHelper {
   private val mongoDbUri = new URI(mongoDbUriString)
 
   private val planningDatabaseName = config.getString("mongodb.planning-database-name")
-  private val termlyPlanningCollectionName = config.getString("termly-planning-collection-name")
+  private val termlyPlanningCollectionName = config.getString("mongodb.termly-planning-collection-name")
 
-  private val isLocalMongoDb: Boolean = try {
-    if (sys.env("LOCAL_MONGO_DB") == "true") true else false
-  } catch {
-    case e: Exception => false
-  }
+  private val isLocalMongoDb: Boolean = config.getString("mongodb.localmongodb").toBoolean
 
   private def createMongoClient: MongoClient = {
     if (isLocalMongoDb || isMinikubeRun) {
+      logger.info("Building local mongo db")
       buildLocalMongoDbClient
     } else {
       logger.info(s"connecting to mongo db at '${mongoDbUri.getHost}:${mongoDbUri.getPort}'")
@@ -67,9 +68,26 @@ class MongoDbConnectionImpl extends MongoDbConnection with MiniKubeHelper {
 
   lazy val mongoDbClient: MongoClient = createMongoClient
 
+  ensureIndexes()
+
   override def getTermlyPlanningCollection: MongoCollection[Document] = {
     val planningDatabase = mongoDbClient.getDatabase(planningDatabaseName)
-    planningDatabase.getCollection(termlyPlanningCollectionName )
+    planningDatabase.getCollection(termlyPlanningCollectionName)
   }
 
+  override def ensureIndexes(): Unit = {
+    val mainIndex = BsonDocument(
+      TermlyPlanningSchema.TTT_USER_ID -> 1,
+      TermlyPlanningSchema.SCHOOL_ID -> 1,
+      TermlyPlanningSchema.GROUP_ID -> 1,
+      TermlyPlanningSchema.CREATED_TIMESTAMP -> 1,
+      TermlyPlanningSchema.SUBJECT_NAME -> 1
+    )
+    logger.info(s"Ensuring index created : ${mainIndex.toString}")
+    val obs = getTermlyPlanningCollection.createIndex(mainIndex)
+    obs.toFuture().onComplete {
+      case Success(msg) => logger.info(s"Ensure index attempt completed with msg : $msg")
+      case Failure(ex) => logger.info(s"Ensure index failed to complete: ${ex.getMessage}")
+    }
+  }
 }

@@ -6,6 +6,7 @@ import org.mongodb.scala.{Document, MongoCollection}
 @ImplementedBy(classOf[MongoDbConnectionImpl])
 trait MongoDbConnection {
 
+  def ensureIndexes()
   def getTermlyPlanningCollection: MongoCollection[Document]
 
 }
