@@ -1,4 +1,4 @@
-package potentialmicroservice.planning.schema
+package potentialmicroservice.planning.sharedschema
 
 object TermlyPlanningSchema {
   val _ID = "_id"

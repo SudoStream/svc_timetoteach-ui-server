@@ -1,6 +1,7 @@
 package dao
 
-trait MiniKubeHelper {
+trait MiniKubeHelper
+{
 
   val mongoKeystorePassword: String = try {
     sys.env("MONGODB_KEYSTORE_PASSWORD")
@@ -22,8 +23,7 @@ trait MiniKubeHelper {
     }
   }
   catch {
-    case e: Exception => ""
-      false
+    case e: Exception => false
   }
 
 }

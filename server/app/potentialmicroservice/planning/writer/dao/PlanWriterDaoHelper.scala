@@ -6,7 +6,7 @@ import org.mongodb.scala.bson.collection.immutable.Document
 import org.mongodb.scala.bson.{BsonArray, BsonDocument, BsonString}
 
 trait PlanWriterDaoHelper {
-  import potentialmicroservice.planning.schema.TermlyPlanningSchema._
+  import potentialmicroservice.planning.sharedschema.TermlyPlanningSchema._
 
   def convertTermlyPlanToMongoDbDocument(planToSave: SubjectTermlyPlan): Document = {
 
@@ -34,7 +34,7 @@ trait PlanWriterDaoHelper {
         SCHOOL_TERM_FIRST_DAY -> planToSave.schoolTerm.termFirstDay.toString,
         SCHOOL_TERM_LAST_DAY -> planToSave.schoolTerm.termLastDay.toString
       ),
-      SELECTED_ES_AND_OS_WITH_BENCHMARKS -> convertListOfEsAndOsToBsonArray(planToSave.eandOsWithBenchmarks)
+      SELECTED_ES_AND_OS_WITH_BENCHMARKS -> convertListOfEsAndOsToBsonArray(planToSave.eAndOsWithBenchmarks)
     )
   }
 

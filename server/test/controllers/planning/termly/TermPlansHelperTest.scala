@@ -51,15 +51,15 @@ class TermPlansHelperTest extends FunSpec {
     }
 
     it("should create a SubjectTermlyPlan with 1 full list of esos with benchmarks") {
-      assert(subjectTermlyPlan.eandOsWithBenchmarks.size === 1)
+      assert(subjectTermlyPlan.eAndOsWithBenchmarks.size === 1)
     }
 
     it("should create a SubjectTermlyPlan with 2 es and os") {
-      assert(subjectTermlyPlan.eandOsWithBenchmarks.head.eAndOCodes.size === 2)
+      assert(subjectTermlyPlan.eAndOsWithBenchmarks.head.eAndOCodes.size === 2)
     }
 
     it("should create a SubjectTermlyPlan with 3 benchmarks") {
-      assert(subjectTermlyPlan.eandOsWithBenchmarks.head.benchmarks.size === 3)
+      assert(subjectTermlyPlan.eAndOsWithBenchmarks.head.benchmarks.size === 3)
     }
 
   }
