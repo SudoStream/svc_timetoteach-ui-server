@@ -1,0 +1,83 @@
+@import models.timetoteach.TimeToTeachUserId
+@import models.timetoteach.planning.SubjectTermlyPlan
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails, groupDetails: duplicate.model.Group, subject: String, subjectTermlyPlan: SubjectTermlyPlan)
+
+@timetoteachAppMain(handler, s"${classDetails.className.name} Termly Plans - $subject - ${groupDetails.groupName.name.capitalize}",
+    userPictureUri, userFirstName, userFamilyName) {
+    <div class="in-app-menu-small-devices">
+        <li class="nav-item nav-login-button">
+            <a class="btn btn-outline-primary btn-block" role="button" href="@routes.Application.timeToTeachApp()">
+                Dashboard</a>
+        </li>
+
+        <li class="nav-item nav-login-button ">
+            <a class="btn btn-outline-primary btn-block" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlans()">
+                Termly Plans Home</a>
+        </li>
+
+        <li class="nav-item nav-login-button ">
+            <a class="btn btn-outline-primary btn-block" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(classDetails.id.id)">
+                @classDetails.className.name Termly Plans</a>
+        </li>
+
+        <li class="nav-item nav-login-button">
+            <a class="btn btn-outline-primary btn-block" role="button"
+            href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(classDetails.id.id)">
+                Manage @classDetails.className.name</a>
+        </li>
+
+        <li class="nav-item nav-login-button">
+            <a id="manage-class-goto-timetable" class="btn btn-outline-primary btn-block" role="button"
+            href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(classDetails.id.id)">
+                Class Timetable</a>
+        </li>
+
+    </div>
+} {
+    <div class="container">
+        <div class="manage-class-form-section">
+            <div class="in-app-menu-medium-and-up">
+                <div class="d-flex ">
+                    <ul class="nav mr-auto justify-content-between">
+                        <li class="nav-item manage-class-nav-item-leftmost">
+                            <a class="btn btn-outline-primary" role="button" href="@routes.Application.timeToTeachApp()">
+                                Dashboard</a>
+                        </li>
+                        <li class="nav-item manage-class-nav-item-on-left">
+                            <a class="btn btn-outline-primary" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlans()">
+                                Termly Plans Home</a>
+                        </li>
+                        <li class="nav-item manage-class-nav-item-on-left">
+                            <a class="btn btn-outline-primary" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(classDetails.id.id)">
+                                @classDetails.className.name Termly Plans</a>
+                        </li>
+                        <li class="nav-item manage-class-nav-item-on-left">
+                            <a class="btn btn-info" role="button"
+                            href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(classDetails.id.id)">
+                                Manage @classDetails.className.name</a>
+                        </li>
+                        <li class="nav-item manage-class-nav-item-on-left">
+                            <a id="manage-class-goto-timetable" class="btn btn-info" role="button"
+                            href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(classDetails.id.id)">
+                                Class Timetable</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="termly-plans-overview-section">
+            We have @subjectTermlyPlan.eAndOsWithBenchmarks.size Es And Os With Benchmarks
+        </div>
+    </div>
+
+    <script>
+            localStorage.setItem("classId", "@classDetails.id.id");
+            localStorage.setItem("subject", "@subject");
+            localStorage.setItem("groupId", "@groupDetails.groupId.id");
+            localStorage.setItem("schoolId", "@classDetails.schoolDetails.id");
+            localStorage.setItem("tttUserId", "@tttUserId.value");
+    </script>
+
+}
