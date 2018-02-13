@@ -83,6 +83,7 @@ object ClassDetailsAvroConverter {
       classDescription = classDetails.classDescription.value
       groups = convertAvroGroupsToModel(classDetails.classGroups)
       schoolDetailsForClassSeq = schools.filter(theSchool => theSchool.id == schoolId)
+      if schoolDetailsForClassSeq.nonEmpty
       schoolDetailsForClass = schoolDetailsForClassSeq.head
     } yield duplicate.model.ClassDetails(
       duplicate.model.ClassId(classId),
