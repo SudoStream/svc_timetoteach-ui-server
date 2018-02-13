@@ -92,3 +92,9 @@
 .termly-plans-es-and-os-benchmark {
     margin-bottom: 0.1rem;
 }
+
+.es-os-benchmarks-overview-row {
+    padding: 0.5rem;
+    background: rgba(250, 250, 250, 0.45);
+    margin-bottom: 0.2rem;
+}
