@@ -16,7 +16,7 @@
         </li>
 
         <li class="nav-item nav-login-button ">
-            <a class="btn btn-outline-primary btn-block" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(classDetails.id.id)">
+            <a class="btn btn-info btn-block" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(classDetails.id.id)">
                 @classDetails.className.name Termly Plans</a>
         </li>
 
@@ -48,7 +48,7 @@
                                 Termly Plans Home</a>
                         </li>
                         <li class="nav-item manage-class-nav-item-on-left">
-                            <a class="btn btn-outline-primary" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(classDetails.id.id)">
+                            <a class="btn btn-info" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(classDetails.id.id)">
                                 @classDetails.className.name Termly Plans</a>
                         </li>
                         <li class="nav-item manage-class-nav-item-on-left">
@@ -60,6 +60,15 @@
                             <a id="manage-class-goto-timetable" class="btn btn-info" role="button"
                             href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(classDetails.id.id)">
                                 Class Timetable</a>
+                        </li>
+                    </ul>
+
+
+                    <ul class="nav justify-content-end">
+                        <li class="nav-item manage-class-nav-item-rightmost">
+                            <a id="termly-plans-edit" role="button" class="btn btn-primary"
+                            href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForGroup(classDetails.id.id, subject, groupDetails.groupId.id)">
+                                Re-Select Es&Os/Benchmarks</a>
                         </li>
                     </ul>
                 </div>
@@ -97,7 +106,7 @@
                 <div class="row es-os-benchmarks-overview-row">
                     <div class="col-sm-6">
                     @for(eAndOCode <- esOsWithBenchmarks.eAndOCodes) {
-                        <p>@eAndOCode</p>
+                        <p><strong>@eAndOCode</strong></p>
                     }
                     </div>
                     <div class="col-sm-6">

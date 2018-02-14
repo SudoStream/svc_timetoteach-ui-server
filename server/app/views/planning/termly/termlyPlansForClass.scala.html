@@ -109,7 +109,7 @@
                                 @if(group.groupType.value == "Maths") {
                                     <div class="row termly-plans-group-row">
                                         <div class="col-lg-3">
-                                            <a type="button" class="btn btn-info btn-sm btn-block"
+                                            <a role="button" class="btn btn-info btn-sm btn-block"
                                             href="@controllers.planning.termly.routes.TermlyPlansController.termlyOverviewForGroup(classDetails.id.id, group.groupType.value, group.groupId.id)">@group.groupName.name.capitalize</a>
                                         </div>
                                         <div class="col-lg-1"></div>
