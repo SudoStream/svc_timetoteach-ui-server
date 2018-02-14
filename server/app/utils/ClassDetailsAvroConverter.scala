@@ -98,7 +98,8 @@ object ClassDetailsAvroConverter {
       duplicate.model.ClassName(className),
       duplicate.model.ClassDescription(classDescription),
       groups,
-      classDetails.teachersWithWriteAccess
+      classDetails.teachersWithWriteAccess,
+      Map()
     )
   }
 

@@ -40,7 +40,8 @@ class ClassDetailsAvroConverterTest extends FunSpec {
         MathsGroupType,
         FirstLevel)
     ),
-    List("userId_1", "userId_2")
+    List("userId_1", "userId_2"),
+    Map()
   )
 
 

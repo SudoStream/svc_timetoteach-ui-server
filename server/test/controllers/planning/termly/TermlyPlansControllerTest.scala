@@ -20,7 +20,8 @@ class TermlyPlansControllerTest extends FunSpec {
       ClassName("P1AB"),
       ClassDescription(""),
       Nil,
-      List("andy")
+      List("andy"),
+      Map()
     ) :: ClassDetails(
       ClassId("class2"),
       SchoolDetails(
@@ -35,7 +36,8 @@ class TermlyPlansControllerTest extends FunSpec {
       ClassName("P2QQ"),
       ClassDescription(""),
       Nil,
-      List("andy")
+      List("andy"),
+      Map()
     ) :: ClassDetails(
       ClassId("class3"),
       SchoolDetails(
@@ -50,7 +52,8 @@ class TermlyPlansControllerTest extends FunSpec {
       ClassName("P3WW"),
       ClassDescription(""),
       Nil,
-      List("andy")
+      List("andy"),
+      Map()
     ) :: ClassDetails(
       ClassId("classAnother1"),
       SchoolDetails(
@@ -65,7 +68,8 @@ class TermlyPlansControllerTest extends FunSpec {
       ClassName("AN67"),
       ClassDescription(""),
       Nil,
-      List("andy")
+      List("andy"),
+      Map()
     ) :: ClassDetails(
       ClassId("classYep"),
       SchoolDetails(
@@ -80,7 +84,8 @@ class TermlyPlansControllerTest extends FunSpec {
       ClassName("P6YY"),
       ClassDescription(""),
       Nil,
-      List("andy")
+      List("andy"),
+      Map()
     ) :: Nil
   }
 

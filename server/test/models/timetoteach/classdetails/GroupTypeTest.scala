@@ -58,7 +58,8 @@ class GroupTypeTest extends FunSpec {
       ClassName("P3AB"),
       ClassDescription("My New Class!"),
       groups,
-      List("id12")
+      List("id12"),
+      Map()
     )
   }
 

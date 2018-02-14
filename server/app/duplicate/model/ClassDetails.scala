@@ -8,7 +8,8 @@ case class ClassDetails(
                          className: ClassName,
                          classDescription: ClassDescription,
                          groups: List[Group],
-                         classTeachersWithWriteAccess: List[String]
+                         classTeachersWithWriteAccess: List[String],
+                         subjectToMaybeGroupMap: Map[SubjectModel, Option[Group]]
                        ) {
   if (classTeachersWithWriteAccess.isEmpty) throw new IllegalArgumentException(
     "Must have at least 1 teacher with write access"

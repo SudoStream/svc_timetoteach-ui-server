@@ -40,7 +40,7 @@
     margin-bottom: 1.5rem;
 }
 
-.termly-plans-collapse-conatiner {
+.termly-plans-collapse-container {
     max-width: 90%;
 }
 
@@ -96,5 +96,10 @@
 .es-os-benchmarks-overview-row {
     padding: 0.5rem;
     background: rgba(250, 250, 250, 0.75);
-    margin-bottom: 0.2rem;
+    border: 1px solid #e3e3e3;
+    margin-bottom: 0.7rem;
+}
+
+.form-control[disabled] {
+    background-color: white;
 }
