@@ -1,6 +1,6 @@
 @import models.timetoteach.TimeToTeachUserId
 @import models.timetoteach.planning.SubjectTermlyPlan
-@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails, groupDetails: duplicate.model.Group, subject: String, subjectTermlyPlan: SubjectTermlyPlan)
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails, groupDetails: duplicate.model.Group, subject: String, subjectTermlyPlan: SubjectTermlyPlan, esAndOsCodeToDetailMap: Map[String, duplicate.model.esandos.EandO])
 
 @timetoteachAppMain(handler, s"${classDetails.className.name} Termly Plans - $subject - ${groupDetails.groupName.name.capitalize}",
     userPictureUri, userFirstName, userFamilyName) {
@@ -106,17 +106,36 @@
                 <div class="row es-os-benchmarks-overview-row">
                     <div class="col-sm-6">
                     @for(eAndOCode <- esOsWithBenchmarks.eAndOCodes) {
-                        <p><strong>@eAndOCode</strong></p>
-                    }
+                        <p><strong>@eAndOCode</strong>
+                            <div>
+
+                        @if(esAndOsCodeToDetailMap.isDefinedAt(eAndOCode)) {
+                            @for(sentence <- esAndOsCodeToDetailMap(eAndOCode).eAndOSentences) {
+                                <p>@sentence.value</p>
+                                @if(sentence.bulletPoints.nonEmpty) {
+                                    <ul>
+                                    }
+                                @for(bullet <- sentence.bulletPoints) {
+                                    <li>@bullet.value</li>
+                                }
+                                @if(sentence.bulletPoints.nonEmpty) {
+                                </ul>
+                                }
+                            }
+                        }
+
                     </div>
-                    <div class="col-sm-6">
-                    @for(benchmark <- esOsWithBenchmarks.benchmarks) {
-                        <p>@benchmark</p>
+                    </p>
                     }
-                    </div>
                 </div>
-            }
-        </div>
+                <div class="col-sm-6">
+                @for(benchmark <- esOsWithBenchmarks.benchmarks) {
+                    <p>@benchmark</p>
+                }
+                </div>
+            </div>
+        }
+    </div>
     </div>
 
 

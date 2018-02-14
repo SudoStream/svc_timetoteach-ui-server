@@ -146,12 +146,12 @@ class TermlyPlansController @Inject()(
   }
 
   def termlyOverviewForGroup(classId: String, subject: String, groupId: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest: AuthenticatedRequest[AnyContent] =>
-    import utils.CurriculumConverterUtil._
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
     val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
     val tttUserId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO ID")
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
+    val eventualEsAndOsTodetailMap = esAndOsReader.esAndOsCodeToEsAndOsDetailMap()
 
     val futureMaybeSubjectName = eventualClasses.map {
       classes =>
@@ -182,6 +182,7 @@ class TermlyPlansController @Inject()(
 
     for {
       classes <- eventualClasses
+      esAndOsCodeToDetailMap <- eventualEsAndOsTodetailMap
       classDetailsList = classes.filter(theClass => theClass.id.id == classId)
       maybeClassDetails: Option[ClassDetails] = classDetailsList.headOption
       if maybeClassDetails.isDefined
@@ -199,7 +200,8 @@ class TermlyPlansController @Inject()(
             classDetails,
             group,
             subject,
-            maybeSubjectTermlyPlan.get
+            maybeSubjectTermlyPlan.get,
+            esAndOsCodeToDetailMap
           ))
         case None =>
           Redirect(routes.TermlyPlansController.termlyPlansForGroup(classId, subject, groupId))
