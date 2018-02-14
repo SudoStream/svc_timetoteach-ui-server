@@ -6,20 +6,21 @@ import io.sudostream.timetoteach.messages.systemwide.model.classes._
 import models.timetoteach.School
 import play.api.Logger
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
-
-object ClassDetailsAvroConverter {
+object ClassDetailsAvroConverter
+{
 
   val logger: Logger.type = Logger
 
-  def convertPickledClassToAvro(classDetails: duplicate.model.ClassDetails): ClassDetails = {
+  def convertPickledClassToAvro(classDetails: duplicate.model.ClassDetails): ClassDetails =
+  {
     val groups = for {
       groupUnpickled: Group <- classDetails.groups
       groupId = GroupId(groupUnpickled.groupId.id)
-      groupType = groupUnpickled.groupType.value match {
-        case "Maths" => GroupType.MATHS
-        case "Literacy" => GroupType.LITERACY
+      groupType = groupUnpickled.groupType.value.toLowerCase match {
+        case "maths" => GroupType.MATHS
+        case "reading" => GroupType.READING
+        case "writing" => GroupType.WRITING
+        case "spelling" => GroupType.SPELLING
         case _ => GroupType.OTHER
       }
       groupLevel = groupUnpickled.groupLevel.value match {
@@ -43,12 +44,15 @@ object ClassDetailsAvroConverter {
     )
   }
 
-  def convertAvroGroupsToModel(classGroups: List[ClassGroupsWrapper]): List[duplicate.model.Group] = {
+  def convertAvroGroupsToModel(classGroups: List[ClassGroupsWrapper]): List[duplicate.model.Group] =
+  {
     for {
       groupWrapper <- classGroups
       groupAvro = groupWrapper.group
       groupType = groupAvro.groupType match {
-        case GroupType.LITERACY => duplicate.model.LiteracyGroupType
+        case GroupType.SPELLING => duplicate.model.SpellingGroupType
+        case GroupType.WRITING => duplicate.model.WritingGroupType
+        case GroupType.READING => duplicate.model.ReadingGroupType
         case GroupType.MATHS => duplicate.model.MathsGroupType
         case _ => duplicate.model.OtherGroupType
       }
@@ -69,7 +73,8 @@ object ClassDetailsAvroConverter {
   }
 
   def convertAvroClassDetailsCollectionToModel(classDetailsCollection: ClassDetailsCollection,
-                                               schools: Seq[School]): List[duplicate.model.ClassDetails] = {
+                                               schools: Seq[School]): List[duplicate.model.ClassDetails] =
+  {
     val classDetailsListAvroStyle = classDetailsCollection.values.map { classDetailsWrapper => classDetailsWrapper.classDetails }
 
     logger.debug(s"classDetailsListAvroStyle size = ${classDetailsListAvroStyle.size}")

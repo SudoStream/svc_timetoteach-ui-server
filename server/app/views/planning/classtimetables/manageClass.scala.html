@@ -193,7 +193,7 @@
                     <div class="col-lg-2 in-app-menu-medium-and-up"></div>
                     <div class="col-sm-12 col-lg-5 ">
                         <div class="text-center">
-                            <label class="manage-class-desription-label manage-class-group-header">Literacy Groups</label>
+                            <label class="manage-class-desription-label manage-class-group-header">Reading Groups</label>
                         </div>
                         <div class="in-app-menu-medium-and-up">
                             <div class="row">
@@ -205,7 +205,7 @@
                         </div>
 
                         @for(group <- classDetails.groups) {
-                            @if(group.groupType.value.toLowerCase == "literacy") {
+                            @if(group.groupType.value.toLowerCase == "reading") {
                                 <div class="manage-new-group-row">
                                     <div class="form-row manage-class-group-row">
 
@@ -310,6 +310,212 @@
                     </div>
                 </div>
 
+
+
+                <div class="form-row add-new-class-form-row">
+                    <div class="col-sm-12 col-lg-5">
+                        <div class="text-center">
+                            <label class="manage-class-desription-label manage-class-group-header">Writing Groups</label>
+                        </div>
+                        <div class="in-app-menu-medium-and-up">
+                            <div class="row">
+                                <div class="col-lg-3 text-muted"><small>Group</small></div>
+                                <div class="col-lg-5 text-muted"><small>Description</small></div>
+                                <div class="col-lg-2 text-muted"><small>Level</small></div>
+                                <div class="col-lg-2"></div>
+                            </div>
+                        </div>
+                        @for(group <- classDetails.groups) {
+                            @if(group.groupType.value.toLowerCase == "writing") {
+                                <div class="manage-new-group-row">
+                                    <div class="form-row manage-class-group-row">
+
+                                        <div class="row in-app-menu-small-devices in-app-menu-small-devices-row">
+                                            <div class="col-sm-12 text-muted"><small>Group Name</small></div>
+                                            <div class="col-sm-12 ">
+                                                <input type="text" name="groupName" class="form-control form-control-sm" disabled="true"
+                                                placeholder="@{
+                                                    group.groupName.name
+                                                }">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3 in-app-menu-medium-and-up">
+                                            <input type="text" name="groupName" class="form-control form-control-sm" disabled="true"
+                                            placeholder="@{
+                                                group.groupName.name
+                                            }">
+                                        </div>
+
+
+                                        <div class="row in-app-menu-small-devices in-app-menu-small-devices-row">
+                                            <div class="col-sm-12 text-muted"><small>Description</small></div>
+                                            <div class="col-sm-12 ">
+                                                <input type="text" name="groupDescription" class="form-control form-control-sm" disabled="true"
+                                                placeholder="@{
+                                                    group.groupDescription.name
+                                                }">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-5 in-app-menu-medium-and-up">
+                                            <input type="text" name="groupDescription" class="form-control form-control-sm" disabled="true"
+                                            placeholder="@{
+                                                group.groupDescription.name
+                                            }">
+                                        </div>
+
+
+                                        <div class="row in-app-menu-small-devices in-app-menu-small-devices-row">
+                                            <div class="col-sm-12 text-muted"><small>Level</small></div>
+                                            <div class="col-sm-12 ">
+                                                <input type="text" name="groupDescription" class="form-control form-control-sm" disabled="true"
+                                                placeholder="@{
+                                                    group.groupLevel.value.toLowerCase.capitalize.replace("level", "")
+                                                }">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-2 in-app-menu-medium-and-up">
+                                            <input type="text" name="groupType" class="form-control form-control-sm" disabled="true"
+                                            placeholder="@group.groupLevel.value.toLowerCase.capitalize.replace("level", "")">
+                                        </div>
+
+                                        <div class="row in-app-menu-small-devices in-app-menu-small-devices-row">
+                                            <br>
+                                            <div class="col-sm-6 ">
+                                                <button id="manage-class-edit" type="button" class="btn btn-sm btn-info align-self-center mx-auto the-group-plans-button" disabled="true">
+                                                    Group Plans
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-2 in-app-menu-medium-and-up">
+                                            <button id="manage-class-edit" type="button" class="btn btn-sm btn-info" disabled="true">
+                                                Plans
+                                            </button>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                    <div class="col-lg-2 in-app-menu-medium-and-up"></div>
+                    <div class="col-sm-12 col-lg-5 ">
+                        <div class="text-center">
+                            <label class="manage-class-desription-label manage-class-group-header">Spelling Groups</label>
+                        </div>
+                        <div class="in-app-menu-medium-and-up">
+                            <div class="row">
+                                <div class="col-lg-3 text-muted"><small>Group</small></div>
+                                <div class="col-lg-5 text-muted"><small>Description</small></div>
+                                <div class="col-lg-2 text-muted"><small>Level</small></div>
+                                <div class="col-lg-2"></div>
+                            </div>
+                        </div>
+
+                        @for(group <- classDetails.groups) {
+                            @if(group.groupType.value.toLowerCase == "spelling") {
+                                <div class="manage-new-group-row">
+                                    <div class="form-row manage-class-group-row">
+
+                                        <div class="row in-app-menu-small-devices in-app-menu-small-devices-row">
+                                            <div class="col-sm-12 text-muted"><small>Group Name</small></div>
+                                            <div class="col-sm-12 ">
+                                                <input type="text" name="groupName" class="form-control form-control-sm" disabled="true"
+                                                placeholder="@{
+                                                    group.groupName.name
+                                                }">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3 in-app-menu-medium-and-up">
+                                            <input type="text" name="groupName" class="form-control form-control-sm" disabled="true"
+                                            placeholder="@{
+                                                group.groupName.name
+                                            }">
+                                        </div>
+
+
+                                        <div class="row in-app-menu-small-devices in-app-menu-small-devices-row">
+                                            <div class="col-sm-12 text-muted"><small>Description</small></div>
+                                            <div class="col-sm-12 ">
+                                                <input type="text" name="groupDescription" class="form-control form-control-sm" disabled="true"
+                                                placeholder="@{
+                                                    group.groupDescription.name
+                                                }">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-5 in-app-menu-medium-and-up">
+                                            <input type="text" name="groupDescription" class="form-control form-control-sm" disabled="true"
+                                            placeholder="@{
+                                                group.groupDescription.name
+                                            }">
+                                        </div>
+
+
+                                        <div class="row in-app-menu-small-devices in-app-menu-small-devices-row">
+                                            <div class="col-sm-12 text-muted"><small>Level</small></div>
+                                            <div class="col-sm-12 ">
+                                                <input type="text" name="groupDescription" class="form-control form-control-sm" disabled="true"
+                                                placeholder="@{
+                                                    group.groupLevel.value.toLowerCase.capitalize.replace("level", "")
+                                                }">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-2 in-app-menu-medium-and-up">
+                                            <input type="text" name="groupType" class="form-control form-control-sm" disabled="true"
+                                            placeholder="@group.groupLevel.value.toLowerCase.capitalize.replace("level", "")">
+                                        </div>
+
+                                        <div class="row in-app-menu-small-devices in-app-menu-small-devices-row">
+                                            <br>
+                                            <div class="col-sm-6 ">
+                                                <button id="manage-class-edit" type="button" class="btn btn-sm btn-info align-self-center mx-auto the-group-plans-button" disabled="true">
+                                                    Group Plans
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-2 in-app-menu-medium-and-up">
+                                            <button id="manage-class-edit" type="button" class="btn btn-sm btn-info" disabled="true">
+                                                Plans
+                                            </button>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+
+                <div class="form-row add-new-class-form-row">
+                    <div class="col-lg-6">
+
+                    @if(classDetails.groups.count(aGroup => aGroup.groupLevel.value.toLowerCase == "other") > 0) {
+                        <label class="manage-class-desription-label manage-class-group-header">Other Groups</label>
+                        @for(group <- classDetails.groups) {
+                            @if(group.groupType.value.toLowerCase == "other") {
+                                <div class="form-row manage-class-group-row">
+                                    <div class="col-lg-6">
+                                        <input type="text" name="groupName" class="form-control form-control-sm" disabled="true"
+                                        placeholder="@{
+                                            group.groupName.name
+                                        }">
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <input type="text" name="groupType" class="form-control form-control-sm" disabled="true"
+                                        placeholder="@{
+                                            group.groupLevel.value.toLowerCase.capitalize.replace("level", "")
+                                        }">
+                                    </div>
+                                    @*<div class="col-lg-1">*@
+                                    @*<button type="button" class="close" aria-label="Close">*@
+                                    @*<span aria-hidden="true">&times;</span>*@
+                                    @*</button>*@
+                                    @*</div>*@
+                                </div>
+                            }
+                        }
+                    }
+                    </div>
+                </div>
 
             </div>
         </div>

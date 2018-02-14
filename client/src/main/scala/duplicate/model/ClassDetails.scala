@@ -8,7 +8,8 @@ case class ClassDetails(
                          className: ClassName,
                          classDescription: ClassDescription,
                          groups: List[Group],
-                         classTeachersWithWriteAccess: List[String]
+                         classTeachersWithWriteAccess: List[String],
+                         subjectToMaybeGroupMap: Map[SubjectModel, Option[Group]]
                        ) {
   if (classTeachersWithWriteAccess.isEmpty) throw new IllegalArgumentException(
     "Must have at least 1 teacher with write access"
@@ -19,14 +20,14 @@ object ClassDetails{
 }
 
 case class SchoolDetails(
-                     id: String,
-                     name: String,
-                     address: String,
-                     postCode: String,
-                     telephone: String,
-                     localAuthority: String,
-                     country: String
-                   )
+                          id: String,
+                          name: String,
+                          address: String,
+                          postCode: String,
+                          telephone: String,
+                          localAuthority: String,
+                          country: String
+                        )
 
 object SchoolDetails{
   implicit def rw: RW[SchoolDetails] = macroRW
@@ -89,8 +90,16 @@ case object MathsGroupType extends GroupType {
   val value = "Maths"
 }
 
-case object LiteracyGroupType extends GroupType {
-  val value = "Literacy"
+case object ReadingGroupType extends GroupType {
+  val value = "Reading"
+}
+
+case object WritingGroupType extends GroupType {
+  val value = "Writing"
+}
+
+case object SpellingGroupType extends GroupType {
+  val value = "Spelling"
 }
 
 case object OtherGroupType extends GroupType {

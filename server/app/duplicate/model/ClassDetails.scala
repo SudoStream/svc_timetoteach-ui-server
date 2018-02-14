@@ -90,8 +90,16 @@ case object MathsGroupType extends GroupType {
   val value = "Maths"
 }
 
-case object LiteracyGroupType extends GroupType {
-  val value = "Literacy"
+case object ReadingGroupType extends GroupType {
+  val value = "Reading"
+}
+
+case object WritingGroupType extends GroupType {
+  val value = "Writing"
+}
+
+case object SpellingGroupType extends GroupType {
+  val value = "Spelling"
 }
 
 case object OtherGroupType extends GroupType {

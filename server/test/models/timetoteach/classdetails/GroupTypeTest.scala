@@ -27,9 +27,9 @@ class GroupTypeTest extends FunSpec {
       Group(createGroupId(), GroupName("Triangles"), GroupDescription(""), MathsGroupType, SecondLevel),
       Group(createGroupId(), GroupName("Squares"), GroupDescription(""), MathsGroupType, FirstLevel),
       Group(createGroupId(), GroupName("Circles"),GroupDescription(""),  MathsGroupType, FirstLevel),
-      Group(createGroupId(), GroupName("Bears"), GroupDescription(""), LiteracyGroupType, SecondLevel),
-      Group(createGroupId(), GroupName("Lions"), GroupDescription(""), LiteracyGroupType, SecondLevel),
-      Group(createGroupId(), GroupName("Tigers"),GroupDescription(""),  LiteracyGroupType, FirstLevel)
+      Group(createGroupId(), GroupName("Bears"), GroupDescription(""), ReadingGroupType, SecondLevel),
+      Group(createGroupId(), GroupName("Lions"), GroupDescription(""), ReadingGroupType, SecondLevel),
+      Group(createGroupId(), GroupName("Tigers"),GroupDescription(""),  ReadingGroupType, FirstLevel)
     )
 
   }
@@ -39,9 +39,9 @@ class GroupTypeTest extends FunSpec {
       Group(createGroupId(), GroupName("Triangles"), GroupDescription(""), MathsGroupType, SecondLevel),
       Group(createGroupId(), GroupName("Squares"), GroupDescription(""), MathsGroupType, FirstLevel),
       Group(createGroupId(), GroupName("Circles"),GroupDescription(""),  MathsGroupType, FirstLevel),
-      Group(createGroupId(), GroupName("Bears"), GroupDescription(""), LiteracyGroupType, SecondLevel),
-      Group(createGroupId(), GroupName("Lions"), GroupDescription(""), LiteracyGroupType, SecondLevel),
-      Group(createGroupId(), GroupName("Tigers"),GroupDescription(""),  LiteracyGroupType, FirstLevel)
+      Group(createGroupId(), GroupName("Bears"), GroupDescription(""), ReadingGroupType, SecondLevel),
+      Group(createGroupId(), GroupName("Lions"), GroupDescription(""), ReadingGroupType, SecondLevel),
+      Group(createGroupId(), GroupName("Tigers"),GroupDescription(""),  ReadingGroupType, FirstLevel)
     )
 
     val classDetails = ClassDetails(

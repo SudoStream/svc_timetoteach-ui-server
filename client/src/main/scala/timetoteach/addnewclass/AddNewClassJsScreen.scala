@@ -47,7 +47,9 @@ object AddNewClassJsScreen {
                 `class` := "btn btn-outline-info",
                 option(value := "Select", "Select Group Type ... "),
                 option(value := "Maths", "Maths"),
-                option(value := "Literacy", "Literacy"),
+                option(value := "Reading", "Reading"),
+                option(value := "Writing", "Writing"),
+                option(value := "Spelling", "Spelling"),
                 option(value := "Other", "Other")
               )
             )),
@@ -216,7 +218,9 @@ object AddNewClassJsScreen {
               println(s"groupTypeMaybe = '$groupTypeMaybe'")
               groupTypeMaybe match {
                 case "Maths" => MathsGroupType
-                case "Literacy" => LiteracyGroupType
+                case "Reading" => ReadingGroupType
+                case "Writing" => WritingGroupType
+                case "Spelling" => SpellingGroupType
                 case _ => OtherGroupType
               }
             }
@@ -332,7 +336,8 @@ object AddNewClassJsScreen {
           ClassName(className),
           ClassDescription(classDescription),
           groups,
-          List(dom.window.localStorage.getItem("timeToTeachUserId"))
+          List(dom.window.localStorage.getItem("timeToTeachUserId")),
+          Map()
         )
 
         if (errorCount > 0) {
