@@ -125,7 +125,7 @@ class SchoolReaderServiceProxyImpl @Inject()(ws: WSClient) {
                 School(
                   id = singleSchoolWrapper.school.id,
                   name = singleSchoolWrapper.school.name.replace("'",""),
-                  address = singleSchoolWrapper.school.address,
+                  address = singleSchoolWrapper.school.address.replace("'",""),
                   postCode = singleSchoolWrapper.school.postCode,
                   telephone = singleSchoolWrapper.school.telephone,
                   localAuthority = LocalAuthority(theLocalAuthority),
