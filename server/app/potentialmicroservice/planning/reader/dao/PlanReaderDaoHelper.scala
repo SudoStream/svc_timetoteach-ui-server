@@ -19,6 +19,19 @@ trait PlanReaderDaoHelper
   private val logger: Logger = Logger
   private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
 
+  def findLatestVersionOfTermlyPlan(foundTermlyPlanDocs: List[Document]): Option[SubjectTermlyPlan] =
+  {
+    logger.debug(s"foundTermlyPlanDocs size = ${foundTermlyPlanDocs.size}")
+    if (foundTermlyPlanDocs.isEmpty) {
+      None
+    } else {
+      val latestVersionOfTermlyPlansDoc = findLatestVersionOfTermlyPlanDocLoop(foundTermlyPlanDocs.tail, foundTermlyPlanDocs.head)
+      convertDocumentToSubjectTermlyPlan(latestVersionOfTermlyPlansDoc)
+    }
+  }
+
+  ////////////////////// Implementation ////////////////////////
+
   private[dao] def findLatestVersionOfTermlyPlanDocLoop(foundTermlyPlanDocs: List[Document], currentLatestDoc: Document): Document =
   {
     if (foundTermlyPlanDocs.isEmpty) currentLatestDoc
@@ -42,17 +55,6 @@ trait PlanReaderDaoHelper
       }
 
       findLatestVersionOfTermlyPlanDocLoop(foundTermlyPlanDocs.tail, newLatestDoc)
-    }
-  }
-
-  def findLatestVersionOfTermlyPlan(foundTermlyPlanDocs: List[Document]): Option[SubjectTermlyPlan] =
-  {
-    logger.debug(s"foundTermlyPlanDocs size = ${foundTermlyPlanDocs.size}")
-    if (foundTermlyPlanDocs.isEmpty) {
-      None
-    } else {
-      val latestVersionOfTermlyPlansDoc = findLatestVersionOfTermlyPlanDocLoop(foundTermlyPlanDocs.tail, foundTermlyPlanDocs.head)
-      convertDocumentToSubjectTermlyPlan(latestVersionOfTermlyPlansDoc)
     }
   }
 
