@@ -3,7 +3,7 @@ package potentialmicroservice.planning.writer.dao
 import javax.inject.{Inject, Singleton}
 
 import dao.MongoDbConnection
-import models.timetoteach.planning.SubjectTermlyPlan
+import models.timetoteach.planning.{SubjectTermlyPlan, TermlyCurriculumSelection}
 import org.mongodb.scala.{Completed, Document, MongoCollection}
 import play.api.Logger
 
@@ -11,9 +11,10 @@ import scala.concurrent.Future
 
 @Singleton
 class PlanWriterDaoImpl @Inject()(mongoDbConnection: MongoDbConnection)
-  extends PlanWriterDao with PlanWriterDaoSubjectTermlyPlanHelper
+  extends PlanWriterDao with PlanWriterDaoSubjectTermlyPlanHelper with PlanWriterDaoTermlyCurriculumSelectionHelper
 {
   private val termlyPlanningCollection: MongoCollection[Document] = mongoDbConnection.getTermlyPlanningCollection
+  private val termlyCurriculumSelectionCollection: MongoCollection[Document] = mongoDbConnection.getTermlyCurriculumSelectionCollection
   private val logger: Logger = Logger
 
   override def saveSubjectTermlyPlan(planToSave: SubjectTermlyPlan): Future[Completed] =
@@ -24,4 +25,11 @@ class PlanWriterDaoImpl @Inject()(mongoDbConnection: MongoDbConnection)
     observable.toFuture()
   }
 
+  override def saveTermlyCurriculumSelection(termlyCurriculumSelection: TermlyCurriculumSelection): Future[Completed] =
+  {
+    val termlyCurriculumSelectionAsDocument = convertTermlyCurriculumSelectionToMongoDbDocument(termlyCurriculumSelection)
+    logger.info(s"Inserting termly curriculum selection to database: ${termlyCurriculumSelectionAsDocument.toString}")
+    val observable = termlyCurriculumSelectionCollection.insertOne(termlyCurriculumSelectionAsDocument)
+    observable.toFuture()
+  }
 }
