@@ -16,9 +16,7 @@ import utils.mongodb.MongoDbSafety._
 
 trait PlanReaderDaoHelper
 {
-  val logger: Logger = Logger
-  import potentialmicroservice.planning.sharedschema.TermlyPlanningSchema.CREATED_TIMESTAMP
-
+  private val logger: Logger = Logger
   private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
 
   private[dao] def findLatestVersionOfTermlyPlanDocLoop(foundTermlyPlanDocs: List[Document], currentLatestDoc: Document): Document =
@@ -26,11 +24,11 @@ trait PlanReaderDaoHelper
     if (foundTermlyPlanDocs.isEmpty) currentLatestDoc
     else {
       val nextDoc = foundTermlyPlanDocs.head
-      val maybeNextTimestampIso = safelyGetString(nextDoc, CREATED_TIMESTAMP)
+      val maybeNextTimestampIso = safelyGetString(nextDoc, TermlyPlanningSchema.CREATED_TIMESTAMP)
       val newLatestDoc: Document = maybeNextTimestampIso match {
         case Some(nextTimestampIso) =>
           val nextTimestamp = LocalDateTime.parse(nextTimestampIso, formatter)
-          val maybeCurrentTimestampIso = safelyGetString(currentLatestDoc, CREATED_TIMESTAMP)
+          val maybeCurrentTimestampIso = safelyGetString(currentLatestDoc, TermlyPlanningSchema.CREATED_TIMESTAMP)
           maybeCurrentTimestampIso match {
             case Some(currentTimestampIso) => val currentTimestamp = LocalDateTime.parse(currentTimestampIso, formatter)
               if (currentTimestamp.isBefore(nextTimestamp)) {

@@ -9,7 +9,7 @@ import org.mongodb.scala.bson.BsonDocument
 import org.mongodb.scala.connection.{NettyStreamFactoryFactory, SslSettings}
 import org.mongodb.scala.{Document, MongoClient, MongoClientSettings, MongoCollection, ServerAddress}
 import play.api.Logger
-import potentialmicroservice.planning.sharedschema.TermlyPlanningSchema
+import potentialmicroservice.planning.sharedschema.{TermlyCurriculumSelectionSchema, TermlyPlanningSchema}
 
 import scala.collection.JavaConverters._
 import scala.util.{Failure, Success}
@@ -24,7 +24,8 @@ class MongoDbConnectionImpl extends MongoDbConnection with MiniKubeHelper {
   private val mongoDbUri = new URI(mongoDbUriString)
 
   private val planningDatabaseName = config.getString("mongodb.planning-database-name")
-  private val termlyPlanningCollectionName = config.getString("mongodb.termly-planning-collection-name")
+  private val termlyPlansCollectionName = config.getString("mongodb.termly-plans-collection-name")
+  private val termlyCurriculumSelectionCollectionName = config.getString("mongodb.termly-curriculum-selection-collection-name")
 
   private val isLocalMongoDb: Boolean = config.getString("mongodb.localmongodb").toBoolean
   logger.info(s"======================================================== isLocalMongoDb: '$isLocalMongoDb'")
@@ -70,25 +71,44 @@ class MongoDbConnectionImpl extends MongoDbConnection with MiniKubeHelper {
 
   private lazy val mongoDbClient: MongoClient = createMongoClient
 
-  ensureIndexes()
+  ensureTermlyPlanningIndexes()
+  ensureTermlyCurriculumSelectionIndexes()
 
   override def getTermlyPlanningCollection: MongoCollection[Document] = {
     val planningDatabase = mongoDbClient.getDatabase(planningDatabaseName)
-    planningDatabase.getCollection(termlyPlanningCollectionName)
+    planningDatabase.getCollection(termlyPlansCollectionName)
   }
 
-  override def ensureIndexes(): Unit = {
+  override def getTermlyCurriculumSelectionCollection: MongoCollection[Document] = {
+    val planningDatabase = mongoDbClient.getDatabase(planningDatabaseName)
+    planningDatabase.getCollection(termlyCurriculumSelectionCollectionName)
+  }
+
+  override def ensureTermlyPlanningIndexes(): Unit = {
     val mainIndex = BsonDocument(
       TermlyPlanningSchema.TTT_USER_ID -> 1,
       TermlyPlanningSchema.CLASS_ID -> 1,
       TermlyPlanningSchema.GROUP_ID -> 1,
       TermlyPlanningSchema.CURRICULUM_PLANNING_AREA -> 1
     )
-    logger.info(s"Ensuring index created : ${mainIndex.toString}")
+    logger.info(s"Ensuring index created on termly planning collection : ${mainIndex.toString}")
     val obs = getTermlyPlanningCollection.createIndex(mainIndex)
     obs.toFuture().onComplete {
-      case Success(msg) => logger.info(s"Ensure index attempt completed with msg : $msg")
-      case Failure(ex) => logger.info(s"Ensure index failed to complete: ${ex.getMessage}")
+      case Success(msg) => logger.info(s"Ensure termly planning index attempt completed with msg : $msg")
+      case Failure(ex) => logger.info(s"Ensure termly planning index failed to complete: ${ex.getMessage}")
+    }
+  }
+
+  override def ensureTermlyCurriculumSelectionIndexes(): Unit = {
+    val mainIndex = BsonDocument(
+      TermlyCurriculumSelectionSchema.TTT_USER_ID -> 1,
+      TermlyCurriculumSelectionSchema.CLASS_ID -> 1
+    )
+    logger.info(s"Ensuring index created on termly curriculum selection collection: ${mainIndex.toString}")
+    val obs = getTermlyCurriculumSelectionCollection.createIndex(mainIndex)
+    obs.toFuture().onComplete {
+      case Success(msg) => logger.info(s"Ensure termly curriculum selection index attempt completed with msg : $msg")
+      case Failure(ex) => logger.info(s"Ensure termly curriculum selection index failed to complete: ${ex.getMessage}")
     }
   }
 }

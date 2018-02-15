@@ -59,7 +59,8 @@ class TermlyPlansController @Inject()(
     }
   }
 
-  def termlyPlansForClass(classId: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest: AuthenticatedRequest[AnyContent] =>
+
+  def termlyPlansSelectCurriculumAreas(classId: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest: AuthenticatedRequest[AnyContent] =>
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
     val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
@@ -72,15 +73,50 @@ class TermlyPlansController @Inject()(
       maybeClassDetails: Option[ClassDetails] = classDetailsList.headOption
       if maybeClassDetails.isDefined
       classDetails = maybeClassDetails.get
-    } yield {
-      Ok(views.html.planning.termly.termlyPlansForClass(new MyDeadboltHandler(userReader),
+    } yield
+      Ok(views.html.planning.termly.termlyPlansSelectCurriculumAreas(
+        new MyDeadboltHandler(userReader),
         userPictureUri,
         userFirstName,
         userFamilyName,
         TimeToTeachUserId(tttUserId),
         classDetails
       ))
-    }
+  }
+
+  def termlyPlansForClass(classId: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest: AuthenticatedRequest[AnyContent] =>
+    val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
+    val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
+    val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
+    val tttUserId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO ID")
+
+    val eventualMaybeCurrentTermlyCurriculumSelection = planningReaderService.currentTermlyCurriculumSelection(
+      TimeToTeachUserId(tttUserId),
+      ClassId(classId)
+    )
+
+    val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
+    for {
+      classes <- eventualClasses
+      classDetailsList = classes.filter(theClass => theClass.id.id == classId)
+      maybeClassDetails: Option[ClassDetails] = classDetailsList.headOption
+      if maybeClassDetails.isDefined
+      classDetails = maybeClassDetails.get
+
+      maybeCurrentTermlyCurriculumSelection <- eventualMaybeCurrentTermlyCurriculumSelection
+      route = maybeCurrentTermlyCurriculumSelection match {
+        case Some(currentTermlyCurriculumSelection) =>
+          Ok(views.html.planning.termly.termlyPlansForClass(new MyDeadboltHandler(userReader),
+            userPictureUri,
+            userFirstName,
+            userFamilyName,
+            TimeToTeachUserId(tttUserId),
+            classDetails
+          ))
+        case None =>
+          Redirect(routes.TermlyPlansController.termlyPlansSelectCurriculumAreas(classId))
+      }
+    } yield route
   }
 
 
