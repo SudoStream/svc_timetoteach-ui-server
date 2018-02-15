@@ -5,7 +5,7 @@ import org.scalatest.FunSpec
 
 class PlanReaderDaoHelperTest extends FunSpec
 {
-  private val planReaderDao = new PlanReaderDaoHelper
+  private val planReaderDao = new PlanReaderDaoSubjectTermlyPlanHelper
   {
   }
 

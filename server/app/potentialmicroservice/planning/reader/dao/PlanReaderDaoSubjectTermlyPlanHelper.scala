@@ -14,7 +14,7 @@ import play.api.Logger
 import potentialmicroservice.planning.sharedschema.TermlyPlanningSchema
 import utils.mongodb.MongoDbSafety._
 
-trait PlanReaderDaoHelper
+trait PlanReaderDaoSubjectTermlyPlanHelper
 {
   private val logger: Logger = Logger
   private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
