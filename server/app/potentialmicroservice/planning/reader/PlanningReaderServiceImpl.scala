@@ -2,7 +2,7 @@ package potentialmicroservice.planning.reader
 
 import javax.inject.{Inject, Singleton}
 
-import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.subjectdetail.SubjectName
+import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
 import models.timetoteach.planning.{GroupId, SubjectTermlyPlan}
 import models.timetoteach.{ClassId, TimeToTeachUserId}
 import potentialmicroservice.planning.reader.dao.PlanReaderDao
@@ -16,9 +16,9 @@ class PlanningReaderServiceImpl @Inject()(planningReaderDao: PlanReaderDao) exte
   override def readSubjectTermlyPlan(tttUserId: TimeToTeachUserId,
                                      classId: ClassId,
                                      groupId: GroupId,
-                                     subject: SubjectName): Future[Option[SubjectTermlyPlan]] =
+                                     planningArea: ScottishCurriculumPlanningArea): Future[Option[SubjectTermlyPlan]] =
   {
-    planningReaderDao.readSubjectTermlyPlan(tttUserId, classId, groupId, subject)
+    planningReaderDao.readSubjectTermlyPlan(tttUserId, classId, groupId, planningArea)
   }
 
 }

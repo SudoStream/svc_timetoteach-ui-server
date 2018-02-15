@@ -26,7 +26,7 @@ trait PlanWriterDaoHelper {
       CLASS_ID -> planToSave.classId.value,
       PLAN_TYPE -> planToSave.planType.toString,
       GROUP_ID -> groupIdValue,
-      SUBJECT_NAME -> planToSave.subject.toString,
+      CURRICULUM_PLANNING_AREA -> planToSave.planningArea.toString,
       CREATED_TIMESTAMP -> planToSave.createdTime.toString.replace("T", " "),
       SCHOOL_TERM -> BsonDocument(
         SCHOOL_YEAR -> schoolYearValue,

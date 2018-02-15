@@ -4,12 +4,13 @@ import java.time.LocalDateTime
 
 import controllers.serviceproxies.TermServiceProxyImpl
 import duplicate.model.{EandOsWithBenchmarks, TermlyPlansToSave}
-import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.subjectdetail.SubjectName
-import models.timetoteach.planning.{GroupId, PlanType}
+import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
+import models.timetoteach.planning.GroupId
 import models.timetoteach.term.SchoolTermName
 import org.scalatest.FunSpec
 
-class TermPlansHelperTest extends FunSpec {
+class TermPlansHelperTest extends FunSpec
+{
 
   private val SCHOOL_ID = "school3333"
   private val CLASS_ID = "classId12312321"
@@ -47,7 +48,7 @@ class TermPlansHelperTest extends FunSpec {
     }
 
     it("should create a SubjectTermlyPlan with a subject of maths") {
-      assert(subjectTermlyPlan.subject === SubjectName.MATHS)
+      assert(subjectTermlyPlan.planningArea === ScottishCurriculumPlanningArea.MATHEMATICS)
     }
 
     it("should create a SubjectTermlyPlan with 1 full list of esos with benchmarks") {

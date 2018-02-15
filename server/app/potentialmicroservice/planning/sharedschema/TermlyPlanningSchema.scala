@@ -6,7 +6,7 @@ object TermlyPlanningSchema {
   val CLASS_ID = "classId"
   val PLAN_TYPE = "planType"
   val GROUP_ID = "groupId"
-  val SUBJECT_NAME = "subjectName"
+  val CURRICULUM_PLANNING_AREA = "curriculumPlanningArea"
   val CREATED_TIMESTAMP = "timestamp"
 
   /// School Term

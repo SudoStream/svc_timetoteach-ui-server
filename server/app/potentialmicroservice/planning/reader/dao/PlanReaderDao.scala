@@ -1,9 +1,9 @@
 package potentialmicroservice.planning.reader.dao
 
 import com.google.inject.ImplementedBy
-import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.subjectdetail.SubjectName
-import models.timetoteach.{ClassId, TimeToTeachUserId}
+import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
 import models.timetoteach.planning.{GroupId, SubjectTermlyPlan}
+import models.timetoteach.{ClassId, TimeToTeachUserId}
 
 import scala.concurrent.Future
 
@@ -15,7 +15,7 @@ trait PlanReaderDao
                              tttUserId: TimeToTeachUserId,
                              classId: ClassId,
                              groupId: GroupId,
-                             subject: SubjectName
+                             planningArea: ScottishCurriculumPlanningArea
                            ): Future[Option[SubjectTermlyPlan]]
 
 }

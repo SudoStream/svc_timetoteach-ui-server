@@ -153,7 +153,7 @@ trait PlanReaderDaoHelper
         case Some(id) => Some(GroupId(id))
         case None => None
       }
-      subjectStringValue <- safelyGetStringNoneIfBlank(doc, TermlyPlanningSchema.SUBJECT_NAME)
+      subjectStringValue <- safelyGetStringNoneIfBlank(doc, TermlyPlanningSchema.CURRICULUM_PLANNING_AREA)
       subject <- SubjectNameConverter.convertSubjectNameStringToSubjectName(subjectStringValue)
       createdTimeString <- safelyGetStringNoneIfBlank(doc, TermlyPlanningSchema.CREATED_TIMESTAMP)
 

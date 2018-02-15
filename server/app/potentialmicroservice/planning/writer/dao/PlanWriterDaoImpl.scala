@@ -18,8 +18,8 @@ class PlanWriterDaoImpl @Inject()(mongoDbConnection: MongoDbConnection)
 
   override def saveSubjectTermlyPlan(planToSave: SubjectTermlyPlan): Future[Completed] =
   {
-    logger.info(s"Upserting termly plan to Database: ${planToSave.toString}")
     val termlyPlanAsDocument = convertTermlyPlanToMongoDbDocument(planToSave)
+    logger.info(s"Inserting termly plan to database: ${termlyPlanAsDocument.toString}")
     val observable = termlyPlanningCollection.insertOne(termlyPlanAsDocument)
     observable.toFuture()
   }

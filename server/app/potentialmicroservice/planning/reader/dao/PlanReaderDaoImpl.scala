@@ -3,12 +3,11 @@ package potentialmicroservice.planning.reader.dao
 import javax.inject.{Inject, Singleton}
 
 import dao.MongoDbConnection
-import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.subjectdetail.SubjectName
+import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
 import models.timetoteach.planning.{GroupId, SubjectTermlyPlan}
 import models.timetoteach.{ClassId, TimeToTeachUserId}
 import org.mongodb.scala.bson.BsonDocument
 import org.mongodb.scala.{Document, MongoCollection}
-import play.api.Logger
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -23,15 +22,15 @@ class PlanReaderDaoImpl @Inject()(mongoDbConnection: MongoDbConnection) extends 
   override def readSubjectTermlyPlan(tttUserId: TimeToTeachUserId,
                                      classId: ClassId,
                                      groupId: GroupId,
-                                     subject: SubjectName): Future[Option[SubjectTermlyPlan]] =
+                                     planningArea: ScottishCurriculumPlanningArea): Future[Option[SubjectTermlyPlan]] =
   {
-    logger.info(s"Reading subject termly plan from Database: $tttUserId|$classId|$groupId|$subject")
+    logger.info(s"Reading subject termly plan from Database: $tttUserId|$classId|$groupId|$planningArea")
 
     val findMatcher = BsonDocument(
       TTT_USER_ID -> tttUserId.value,
       CLASS_ID -> classId.value,
       GROUP_ID -> groupId.value,
-      SUBJECT_NAME -> subject.toString
+      CURRICULUM_PLANNING_AREA -> planningArea.toString
     )
 
     val futureFoundTermlyPlanDocuments = termlyPlanningCollection.find(findMatcher).toFuture()

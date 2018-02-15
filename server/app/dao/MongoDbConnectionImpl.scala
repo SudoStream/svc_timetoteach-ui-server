@@ -82,7 +82,7 @@ class MongoDbConnectionImpl extends MongoDbConnection with MiniKubeHelper {
       TermlyPlanningSchema.TTT_USER_ID -> 1,
       TermlyPlanningSchema.CLASS_ID -> 1,
       TermlyPlanningSchema.GROUP_ID -> 1,
-      TermlyPlanningSchema.SUBJECT_NAME -> 1
+      TermlyPlanningSchema.CURRICULUM_PLANNING_AREA -> 1
     )
     logger.info(s"Ensuring index created : ${mainIndex.toString}")
     val obs = getTermlyPlanningCollection.createIndex(mainIndex)

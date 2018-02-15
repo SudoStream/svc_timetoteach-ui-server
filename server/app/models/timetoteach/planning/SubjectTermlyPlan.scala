@@ -3,7 +3,7 @@ package models.timetoteach.planning
 import java.time.LocalDateTime
 
 import duplicate.model.EandOsWithBenchmarks
-import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.subjectdetail.SubjectName
+import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
 import models.timetoteach.planning.PlanType.PlanType
 import models.timetoteach.term.SchoolTerm
 import models.timetoteach.{ClassId, TimeToTeachUserId}
@@ -15,7 +15,7 @@ case class SubjectTermlyPlan(
                               schoolTerm: SchoolTerm,
                               classId: ClassId,
                               maybeGroupId: Option[GroupId],
-                              subject: SubjectName,
+                              planningArea: ScottishCurriculumPlanningArea,
                               createdTime: LocalDateTime,
                               eAndOsWithBenchmarks: List[EandOsWithBenchmarks]
                             )
@@ -56,33 +56,36 @@ object SubjectNameConverter
 {
   val logger: Logger = Logger
 
-  def convertSubjectNameStringToSubjectName(name: String): Option[SubjectName] =
+  def convertSubjectNameStringToSubjectName(name: String): Option[ScottishCurriculumPlanningArea] =
   {
     name.toUpperCase match {
-      case "ART" => Some(SubjectName.ART)
-      case "ASSEMBLY" => Some(SubjectName.ASSEMBLY)
-      case "EMPTY" => Some(SubjectName.EMPTY)
-      case "DRAMA" => Some(SubjectName.DRAMA)
-      case "GOLDEN_TIME" => Some(SubjectName.GOLDEN_TIME)
-      case "HEALTH" => Some(SubjectName.HEALTH)
-      case "ICT" => Some(SubjectName.ICT)
-      case "MATHS" => Some(SubjectName.MATHS)
-      case "MUSIC" => Some(SubjectName.MUSIC)
-      case "NUMERACY" => Some(SubjectName.NUMERACY)
-      case "OTHER" => Some(SubjectName.OTHER)
-      case "READING" => Some(SubjectName.READING)
-      case "PHYSICAL_EDUCATION" => Some(SubjectName.PHYSICAL_EDUCATION)
-      case "RME" => Some(SubjectName.RME)
-      case "SOFT_START" => Some(SubjectName.SOFT_START)
-      case "SPELLING" => Some(SubjectName.SPELLING)
-      case "TEACHER_COVERTIME" => Some(SubjectName.TEACHER_COVERTIME)
-      case "TOPIC" => Some(SubjectName.TOPIC)
-      case "WRITING" => Some(SubjectName.WRITING)
-      case "PLAY" => Some(SubjectName.PLAY)
-      case "MODERN_LANGUAGES" => Some(SubjectName.MODERN_LANGUAGES)
-      case "SCIENCE" => Some(SubjectName.SCIENCE)
-      case "HAND_WRITING" => Some(SubjectName.HAND_WRITING)
-      case "GEOGRAPHY" => Some(SubjectName.GEOGRAPHY)
+      case "ART" | "EXPRESSIVE_ARTS__ART" => Some(ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__ART)
+      case "ASSEMBLY" => None
+      case "EMPTY" => None
+      case "DRAMA" | "EXPRESSIVE_ARTS__DRAMA" => Some(ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__DRAMA)
+      case "GOLDEN_TIME" => None
+      case "HEALTH" | "HEALTH_AND_WELLBEING" => Some(ScottishCurriculumPlanningArea.HEALTH_AND_WELLBEING)
+      case "ICT" | "TECHNOLOGIES" => Some(ScottishCurriculumPlanningArea.TECHNOLOGIES)
+      case "MATHS" | "MATHEMATICS" => Some(ScottishCurriculumPlanningArea.MATHEMATICS)
+      case "MUSIC" | "EXPRESSIVE_ARTS__MUSIC" => Some(ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__MUSIC)
+      case "NUMERACY" => Some(ScottishCurriculumPlanningArea.MATHEMATICS)
+      case "OTHER" => None
+      case "READING" | "LITERACY__READING" => Some(ScottishCurriculumPlanningArea.LITERACY__READING)
+      case "PHYSICAL_EDUCATION" | "HEALTH_AND_WELLBEING__PHYSICAL_EDUCATION" =>
+        Some(ScottishCurriculumPlanningArea.HEALTH_AND_WELLBEING__PHYSICAL_EDUCATION)
+      case "RME" | "RME__STANDARD" => Some(ScottishCurriculumPlanningArea.RME__STANDARD)
+      case "RME__CATHOLIC" => Some(ScottishCurriculumPlanningArea.RME__CATHOLIC)
+      case "SOFT_START" => None
+      case "SPELLING" => None
+      case "TEACHER_COVERTIME" => None
+      case "TOPIC" => Some(ScottishCurriculumPlanningArea.TOPIC)
+      case "WRITING" | "LITERACY__WRITING" => Some(ScottishCurriculumPlanningArea.LITERACY__WRITING)
+      case "PLAY" => None
+      case "MODERN_LANGUAGES" | "LITERACY__MODERN_LANGUAGES"=> Some(ScottishCurriculumPlanningArea.LITERACY__MODERN_LANGUAGES)
+      case "SCIENCE" => Some(ScottishCurriculumPlanningArea.SCIENCE)
+      case "HAND_WRITING" => None
+      case "GEOGRAPHY" | "SOCIAL_STUDIES" => Some(ScottishCurriculumPlanningArea.SOCIAL_STUDIES)
+      case "HISTORY" => Some(ScottishCurriculumPlanningArea.SOCIAL_STUDIES)
       case other =>
         logger.warn(s"Did not recognise subject name '$other'")
         None

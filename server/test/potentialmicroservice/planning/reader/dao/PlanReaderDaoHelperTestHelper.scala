@@ -14,7 +14,7 @@ object PlanReaderDaoHelperTestHelper
       "classId" -> "classId_1b22d43d-5585-47b4-bb41-94f26d3edba5",
       "planType" -> "GROUP_LEVEL_PLAN",
       "groupId" -> "groupId_f842e787-cc90-483f-a321-49b68a252a80",
-      "subjectName" -> "MATHS",
+      "curriculumPlanningArea" -> "MATHEMATICS",
       "timestamp" -> timestamp,
       "schoolTerm" -> BsonDocument(
         "schoolYear" -> "2017-2018",

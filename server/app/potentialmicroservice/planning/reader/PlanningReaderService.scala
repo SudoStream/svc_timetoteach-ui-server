@@ -1,7 +1,7 @@
 package potentialmicroservice.planning.reader
 
 import com.google.inject.ImplementedBy
-import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.subjectdetail.SubjectName
+import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
 import models.timetoteach.planning.{GroupId, SubjectTermlyPlan}
 import models.timetoteach.{ClassId, TimeToTeachUserId}
 
@@ -15,7 +15,7 @@ trait PlanningReaderService
                              tttUserId: TimeToTeachUserId,
                              classId: ClassId,
                              groupId: GroupId,
-                             subject: SubjectName
+                             planningArea: ScottishCurriculumPlanningArea
                            ): Future[Option[SubjectTermlyPlan]]
 
 }
