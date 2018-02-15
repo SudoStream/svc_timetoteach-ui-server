@@ -5,7 +5,7 @@ import models.timetoteach.planning.SubjectTermlyPlan
 import org.mongodb.scala.bson.collection.immutable.Document
 import org.mongodb.scala.bson.{BsonArray, BsonDocument, BsonString}
 
-trait PlanWriterDaoHelper {
+trait PlanWriterDaoSubjectTermlyPlanHelper {
   import potentialmicroservice.planning.sharedschema.TermlyPlanningSchema._
 
   def convertTermlyPlanToMongoDbDocument(planToSave: SubjectTermlyPlan): Document = {

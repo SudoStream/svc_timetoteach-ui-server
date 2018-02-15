@@ -11,7 +11,7 @@ import scala.concurrent.Future
 
 @Singleton
 class PlanWriterDaoImpl @Inject()(mongoDbConnection: MongoDbConnection)
-  extends PlanWriterDao with PlanWriterDaoHelper
+  extends PlanWriterDao with PlanWriterDaoSubjectTermlyPlanHelper
 {
   private val termlyPlanningCollection: MongoCollection[Document] = mongoDbConnection.getTermlyPlanningCollection
   private val logger: Logger = Logger
