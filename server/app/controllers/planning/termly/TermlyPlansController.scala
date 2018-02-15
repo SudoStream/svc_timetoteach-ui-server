@@ -7,7 +7,8 @@ import be.objectify.deadbolt.scala.{AuthenticatedRequest, DeadboltActions}
 import controllers.serviceproxies._
 import curriculum.scotland.EsOsAndBenchmarksBuilderImpl
 import duplicate.model.{ClassDetails, TermlyPlansToSave}
-import models.timetoteach.planning.{GroupId, SubjectNameConverter}
+import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
+import models.timetoteach.planning.{GroupId, ScottishCurriculumPlanningAreaWrapper, SubjectNameConverter}
 import models.timetoteach.{ClassId, CookieNames, TimeToTeachUserId}
 import play.api.Logger
 import play.api.data.Form
@@ -59,6 +60,16 @@ class TermlyPlansController @Inject()(
     }
   }
 
+  def createScottishCurriculumPlanningAreaWrapperList(): List[ScottishCurriculumPlanningAreaWrapper] =
+  {
+    {
+      for {
+        planningArea <- ScottishCurriculumPlanningArea.values()
+        if planningArea != ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS
+        if planningArea != ScottishCurriculumPlanningArea.NONE
+      } yield ScottishCurriculumPlanningAreaWrapper(planningArea)
+    }.toList
+  }
 
   def termlyPlansSelectCurriculumAreas(classId: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest: AuthenticatedRequest[AnyContent] =>
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
@@ -80,7 +91,8 @@ class TermlyPlansController @Inject()(
         userFirstName,
         userFamilyName,
         TimeToTeachUserId(tttUserId),
-        classDetails
+        classDetails,
+        createScottishCurriculumPlanningAreaWrapperList()
       ))
   }
 

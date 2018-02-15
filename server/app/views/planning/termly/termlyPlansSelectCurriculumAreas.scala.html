@@ -1,5 +1,6 @@
 @import models.timetoteach.TimeToTeachUserId
-@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails)
+@import models.timetoteach.planning.ScottishCurriculumPlanningAreaWrapper
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails, planningAreas: List[ScottishCurriculumPlanningAreaWrapper])
 
 @timetoteachAppMain(handler, s"${classDetails.className.name} Area Selection",
     userPictureUri, userFirstName, userFamilyName) {
@@ -58,6 +59,10 @@
 
 
         <h2>Lets select some curriculum areas</h2>
+
+        @for(area <- planningAreas) {
+            <p>@area.niceValue</p>
+        }
 
     </div>
 }
