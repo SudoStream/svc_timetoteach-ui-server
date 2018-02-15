@@ -16,7 +16,7 @@ import scala.concurrent.Future
 
 @Singleton
 class PlanReaderDaoImpl @Inject()(mongoDbConnection: MongoDbConnection) extends PlanReaderDao
-  with PlanReaderDaoHelper with PlanReaderTermlyCurriculumSelectionHelper
+  with PlanReaderDaoHelper with PlanReaderDaoTermlyCurriculumSelectionHelper
 {
   private val logger: Logger = Logger
   private val termlyPlanningCollection: MongoCollection[Document] = mongoDbConnection.getTermlyPlanningCollection

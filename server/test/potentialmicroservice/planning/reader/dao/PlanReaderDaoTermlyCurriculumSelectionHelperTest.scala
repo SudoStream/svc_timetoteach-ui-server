@@ -2,9 +2,9 @@ package potentialmicroservice.planning.reader.dao
 
 import org.scalatest.FunSpec
 
-class PlanReaderTermlyCurriculumSelectionHelperTest extends FunSpec
+class PlanReaderDaoTermlyCurriculumSelectionHelperTest extends FunSpec
 {
-  private val planReaderTermlyCurriculumSelectionHelper = new PlanReaderTermlyCurriculumSelectionHelper
+  private val planReaderTermlyCurriculumSelectionHelper = new PlanReaderDaoTermlyCurriculumSelectionHelper
   {}
 
   describe("When given an empty list, findLatestVersionOfTermlyCurriculumSelection()") {

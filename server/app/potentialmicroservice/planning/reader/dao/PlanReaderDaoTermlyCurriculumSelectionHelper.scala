@@ -6,7 +6,7 @@ import models.timetoteach.planning.TermlyCurriculumSelection
 import org.mongodb.scala.Document
 import play.api.Logger
 
-trait PlanReaderTermlyCurriculumSelectionHelper
+trait PlanReaderDaoTermlyCurriculumSelectionHelper
 {
   private val logger: Logger = Logger
   private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
