@@ -1,68 +1,100 @@
+@import be.objectify.deadbolt.scala.AuthenticatedRequest
 @import models.timetoteach.TimeToTeachUserId
 @import models.timetoteach.planning.ScottishCurriculumPlanningAreaWrapper
-@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails, planningAreas: List[ScottishCurriculumPlanningAreaWrapper])
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails, planningAreas: List[ScottishCurriculumPlanningAreaWrapper], postSelectedCurriculumAreasUrl: Call, theForm: Form[controllers.planning.termly.TermlyPlansControllerFormHelper.CurriculumAreaSelectionData])(implicit request: AuthenticatedRequest[Any])
 
-@timetoteachAppMain(handler, s"${classDetails.className.name} Area Selection",
-    userPictureUri, userFirstName, userFamilyName) {
-    <div class="in-app-menu-small-devices">
-        <li class="nav-item nav-login-button">
-            <a class="btn btn-outline-primary btn-block" role="button" href="@routes.Application.timeToTeachApp()">
-                Dashboard</a>
-        </li>
+    @timetoteachAppMain(handler, s"${classDetails.className.name} Area Selection",
+        userPictureUri, userFirstName, userFamilyName) {
+        <div class="in-app-menu-small-devices">
+            <li class="nav-item nav-login-button">
+                <a class="btn btn-outline-primary btn-block" role="button" href="@routes.Application.timeToTeachApp()">
+                    Dashboard</a>
+            </li>
 
-        <li class="nav-item nav-login-button ">
-            <a class="btn btn-outline-primary btn-block" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlans()">
-                Termly Plans Home</a>
-        </li>
+            <li class="nav-item nav-login-button ">
+                <a class="btn btn-outline-primary btn-block" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlans()">
+                    Termly Plans Home</a>
+            </li>
 
-        <li class="nav-item nav-login-button">
-            <a class="btn btn-outline-primary btn-block" role="button"
-            href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(classDetails.id.id)">
-                Manage @classDetails.className.name</a>
-        </li>
+            <li class="nav-item nav-login-button">
+                <a class="btn btn-outline-primary btn-block" role="button"
+                href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(classDetails.id.id)">
+                    Manage @classDetails.className.name</a>
+            </li>
 
-        <li class="nav-item nav-login-button">
-            <a id="manage-class-goto-timetable" class="btn btn-outline-primary btn-block" role="button"
-            href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(classDetails.id.id)">
-                Class Timetable</a>
-        </li>
+            <li class="nav-item nav-login-button">
+                <a id="manage-class-goto-timetable" class="btn btn-outline-primary btn-block" role="button"
+                href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(classDetails.id.id)">
+                    Class Timetable</a>
+            </li>
 
-    </div>
-} {
-    <div class="container">
-        <div class="manage-class-form-section">
-            <div class="in-app-menu-medium-and-up">
-                <div class="d-flex ">
-                    <ul class="nav mr-auto justify-content-between">
-                        <li class="nav-item manage-class-nav-item-leftmost">
-                            <a class="btn btn-outline-primary" role="button" href="@routes.Application.timeToTeachApp()">
-                                Dashboard</a>
-                        </li>
-                        <li class="nav-item manage-class-nav-item-on-left">
-                            <a class="btn btn-outline-primary" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlans()">
-                                Termly Plans Home</a>
-                        </li>
-                        <li class="nav-item manage-class-nav-item-on-left">
-                            <a class="btn btn-info" role="button"
-                            href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(classDetails.id.id)">
-                                Manage @classDetails.className.name</a>
-                        </li>
-                        <li class="nav-item manage-class-nav-item-on-left">
-                            <a id="manage-class-goto-timetable" class="btn btn-info" role="button"
-                            href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(classDetails.id.id)">
-                                Class Timetable</a>
-                        </li>
-                    </ul>
+        </div>
+    } {
+        <div class="container">
+            <div class="manage-class-form-section">
+                <div class="in-app-menu-medium-and-up">
+                    <div class="d-flex ">
+                        <ul class="nav mr-auto justify-content-between">
+                            <li class="nav-item manage-class-nav-item-leftmost">
+                                <a class="btn btn-outline-primary" role="button" href="@routes.Application.timeToTeachApp()">
+                                    Dashboard</a>
+                            </li>
+                            <li class="nav-item manage-class-nav-item-on-left">
+                                <a class="btn btn-outline-primary" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlans()">
+                                    Termly Plans Home</a>
+                            </li>
+                            <li class="nav-item manage-class-nav-item-on-left">
+                                <a class="btn btn-info" role="button"
+                                href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(classDetails.id.id)">
+                                    Manage @classDetails.className.name</a>
+                            </li>
+                            <li class="nav-item manage-class-nav-item-on-left">
+                                <a id="manage-class-goto-timetable" class="btn btn-info" role="button"
+                                href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(classDetails.id.id)">
+                                    Class Timetable</a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
+
+
+            <div class="text-center termly-plans-select-curriculum-areas-header">
+                <h5>Please select the curriculum areas you wish to plan for this term</h5>
+            </div>
+
+
+            <form action="@postSelectedCurriculumAreasUrl.url" method="post" id="needs-validation" novalidate>
+                @helper.CSRF.formField
+                <div class="row">
+                @for(area <- planningAreas) {
+                    <div class="col-md-6 col-lg-4">
+                        <div class="form-group">
+                            <label class="custom-control custom-checkbox">
+                                <input id="@area.value.toString" name="@area.value.toString" type="checkbox" class="custom-control-input" value="On">
+                                <input name="@area.value.toString" type="hidden" value="Off">
+                                <span class="custom-control-indicator"></span>
+                                @if(area.isCompositeValue) {
+                                    <span class="custom-control-description">@area.niceSpecificValueIfPresent().getOrElse(area.niceValue())</span>
+                                } else {
+                                    <span class="custom-control-description">@area.niceValue</span>
+                                }
+                            </label>
+                        </div>
+
+                    </div>
+                }
+                </div>
+
+                <input type="text" class="custom-control-input" id="classId" name="classId" value="@classDetails.id.id">
+
+                <div class="form-submit-button text-center">
+                    <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+                </div>
+            </form>
+
+
         </div>
 
-
-        <h2>Lets select some curriculum areas</h2>
-
-        @for(area <- planningAreas) {
-            <p>@area.niceValue</p>
-        }
-
-    </div>
-}
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" crossorigin="anonymous"></script>
+    }

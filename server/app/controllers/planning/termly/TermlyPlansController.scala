@@ -1,14 +1,16 @@
 package controllers.planning.termly
 
+import java.time.{LocalDateTime, LocalTime}
 import javax.inject.Inject
 
 import be.objectify.deadbolt.scala.cache.HandlerCache
 import be.objectify.deadbolt.scala.{AuthenticatedRequest, DeadboltActions}
+import controllers.planning.termly.TermlyPlansControllerFormHelper._
 import controllers.serviceproxies._
 import curriculum.scotland.EsOsAndBenchmarksBuilderImpl
 import duplicate.model.{ClassDetails, TermlyPlansToSave}
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
-import models.timetoteach.planning.{GroupId, ScottishCurriculumPlanningAreaWrapper, SubjectNameConverter}
+import models.timetoteach.planning.{TermlyCurriculumSelection, _}
 import models.timetoteach.{ClassId, CookieNames, TimeToTeachUserId}
 import play.api.Logger
 import play.api.data.Form
@@ -21,7 +23,6 @@ import scala.annotation.tailrec
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-
 class TermlyPlansController @Inject()(
                                        cc: ControllerComponents,
                                        userReader: UserReaderServiceProxyImpl,
@@ -31,12 +32,14 @@ class TermlyPlansController @Inject()(
                                        planningWriterService: PlanningWriterServiceProxy,
                                        planningReaderService: PlanningReaderServiceProxy,
                                        termsPlanHelper: TermPlansHelper,
+                                       termService: TermServiceProxy,
                                        deadbolt: DeadboltActions) extends AbstractController(cc)
 {
 
   import TermlyPlansController.buildSchoolNameToClassesMap
 
   val logger: Logger = Logger
+  private val postSelectedCurriculumAreasUrl = routes.TermlyPlansController.curriulumAreasSelected
 
 
   def termlyPlans: Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest: AuthenticatedRequest[AnyContent] =>
@@ -92,8 +95,10 @@ class TermlyPlansController @Inject()(
         userFamilyName,
         TimeToTeachUserId(tttUserId),
         classDetails,
-        createScottishCurriculumPlanningAreaWrapperList()
-      ))
+        createScottishCurriculumPlanningAreaWrapperList(),
+        postSelectedCurriculumAreasUrl,
+        curriculumAreaSelectionDataForm
+      )(authRequest))
   }
 
   def termlyPlansForClass(classId: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest: AuthenticatedRequest[AnyContent] =>
@@ -254,6 +259,71 @@ class TermlyPlansController @Inject()(
           Redirect(routes.TermlyPlansController.termlyPlansForGroup(classId, subject, groupId))
       }
     } yield route
+  }
+
+
+  def curriulumAreasSelected: Action[AnyContent] = deadbolt.SubjectPresent()() { implicit request =>
+    val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, request)
+    val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, request)
+    val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, request)
+    val tttUserId = getCookieStringFromRequest(CookieNames.timetoteachId, request).getOrElse("NO ID")
+
+    val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
+
+    val errorFunction = { formWithErrors: Form[CurriculumAreaSelectionData] =>
+      logger.error(s"${LocalTime.now.toString} : Form ERROR : Oh well ... " + formWithErrors.errors.toString())
+      for {
+        classes <- eventualClasses
+      } yield {
+        BadRequest(views.html.planning.termly.termlyPlansHome(new MyDeadboltHandler(userReader),
+          userPictureUri,
+          userFirstName,
+          userFamilyName,
+          TimeToTeachUserId(tttUserId),
+          buildSchoolNameToClassesMap(classes)
+        ))
+      }
+    }
+
+    val successFunction = { curriculumAreaSelectionData: CurriculumAreaSelectionData =>
+      logger.info(s"${LocalTime.now.toString} : Form SUCCESS")
+      logger.debug(s"${LocalTime.now.toString} : CurriculumAreaSelectionData - ${curriculumAreaSelectionData.toString}")
+
+      val cookies = request.cookies
+
+      val theTimeToTeachUserId = cookies.get(CookieNames.timetoteachId) match {
+        case Some(userId) => userId.value
+        case None => ""
+      }
+      val termlyCurriculumSelection: TermlyCurriculumSelection = createTermlyCurriculumSelection(
+        TimeToTeachUserId(theTimeToTeachUserId),
+        LocalDateTime.now(),
+        termService.currentSchoolTerm(),
+        curriculumAreaSelectionData
+      )
+      val insertCompleted = planningWriterService.saveTermlyCurriculumSelection(termlyCurriculumSelection)
+
+
+      for {
+        classes <- eventualClasses
+        classDetailsList = classes.filter(theClass => theClass.id.id == curriculumAreaSelectionData.classId)
+        maybeClassDetails: Option[ClassDetails] = classDetailsList.headOption
+        if maybeClassDetails.isDefined
+        classDetails = maybeClassDetails.get
+        done <- insertCompleted
+      } yield {
+        Ok(views.html.planning.termly.termlyPlansForClass(new MyDeadboltHandler(userReader),
+          userPictureUri,
+          userFirstName,
+          userFamilyName,
+          TimeToTeachUserId(tttUserId),
+          classDetails
+        ))
+      }
+    }
+
+    val formValidationResult = curriculumAreaSelectionDataForm.bindFromRequest
+    formValidationResult.fold(errorFunction, successFunction)
   }
 
 

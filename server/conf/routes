@@ -28,6 +28,7 @@ GET           /weeklyplanning                                                   
 
 GET           /termlyplanning                                                         controllers.planning.termly.TermlyPlansController.termlyPlans
 GET           /termlyplanningselectcurriculumareas/:classId                           controllers.planning.termly.TermlyPlansController.termlyPlansSelectCurriculumAreas(classId)
+POST          /curriulumAreasSelected                                                 controllers.planning.termly.TermlyPlansController.curriulumAreasSelected
 GET           /termlyplanningforclass/:classId                                        controllers.planning.termly.TermlyPlansController.termlyPlansForClass(classId)
 GET           /termlyplanningforsubjectandgroup/:classId/:subject/:groupId            controllers.planning.termly.TermlyPlansController.termlyPlansForGroup(classId, subject, groupId)
 POST          /termlysaveplanningforsubjectandgroup/:classId/:subject/:groupId        controllers.planning.termly.TermlyPlansController.savePlansForGroup(classId, subject, groupId)
