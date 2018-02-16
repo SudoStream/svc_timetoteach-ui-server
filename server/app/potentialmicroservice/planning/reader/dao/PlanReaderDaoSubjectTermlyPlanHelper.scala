@@ -4,7 +4,7 @@ import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, LocalDateTime}
 
 import duplicate.model.EandOsWithBenchmarks
-import models.timetoteach.planning.{GroupId, PlanType, SubjectNameConverter, SubjectTermlyPlan}
+import models.timetoteach.planning.{GroupId, PlanType, CurriculumAreaConverter, SubjectTermlyPlan}
 import models.timetoteach.term.{SchoolTerm, SchoolTermName, SchoolYear}
 import models.timetoteach.{ClassId, TimeToTeachUserId}
 import org.bson.{BsonArray, BsonDocument}
@@ -116,7 +116,7 @@ trait PlanReaderDaoSubjectTermlyPlanHelper extends PlanReaderDaoCommonHelper
         case None => None
       }
       curriculumPlanningAreaValue <- safelyGetStringNoneIfBlank(doc, TermlyPlanningSchema.CURRICULUM_PLANNING_AREA)
-      curriculumPlanningArea <- SubjectNameConverter.convertSubjectNameStringToSubjectName(curriculumPlanningAreaValue)
+      curriculumPlanningArea <- CurriculumAreaConverter.convertCurriculumAreaStringToSubjectName(curriculumPlanningAreaValue)
       createdTimeString <- safelyGetStringNoneIfBlank(doc, TermlyPlanningSchema.CREATED_TIMESTAMP)
 
       maybeSchoolTermBsonValue = doc.get(TermlyPlanningSchema.SCHOOL_TERM)

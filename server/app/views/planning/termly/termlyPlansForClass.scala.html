@@ -125,7 +125,7 @@
                                                     <div class="row termly-plans-group-row">
                                                         <div class="col-lg-3">
                                                             <a role="button" class="btn btn-info btn-sm btn-block"
-                                                            href="@controllers.planning.termly.routes.TermlyPlansController.termlyOverviewForGroup(classDetails.id.id, group.groupType.value, group.groupId.id)">@group.groupName.name.capitalize</a>
+                                                            href="@controllers.planning.termly.routes.TermlyPlansController.termlyOverviewForCurriculumAreaAtGroupLevel(classDetails.id.id, group.groupType.value, group.groupId.id)">@group.groupName.name.capitalize</a>
                                                         </div>
                                                         <div class="col-lg-1"></div>
                                                         <div class="col-lg-3">
@@ -142,7 +142,7 @@
                                             <div class="row termly-plans-group-row">
                                                 <div class="col-lg-3">
                                                     <a role="button" class="btn btn-info btn-sm btn-block"
-                                                    href="@controllers.planning.termly.routes.TermlyPlansController.termlyOverviewForClass(classDetails.id.id)">
+                                                    href="@controllers.planning.termly.routes.TermlyPlansController.termlyOverviewForCurriculumAreaAtClassLevel(classDetails.id.id, curriculumAreaToPlan.value.toString)">
                                                         Plan For Class</a>
                                                 </div>
                                                 <div class="col-lg-1"></div>

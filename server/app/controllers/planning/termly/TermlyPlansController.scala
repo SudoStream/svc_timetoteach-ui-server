@@ -138,7 +138,7 @@ class TermlyPlansController @Inject()(
   }
 
 
-  def termlyPlansForGroup(classId: String, subject: String, groupId: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest: AuthenticatedRequest[AnyContent] =>
+  def termlyPlansForClassAtGroupLevel(classId: String, curriculumArea: String, groupId: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest: AuthenticatedRequest[AnyContent] =>
     import utils.CurriculumConverterUtil._
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
@@ -156,7 +156,7 @@ class TermlyPlansController @Inject()(
       group = classDetails.groups.filter(group => group.groupId.id == groupId).head
       relevantEsAndOs <- esAndOsReader.buildEsOsAndBenchmarks(
         group.groupLevel,
-        convertSubjectToCurriculumArea(subject)
+        convertSubjectToCurriculumArea(curriculumArea)
       )
     } yield {
       Ok(views.html.planning.termly.termlyPlansForGroup(new MyDeadboltHandler(userReader),
@@ -166,7 +166,7 @@ class TermlyPlansController @Inject()(
         TimeToTeachUserId(tttUserId),
         classDetails,
         group,
-        subject,
+        curriculumArea,
         relevantEsAndOs
       ))
     }
@@ -182,7 +182,7 @@ class TermlyPlansController @Inject()(
                                     groupTermlyPlansPickled: String
                                   )
 
-  def savePlansForGroup(classId: String, subject: String, groupId: String): Action[AnyContent] = Action.async { implicit request =>
+  def savePlansForGroup(classId: String, curriculumArea: String, groupId: String): Action[AnyContent] = Action.async { implicit request =>
     val termlyPlansForGroup = termlyPlansToSaveForm.bindFromRequest.get
     logger.debug(s"Termly Plans Pickled = #${termlyPlansForGroup.groupTermlyPlansPickled}#")
 
@@ -190,7 +190,7 @@ class TermlyPlansController @Inject()(
     val termlyPlansToSave: TermlyPlansToSave = read[TermlyPlansToSave](termlyPlansForGroup.groupTermlyPlansPickled)
     logger.debug(s"Termly plans Unpickled = ${termlyPlansToSave.toString}")
 
-    val termlyPlansAsModel = termsPlanHelper.convertTermlyPlanToModel(classId, termlyPlansToSave, Some(GroupId(groupId)), subject)
+    val termlyPlansAsModel = termsPlanHelper.convertTermlyPlanToModel(classId, termlyPlansToSave, Some(GroupId(groupId)), curriculumArea)
     val savedPlan = planningWriterService.saveSubjectTermlyPlan(termlyPlansAsModel)
 
     for {
@@ -198,13 +198,13 @@ class TermlyPlansController @Inject()(
     } yield Ok("Saved termly plans!")
   }
 
-  def termlyOverviewForClass(classId: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest: AuthenticatedRequest[AnyContent] =>
+  def termlyOverviewForCurriculumAreaAtClassLevel(classId: String, curriculumArea: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest: AuthenticatedRequest[AnyContent] =>
     Future{
       Ok("Yep")
     }
   }
 
-  def termlyOverviewForGroup(classId: String, subject: String, groupId: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest: AuthenticatedRequest[AnyContent] =>
+  def termlyOverviewForCurriculumAreaAtGroupLevel(classId: String, curriculumArea: String, groupId: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest: AuthenticatedRequest[AnyContent] =>
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
     val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
@@ -219,7 +219,7 @@ class TermlyPlansController @Inject()(
         maybeClassDetails match {
           case Some(classDetails) =>
             val group = classDetails.groups.filter(group => group.groupId.id == groupId).head
-            SubjectNameConverter.convertSubjectNameStringToSubjectName(subject)
+            CurriculumAreaConverter.convertCurriculumAreaStringToSubjectName(curriculumArea)
           case None => None
         }
     }
@@ -258,12 +258,12 @@ class TermlyPlansController @Inject()(
             TimeToTeachUserId(tttUserId),
             classDetails,
             group,
-            subject,
+            curriculumArea,
             maybeSubjectTermlyPlan.get,
             esAndOsCodeToDetailMap
           ))
         case None =>
-          Redirect(routes.TermlyPlansController.termlyPlansForGroup(classId, subject, groupId))
+          Redirect(routes.TermlyPlansController.termlyPlansForClassAtGroupLevel(classId, curriculumArea, groupId))
       }
     } yield route
   }

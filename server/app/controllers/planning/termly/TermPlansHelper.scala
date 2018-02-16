@@ -19,7 +19,7 @@ class TermPlansHelper @Inject()(termService: TermServiceProxy)
                                 classId: String,
                                 termlyPlansToSave: TermlyPlansToSave,
                                 maybeGroupId: Option[GroupId],
-                                subjectName: String
+                                curriculumArea: String
                               ): SubjectTermlyPlan =
   {
     val thisTerm = termService.currentSchoolTerm()
@@ -35,7 +35,7 @@ class TermPlansHelper @Inject()(termService: TermServiceProxy)
       thisTerm,
       classId,
       maybeGroupId,
-      subjectName,
+      curriculumArea,
       LocalDateTime.now(),
       termlyPlansToSave.eandOsWithBenchmarks
     )

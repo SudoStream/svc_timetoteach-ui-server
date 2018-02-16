@@ -52,11 +52,11 @@ object PlanType extends Enumeration
 
 case class GroupId(value: String)
 
-object SubjectNameConverter
+object CurriculumAreaConverter
 {
   val logger: Logger = Logger
 
-  def convertSubjectNameStringToSubjectName(name: String): Option[ScottishCurriculumPlanningArea] =
+  def convertCurriculumAreaStringToSubjectName(name: String): Option[ScottishCurriculumPlanningArea] =
   {
     name.toUpperCase match {
       case "ART" | "EXPRESSIVE_ARTS__ART" => Some(ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__ART)

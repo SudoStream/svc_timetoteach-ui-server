@@ -28,7 +28,7 @@ object TimeToTeachApp extends js.JSApp {
       SignupJs.loadJavascript()
     }
 
-    if (dom.document.location.toString.contains("termlyplanningforsubjectandgroup")) {
+    if (dom.document.location.toString.contains("termlyplanningforclassatgrouplevel")) {
       ClassGroupPlanningJsScreen.loadJavascript()
     }
   }
