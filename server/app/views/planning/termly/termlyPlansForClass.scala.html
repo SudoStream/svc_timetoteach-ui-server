@@ -52,6 +52,13 @@
                                 Class Timetable</a>
                         </li>
                     </ul>
+                    <ul class="nav justify-content-end">
+                        <li class="nav-item manage-class-nav-item-rightmost">
+                            <a id="termly-plans-edit" role="button" class="btn btn-primary"
+                            href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansSelectCurriculumAreas(classDetails.id.id)">
+                                Re-Select Curriculum Areas</a>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -64,7 +71,7 @@
                 <div class="in-app-menu-medium-and-up">
                     <div class="termly-plans-overview-headers">
                         <div class="row">
-                            <div class="col-lg-3"><small class="text-muted">Subject Area</small></div>
+                            <div class="col-lg-3"><small class="text-muted">Curriculum Area</small></div>
                             <div class="col-lg-1"></div>
                             <div class="col-lg-4"><small class="text-muted">Plan Progress</small></div>
                             <div class="col-lg-4"></div>
