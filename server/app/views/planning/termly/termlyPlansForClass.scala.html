@@ -114,7 +114,7 @@
                                 </div>
                             </div>
 
-                            @for(group <- classDetails.groups) {
+                            @for(group <- classDetails.groups.sortBy(group => group.groupLevel)) {
                                 @if(group.groupType.value == "Maths") {
                                     <div class="row termly-plans-group-row">
                                         <div class="col-lg-3">

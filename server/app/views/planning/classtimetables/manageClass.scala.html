@@ -118,7 +118,7 @@
                                 <div class="col-lg-2"></div>
                             </div>
                         </div>
-                        @for(group <- classDetails.groups) {
+                        @for(group <- classDetails.groups.sortBy(group => group.groupLevel)) {
                             @if(group.groupType.value.toLowerCase == "maths") {
                                 <div class="manage-new-group-row">
                                     <div class="form-row manage-class-group-row">
@@ -204,7 +204,7 @@
                             </div>
                         </div>
 
-                        @for(group <- classDetails.groups) {
+                        @for(group <- classDetails.groups.sortBy(group => group.groupLevel)) {
                             @if(group.groupType.value.toLowerCase == "reading") {
                                 <div class="manage-new-group-row">
                                     <div class="form-row manage-class-group-row">
@@ -283,7 +283,7 @@
 
                     @if(classDetails.groups.count(aGroup => aGroup.groupLevel.value.toLowerCase == "other") > 0) {
                         <label class="manage-class-desription-label manage-class-group-header">Other Groups</label>
-                        @for(group <- classDetails.groups) {
+                        @for(group <- classDetails.groups.sortBy(group => group.groupLevel)) {
                             @if(group.groupType.value.toLowerCase == "other") {
                                 <div class="form-row manage-class-group-row">
                                     <div class="col-lg-6">
@@ -325,7 +325,7 @@
                                 <div class="col-lg-2"></div>
                             </div>
                         </div>
-                        @for(group <- classDetails.groups) {
+                        @for(group <- classDetails.groups.sortBy(group => group.groupLevel)) {
                             @if(group.groupType.value.toLowerCase == "writing") {
                                 <div class="manage-new-group-row">
                                     <div class="form-row manage-class-group-row">

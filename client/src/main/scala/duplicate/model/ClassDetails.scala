@@ -10,12 +10,15 @@ case class ClassDetails(
                          groups: List[Group],
                          classTeachersWithWriteAccess: List[String],
                          subjectToMaybeGroupMap: Map[SubjectModel, Option[Group]]
-                       ) {
+                       )
+{
   if (classTeachersWithWriteAccess.isEmpty) throw new IllegalArgumentException(
     "Must have at least 1 teacher with write access"
   )
 }
-object ClassDetails{
+
+object ClassDetails
+{
   implicit def rw: RW[ClassDetails] = macroRW
 }
 
@@ -29,45 +32,60 @@ case class SchoolDetails(
                           country: String
                         )
 
-object SchoolDetails{
+object SchoolDetails
+{
   implicit def rw: RW[SchoolDetails] = macroRW
 }
 
 case class ClassId(id: String)
-object ClassId{
+
+object ClassId
+{
   implicit def rw: RW[ClassId] = macroRW
 }
 
 case class ClassName(name: String)
-object ClassName{
+
+object ClassName
+{
   implicit def rw: RW[ClassName] = macroRW
 }
 
 case class ClassDescription(name: String)
-object ClassDescription{
+
+object ClassDescription
+{
   implicit def rw: RW[ClassDescription] = macroRW
 }
 
 ////
 
 case class Group(groupId: GroupId, groupName: GroupName, groupDescription: GroupDescription, groupType: GroupType, groupLevel: CurriculumLevel)
-object Group{
+
+object Group
+{
   implicit def rw: RW[Group] = macroRW
 }
 
 case class GroupId(id: String)
-object GroupId{
+
+object GroupId
+{
   implicit def rw: RW[GroupId] = macroRW
 }
 
 
 case class GroupName(name: String)
-object GroupName{
+
+object GroupName
+{
   implicit def rw: RW[GroupName] = macroRW
 }
 
 case class GroupDescription(name: String)
-object GroupDescription{
+
+object GroupDescription
+{
   implicit def rw: RW[GroupDescription] = macroRW
 }
 
@@ -79,30 +97,38 @@ object GroupDescription{
 //}
 
 
-sealed trait GroupType {
+sealed trait GroupType
+{
   def value: String
 }
-object GroupType{
+
+object GroupType
+{
   implicit def rw: RW[GroupType] = macroRW
 }
 
-case object MathsGroupType extends GroupType {
+case object MathsGroupType extends GroupType
+{
   val value = "Maths"
 }
 
-case object ReadingGroupType extends GroupType {
+case object ReadingGroupType extends GroupType
+{
   val value = "Reading"
 }
 
-case object WritingGroupType extends GroupType {
+case object WritingGroupType extends GroupType
+{
   val value = "Writing"
 }
 
-case object SpellingGroupType extends GroupType {
+case object SpellingGroupType extends GroupType
+{
   val value = "Spelling"
 }
 
-case object OtherGroupType extends GroupType {
+case object OtherGroupType extends GroupType
+{
   val value = "Other"
 }
 
@@ -116,32 +142,53 @@ case object OtherGroupType extends GroupType {
 //}
 
 
-sealed trait CurriculumLevel {
+sealed trait CurriculumLevel extends Ordered[CurriculumLevel]
+{
   def value: String
+  def order: Int
+
+  def compare(that: CurriculumLevel): Int =
+  {
+    this.order compareTo that.order
+  }
+
 }
-object CurriculumLevel{
+
+object CurriculumLevel
+{
   implicit def rw: RW[CurriculumLevel] = macroRW
 }
 
-case object EarlyLevel extends CurriculumLevel {
+case object EarlyLevel extends CurriculumLevel
+{
   val value = "EarlyLevel"
+  val order = 1
 }
 
-case object FirstLevel extends CurriculumLevel {
+case object FirstLevel extends CurriculumLevel
+{
   val value = "FirstLevel"
+  val order = 2
 }
 
-case object SecondLevel extends CurriculumLevel {
+case object SecondLevel extends CurriculumLevel
+{
   val value = "SecondLevel"
+  val order = 3
 }
 
-case object ThirdLevel extends CurriculumLevel {
+case object ThirdLevel extends CurriculumLevel
+{
   val value = "ThirdLevel"
+  val order = 4
 }
 
-case object FourthLevel extends CurriculumLevel {
+case object FourthLevel extends CurriculumLevel
+{
   val value = "FourthLevel"
+  val order = 5
 }
+
 //
 //////// Curriculum Level - END//////////////
 //
