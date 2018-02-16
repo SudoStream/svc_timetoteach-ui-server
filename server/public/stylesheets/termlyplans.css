@@ -80,7 +80,7 @@
     margin-bottom: 10rem;
 }
 
-#clear-termly-groups-button{
+#clear-termly-groups-button {
     margin-top: 3rem;
     margin-bottom: 10rem;
 }
@@ -105,6 +105,51 @@
 }
 
 .termly-plans-select-curriculum-areas-header {
-    margin-top: 2rem;
-    margin-bottom: 3rem;
+    margin-top: 3rem;
+    margin-bottom: 2rem;
+}
+
+.termly-plans-fieldset-expressive-arts fieldset {
+    border: 1px solid orangered;
+    color: orangered;
+}
+
+.termly-plans-fieldset-literacy fieldset {
+    border: 1px solid mediumvioletred  !important;
+    color: mediumvioletred;
+}
+
+.termly-plans-fieldset-maths fieldset {
+    border: 1px solid cornflowerblue;
+    color: cornflowerblue;
+}
+
+.termly-plans-fieldset-rme fieldset {
+    border: 1px solid mediumpurple;
+    color: mediumpurple;
+}
+
+.termly-plans-fieldset-science fieldset {
+    border: 1px solid mediumaquamarine;
+    color: mediumaquamarine;
+}
+
+.termly-plans-fieldset-social-studies fieldset {
+    border: 1px solid hotpink;
+    color: hotpink;
+}
+
+.termly-plans-fieldset-technologies fieldset {
+    border: 1px solid darkturquoise;
+    color: darkturquoise;
+}
+
+.termly-plans-fieldset-health-and-wellbeing fieldset {
+    border: 1px solid green;
+    color: green;
+}
+
+.termly-plans-fieldset fieldset {
+    margin: 1rem 1rem;
+    padding: 0.25rem 2rem;
 }

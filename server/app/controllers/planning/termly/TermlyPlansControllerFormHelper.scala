@@ -43,9 +43,6 @@ object TermlyPlansControllerFormHelper
     if (curriculumAreaSelectionData.LITERACY__GAELIC_LEARNERS == "On") {
       selectedScottishCurriculumPlanningAreas += ScottishCurriculumPlanningArea.LITERACY__GAELIC_LEARNERS
     }
-    if (curriculumAreaSelectionData.LITERACY__LITERACY_AND_ENGLISH == "On") {
-      selectedScottishCurriculumPlanningAreas += ScottishCurriculumPlanningArea.LITERACY__LITERACY_AND_ENGLISH
-    }
     if (curriculumAreaSelectionData.LITERACY__LITERACY_AND_GAIDLIG == "On") {
       selectedScottishCurriculumPlanningAreas += ScottishCurriculumPlanningArea.LITERACY__LITERACY_AND_GAIDLIG
     }
@@ -69,9 +66,6 @@ object TermlyPlansControllerFormHelper
     }
     if (curriculumAreaSelectionData.TECHNOLOGIES == "On") {
       selectedScottishCurriculumPlanningAreas += ScottishCurriculumPlanningArea.TECHNOLOGIES
-    }
-    if (curriculumAreaSelectionData.TOPIC == "On") {
-      selectedScottishCurriculumPlanningAreas += ScottishCurriculumPlanningArea.TOPIC
     }
 
     selectedScottishCurriculumPlanningAreas.toList
@@ -106,7 +100,6 @@ object TermlyPlansControllerFormHelper
                                           LITERACY__READING: String,
                                           LITERACY__CLASSICAL_LANGUAGES: String,
                                           LITERACY__GAELIC_LEARNERS: String,
-                                          LITERACY__LITERACY_AND_ENGLISH: String,
                                           LITERACY__LITERACY_AND_GAIDLIG: String,
                                           LITERACY__MODERN_LANGUAGES: String,
                                           MATHEMATICS: String,
@@ -114,8 +107,7 @@ object TermlyPlansControllerFormHelper
                                           RME__CATHOLIC: String,
                                           SCIENCE: String,
                                           SOCIAL_STUDIES: String,
-                                          TECHNOLOGIES: String,
-                                          TOPIC: String
+                                          TECHNOLOGIES: String
                                         )
 
 
@@ -131,7 +123,6 @@ object TermlyPlansControllerFormHelper
       "LITERACY__READING" -> text,
       "LITERACY__CLASSICAL_LANGUAGES" -> text,
       "LITERACY__GAELIC_LEARNERS" -> text,
-      "LITERACY__LITERACY_AND_ENGLISH" -> text,
       "LITERACY__LITERACY_AND_GAIDLIG" -> text,
       "LITERACY__MODERN_LANGUAGES" -> text,
       "MATHEMATICS" -> text,
@@ -139,8 +130,7 @@ object TermlyPlansControllerFormHelper
       "RME__CATHOLIC" -> text,
       "SCIENCE" -> text,
       "SOCIAL_STUDIES" -> text,
-      "TECHNOLOGIES" -> text,
-      "TOPIC" -> text
+      "TECHNOLOGIES" -> text
     )(CurriculumAreaSelectionData.apply)(CurriculumAreaSelectionData.unapply)
   )
 

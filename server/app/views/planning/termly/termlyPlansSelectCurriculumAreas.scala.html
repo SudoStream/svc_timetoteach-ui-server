@@ -1,100 +1,291 @@
 @import be.objectify.deadbolt.scala.AuthenticatedRequest
 @import models.timetoteach.TimeToTeachUserId
 @import models.timetoteach.planning.ScottishCurriculumPlanningAreaWrapper
+@import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails, planningAreas: List[ScottishCurriculumPlanningAreaWrapper], postSelectedCurriculumAreasUrl: Call, theForm: Form[controllers.planning.termly.TermlyPlansControllerFormHelper.CurriculumAreaSelectionData])(implicit request: AuthenticatedRequest[Any])
 
-    @timetoteachAppMain(handler, s"${classDetails.className.name} Area Selection",
-        userPictureUri, userFirstName, userFamilyName) {
-        <div class="in-app-menu-small-devices">
-            <li class="nav-item nav-login-button">
-                <a class="btn btn-outline-primary btn-block" role="button" href="@routes.Application.timeToTeachApp()">
-                    Dashboard</a>
-            </li>
+@timetoteachAppMain(handler, s"${classDetails.className.name} Area Selection",
+    userPictureUri, userFirstName, userFamilyName) {
+    <div class="in-app-menu-small-devices">
+        <li class="nav-item nav-login-button">
+            <a class="btn btn-outline-primary btn-block" role="button" href="@routes.Application.timeToTeachApp()">
+                Dashboard</a>
+        </li>
 
-            <li class="nav-item nav-login-button ">
-                <a class="btn btn-outline-primary btn-block" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlans()">
-                    Termly Plans Home</a>
-            </li>
+        <li class="nav-item nav-login-button ">
+            <a class="btn btn-outline-primary btn-block" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlans()">
+                Termly Plans Home</a>
+        </li>
 
-            <li class="nav-item nav-login-button">
-                <a class="btn btn-outline-primary btn-block" role="button"
-                href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(classDetails.id.id)">
-                    Manage @classDetails.className.name</a>
-            </li>
+        <li class="nav-item nav-login-button">
+            <a class="btn btn-outline-primary btn-block" role="button"
+            href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(classDetails.id.id)">
+                Manage @classDetails.className.name</a>
+        </li>
 
-            <li class="nav-item nav-login-button">
-                <a id="manage-class-goto-timetable" class="btn btn-outline-primary btn-block" role="button"
-                href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(classDetails.id.id)">
-                    Class Timetable</a>
-            </li>
+        <li class="nav-item nav-login-button">
+            <a id="manage-class-goto-timetable" class="btn btn-outline-primary btn-block" role="button"
+            href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(classDetails.id.id)">
+                Class Timetable</a>
+        </li>
 
-        </div>
-    } {
-        <div class="container">
-            <div class="manage-class-form-section">
-                <div class="in-app-menu-medium-and-up">
-                    <div class="d-flex ">
-                        <ul class="nav mr-auto justify-content-between">
-                            <li class="nav-item manage-class-nav-item-leftmost">
-                                <a class="btn btn-outline-primary" role="button" href="@routes.Application.timeToTeachApp()">
-                                    Dashboard</a>
-                            </li>
-                            <li class="nav-item manage-class-nav-item-on-left">
-                                <a class="btn btn-outline-primary" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlans()">
-                                    Termly Plans Home</a>
-                            </li>
-                            <li class="nav-item manage-class-nav-item-on-left">
-                                <a class="btn btn-info" role="button"
-                                href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(classDetails.id.id)">
-                                    Manage @classDetails.className.name</a>
-                            </li>
-                            <li class="nav-item manage-class-nav-item-on-left">
-                                <a id="manage-class-goto-timetable" class="btn btn-info" role="button"
-                                href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(classDetails.id.id)">
-                                    Class Timetable</a>
-                            </li>
-                        </ul>
-                    </div>
+    </div>
+} {
+    <div class="container">
+        <div class="manage-class-form-section">
+            <div class="in-app-menu-medium-and-up">
+                <div class="d-flex ">
+                    <ul class="nav mr-auto justify-content-between">
+                        <li class="nav-item manage-class-nav-item-leftmost">
+                            <a class="btn btn-outline-primary" role="button" href="@routes.Application.timeToTeachApp()">
+                                Dashboard</a>
+                        </li>
+                        <li class="nav-item manage-class-nav-item-on-left">
+                            <a class="btn btn-outline-primary" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlans()">
+                                Termly Plans Home</a>
+                        </li>
+                        <li class="nav-item manage-class-nav-item-on-left">
+                            <a class="btn btn-info" role="button"
+                            href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(classDetails.id.id)">
+                                Manage @classDetails.className.name</a>
+                        </li>
+                        <li class="nav-item manage-class-nav-item-on-left">
+                            <a id="manage-class-goto-timetable" class="btn btn-info" role="button"
+                            href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(classDetails.id.id)">
+                                Class Timetable</a>
+                        </li>
+                    </ul>
                 </div>
             </div>
+        </div>
 
 
-            <div class="text-center termly-plans-select-curriculum-areas-header">
-                <h5>Please select the curriculum areas you wish to plan for this term</h5>
-            </div>
+        <div class="text-center termly-plans-select-curriculum-areas-header">
+            <h5>Please select the curriculum areas you wish to plan for this term</h5>
+        </div>
 
 
-            <form action="@postSelectedCurriculumAreasUrl.url" method="post" id="needs-validation" novalidate>
-                @helper.CSRF.formField
-                <div class="row">
-                @for(area <- planningAreas) {
-                    <div class="col-md-6 col-lg-4">
-                        <div class="form-group">
-                            <label class="custom-control custom-checkbox">
-                                <input id="@area.value.toString" name="@area.value.toString" type="checkbox" class="custom-control-input" value="On">
-                                <input name="@area.value.toString" type="hidden" value="Off">
-                                <span class="custom-control-indicator"></span>
-                                @if(area.isCompositeValue) {
-                                    <span class="custom-control-description">@area.niceSpecificValueIfPresent().getOrElse(area.niceValue())</span>
-                                } else {
-                                    <span class="custom-control-description">@area.niceValue</span>
-                                }
-                            </label>
+        <form action="@postSelectedCurriculumAreasUrl.url" method="post" id="needs-validation" novalidate>
+            @helper.CSRF.formField
+            <div class="row">
+                <div class="termly-plans-fieldset termly-plans-fieldset-expressive-arts">
+                    <fieldset>
+                        <legend>Expressive Arts</legend>
+                        <div class="row">
+                        @for(area <- planningAreas) {
+                            @if(area.isCompositeValue && area.niceHeaderValueIfPresent().getOrElse("NONE") == "Expressive Arts") {
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label class="custom-control custom-checkbox">
+                                            <input id="@area.value.toString" name="@area.value.toString" type="checkbox" class="custom-control-input" value="On">
+                                            <input name="@area.value.toString" type="hidden" value="Off">
+                                            <span class="custom-control-indicator"></span>
+                                            @if(area.isCompositeValue) {
+                                                <span class="custom-control-description">@area.niceSpecificValueIfPresent().getOrElse(area.niceValue())</span>
+                                            } else {
+                                                <span class="custom-control-description">@area.niceValue</span>
+                                            }
+                                        </label>
+                                    </div>
+                                </div>
+                            }
+                        }
                         </div>
-
-                    </div>
-                }
+                    </fieldset>
+                </div>
+                <div class="termly-plans-fieldset termly-plans-fieldset-health-and-wellbeing">
+                    <fieldset>
+                        <legend>Health and Wellbeing</legend>
+                        <div class="row">
+                        @for(area <- planningAreas) {
+                            @if(area.niceHeaderValueIfPresent().getOrElse("NONE") == "Health And Wellbeing" || area.niceValue() == "Health And Wellbeing") {
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label class="custom-control custom-checkbox">
+                                            <input id="@area.value.toString" name="@area.value.toString" type="checkbox" class="custom-control-input" value="On">
+                                            <input name="@area.value.toString" type="hidden" value="Off">
+                                            <span class="custom-control-indicator"></span>
+                                            @if(area.isCompositeValue) {
+                                                <span class="custom-control-description">@area.niceSpecificValueIfPresent().getOrElse(area.niceValue())</span>
+                                            } else {
+                                                <span class="custom-control-description">@area.niceValue</span>
+                                            }
+                                        </label>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        </div>
+                    </fieldset>
                 </div>
 
-                <input type="text" class="custom-control-input" id="classId" name="classId" value="@classDetails.id.id">
-
-                <div class="form-submit-button text-center">
-                    <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+                <div class="termly-plans-fieldset termly-plans-fieldset-literacy">
+                    <fieldset>
+                        <legend>Literacy</legend>
+                        <div class="row">
+                        @for(area <- planningAreas) {
+                            @if(area.isCompositeValue && area.niceHeaderValueIfPresent().getOrElse("NONE") == "Literacy") {
+                                @if(area.niceSpecificValueIfPresent().getOrElse("NONE") != "Literacy And English") {
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label class="custom-control custom-checkbox">
+                                                <input id="@area.value.toString" name="@area.value.toString" type="checkbox" class="custom-control-input" value="On">
+                                                <input name="@area.value.toString" type="hidden" value="Off">
+                                                <span class="custom-control-indicator"></span>
+                                                @if(area.isCompositeValue) {
+                                                    <span class="custom-control-description">@area.niceSpecificValueIfPresent().getOrElse(area.niceValue())</span>
+                                                } else {
+                                                    <span class="custom-control-description">@area.niceValue</span>
+                                                }
+                                            </label>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        }
+                        </div>
+                    </fieldset>
                 </div>
-            </form>
+
+                <div class="termly-plans-fieldset termly-plans-fieldset-maths">
+                    <fieldset>
+                        <legend>Mathematics</legend>
+                        @for(area <- planningAreas) {
+                            @if(area.isNotCompositeValue && area.niceValue() == "Mathematics") {
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label class="custom-control custom-checkbox">
+                                            <input id="@area.value.toString" name="@area.value.toString" type="checkbox" class="custom-control-input" value="On">
+                                            <input name="@area.value.toString" type="hidden" value="Off">
+                                            <span class="custom-control-indicator"></span>
+                                            @if(area.isCompositeValue) {
+                                                <span class="custom-control-description">@area.niceSpecificValueIfPresent().getOrElse(area.niceValue())</span>
+                                            } else {
+                                                <span class="custom-control-description">@area.niceValue</span>
+                                            }
+                                        </label>
+                                    </div>
+                                </div>
+
+                            }
+                        }
+                    </fieldset>
+                </div>
+
+                <div class="termly-plans-fieldset termly-plans-fieldset-rme">
+                    <fieldset>
+                        <legend>Religious and Moral Education</legend>
+                        <div class="row">
+                        @for(area <- planningAreas) {
+                            @if(area.isCompositeValue && area.niceHeaderValueIfPresent().getOrElse("NONE") == "RME") {
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label class="custom-control custom-checkbox">
+                                            <input id="@area.value.toString" name="@area.value.toString" type="checkbox" class="custom-control-input" value="On">
+                                            <input name="@area.value.toString" type="hidden" value="Off">
+                                            <span class="custom-control-indicator"></span>
+                                            @if(area.isCompositeValue) {
+                                                <span class="custom-control-description">@area.niceSpecificValueIfPresent().getOrElse(area.niceValue())</span>
+                                            } else {
+                                                <span class="custom-control-description">@area.niceValue</span>
+                                            }
+                                        </label>
+                                    </div>
+                                </div>
+
+                            }
+                        }
+                        </div>
+                    </fieldset>
+                </div>
+
+                <div class="termly-plans-fieldset termly-plans-fieldset-science">
+                    <fieldset>
+                        <legend>Sciences</legend>
+                        @for(area <- planningAreas) {
+                            @if(area.isNotCompositeValue && area.niceValue() == "Science") {
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label class="custom-control custom-checkbox">
+                                            <input id="@area.value.toString" name="@area.value.toString" type="checkbox" class="custom-control-input" value="On">
+                                            <input name="@area.value.toString" type="hidden" value="Off">
+                                            <span class="custom-control-indicator"></span>
+                                            @if(area.isCompositeValue) {
+                                                <span class="custom-control-description">@area.niceSpecificValueIfPresent().getOrElse(area.niceValue())</span>
+                                            } else {
+                                                <span class="custom-control-description">@area.niceValue</span>
+                                            }
+                                        </label>
+                                    </div>
+                                </div>
+
+                            }
+                        }
+                    </fieldset>
+                </div>
+
+                <div class="termly-plans-fieldset termly-plans-fieldset-social-studies">
+                    <fieldset>
+                        <legend>Social Studies</legend>
+                        @for(area <- planningAreas) {
+                            @if(area.isNotCompositeValue && area.niceValue() == "Social Studies") {
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label class="custom-control custom-checkbox">
+                                            <input id="@area.value.toString" name="@area.value.toString" type="checkbox" class="custom-control-input" value="On">
+                                            <input name="@area.value.toString" type="hidden" value="Off">
+                                            <span class="custom-control-indicator"></span>
+                                            @if(area.isCompositeValue) {
+                                                <span class="custom-control-description">@area.niceSpecificValueIfPresent().getOrElse(area.niceValue())</span>
+                                            } else {
+                                                <span class="custom-control-description">@area.niceValue</span>
+                                            }
+                                        </label>
+                                    </div>
+                                </div>
+
+                            }
+                        }
+                    </fieldset>
+                </div>
+
+                <div class="termly-plans-fieldset termly-plans-fieldset-technologies">
+                    <fieldset>
+                        <legend>Technologies</legend>
+                        @for(area <- planningAreas) {
+                            @if(area.isNotCompositeValue && area.niceValue() == "Technologies") {
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label class="custom-control custom-checkbox">
+                                            <input id="@area.value.toString" name="@area.value.toString" type="checkbox" class="custom-control-input" value="On">
+                                            <input name="@area.value.toString" type="hidden" value="Off">
+                                            <span class="custom-control-indicator"></span>
+                                            @if(area.isCompositeValue) {
+                                                <span class="custom-control-description">@area.niceSpecificValueIfPresent().getOrElse(area.niceValue())</span>
+                                            } else {
+                                                <span class="custom-control-description">@area.niceValue</span>
+                                            }
+                                        </label>
+                                    </div>
+                                </div>
+
+                            }
+                        }
+                    </fieldset>
+                </div>
+
+            </div>
 
 
-        </div>
+            <input type="text" class="custom-control-input" id="classId" name="classId" value="@classDetails.id.id">
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" crossorigin="anonymous"></script>
-    }
+            <div class="form-submit-button text-center">
+                <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+            </div>
+        </form>
+
+
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" crossorigin="anonymous"></script>
+}

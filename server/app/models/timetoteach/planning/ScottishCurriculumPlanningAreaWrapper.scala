@@ -23,6 +23,8 @@ case class ScottishCurriculumPlanningAreaWrapper(
       .replace("__", " : ")
       .toLowerCase.replace("_", " ")
       .replace("rme", "RME")
+      .replace("standard", "Religious & Moral Education")
+      .replace("catholic", "Religious & Moral Education (Catholic)")
       .split(" ")
       .toList
       .map(word => word.capitalize)

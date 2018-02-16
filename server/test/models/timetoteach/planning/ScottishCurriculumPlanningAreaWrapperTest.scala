@@ -18,7 +18,7 @@ class ScottishCurriculumPlanningAreaWrapperTest
 
   test("RME__STANDARD nice value is 'RME : Standard'") {
     val wrapper = ScottishCurriculumPlanningAreaWrapper(ScottishCurriculumPlanningArea.RME__STANDARD)
-    assert(wrapper.niceValue() === "RME : Standard")
+    assert(wrapper.niceValue() === "RME : Religious & Moral Education")
   }
 
   test("HEALTH_AND_WELLBEING__PHYSICAL_EDUCATION nice value is 'Health And Wellbeing : Physical Education'"){
@@ -73,7 +73,7 @@ class ScottishCurriculumPlanningAreaWrapperTest
 
   test("RME__CATHOLIC nice specific value is 'Catholic'"){
     val wrapper = ScottishCurriculumPlanningAreaWrapper(ScottishCurriculumPlanningArea.RME__CATHOLIC)
-    assert(wrapper.niceSpecificValueIfPresent().get === "Catholic")
+    assert(wrapper.niceSpecificValueIfPresent().get === "Religious & Moral Education (Catholic)")
   }
 
 }
