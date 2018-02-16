@@ -3,7 +3,7 @@ package potentialmicroservice.planning.reader.dao
 import models.timetoteach.planning.PlanType
 import org.scalatest.FunSpec
 
-class PlanReaderDaoHelperTest extends FunSpec
+class PlanReaderDaoSubjectTermlyPlanHelperTest extends FunSpec
 {
   private val planReaderDao = new PlanReaderDaoSubjectTermlyPlanHelper
   {

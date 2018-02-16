@@ -14,7 +14,7 @@ import play.api.Logger
 import potentialmicroservice.planning.sharedschema.TermlyPlanningSchema
 import utils.mongodb.MongoDbSafety._
 
-trait PlanReaderDaoSubjectTermlyPlanHelper
+trait PlanReaderDaoSubjectTermlyPlanHelper extends PlanReaderDaoCommonHelper
 {
   private val logger: Logger = Logger
   private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
@@ -56,44 +56,6 @@ trait PlanReaderDaoSubjectTermlyPlanHelper
 
       findLatestVersionOfTermlyPlanDocLoop(foundTermlyPlanDocs.tail, newLatestDoc)
     }
-  }
-
-  def convertToSchoolTerm(maybeSchoolTermValue: Option[BsonValue]): Option[SchoolTerm] =
-  {
-    maybeSchoolTermValue match {
-      case Some(schoolTermValue) =>
-        val schoolTermDoc = schoolTermValue.asDocument()
-        for {
-          calendarYearValue <- safelyGetStringNoneIfBlank(schoolTermDoc, TermlyPlanningSchema.SCHOOL_YEAR)
-          yearsInCalendar = calendarYearValue.split("-")
-          yearStart = yearsInCalendar(0).toInt
-          maybeYearEnd = if (yearsInCalendar.size == 2) {
-            Some(yearsInCalendar(1).toInt)
-          } else None
-
-          schoolTermNameString <- safelyGetStringNoneIfBlank(schoolTermDoc, TermlyPlanningSchema.SCHOOL_TERM_NAME)
-          maybeSchoolTermName = SchoolTermName.convertToSchoolTermName(schoolTermNameString)
-          if maybeSchoolTermName.isDefined
-          schoolTermFirstDay <- safelyGetStringNoneIfBlank(schoolTermDoc, TermlyPlanningSchema.SCHOOL_TERM_FIRST_DAY)
-          schoolTermLastDay <- safelyGetStringNoneIfBlank(schoolTermDoc, TermlyPlanningSchema.SCHOOL_TERM_LAST_DAY)
-        } yield SchoolTerm(
-          SchoolYear(yearStart, maybeYearEnd),
-          maybeSchoolTermName.get,
-          LocalDate.parse(schoolTermFirstDay),
-          LocalDate.parse(schoolTermLastDay)
-        )
-      case None => None
-    }
-  }
-
-  private def convertBsonArrayToListOfString(array: BsonArray): List[String] =
-  {
-    import scala.collection.JavaConversions._
-    {
-      for {
-        eAndoValue <- array
-      } yield eAndoValue.asString().getValue
-    }.toList
   }
 
   private def convertDocumentEandOsWithBenchmarks(document: BsonDocument): Option[EandOsWithBenchmarks] =
@@ -153,8 +115,8 @@ trait PlanReaderDaoSubjectTermlyPlanHelper
         case Some(id) => Some(GroupId(id))
         case None => None
       }
-      subjectStringValue <- safelyGetStringNoneIfBlank(doc, TermlyPlanningSchema.CURRICULUM_PLANNING_AREA)
-      subject <- SubjectNameConverter.convertSubjectNameStringToSubjectName(subjectStringValue)
+      curriculumPlanningAreaValue <- safelyGetStringNoneIfBlank(doc, TermlyPlanningSchema.CURRICULUM_PLANNING_AREA)
+      curriculumPlanningArea <- SubjectNameConverter.convertSubjectNameStringToSubjectName(curriculumPlanningAreaValue)
       createdTimeString <- safelyGetStringNoneIfBlank(doc, TermlyPlanningSchema.CREATED_TIMESTAMP)
 
       maybeSchoolTermBsonValue = doc.get(TermlyPlanningSchema.SCHOOL_TERM)
@@ -169,7 +131,7 @@ trait PlanReaderDaoSubjectTermlyPlanHelper
       maybeSchoolTerm.get,
       ClassId(classId),
       groupId,
-      subject,
+      curriculumPlanningArea,
       LocalDateTime.parse(createdTimeString, formatter),
       eAndOsWithBenchmarks
     )

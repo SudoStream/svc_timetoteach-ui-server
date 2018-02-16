@@ -52,9 +52,9 @@ class PlanReaderDaoImpl @Inject()(mongoDbConnection: MongoDbConnection) extends 
       TermlyCurriculumSelectionSchema.CLASS_ID -> classId.value
     )
 
-    val futureFoundTermlyPlanDocuments = termlyCurriculumSelectionCollection.find(findMatcher).toFuture()
-    futureFoundTermlyPlanDocuments.map {
-      foundTermlyPlanDocs: Seq[Document] => findLatestVersionOfTermlyCurriculumSelection(foundTermlyPlanDocs.toList)
+    val futureFoundCurriculumSelectionDocuments = termlyCurriculumSelectionCollection.find(findMatcher).toFuture()
+    futureFoundCurriculumSelectionDocuments.map {
+      foundTermlyCurriculumSelectionDocs: Seq[Document] => findLatestVersionOfTermlyCurriculumSelection(foundTermlyCurriculumSelectionDocs.toList)
     }
   }
 }

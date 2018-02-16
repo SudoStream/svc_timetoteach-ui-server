@@ -5,8 +5,25 @@ import org.mongodb.scala.bson.{BsonArray, BsonDocument}
 
 object PlanReaderDaoHelperTermlyPlanTestHelper
 {
+  def provideSingleTermlyPlanDocument(): Document =
+  {
+    createTermlyPlanMongoDocumentWithIdAndTimestamp("5a7e0f39e9ff0d6d4d390e3c", "2018-02-09 21:14:33.347")
+  }
 
-  def createTermlyPlanMongoDocumentWithIdAndTimestamp(id: String, timestamp: String): Document =
+  def createAListOfSeveralTermlyPlanDocumentsMixedUp(): List[Document] =
+  {
+    List(
+      createTermlyPlanMongoDocumentWithIdAndTimestamp("204534664378917127976998", "2018-02-09 21:54:00.341"),
+      createTermlyPlanMongoDocumentWithIdAndTimestamp("1a7e0f39e9ff0d6d4d390e3c", "2018-02-09 21:33:43.347"),
+      createTermlyPlanMongoDocumentWithIdAndTimestamp("a21029985165479d9a049551", "2018-02-09 22:14:33.344"),
+      createTermlyPlanMongoDocumentWithIdAndTimestamp("b38bcf3f4450361f4271b465", "2018-02-09 21:34:00.343"),
+      createTermlyPlanMongoDocumentWithIdAndTimestamp("9a95defb5aa9a109ed704fea", "2018-02-09 21:17:30.349")
+    )
+  }
+
+  ///////////////////////////
+
+  private def createTermlyPlanMongoDocumentWithIdAndTimestamp(id: String, timestamp: String): Document =
   {
     Document(
       "_id" -> id,
@@ -60,20 +77,5 @@ object PlanReaderDaoHelperTermlyPlanTestHelper
     )
   }
 
-  def provideSingleTermlyPlanDocument(): Document =
-  {
-    createTermlyPlanMongoDocumentWithIdAndTimestamp("5a7e0f39e9ff0d6d4d390e3c", "2018-02-09 21:14:33.347")
-  }
-
-  def createAListOfSeveralTermlyPlanDocumentsMixedUp(): List[Document] =
-  {
-    List(
-      createTermlyPlanMongoDocumentWithIdAndTimestamp("204534664378917127976998", "2018-02-09 21:54:00.341"),
-      createTermlyPlanMongoDocumentWithIdAndTimestamp("1a7e0f39e9ff0d6d4d390e3c", "2018-02-09 21:33:43.347"),
-      createTermlyPlanMongoDocumentWithIdAndTimestamp("a21029985165479d9a049551", "2018-02-09 22:14:33.344"),
-      createTermlyPlanMongoDocumentWithIdAndTimestamp("b38bcf3f4450361f4271b465", "2018-02-09 21:34:00.343"),
-      createTermlyPlanMongoDocumentWithIdAndTimestamp("9a95defb5aa9a109ed704fea", "2018-02-09 21:17:30.349")
-    )
-  }
 
 }
