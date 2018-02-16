@@ -15,7 +15,10 @@ case class TermlyCurriculumSelection(
                                       schoolTerm: SchoolTerm
                                     )
 {
-
+  def planningAreasWrapped: List[ScottishCurriculumPlanningAreaWrapper] =
+  {
+    planningAreas.map(area => ScottishCurriculumPlanningAreaWrapper(area))
+  }
 }
 
 object TermlyCurriculumSelection

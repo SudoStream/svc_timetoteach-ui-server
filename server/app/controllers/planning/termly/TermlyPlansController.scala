@@ -128,7 +128,8 @@ class TermlyPlansController @Inject()(
             userFirstName,
             userFamilyName,
             TimeToTeachUserId(tttUserId),
-            classDetails
+            classDetails,
+            currentTermlyCurriculumSelection
           ))
         case None =>
           Redirect(routes.TermlyPlansController.termlyPlansSelectCurriculumAreas(classId))
@@ -195,6 +196,12 @@ class TermlyPlansController @Inject()(
     for {
       done <- savedPlan
     } yield Ok("Saved termly plans!")
+  }
+
+  def termlyOverviewForClass(classId: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest: AuthenticatedRequest[AnyContent] =>
+    Future{
+      Ok("Yep")
+    }
   }
 
   def termlyOverviewForGroup(classId: String, subject: String, groupId: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest: AuthenticatedRequest[AnyContent] =>
@@ -303,7 +310,6 @@ class TermlyPlansController @Inject()(
       )
       val insertCompleted = planningWriterService.saveTermlyCurriculumSelection(termlyCurriculumSelection)
 
-
       for {
         classes <- eventualClasses
         classDetailsList = classes.filter(theClass => theClass.id.id == curriculumAreaSelectionData.classId)
@@ -312,13 +318,7 @@ class TermlyPlansController @Inject()(
         classDetails = maybeClassDetails.get
         done <- insertCompleted
       } yield {
-        Ok(views.html.planning.termly.termlyPlansForClass(new MyDeadboltHandler(userReader),
-          userPictureUri,
-          userFirstName,
-          userFamilyName,
-          TimeToTeachUserId(tttUserId),
-          classDetails
-        ))
+        Redirect(routes.TermlyPlansController.termlyPlansForClass(classDetails.id.id))
       }
     }
 

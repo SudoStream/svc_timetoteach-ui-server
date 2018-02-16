@@ -33,6 +33,7 @@ GET           /termlyplanningforclass/:classId                                  
 GET           /termlyplanningforsubjectandgroup/:classId/:subject/:groupId            controllers.planning.termly.TermlyPlansController.termlyPlansForGroup(classId, subject, groupId)
 POST          /termlysaveplanningforsubjectandgroup/:classId/:subject/:groupId        controllers.planning.termly.TermlyPlansController.savePlansForGroup(classId, subject, groupId)
 GET           /termlyoverviewforsubjectandgroup/:classId/:subject/:groupId            controllers.planning.termly.TermlyPlansController.termlyOverviewForGroup(classId, subject, groupId)
+GET           /termlyoverviewforsubjectatclasslevel/:classId                         controllers.planning.termly.TermlyPlansController.termlyOverviewForClass(classId)
 
 GET           /classes                                                                controllers.planning.classtimetable.ClassTimetableController.classesHome
 GET           /addnewclass                                                            controllers.planning.classtimetable.ClassTimetableController.addNewClass

@@ -42,6 +42,7 @@
 
 .termly-plans-collapse-container {
     max-width: 90%;
+    margin-bottom: 1rem;
 }
 
 .termly-plans-group-row {
@@ -152,4 +153,8 @@
 .termly-plans-fieldset fieldset {
     margin: 1rem 1rem;
     padding: 0.25rem 2rem;
+}
+
+.termly-plans-overview-section-div {
+
 }
