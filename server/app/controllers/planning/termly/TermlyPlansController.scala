@@ -39,8 +39,7 @@ class TermlyPlansController @Inject()(
   import TermlyPlansController.buildSchoolNameToClassesMap
 
   val logger: Logger = Logger
-  private val postSelectedCurriculumAreasUrl = routes.TermlyPlansController.curriulumAreasSelected
-
+  private val postSelectedCurriculumAreasUrl = routes.TermlyPlansController.curriulumAreasSelected()
 
   def termlyPlans: Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest: AuthenticatedRequest[AnyContent] =>
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
@@ -74,7 +73,7 @@ class TermlyPlansController @Inject()(
     }.toList
   }
 
-  def termlyPlansSelectCurriculumAreas(classId: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest: AuthenticatedRequest[AnyContent] =>
+  def termlyPlansSelectOverallCurriculumAreasForTheTerm(classId: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest: AuthenticatedRequest[AnyContent] =>
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
     val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
@@ -88,7 +87,7 @@ class TermlyPlansController @Inject()(
       if maybeClassDetails.isDefined
       classDetails = maybeClassDetails.get
     } yield
-      Ok(views.html.planning.termly.termlyPlansSelectCurriculumAreas(
+      Ok(views.html.planning.termly.termlyPlansSelectOverallCurriculumAreasForTheTerm(
         new MyDeadboltHandler(userReader),
         userPictureUri,
         userFirstName,
@@ -123,7 +122,7 @@ class TermlyPlansController @Inject()(
       maybeCurrentTermlyCurriculumSelection <- eventualMaybeCurrentTermlyCurriculumSelection
       route = maybeCurrentTermlyCurriculumSelection match {
         case Some(currentTermlyCurriculumSelection) =>
-          Ok(views.html.planning.termly.termlyPlansForClass(new MyDeadboltHandler(userReader),
+          Ok(views.html.planning.termly.termlyPlansForClassOverallOverview(new MyDeadboltHandler(userReader),
             userPictureUri,
             userFirstName,
             userFamilyName,
@@ -132,13 +131,18 @@ class TermlyPlansController @Inject()(
             currentTermlyCurriculumSelection
           ))
         case None =>
-          Redirect(routes.TermlyPlansController.termlyPlansSelectCurriculumAreas(classId))
+          Redirect(routes.TermlyPlansController.termlyPlansSelectOverallCurriculumAreasForTheTerm(classId))
       }
     } yield route
   }
 
+  def termlyPlansClassLevel_SelectEsOsBenchmarksForCurriculumArea(classId: String, curriculumArea: String, groupId: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest: AuthenticatedRequest[AnyContent] =>
+    Future{
+      Ok("termlyPlansClassLevel_SelectEsOsBenchmarksForCurriculumArea")
+    }
+  }
 
-  def termlyPlansForClassAtGroupLevel(classId: String, curriculumArea: String, groupId: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest: AuthenticatedRequest[AnyContent] =>
+  def termlyPlansGroupLevel_SelectEsOsBenchmarksForCurriculumArea(classId: String, curriculumArea: String, groupId: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest: AuthenticatedRequest[AnyContent] =>
     import utils.CurriculumConverterUtil._
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
@@ -159,7 +163,7 @@ class TermlyPlansController @Inject()(
         convertSubjectToCurriculumArea(curriculumArea)
       )
     } yield {
-      Ok(views.html.planning.termly.termlyPlansForGroup(new MyDeadboltHandler(userReader),
+      Ok(views.html.planning.termly.termlyPlansSelectEsOsBenchmarksForCurriculumAreaAtGroupLevel(new MyDeadboltHandler(userReader),
         userPictureUri,
         userFirstName,
         userFamilyName,
@@ -251,7 +255,7 @@ class TermlyPlansController @Inject()(
       maybeSubjectTermlyPlan <- futureMaybeSubjectTermlyPlan
       route = maybeSubjectTermlyPlan match {
         case Some(subjectTermlyPlan) =>
-          Ok(views.html.planning.termly.termlyPlansOverviewForGroup(new MyDeadboltHandler(userReader),
+          Ok(views.html.planning.termly.termlyPlansOverviewForCurriculumAtGroupLevel(new MyDeadboltHandler(userReader),
             userPictureUri,
             userFirstName,
             userFamilyName,
@@ -263,7 +267,7 @@ class TermlyPlansController @Inject()(
             esAndOsCodeToDetailMap
           ))
         case None =>
-          Redirect(routes.TermlyPlansController.termlyPlansForClassAtGroupLevel(classId, curriculumArea, groupId))
+          Redirect(routes.TermlyPlansController.termlyPlansGroupLevel_SelectEsOsBenchmarksForCurriculumArea(classId, curriculumArea, groupId))
       }
     } yield route
   }

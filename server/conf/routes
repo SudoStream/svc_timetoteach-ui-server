@@ -27,10 +27,11 @@ POST          /initialPreferencesCreated                                        
 GET           /weeklyplanning                                                                   controllers.Application.weeklyPlanning
 
 GET           /termlyplanning                                                                   controllers.planning.termly.TermlyPlansController.termlyPlans
-GET           /termlyplanningselectcurriculumareas/:classId                                     controllers.planning.termly.TermlyPlansController.termlyPlansSelectCurriculumAreas(classId)
+GET           /termlyplanningselectcurriculumareas/:classId                                     controllers.planning.termly.TermlyPlansController.termlyPlansSelectOverallCurriculumAreasForTheTerm(classId)
 POST          /curriulumAreasSelected                                                           controllers.planning.termly.TermlyPlansController.curriulumAreasSelected
 GET           /termlyplanningforclass/:classId                                                  controllers.planning.termly.TermlyPlansController.termlyPlansForClass(classId)
-GET           /termlyplanningforclassatgrouplevel/:classId/:curriculumArea/:groupId             controllers.planning.termly.TermlyPlansController.termlyPlansForClassAtGroupLevel(classId, curriculumArea, groupId)
+GET           /termlyplanningforclassatgrouplevel/:classId/:curriculumArea/:groupId             controllers.planning.termly.TermlyPlansController.termlyPlansGroupLevel_SelectEsOsBenchmarksForCurriculumArea(classId, curriculumArea, groupId)
+GET           /termlyplanningforclassatclasslevel/:classId/:curriculumArea/:groupId             controllers.planning.termly.TermlyPlansController.termlyPlansClassLevel_SelectEsOsBenchmarksForCurriculumArea(classId, curriculumArea, groupId)
 POST          /termlysaveplanningforsubjectandgroup/:classId/:curriculumArea/:groupId           controllers.planning.termly.TermlyPlansController.savePlansForGroup(classId, curriculumArea, groupId)
 GET           /termlyoverviewforcurriculumareaandgroup/:classId/:curriculumArea/:groupId        controllers.planning.termly.TermlyPlansController.termlyOverviewForCurriculumAreaAtGroupLevel(classId, curriculumArea, groupId)
 GET           /termlyoverviewforcurriculumareaatclasslevel/:classId/:curriculumArea             controllers.planning.termly.TermlyPlansController.termlyOverviewForCurriculumAreaAtClassLevel(classId,curriculumArea)
