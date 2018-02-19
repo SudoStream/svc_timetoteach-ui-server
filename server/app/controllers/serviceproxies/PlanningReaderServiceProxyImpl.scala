@@ -12,12 +12,12 @@ import scala.concurrent.Future
 @Singleton
 class PlanningReaderServiceProxyImpl @Inject()(planningReaderService: PlanningReaderService) extends PlanningReaderServiceProxy
 {
-  override def readSubjectTermlyPlan(tttUserId: TimeToTeachUserId,
-                                     classId: ClassId,
-                                     groupId: GroupId,
-                                     planningArea: ScottishCurriculumPlanningArea): Future[Option[SubjectTermlyPlan]] =
+  override def readCurriculumAreaTermlyPlanForGroup(tttUserId: TimeToTeachUserId,
+                                                    classId: ClassId,
+                                                    groupId: GroupId,
+                                                    planningArea: ScottishCurriculumPlanningArea): Future[Option[SubjectTermlyPlan]] =
   {
-    planningReaderService.readSubjectTermlyPlan(tttUserId, classId, groupId, planningArea)
+    planningReaderService.readCurriculumAreaTermlyPlanForGroup(tttUserId, classId, groupId, planningArea)
   }
 
   override def currentTermlyCurriculumSelection(tttUserId: TimeToTeachUserId, classId: ClassId): Future[Option[TermlyCurriculumSelection]] =

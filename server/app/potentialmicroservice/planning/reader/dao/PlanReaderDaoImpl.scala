@@ -22,12 +22,12 @@ class PlanReaderDaoImpl @Inject()(mongoDbConnection: MongoDbConnection) extends 
   private val termlyPlanningCollection: MongoCollection[Document] = mongoDbConnection.getTermlyPlanningCollection
   private val termlyCurriculumSelectionCollection: MongoCollection[Document] = mongoDbConnection.getTermlyCurriculumSelectionCollection
 
-  override def readSubjectTermlyPlan(tttUserId: TimeToTeachUserId,
-                                     classId: ClassId,
-                                     groupId: GroupId,
-                                     planningArea: ScottishCurriculumPlanningArea): Future[Option[SubjectTermlyPlan]] =
+  override def readCurriculumAreaTermlyPlanForGroup(tttUserId: TimeToTeachUserId,
+                                                    classId: ClassId,
+                                                    groupId: GroupId,
+                                                    planningArea: ScottishCurriculumPlanningArea): Future[Option[SubjectTermlyPlan]] =
   {
-    logger.info(s"Reading subject termly plan from Database: $tttUserId|$classId|$groupId|$planningArea")
+    logger.info(s"Reading subject termly plan for group from Database: $tttUserId|$classId|$groupId|$planningArea")
 
     val findMatcher = BsonDocument(
       TermlyPlanningSchema.TTT_USER_ID -> tttUserId.value,

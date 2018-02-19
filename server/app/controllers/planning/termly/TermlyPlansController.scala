@@ -204,7 +204,7 @@ class TermlyPlansController @Inject()(
 
   def termlyOverviewForCurriculumAreaAtClassLevel(classId: String, curriculumArea: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest: AuthenticatedRequest[AnyContent] =>
     Future{
-      Ok("Yep")
+      Ok("Termly Overview For Curriculum Area At Class Level")
     }
   }
 
@@ -231,7 +231,7 @@ class TermlyPlansController @Inject()(
     val futureMaybeSubjectTermlyPlan = {
       futureMaybeSubjectName.map {
         case Some(subjectName) =>
-          planningReaderService.readSubjectTermlyPlan(
+          planningReaderService.readCurriculumAreaTermlyPlanForGroup(
             TimeToTeachUserId(tttUserId),
             ClassId(classId),
             GroupId(groupId),

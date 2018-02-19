@@ -16,7 +16,7 @@ trait PlanReaderDao
                                         classId: ClassId
                                       ): Future[Option[TermlyCurriculumSelection]]
 
-  def readSubjectTermlyPlan(
+  def readCurriculumAreaTermlyPlanForGroup(
                              tttUserId: TimeToTeachUserId,
                              classId: ClassId,
                              groupId: GroupId,
