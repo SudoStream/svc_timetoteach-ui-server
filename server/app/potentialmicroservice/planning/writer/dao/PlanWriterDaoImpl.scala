@@ -3,7 +3,7 @@ package potentialmicroservice.planning.writer.dao
 import javax.inject.{Inject, Singleton}
 
 import dao.MongoDbConnection
-import models.timetoteach.planning.{SubjectTermlyPlan, TermlyCurriculumSelection}
+import models.timetoteach.planning.{CurriculumAreaTermlyPlan, TermlyCurriculumSelection}
 import org.mongodb.scala.{Completed, Document, MongoCollection}
 import play.api.Logger
 
@@ -17,7 +17,7 @@ class PlanWriterDaoImpl @Inject()(mongoDbConnection: MongoDbConnection)
   private val termlyCurriculumSelectionCollection: MongoCollection[Document] = mongoDbConnection.getTermlyCurriculumSelectionCollection
   private val logger: Logger = Logger
 
-  override def saveSubjectTermlyPlan(planToSave: SubjectTermlyPlan): Future[Completed] =
+  override def saveSubjectTermlyPlan(planToSave: CurriculumAreaTermlyPlan): Future[Completed] =
   {
     val termlyPlanAsDocument = convertTermlyPlanToMongoDbDocument(planToSave)
     logger.info(s"Inserting termly plan to database: ${termlyPlanAsDocument.toString}")

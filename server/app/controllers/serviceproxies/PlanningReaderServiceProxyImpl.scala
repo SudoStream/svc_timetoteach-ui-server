@@ -3,7 +3,7 @@ package controllers.serviceproxies
 import javax.inject.{Inject, Singleton}
 
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
-import models.timetoteach.planning.{GroupId, SubjectTermlyPlan, TermlyCurriculumSelection}
+import models.timetoteach.planning.{GroupId, CurriculumAreaTermlyPlan, TermlyCurriculumSelection}
 import models.timetoteach.{ClassId, TimeToTeachUserId}
 import potentialmicroservice.planning.reader.PlanningReaderService
 
@@ -15,7 +15,7 @@ class PlanningReaderServiceProxyImpl @Inject()(planningReaderService: PlanningRe
   override def readCurriculumAreaTermlyPlanForGroup(tttUserId: TimeToTeachUserId,
                                                     classId: ClassId,
                                                     groupId: GroupId,
-                                                    planningArea: ScottishCurriculumPlanningArea): Future[Option[SubjectTermlyPlan]] =
+                                                    planningArea: ScottishCurriculumPlanningArea): Future[Option[CurriculumAreaTermlyPlan]] =
   {
     planningReaderService.readCurriculumAreaTermlyPlanForGroup(tttUserId, classId, groupId, planningArea)
   }

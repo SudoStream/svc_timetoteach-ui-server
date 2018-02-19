@@ -9,7 +9,7 @@ import models.timetoteach.term.SchoolTerm
 import models.timetoteach.{ClassId, TimeToTeachUserId}
 import play.api.Logger
 
-case class SubjectTermlyPlan(
+case class CurriculumAreaTermlyPlan(
                               tttUserId: TimeToTeachUserId,
                               planType: PlanType,
                               schoolTerm: SchoolTerm,

@@ -4,7 +4,7 @@ import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, LocalDateTime}
 
 import duplicate.model.EandOsWithBenchmarks
-import models.timetoteach.planning.{GroupId, PlanType, CurriculumAreaConverter, SubjectTermlyPlan}
+import models.timetoteach.planning.{GroupId, PlanType, CurriculumAreaConverter, CurriculumAreaTermlyPlan}
 import models.timetoteach.term.{SchoolTerm, SchoolTermName, SchoolYear}
 import models.timetoteach.{ClassId, TimeToTeachUserId}
 import org.bson.{BsonArray, BsonDocument}
@@ -19,7 +19,7 @@ trait PlanReaderDaoSubjectTermlyPlanHelper extends PlanReaderDaoCommonHelper
   private val logger: Logger = Logger
   private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
 
-  def findLatestVersionOfTermlyPlan(foundTermlyPlanDocs: List[Document]): Option[SubjectTermlyPlan] =
+  def findLatestVersionOfTermlyPlan(foundTermlyPlanDocs: List[Document]): Option[CurriculumAreaTermlyPlan] =
   {
     logger.debug(s"foundTermlyPlanDocs size = ${foundTermlyPlanDocs.size}")
     if (foundTermlyPlanDocs.isEmpty) {
@@ -103,7 +103,7 @@ trait PlanReaderDaoSubjectTermlyPlanHelper extends PlanReaderDaoCommonHelper
     }
   }
 
-  private[dao] def convertDocumentToSubjectTermlyPlan(doc: Document): Option[SubjectTermlyPlan] =
+  private[dao] def convertDocumentToSubjectTermlyPlan(doc: Document): Option[CurriculumAreaTermlyPlan] =
   {
     for {
       tttUserId <- safelyGetStringNoneIfBlank(doc, TermlyPlanningSchema.TTT_USER_ID)
@@ -125,7 +125,7 @@ trait PlanReaderDaoSubjectTermlyPlanHelper extends PlanReaderDaoCommonHelper
 
       maybeEandOsWithBenchmarks = doc.get(TermlyPlanningSchema.SELECTED_ES_AND_OS_WITH_BENCHMARKS)
       eAndOsWithBenchmarks = convertToEsAndOsWithBenchmarks(maybeEandOsWithBenchmarks)
-    } yield SubjectTermlyPlan(
+    } yield CurriculumAreaTermlyPlan(
       TimeToTeachUserId(tttUserId),
       planType,
       maybeSchoolTerm.get,

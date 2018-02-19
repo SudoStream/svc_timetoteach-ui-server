@@ -228,7 +228,7 @@ class TermlyPlansController @Inject()(
         }
     }
 
-    val futureMaybeSubjectTermlyPlan = {
+    val futureMaybeCurriculumAreaTermlyPlanForGroup = {
       futureMaybeSubjectName.map {
         case Some(subjectName) =>
           planningReaderService.readCurriculumAreaTermlyPlanForGroup(
@@ -252,9 +252,9 @@ class TermlyPlansController @Inject()(
       classDetails = maybeClassDetails.get
       group = classDetails.groups.filter(group => group.groupId.id == groupId).head
 
-      maybeSubjectTermlyPlan <- futureMaybeSubjectTermlyPlan
-      route = maybeSubjectTermlyPlan match {
-        case Some(subjectTermlyPlan) =>
+      maybeCurriculumAreaTermlyPlanForGroup <- futureMaybeCurriculumAreaTermlyPlanForGroup
+      route = maybeCurriculumAreaTermlyPlanForGroup match {
+        case Some(curriculumAreaTermlyPlan: CurriculumAreaTermlyPlan) =>
           Ok(views.html.planning.termly.termlyPlansOverviewForCurriculumAtGroupLevel(new MyDeadboltHandler(userReader),
             userPictureUri,
             userFirstName,
@@ -263,7 +263,7 @@ class TermlyPlansController @Inject()(
             classDetails,
             group,
             curriculumArea,
-            maybeSubjectTermlyPlan.get,
+            maybeCurriculumAreaTermlyPlanForGroup.get,
             esAndOsCodeToDetailMap
           ))
         case None =>

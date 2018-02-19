@@ -6,7 +6,7 @@ import javax.inject.{Inject, Singleton}
 import controllers.serviceproxies.TermServiceProxy
 import duplicate.model.TermlyPlansToSave
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
-import models.timetoteach.planning.{GroupId, PlanType, SubjectTermlyPlan}
+import models.timetoteach.planning.{GroupId, PlanType, CurriculumAreaTermlyPlan}
 import models.timetoteach.{ClassId, TimeToTeachUserId}
 
 @Singleton
@@ -20,7 +20,7 @@ class TermPlansHelper @Inject()(termService: TermServiceProxy)
                                 termlyPlansToSave: TermlyPlansToSave,
                                 maybeGroupId: Option[GroupId],
                                 curriculumArea: String
-                              ): SubjectTermlyPlan =
+                              ): CurriculumAreaTermlyPlan =
   {
     val thisTerm = termService.currentSchoolTerm()
     val planType = if (maybeGroupId.isDefined) {
@@ -29,7 +29,7 @@ class TermPlansHelper @Inject()(termService: TermServiceProxy)
       PlanType.CLASS_LEVEL_PLAN
     }
 
-    SubjectTermlyPlan(
+    CurriculumAreaTermlyPlan(
       termlyPlansToSave.tttUserId,
       planType,
       thisTerm,

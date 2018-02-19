@@ -2,7 +2,7 @@ package potentialmicroservice.planning.writer
 
 import javax.inject.{Inject, Singleton}
 
-import models.timetoteach.planning.{SubjectTermlyPlan, TermlyCurriculumSelection}
+import models.timetoteach.planning.{CurriculumAreaTermlyPlan, TermlyCurriculumSelection}
 import org.mongodb.scala.Completed
 import potentialmicroservice.planning.writer.dao.PlanWriterDao
 
@@ -12,7 +12,7 @@ import scala.concurrent.Future
 class PlanningWriterServiceImpl @Inject()(planningWriterDao: PlanWriterDao) extends PlanningWriterService
 {
 
-  override def saveSubjectTermlyPlan(planToSave: SubjectTermlyPlan): Future[Completed] =
+  override def saveSubjectTermlyPlan(planToSave: CurriculumAreaTermlyPlan): Future[Completed] =
   {
     planningWriterDao.saveSubjectTermlyPlan(planToSave)
   }

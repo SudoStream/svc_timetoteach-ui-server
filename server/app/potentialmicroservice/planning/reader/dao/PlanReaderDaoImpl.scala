@@ -4,7 +4,7 @@ import javax.inject.{Inject, Singleton}
 
 import dao.MongoDbConnection
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
-import models.timetoteach.planning.{GroupId, SubjectTermlyPlan, TermlyCurriculumSelection}
+import models.timetoteach.planning.{GroupId, CurriculumAreaTermlyPlan, TermlyCurriculumSelection}
 import models.timetoteach.{ClassId, TimeToTeachUserId}
 import org.mongodb.scala.bson.BsonDocument
 import org.mongodb.scala.{Document, MongoCollection}
@@ -25,7 +25,7 @@ class PlanReaderDaoImpl @Inject()(mongoDbConnection: MongoDbConnection) extends 
   override def readCurriculumAreaTermlyPlanForGroup(tttUserId: TimeToTeachUserId,
                                                     classId: ClassId,
                                                     groupId: GroupId,
-                                                    planningArea: ScottishCurriculumPlanningArea): Future[Option[SubjectTermlyPlan]] =
+                                                    planningArea: ScottishCurriculumPlanningArea): Future[Option[CurriculumAreaTermlyPlan]] =
   {
     logger.info(s"Reading subject termly plan for group from Database: $tttUserId|$classId|$groupId|$planningArea")
 

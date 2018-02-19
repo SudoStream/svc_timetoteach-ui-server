@@ -1,14 +1,14 @@
 package potentialmicroservice.planning.writer.dao
 
 import duplicate.model.EandOsWithBenchmarks
-import models.timetoteach.planning.SubjectTermlyPlan
+import models.timetoteach.planning.CurriculumAreaTermlyPlan
 import org.mongodb.scala.bson.collection.immutable.Document
 import org.mongodb.scala.bson.{BsonArray, BsonDocument, BsonString}
 
 trait PlanWriterDaoSubjectTermlyPlanHelper {
   import potentialmicroservice.planning.sharedschema.TermlyPlanningSchema._
 
-  def convertTermlyPlanToMongoDbDocument(planToSave: SubjectTermlyPlan): Document = {
+  def convertTermlyPlanToMongoDbDocument(planToSave: CurriculumAreaTermlyPlan): Document = {
 
     val groupIdValue = if (planToSave.maybeGroupId.isDefined) {
       planToSave.maybeGroupId.get.value

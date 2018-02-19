@@ -1,6 +1,6 @@
 @import models.timetoteach.TimeToTeachUserId
-@import models.timetoteach.planning.SubjectTermlyPlan
-@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails, groupDetails: duplicate.model.Group, curriculumArea: String, subjectTermlyPlan: SubjectTermlyPlan, esAndOsCodeToDetailMap: Map[String, duplicate.model.esandos.EandO])
+@import models.timetoteach.planning.CurriculumAreaTermlyPlan
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails, groupDetails: duplicate.model.Group, curriculumArea: String, subjectTermlyPlan: CurriculumAreaTermlyPlan, esAndOsCodeToDetailMap: Map[String, duplicate.model.esandos.EandO])
 
 @timetoteachAppMain(handler, s"${classDetails.className.name} Termly Plans - $curriculumArea - ${groupDetails.groupName.name.capitalize}",
     userPictureUri, userFirstName, userFamilyName) {
