@@ -116,7 +116,7 @@ trait PlanReaderDaoSubjectTermlyPlanHelper extends PlanReaderDaoCommonHelper
         case None => None
       }
       curriculumPlanningAreaValue <- safelyGetStringNoneIfBlank(doc, TermlyPlanningSchema.CURRICULUM_PLANNING_AREA)
-      curriculumPlanningArea <- CurriculumAreaConverter.convertCurriculumAreaStringToSubjectName(curriculumPlanningAreaValue)
+      curriculumPlanningArea <- CurriculumAreaConverter.convertCurriculumAreaStringToModel(curriculumPlanningAreaValue)
       createdTimeString <- safelyGetStringNoneIfBlank(doc, TermlyPlanningSchema.CREATED_TIMESTAMP)
 
       maybeSchoolTermBsonValue = doc.get(TermlyPlanningSchema.SCHOOL_TERM)

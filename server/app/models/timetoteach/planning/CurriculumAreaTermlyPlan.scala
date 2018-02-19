@@ -56,7 +56,7 @@ object CurriculumAreaConverter
 {
   val logger: Logger = Logger
 
-  def convertCurriculumAreaStringToSubjectName(name: String): Option[ScottishCurriculumPlanningArea] =
+  def convertCurriculumAreaStringToModel(name: String): Option[ScottishCurriculumPlanningArea] =
   {
     name.toUpperCase match {
       case "ART" | "EXPRESSIVE_ARTS__ART" => Some(ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__ART)

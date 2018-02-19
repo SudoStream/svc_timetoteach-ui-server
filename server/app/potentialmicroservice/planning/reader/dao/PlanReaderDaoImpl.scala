@@ -4,7 +4,7 @@ import javax.inject.{Inject, Singleton}
 
 import dao.MongoDbConnection
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
-import models.timetoteach.planning.{GroupId, CurriculumAreaTermlyPlan, TermlyCurriculumSelection}
+import models.timetoteach.planning.{CurriculumAreaTermlyPlan, GroupId, PlanType, TermlyCurriculumSelection}
 import models.timetoteach.{ClassId, TimeToTeachUserId}
 import org.mongodb.scala.bson.BsonDocument
 import org.mongodb.scala.{Document, MongoCollection}
@@ -21,6 +21,22 @@ class PlanReaderDaoImpl @Inject()(mongoDbConnection: MongoDbConnection) extends 
   private val logger: Logger = Logger
   private val termlyPlanningCollection: MongoCollection[Document] = mongoDbConnection.getTermlyPlanningCollection
   private val termlyCurriculumSelectionCollection: MongoCollection[Document] = mongoDbConnection.getTermlyCurriculumSelectionCollection
+
+  override def currentTermlyCurriculumSelection(tttUserId: TimeToTeachUserId,
+                                                classId: ClassId): Future[Option[TermlyCurriculumSelection]] =
+  {
+    logger.info(s"Looking for latest termly curriculum selection from Database: $tttUserId|$classId")
+
+    val findMatcher = BsonDocument(
+      TermlyCurriculumSelectionSchema.TTT_USER_ID -> tttUserId.value,
+      TermlyCurriculumSelectionSchema.CLASS_ID -> classId.value
+    )
+
+    val futureFoundCurriculumSelectionDocuments = termlyCurriculumSelectionCollection.find(findMatcher).toFuture()
+    futureFoundCurriculumSelectionDocuments.map {
+      foundTermlyCurriculumSelectionDocs: Seq[Document] => findLatestVersionOfTermlyCurriculumSelection(foundTermlyCurriculumSelectionDocs.toList)
+    }
+  }
 
   override def readCurriculumAreaTermlyPlanForGroup(tttUserId: TimeToTeachUserId,
                                                     classId: ClassId,
@@ -42,19 +58,20 @@ class PlanReaderDaoImpl @Inject()(mongoDbConnection: MongoDbConnection) extends 
     }
   }
 
-  override def currentTermlyCurriculumSelection(tttUserId: TimeToTeachUserId,
-                                                classId: ClassId): Future[Option[TermlyCurriculumSelection]] =
+  override def readCurriculumAreaTermlyPlanForClassLevel(tttUserId: TimeToTeachUserId, classId: ClassId, planningArea: ScottishCurriculumPlanningArea): Future[Option[CurriculumAreaTermlyPlan]] =
   {
-    logger.info(s"Looking for latest termly curriculum selection from Database: $tttUserId|$classId")
+    logger.info(s"Reading subject termly plan for class level from Database: $tttUserId|$classId|$planningArea")
 
     val findMatcher = BsonDocument(
-      TermlyCurriculumSelectionSchema.TTT_USER_ID -> tttUserId.value,
-      TermlyCurriculumSelectionSchema.CLASS_ID -> classId.value
+      TermlyPlanningSchema.TTT_USER_ID -> tttUserId.value,
+      TermlyPlanningSchema.CLASS_ID -> classId.value,
+      TermlyPlanningSchema.CURRICULUM_PLANNING_AREA -> planningArea.toString,
+      TermlyPlanningSchema.PLAN_TYPE -> PlanType.CLASS_LEVEL_PLAN.toString
     )
 
-    val futureFoundCurriculumSelectionDocuments = termlyCurriculumSelectionCollection.find(findMatcher).toFuture()
-    futureFoundCurriculumSelectionDocuments.map {
-      foundTermlyCurriculumSelectionDocs: Seq[Document] => findLatestVersionOfTermlyCurriculumSelection(foundTermlyCurriculumSelectionDocs.toList)
+    val futureFoundTermlyPlanDocuments = termlyPlanningCollection.find(findMatcher).toFuture()
+    futureFoundTermlyPlanDocuments.map {
+      foundTermlyPlanDocs: Seq[Document] => findLatestVersionOfTermlyPlan(foundTermlyPlanDocs.toList)
     }
   }
 }

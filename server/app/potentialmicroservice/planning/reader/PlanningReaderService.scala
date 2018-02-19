@@ -23,4 +23,10 @@ trait PlanningReaderService
                              planningArea: ScottishCurriculumPlanningArea
                            ): Future[Option[CurriculumAreaTermlyPlan]]
 
+  def readCurriculumAreaTermlyPlanForClassLevel(
+                                                 tttUserId: TimeToTeachUserId,
+                                                 classId: ClassId,
+                                                 planningArea: ScottishCurriculumPlanningArea
+                                               ): Future[Option[CurriculumAreaTermlyPlan]]
+
 }

@@ -1,8 +1,8 @@
 @import models.timetoteach.TimeToTeachUserId
 @import models.timetoteach.planning.CurriculumAreaTermlyPlan
-@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails, groupDetails: duplicate.model.Group, curriculumArea: String, subjectTermlyPlan: CurriculumAreaTermlyPlan, esAndOsCodeToDetailMap: Map[String, duplicate.model.esandos.EandO])
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails, curriculumArea: String, subjectTermlyPlan: CurriculumAreaTermlyPlan, esAndOsCodeToDetailMap: Map[String, duplicate.model.esandos.EandO])
 
-@timetoteachAppMain(handler, s"${classDetails.className.name} Termly Plans - $curriculumArea - ${groupDetails.groupName.name.capitalize}",
+@timetoteachAppMain(handler, s"${classDetails.className.name} Termly Plans - $curriculumArea - Class Level",
     userPictureUri, userFirstName, userFamilyName) {
     <div class="in-app-menu-small-devices">
         <li class="nav-item nav-login-button">
@@ -67,7 +67,8 @@
                     <ul class="nav justify-content-end">
                         <li class="nav-item manage-class-nav-item-rightmost">
                             <a id="termly-plans-edit" role="button" class="btn btn-primary"
-                            href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansClassLevel_SelectEsOsBenchmarksForCurriculumArea(classDetails.id.id, curriculumArea, groupDetails.groupId.id)">
+                            href="#">
+                            @*href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansClassLevel_SelectEsOsBenchmarksForCurriculumArea(classDetails.id.id, curriculumArea, groupDetails.groupId.id)">*@
                                 Re-Select Es&Os/Benchmarks</a>
                         </li>
                     </ul>
@@ -85,11 +86,11 @@
                     </div>
                     <div class="form-group col-md-4">
                         <label for="inputGroup">Group</label>
-                        <input type="text" class="form-control" id="inputGroup" placeholder="@groupDetails.groupName.name.capitalize" disabled="true">
+                        @*<input type="text" class="form-control" id="inputGroup" placeholder="@groupDetails.groupName.name.capitalize" disabled="true">*@
                     </div>
                     <div class="form-group col-md-4">
                         <label for="inputLevel">Curriculum Level</label>
-                        <input type="text" class="form-control" id="inputLevel" placeholder="@groupDetails.groupLevel.value.replace("Level", "")" disabled="true">
+                        @*<input type="text" class="form-control" id="inputLevel" placeholder="@groupDetails.groupLevel.value.replace("Level", "")" disabled="true">*@
                     </div>
                 </div>
             </form>

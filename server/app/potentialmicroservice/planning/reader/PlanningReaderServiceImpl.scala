@@ -13,6 +13,13 @@ import scala.concurrent.Future
 class PlanningReaderServiceImpl @Inject()(planningReaderDao: PlanReaderDao) extends PlanningReaderService
 {
 
+  override def currentTermlyCurriculumSelection(tttUserId: TimeToTeachUserId,
+                                                classId: ClassId): Future[Option[TermlyCurriculumSelection]] =
+  {
+    planningReaderDao.currentTermlyCurriculumSelection(tttUserId,classId)
+  }
+
+
   override def readCurriculumAreaTermlyPlanForGroup(tttUserId: TimeToTeachUserId,
                                                     classId: ClassId,
                                                     groupId: GroupId,
@@ -21,9 +28,9 @@ class PlanningReaderServiceImpl @Inject()(planningReaderDao: PlanReaderDao) exte
     planningReaderDao.readCurriculumAreaTermlyPlanForGroup(tttUserId, classId, groupId, planningArea)
   }
 
-  override def currentTermlyCurriculumSelection(tttUserId: TimeToTeachUserId,
-                                                classId: ClassId): Future[Option[TermlyCurriculumSelection]] =
-  {
-    planningReaderDao.currentTermlyCurriculumSelection(tttUserId,classId)
+
+  override def readCurriculumAreaTermlyPlanForClassLevel(tttUserId: TimeToTeachUserId, classId: ClassId, planningArea: ScottishCurriculumPlanningArea): Future[Option[CurriculumAreaTermlyPlan]] = {
+    planningReaderDao.readCurriculumAreaTermlyPlanForClassLevel(tttUserId, classId, planningArea)
   }
+
 }

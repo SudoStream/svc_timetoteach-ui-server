@@ -136,8 +136,8 @@ class TermlyPlansController @Inject()(
     } yield route
   }
 
-  def termlyPlansClassLevel_SelectEsOsBenchmarksForCurriculumArea(classId: String, curriculumArea: String, groupId: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest: AuthenticatedRequest[AnyContent] =>
-    Future{
+  def termlyPlansClassLevel_SelectEsOsBenchmarksForCurriculumArea(classId: String, curriculumArea: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest: AuthenticatedRequest[AnyContent] =>
+    Future {
       Ok("termlyPlansClassLevel_SelectEsOsBenchmarksForCurriculumArea")
     }
   }
@@ -203,9 +203,40 @@ class TermlyPlansController @Inject()(
   }
 
   def termlyOverviewForCurriculumAreaAtClassLevel(classId: String, curriculumArea: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest: AuthenticatedRequest[AnyContent] =>
-    Future{
-      Ok("Termly Overview For Curriculum Area At Class Level")
-    }
+    val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
+    val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
+    val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
+    val tttUserId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO ID")
+    val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
+    val eventualEsAndOsToDetailMap = esAndOsReader.esAndOsCodeToEsAndOsDetailMap()
+
+    val futureMaybeCurriculumAreaTermlyPlanForClassLevel = findAnyCurrentTermlyPlanForCurriculumAreaAtClassLevel(classId, curriculumArea, tttUserId)
+
+    for {
+      classes <- eventualClasses
+      esAndOsCodeToDetailMap <- eventualEsAndOsToDetailMap
+      classDetailsList = classes.filter(theClass => theClass.id.id == classId)
+      maybeClassDetails: Option[ClassDetails] = classDetailsList.headOption
+      if maybeClassDetails.isDefined
+      classDetails = maybeClassDetails.get
+
+      maybeCurriculumAreaTermlyPlanForGroup <- futureMaybeCurriculumAreaTermlyPlanForClassLevel
+      route = maybeCurriculumAreaTermlyPlanForGroup match {
+        case Some(curriculumAreaTermlyPlan: CurriculumAreaTermlyPlan) =>
+          Ok(views.html.planning.termly.termlyPlansOverviewForCurriculumAtClassLevel(new MyDeadboltHandler(userReader),
+            userPictureUri,
+            userFirstName,
+            userFamilyName,
+            TimeToTeachUserId(tttUserId),
+            classDetails,
+            curriculumArea,
+            maybeCurriculumAreaTermlyPlanForGroup.get,
+            esAndOsCodeToDetailMap
+          ))
+        case None =>
+          Redirect(routes.TermlyPlansController.termlyPlansClassLevel_SelectEsOsBenchmarksForCurriculumArea(classId, curriculumArea))
+      }
+    } yield route
   }
 
   def termlyOverviewForCurriculumAreaAtGroupLevel(classId: String, curriculumArea: String, groupId: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest: AuthenticatedRequest[AnyContent] =>
@@ -214,38 +245,13 @@ class TermlyPlansController @Inject()(
     val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
     val tttUserId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO ID")
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
-    val eventualEsAndOsTodetailMap = esAndOsReader.esAndOsCodeToEsAndOsDetailMap()
+    val eventualEsAndOsToDetailMap = esAndOsReader.esAndOsCodeToEsAndOsDetailMap()
 
-    val futureMaybeSubjectName = eventualClasses.map {
-      classes =>
-        val classDetailsList = classes.filter(theClass => theClass.id.id == classId)
-        val maybeClassDetails: Option[ClassDetails] = classDetailsList.headOption
-        maybeClassDetails match {
-          case Some(classDetails) =>
-            val group = classDetails.groups.filter(group => group.groupId.id == groupId).head
-            CurriculumAreaConverter.convertCurriculumAreaStringToSubjectName(curriculumArea)
-          case None => None
-        }
-    }
-
-    val futureMaybeCurriculumAreaTermlyPlanForGroup = {
-      futureMaybeSubjectName.map {
-        case Some(subjectName) =>
-          planningReaderService.readCurriculumAreaTermlyPlanForGroup(
-            TimeToTeachUserId(tttUserId),
-            ClassId(classId),
-            GroupId(groupId),
-            subjectName
-          )
-        case None => Future {
-          None
-        }
-      }
-    }.flatMap(res => res)
+    val futureMaybeCurriculumAreaTermlyPlanForGroup = findAnyCurrentTermlyPlanForCurriculumAreaAndGroup(classId, curriculumArea, groupId, tttUserId)
 
     for {
       classes <- eventualClasses
-      esAndOsCodeToDetailMap <- eventualEsAndOsTodetailMap
+      esAndOsCodeToDetailMap <- eventualEsAndOsToDetailMap
       classDetailsList = classes.filter(theClass => theClass.id.id == classId)
       maybeClassDetails: Option[ClassDetails] = classDetailsList.headOption
       if maybeClassDetails.isDefined
@@ -272,6 +278,36 @@ class TermlyPlansController @Inject()(
     } yield route
   }
 
+  private def findAnyCurrentTermlyPlanForCurriculumAreaAtClassLevel(classId: String, curriculumArea: String, tttUserId: String) =
+  {
+    CurriculumAreaConverter.convertCurriculumAreaStringToModel(curriculumArea) match {
+      case Some(curriculumPlanningArea) =>
+        planningReaderService.readCurriculumAreaTermlyPlanForClassLevel(
+          TimeToTeachUserId(tttUserId),
+          ClassId(classId),
+          curriculumPlanningArea
+        )
+      case None => Future {
+        None
+      }
+    }
+  }
+
+  private def findAnyCurrentTermlyPlanForCurriculumAreaAndGroup(classId: String, curriculumArea: String, groupId: String, tttUserId: String) =
+  {
+    CurriculumAreaConverter.convertCurriculumAreaStringToModel(curriculumArea) match {
+      case Some(curriculumPlanningArea) =>
+        planningReaderService.readCurriculumAreaTermlyPlanForGroup(
+          TimeToTeachUserId(tttUserId),
+          ClassId(classId),
+          GroupId(groupId),
+          curriculumPlanningArea
+        )
+      case None => Future {
+        None
+      }
+    }
+  }
 
   def curriulumAreasSelected: Action[AnyContent] = deadbolt.SubjectPresent()() { implicit request =>
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, request)
