@@ -1,7 +1,8 @@
 @import models.timetoteach.TimeToTeachUserId
-@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails, groupDetails: duplicate.model.Group, subject: String, maybeEsOsAndBenchmarks: Option[duplicate.model.esandos.EsAndOsPlusBenchmarksForCurriculumAreaAndLevel])
+@import models.timetoteach.planning.ScottishCurriculumPlanningAreaWrapper
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails, curriculumArea: ScottishCurriculumPlanningAreaWrapper, esOsAndBenchmarksList: List[duplicate.model.esandos.EsAndOsPlusBenchmarksForCurriculumAreaAndLevel])
 
-@timetoteachAppMain(handler, s"${classDetails.className.name} Termly Plans - $subject - ${groupDetails.groupName.name.capitalize}",
+@timetoteachAppMain(handler, s"${classDetails.className.name} Termly Plans - ${curriculumArea.niceSpecificValueIfPresent().getOrElse(curriculumArea.niceValue())} - For Class",
     userPictureUri, userFirstName, userFamilyName) {
     <div class="in-app-menu-small-devices">
         <li class="nav-item nav-login-button">
@@ -46,51 +47,61 @@
                             <a class="btn btn-outline-primary" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlans()">
                                 Termly Plans Home</a>
                         </li>
-                        <li class="nav-item manage-class-nav-item-on-left">
+                    </ul>
+                    <ul class="nav justify-content-end">
+                        <li class="nav-item manage-class-nav-item-on-right">
                             <a class="btn btn-info" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(classDetails.id.id)">
                                 @classDetails.className.name Termly Plans</a>
                         </li>
-                        <li class="nav-item manage-class-nav-item-on-left">
+                        <li class="nav-item manage-class-nav-item-on-right">
                             <a class="btn btn-info" role="button"
                             href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(classDetails.id.id)">
                                 Manage @classDetails.className.name</a>
                         </li>
-                        <li class="nav-item manage-class-nav-item-on-left">
+                        <li class="nav-item manage-class-nav-item-rightmost">
                             <a id="manage-class-goto-timetable" class="btn btn-info" role="button"
                             href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(classDetails.id.id)">
                                 Class Timetable</a>
                         </li>
                     </ul>
+
                 </div>
             </div>
         </div>
 
 
         <div class="termly-plans-overview-section">
-            <form>
-                <div class="form-row">
-                    <div class="form-group col-md-4">
-                        <label for="inputSubject">Subject</label>
-                        <input type="text" class="form-control" id="inputSubject" placeholder="@subject" disabled="true">
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label for="inputGroup">Group</label>
-                        <input type="text" class="form-control" id="inputGroup" placeholder="@groupDetails.groupName.name.capitalize" disabled="true">
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label for="inputLevel">Curriculum Level</label>
-                        <input type="text" class="form-control" id="inputLevel" placeholder="@groupDetails.groupLevel.value.replace("Level", "")" disabled="true">
-                    </div>
+            <h5 class="termly-plans-overview-section-header text-center">
+                Select the curriculum levels you wish to plan for</h5>
+            <div class="row curriculumLevelEarlyFilterSection">
+                <div class="col">
+                    <button id="curriculumLevelEarlyFilterButton" type="button" class="btn btn-outline-dark btn-sm btn-block">
+                        Early</button>
                 </div>
-            </form>
+                <div class="col">
+                    <button id="curriculumLevelFirstFilterButton" type="button" class="btn btn-outline-dark  btn-sm btn-block">
+                        First</button>
+                </div>
+                <div class="col">
+                    <button id="curriculumLevelSecondFilterButton" type="button" class="btn btn-outline-dark  btn-sm btn-block">
+                        Second</button>
+                </div>
+                <div class="col">
+                    <button id="curriculumLevelThirdFilterButton" type="button" class="btn btn-outline-dark  btn-sm btn-block">
+                        Third</button>
+                </div>
+                <div class="col">
+                    <button id="curriculumLevelFourthFilterButton" type="button" class="btn btn-outline-dark  btn-sm btn-block">
+                        Fourth</button>
+                </div>
+            </div>
 
             <h5 class="termly-plans-overview-section-header text-center">
                 Select the Es & Os and/or Benchmarks to cover this term</h5>
         </div>
 
-        @if(maybeEsOsAndBenchmarks.isDefined) {
-
-            @for((esAndOsSectionMap, sectionIndex) <- maybeEsOsAndBenchmarks.get.setSectionNameToSubSections.zipWithIndex) {
+        @for(esOsAndBenchmarks <- esOsAndBenchmarksList) {
+            @for((esAndOsSectionMap, sectionIndex) <- esOsAndBenchmarks.setSectionNameToSubSections.zipWithIndex) {
                 <a class="btn btn-secondary termly-plans-es-and-os-section" data-toggle="collapse" href="#section_@sectionIndex" role="button"
                 aria-expanded="false" aria-controls="section_@sectionIndex">
                 @esAndOsSectionMap._1
@@ -164,15 +175,6 @@
                 </div>
 
             }
-
-        } else {
-            <div class="alert alert-warning" role="alert">
-                No Es & Os or Benchmarks defined for level='@{
-                groupDetails.groupLevel.value.replace("Level", "")
-            }' & subject='@{
-                subject
-            }'
-            </div>
         }
 
 
@@ -192,8 +194,7 @@
 
     <script>
             localStorage.setItem("classId", "@classDetails.id.id");
-            localStorage.setItem("subject", "@subject");
-            localStorage.setItem("groupId", "@groupDetails.groupId.id");
+            localStorage.setItem("subject", "@curriculumArea");
             localStorage.setItem("schoolId", "@classDetails.schoolDetails.id");
             localStorage.setItem("tttUserId", "@tttUserId.value");
     </script>

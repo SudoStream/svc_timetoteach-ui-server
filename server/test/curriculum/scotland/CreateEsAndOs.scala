@@ -30,7 +30,7 @@ trait CreateEsAndOs {
             "Checks estimates by counting.",
             "Demonstrates skills of estimation in the contexts of number and measure using relevant vocabulary, including less than, longer than, more than and the same."
           ),
-          curriculumAreaName = ScottishCurriculumAreaName.MATHEMATICS,
+          curriculumAreaName = ScottishCurriculumPlanningArea.MATHEMATICS,
           eAndOSetSectionName = "Number, money and measure",
           eAndOSetSubSectionName = Some("Estimation and rounding"),
           eAndOSetSubSectionAuxiliaryText = Option.empty,
@@ -55,7 +55,7 @@ trait CreateEsAndOs {
             "Uses strategies to estimate an answer to a calculation or problem, for example, doubling and rounding.",
             "Rounds whole numbers to the nearest 10 and 100 and uses this routinely to estimate and check the reasonableness of a solution."
           ),
-          curriculumAreaName = ScottishCurriculumAreaName.MATHEMATICS,
+          curriculumAreaName = ScottishCurriculumPlanningArea.MATHEMATICS,
           eAndOSetSectionName = "Number, money and measure",
           eAndOSetSubSectionName = Some("Estimation and rounding"),
           eAndOSetSubSectionAuxiliaryText = Option.empty,
@@ -100,7 +100,7 @@ trait CreateEsAndOs {
             "Doubles numbers to a total of 10 mentally.",
             "When counting objects, understands that the number name of the last object counted is the name given to the total number of objects in the group"
           ),
-          curriculumAreaName = ScottishCurriculumAreaName.MATHEMATICS,
+          curriculumAreaName = ScottishCurriculumPlanningArea.MATHEMATICS,
           eAndOSetSectionName = "Number, money and measure",
           eAndOSetSubSectionName = Some("Number and number processes"),
           eAndOSetSubSectionAuxiliaryText = Some("including addition, subtraction, multiplication, division and negative numbers"),

@@ -3,14 +3,14 @@ package duplicate.model.esandos
 import duplicate.model.CurriculumLevel
 import upickle.default.{macroRW, ReadWriter => RW}
 
-case class EsAndOsPlusBenchmarksForSubjectAndLevel(
+case class EsAndOsPlusBenchmarksForCurriculumAreaAndLevel(
                                                     curriculumLevel: CurriculumLevel,
                                                     curriculumArea: CurriculumArea,
                                                     setSectionNameToSubSections: Map[String, Map[String, EandOSetSubSection]]
                                                   )
 
-object EsAndOsPlusBenchmarksForSubjectAndLevel {
-  implicit def rw: RW[EsAndOsPlusBenchmarksForSubjectAndLevel] = macroRW
+object EsAndOsPlusBenchmarksForCurriculumAreaAndLevel {
+  implicit def rw: RW[EsAndOsPlusBenchmarksForCurriculumAreaAndLevel] = macroRW
 }
 
 case class EandOSetSubSection(
@@ -76,17 +76,38 @@ case object HealthAndWellbeing extends CurriculumArea {
   val value = "HEALTH_AND_WELLBEING"
 }
 
-case object Languages extends CurriculumArea {
-  val value = "LANGUAGES"
+case object Languages_ClassicalLanguages extends CurriculumArea {
+  val value = "LANGUAGES_CLASSICAL_LANGUAGES"
+}
+
+case object Languages_Gaelic extends CurriculumArea {
+  val value = "LANGUAGES_GAELIC"
+}
+
+case object Languages_LiteracyAndEnglish extends CurriculumArea {
+  val value = "LANGUAGES_LITERACY_AND_ENGLISH"
+}
+
+case object Languages_LiteracyAndGaidhlig extends CurriculumArea {
+  val value = "LANGUAGES_LITERACY_AND_GAIDHLIG"
+}
+
+case object Languages_ModernLanguages extends CurriculumArea {
+  val value = "LANGUAGES_MODERN_LANGUAGES"
 }
 
 case object Mathematics extends CurriculumArea {
   val value = "MATHEMATICS"
 }
 
-case object ReligionAndMoralEducation extends CurriculumArea {
-  val value = "RELIGION_AND_MORAL_EDUCATION"
+case object ReligionAndMoralEducationStandard extends CurriculumArea {
+  val value = "RELIGION_AND_MORAL_EDUCATION_STANDARD"
 }
+
+case object ReligionAndMoralEducationCatholic extends CurriculumArea {
+  val value = "RELIGION_AND_MORAL_EDUCATION_CATHOLIC"
+}
+
 
 case object Sciences extends CurriculumArea {
   val value = "SCIENCES"

@@ -4,7 +4,7 @@ import javax.inject.{Inject, Singleton}
 
 import controllers.serviceproxies.EsAndOsReaderServiceProxyImpl
 import duplicate.model._
-import duplicate.model.esandos.{CurriculumArea, EsAndOsPlusBenchmarksForSubjectAndLevel, _}
+import duplicate.model.esandos.{CurriculumArea, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel, _}
 import io.sudostream.timetoteach.messages.scottish._
 import play.api.Logger
 
@@ -19,10 +19,10 @@ class EsOsAndBenchmarksBuilderImpl @Inject()(esAndOsReader: EsAndOsReaderService
 
   import EsOsAndBenchmarksBuilderImpl.buildTheEsOsAndBenchmarks
 
-  lazy private val allEsOsAndBenchmarks: Future[Option[Map[CurriculumLevel, Map[CurriculumArea, EsAndOsPlusBenchmarksForSubjectAndLevel]]]] = buildAllEsOsAndBenchmarks()
+  lazy private val allEsOsAndBenchmarks: Future[Option[Map[CurriculumLevel, Map[CurriculumArea, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel]]]] = buildAllEsOsAndBenchmarks()
 
   private def buildAllEsOsAndBenchmarks():
-  Future[Option[Map[CurriculumLevel, Map[CurriculumArea, EsAndOsPlusBenchmarksForSubjectAndLevel]]]] =
+  Future[Option[Map[CurriculumLevel, Map[CurriculumArea, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel]]]] =
   {
 
     val eventualMaybeAllEsAndOs = esAndOsReader.readAllEsAndos()
@@ -36,7 +36,7 @@ class EsOsAndBenchmarksBuilderImpl @Inject()(esAndOsReader: EsAndOsReaderService
 
   override def buildEsOsAndBenchmarks(curriculumLevel: CurriculumLevel,
                                       curriculumAreaName: CurriculumArea):
-  Future[Option[EsAndOsPlusBenchmarksForSubjectAndLevel]] =
+  Future[Option[EsAndOsPlusBenchmarksForCurriculumAreaAndLevel]] =
   {
     logger.info(s"Building Es,Os and benchmarks for $curriculumLevel|$curriculumAreaName")
     allEsOsAndBenchmarks map {
@@ -50,13 +50,32 @@ class EsOsAndBenchmarksBuilderImpl @Inject()(esAndOsReader: EsAndOsReaderService
     }
   }
 
+  override def buildEsOsAndBenchmarks(curriculumAreaName: CurriculumArea): Future[Option[List[EsAndOsPlusBenchmarksForCurriculumAreaAndLevel]]] =
+  {
+    logger.info(s"Building Es,Os and benchmarks for $curriculumAreaName")
+
+    allEsOsAndBenchmarks map {
+      case Some(allEsAndOs: Map[CurriculumLevel, Map[CurriculumArea, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel]]) =>
+        Some({
+          for {
+            (theCurriculumLevel, theCurriculumAreaToEsAndOs) <- allEsAndOs
+            filteredCurriculumAreaToEsAndOs = theCurriculumAreaToEsAndOs.filter(curriculumArea_to_EoBenchmark_Tuple =>
+              curriculumArea_to_EoBenchmark_Tuple._1 == curriculumAreaName)
+            filteredEsOsAndBenchmarks <- filteredCurriculumAreaToEsAndOs.values
+          } yield filteredEsOsAndBenchmarks
+        }.toList
+        )
+      case None => None
+    }
+  }
+
   override def esAndOsCodeToEsAndOsDetailMap(): Future[Map[String, EandO]] =
   {
     var counter = 0
     val mutableEAndOCodeTodetailMap = scala.collection.mutable.Map[String, EandO]()
     logger.info(s"++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ Building Es,Os Code to Detail map")
     allEsOsAndBenchmarks map {
-      case Some(allEsAndOs: Map[CurriculumLevel, Map[CurriculumArea, EsAndOsPlusBenchmarksForSubjectAndLevel]]) =>
+      case Some(allEsAndOs: Map[CurriculumLevel, Map[CurriculumArea, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel]]) =>
         for (curriculumAreaToEsAndOs <- allEsAndOs.values) {
           for (esAndOsForSubjectLevel <- curriculumAreaToEsAndOs) {
             val esAndOsPlusBenchmark = esAndOsForSubjectLevel._2
@@ -76,6 +95,7 @@ class EsOsAndBenchmarksBuilderImpl @Inject()(esAndOsReader: EsAndOsReaderService
       case None => Map()
     }
   }
+
 }
 
 object EsOsAndBenchmarksBuilderImpl extends EsOsAndBenchmarksBuilderHelper
@@ -83,14 +103,14 @@ object EsOsAndBenchmarksBuilderImpl extends EsOsAndBenchmarksBuilderHelper
   val logger: Logger = Logger
 
   private[scotland] def buildTheEsOsAndBenchmarks(scottishEsAndOsData: ScottishEsAndOsData):
-  Option[Map[CurriculumLevel, Map[CurriculumArea, EsAndOsPlusBenchmarksForSubjectAndLevel]]] =
+  Option[Map[CurriculumLevel, Map[CurriculumArea, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel]]] =
   {
 
     def buildTheEsOsAndBenchmarksLoop(
                                        nextEsAndOsBySubSection: ScottishEsAndOsBySubSection,
                                        restScottishEsAndOsBySubSection: List[ScottishEsAndOsBySubSection],
-                                       currentMap: Map[CurriculumLevel, Map[CurriculumArea, EsAndOsPlusBenchmarksForSubjectAndLevel]]
-                                     ): Option[Map[CurriculumLevel, Map[CurriculumArea, EsAndOsPlusBenchmarksForSubjectAndLevel]]] =
+                                       currentMap: Map[CurriculumLevel, Map[CurriculumArea, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel]]
+                                     ): Option[Map[CurriculumLevel, Map[CurriculumArea, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel]]] =
     {
 
       val maybeCurrentMapForCurriculumLevel = currentMap.get(nextEsAndOsBySubSection.scottishCurriculumLevel)
@@ -109,9 +129,9 @@ object EsOsAndBenchmarksBuilderImpl extends EsOsAndBenchmarksBuilderHelper
     }
   }
 
-  private def loop(buildTheEsOsAndBenchmarksLoop: (ScottishEsAndOsBySubSection, List[ScottishEsAndOsBySubSection], Map[CurriculumLevel, Map[CurriculumArea, EsAndOsPlusBenchmarksForSubjectAndLevel]]) => Option[Map[CurriculumLevel, Map[CurriculumArea, EsAndOsPlusBenchmarksForSubjectAndLevel]]],
+  private def loop(buildTheEsOsAndBenchmarksLoop: (ScottishEsAndOsBySubSection, List[ScottishEsAndOsBySubSection], Map[CurriculumLevel, Map[CurriculumArea, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel]]) => Option[Map[CurriculumLevel, Map[CurriculumArea, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel]]],
                    restScottishEsAndOsBySubSection: List[ScottishEsAndOsBySubSection],
-                   newMap: Map[CurriculumLevel, Map[CurriculumArea, EsAndOsPlusBenchmarksForSubjectAndLevel]]) =
+                   newMap: Map[CurriculumLevel, Map[CurriculumArea, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel]]) =
   {
     if (restScottishEsAndOsBySubSection.isEmpty) {
       Some(newMap)
@@ -122,17 +142,17 @@ object EsOsAndBenchmarksBuilderImpl extends EsOsAndBenchmarksBuilderHelper
 
 
   private def createNewVersionOfMap(nextEsAndOsBySubSection: ScottishEsAndOsBySubSection,
-                                    maybeCurrentMapForCurriculumLevel: Option[Map[CurriculumArea, EsAndOsPlusBenchmarksForSubjectAndLevel]])
-  : Map[CurriculumArea, EsAndOsPlusBenchmarksForSubjectAndLevel] =
+                                    maybeCurrentMapForCurriculumLevel: Option[Map[CurriculumArea, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel]])
+  : Map[CurriculumArea, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel] =
   {
 
-    val newMapForCurriculumLevel: Map[CurriculumArea, EsAndOsPlusBenchmarksForSubjectAndLevel] = maybeCurrentMapForCurriculumLevel match {
-      case Some(currentMapForCurriculumLevel: Map[CurriculumArea, EsAndOsPlusBenchmarksForSubjectAndLevel]) =>
+    val newMapForCurriculumLevel: Map[CurriculumArea, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel] = maybeCurrentMapForCurriculumLevel match {
+      case Some(currentMapForCurriculumLevel: Map[CurriculumArea, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel]) =>
 
         val maybeCurrentEsAndOsPlusBenchmarks = currentMapForCurriculumLevel.get(nextEsAndOsBySubSection.curriculumAreaName)
 
-        val newEsAndOsPlusBenchmarks: EsAndOsPlusBenchmarksForSubjectAndLevel = maybeCurrentEsAndOsPlusBenchmarks match {
-          case Some(currentEsAndOsPlusBenchmarks: EsAndOsPlusBenchmarksForSubjectAndLevel) =>
+        val newEsAndOsPlusBenchmarks: EsAndOsPlusBenchmarksForCurriculumAreaAndLevel = maybeCurrentEsAndOsPlusBenchmarks match {
+          case Some(currentEsAndOsPlusBenchmarks: EsAndOsPlusBenchmarksForCurriculumAreaAndLevel) =>
             val maybeSubSectionMap: Option[Map[String, EandOSetSubSection]] = currentEsAndOsPlusBenchmarks.setSectionNameToSubSections.get(nextEsAndOsBySubSection.eAndOSetSectionName)
 
             val newSubSectionMap: Map[String, EandOSetSubSection] = maybeSubSectionMap match {
@@ -163,7 +183,7 @@ object EsOsAndBenchmarksBuilderImpl extends EsOsAndBenchmarksBuilderHelper
                 ))
             }
 
-            EsAndOsPlusBenchmarksForSubjectAndLevel(
+            EsAndOsPlusBenchmarksForCurriculumAreaAndLevel(
               currentEsAndOsPlusBenchmarks.curriculumLevel,
               currentEsAndOsPlusBenchmarks.curriculumArea,
               currentEsAndOsPlusBenchmarks.setSectionNameToSubSections + (nextEsAndOsBySubSection.eAndOSetSectionName -> newSubSectionMap)
