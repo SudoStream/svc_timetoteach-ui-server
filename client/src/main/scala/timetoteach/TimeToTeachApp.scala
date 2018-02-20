@@ -4,7 +4,7 @@ import org.scalajs.dom
 import timetoteach.addnewclass.AddNewClassJsScreen
 import timetoteach.classesHome.ClassHomeJsScreen
 import timetoteach.classtimetable.ClassTimetableScreen
-import timetoteach.planning.ClassGroupPlanningJsScreen
+import timetoteach.planning.ClassLevelPlanningJsScreen
 import timetoteach.signup.SignupJs
 
 import scala.scalajs.js
@@ -29,8 +29,12 @@ object TimeToTeachApp extends js.JSApp {
     }
 
     if (dom.document.location.toString.contains("termlyplanningforclassatgrouplevel")) {
-      ClassGroupPlanningJsScreen.loadJavascript()
+      ClassLevelPlanningJsScreen.loadJavascript()
     }
+    if (dom.document.location.toString.contains("termlyplanningforclassatclasslevel")) {
+      ClassLevelPlanningJsScreen.loadJavascript()
+    }
+
   }
 
 }

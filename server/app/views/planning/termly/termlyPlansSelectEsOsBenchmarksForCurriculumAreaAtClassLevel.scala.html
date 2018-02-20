@@ -103,96 +103,108 @@
         </div>
 
         @for(esOsAndBenchmarks <- esOsAndBenchmarksList.sortBy(elem => elem.curriculumLevel.order)) {
-            <div class="termly-plans-es-and-os-level-section-header">
-                <h4>@esOsAndBenchmarks.curriculumLevel.value.replace("Level", " Level")</h4>
-            </div>
-            @for((esAndOsSectionMap, sectionIndex) <- esOsAndBenchmarks.setSectionNameToSubSections.toList.sortBy(subsectionMap => subsectionMap._1).zipWithIndex) {
-                <a class="btn btn-secondary termly-plans-es-and-os-section" data-toggle="collapse" href="#section_@{sectionIndex}_@{esOsAndBenchmarks.curriculumLevel}" role="button"
-                aria-expanded="false" aria-controls="section_@sectionIndex">
-                @esAndOsSectionMap._1
-                </a>
-                <br>
+            <div id="termly-plans-es-and-os-level-section-div-@{
+                esOsAndBenchmarks.curriculumLevel.value
+            }">
+                <div class="termly-plans-es-and-os-level-section-header">
+                    <h4>@esOsAndBenchmarks.curriculumLevel.value.replace("Level", " Level")</h4>
+                </div>
+                @for((esAndOsSectionMap, sectionIndex) <- esOsAndBenchmarks.setSectionNameToSubSections.toList.sortBy(subsectionMap => subsectionMap._1).zipWithIndex) {
+                    <a class="btn btn-secondary termly-plans-es-and-os-section" data-toggle="collapse" href="#section_@{
+                        sectionIndex
+                    }_@{
+                        esOsAndBenchmarks.curriculumLevel
+                    }" role="button"
+                    aria-expanded="false" aria-controls="section_@sectionIndex">
+                    @esAndOsSectionMap._1
+                    </a>
+                    <br>
 
-                <div class="collapse" id="section_@{sectionIndex}_@{esOsAndBenchmarks.curriculumLevel}">
-                    <div class="card card-body">
-                        @for((subjectSectionMap, subSectionIndex) <- esAndOsSectionMap._2.zipWithIndex) {
+                    <div class="collapse" id="section_@{
+                        sectionIndex
+                    }_@{
+                        esOsAndBenchmarks.curriculumLevel
+                    }">
+                        <div class="card card-body">
+                            @for((subjectSectionMap, subSectionIndex) <- esAndOsSectionMap._2.zipWithIndex) {
 
-                            @if(subjectSectionMap._1 != NO_SUBSECTION_NAME) {
+                                @if(subjectSectionMap._1 != NO_SUBSECTION_NAME) {
 
-                                <a class="btn btn-light termly-plans-es-and-os-subsection " data-toggle="collapse" href="#section_@{
-                                    sectionIndex
-                                }_subsection_@subSectionIndex" role="button"
-                                aria-expanded="false" aria-controls="section_@{
-                                    sectionIndex
-                                }_subsection_@subSectionIndex">
-                                @subjectSectionMap._1
-                                </a>
+                                    <a class="btn btn-light termly-plans-es-and-os-subsection " data-toggle="collapse" href="#section_@{
+                                        sectionIndex
+                                    }_subsection_@subSectionIndex" role="button"
+                                    aria-expanded="false" aria-controls="section_@{
+                                        sectionIndex
+                                    }_subsection_@subSectionIndex">
+                                    @subjectSectionMap._1
+                                    </a>
+
+                                }
+
+                                @if(subjectSectionMap._1 != NO_SUBSECTION_NAME) {
+                                    <div class="collapse" id="section_@{
+                                        sectionIndex
+                                    }_subsection_@subSectionIndex">
+                                    } else {
+                                    <div id="section_@{
+                                        sectionIndex
+                                    }_subsection_@subSectionIndex">
+                                    }
+                                <div class="card card-body">
+                                    @if(subjectSectionMap._2.auxiliaryText.nonEmpty) {
+                                        <h6>@subjectSectionMap._2.auxiliaryText</h6>
+                                    }
+                                <div class="row text-center">
+                                    <div class="col-lg-6 termly-plans-es-and-os-header">Experiences & Outcomes</div>
+                                    <div class="col-lg-6 termly-plans-es-and-os-header">Benchmarks</div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                    @for(eAndO <- subjectSectionMap._2.eAndOs) {
+                                        <div class="row termly-plans-es-and-os-code-and-eando-row termly-plans-eobenchmark-row"
+                                        data-curriculum-section="@esAndOsSectionMap._1" data-curriculum-subsection="@subjectSectionMap._1" data-eando-code="@eAndO.code">
+                                            <div class="col-lg-3 termly-plans-es-and-os-code">
+                                            @eAndO.code
+                                            </div>
+                                            <div class="col-lg-9 termly-plans-es-and-os-content termly-plans-es-and-os-eando">
+                                            @for(sentence <- eAndO.eAndOSentences) {
+                                                <p>@sentence.value</p>
+                                                @if(sentence.bulletPoints.nonEmpty) {
+                                                    <ul>
+                                                    }
+                                                @for(bullet <- sentence.bulletPoints) {
+                                                    @if(bullet.value.nonEmpty) {
+                                                        <li>@bullet.value</li>
+                                                    }
+                                                }
+                                                @if(sentence.bulletPoints.nonEmpty) {
+                                                </ul>
+                                                }
+                                            }
+                                            </div>
+                                        </div>
+                                    }
+                                    </div>
+                                    <div class="col-lg-6 termly-plans-es-and-os-content">
+                                    @for(benchmark <- subjectSectionMap._2.benchmarks) {
+                                        <div class="termly-plans-es-and-os-benchmark termly-plans-eobenchmark-row"
+                                        data-curriculum-section="@esAndOsSectionMap._1" data-curriculum-subsection="@subjectSectionMap._1"
+                                        data-benchmark="@benchmark.value">@benchmark.value</div>
+                                    }
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
 
                             }
 
-                            @if(subjectSectionMap._1 != NO_SUBSECTION_NAME) {
-                                <div class="collapse" id="section_@{
-                                    sectionIndex
-                                }_subsection_@subSectionIndex">
-                                } else {
-                                <div id="section_@{
-                                    sectionIndex
-                                }_subsection_@subSectionIndex">
-                                }
-                            <div class="card card-body">
-                                @if(subjectSectionMap._2.auxiliaryText.nonEmpty) {
-                                    <h6>@subjectSectionMap._2.auxiliaryText</h6>
-                                }
-                            <div class="row text-center">
-                                <div class="col-lg-6 termly-plans-es-and-os-header">Experiences & Outcomes</div>
-                                <div class="col-lg-6 termly-plans-es-and-os-header">Benchmarks</div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-lg-6">
-                                @for(eAndO <- subjectSectionMap._2.eAndOs) {
-                                    <div class="row termly-plans-es-and-os-code-and-eando-row termly-plans-eobenchmark-row"
-                                    data-curriculum-section="@esAndOsSectionMap._1" data-curriculum-subsection="@subjectSectionMap._1" data-eando-code="@eAndO.code">
-                                        <div class="col-lg-3 termly-plans-es-and-os-code">
-                                        @eAndO.code
-                                        </div>
-                                        <div class="col-lg-9 termly-plans-es-and-os-content termly-plans-es-and-os-eando">
-                                        @for(sentence <- eAndO.eAndOSentences) {
-                                            <p>@sentence.value</p>
-                                            @if(sentence.bulletPoints.nonEmpty) {
-                                                <ul>
-                                                }
-                                            @for(bullet <- sentence.bulletPoints) {
-                                                @if(bullet.value.nonEmpty) {
-                                                    <li>@bullet.value</li>
-                                                }
-                                            }
-                                            @if(sentence.bulletPoints.nonEmpty) {
-                                            </ul>
-                                            }
-                                        }
-                                        </div>
-                                    </div>
-                                }
-                                </div>
-                                <div class="col-lg-6 termly-plans-es-and-os-content">
-                                @for(benchmark <- subjectSectionMap._2.benchmarks) {
-                                    <div class="termly-plans-es-and-os-benchmark termly-plans-eobenchmark-row"
-                                    data-curriculum-section="@esAndOsSectionMap._1" data-curriculum-subsection="@subjectSectionMap._1"
-                                    data-benchmark="@benchmark.value">@benchmark.value</div>
-                                }
-                                </div>
-                            </div>
-                            </div>
+                        </div>
                         </div>
 
                         }
-
-                    </div>
-                    </div>
-
-                    }
-        }
+            </div>
+            }
 
 
         <div class="row">

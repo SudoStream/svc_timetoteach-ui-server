@@ -116,7 +116,7 @@
 }
 
 .termly-plans-fieldset-literacy fieldset {
-    border: 1px solid mediumvioletred  !important;
+    border: 1px solid mediumvioletred !important;
     color: mediumvioletred;
 }
 
@@ -159,11 +159,31 @@
 
 }
 
-.curriculumLevelEarlyFilterSection{
+.curriculumLevelEarlyFilterSection {
     margin-top: 2rem;
     margin-bottom: 3.5rem;
 }
 
 .termly-plans-es-and-os-level-section-header {
     margin-top: 2rem;
+}
+
+#termly-plans-es-and-os-level-section-div-EarlyLevel {
+    display: none;
+}
+
+#termly-plans-es-and-os-level-section-div-FirstLevel {
+    display: none;
+}
+
+#termly-plans-es-and-os-level-section-div-SecondLevel {
+    display: none;
+}
+
+#termly-plans-es-and-os-level-section-div-ThirdLevel {
+    display: none;
+}
+
+#termly-plans-es-and-os-level-section-div-FourthLevel {
+    display: none;
 }
