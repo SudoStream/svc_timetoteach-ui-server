@@ -109,7 +109,7 @@ object GroupType
 
 case object MathsGroupType extends GroupType
 {
-  val value = "Maths"
+  val value = "Mathematics"
 }
 
 case object ReadingGroupType extends GroupType

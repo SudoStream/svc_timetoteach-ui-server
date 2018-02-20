@@ -18,7 +18,7 @@ class TermPlansHelperTest extends FunSpec
   private val E_AND_O_CODES = List("CODE1", "CODE2")
   private val BENCHMARKS = List("Benchmark1", "Benchmark2", "Benchmark3")
   private val GROUP_ID = "groupAbc"
-  private val SUBJECT_MATHS = "Maths"
+  private val SUBJECT_MATHS = "Mathematics"
 
   describe("Given a TermlyPlansToSave, a group id and a subject 'maths', TermPlansHelper.convertTermlyPlanToModel(...)") {
     val planHelper = new TermPlansHelper(new TermServiceProxyImpl)

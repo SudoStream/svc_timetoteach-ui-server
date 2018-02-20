@@ -15,6 +15,40 @@ trait CreateEsAndOs {
         ScottishEsAndOsBySubSection(
           allExperienceAndOutcomesAtTheSubSectionLevel = List(
             SingleScottishExperienceAndOutcome(
+              code = "EXA 2-16a",
+              eAndOLines = List(
+                ScottishExperienceAndOutcomeLine(
+                  sentence = "I can sing and play music from a range of styles and cultures, showing skill and using performance directions, and/or musical notation.",
+                  bulletPoints = Nil
+                )
+              )
+            ),
+            SingleScottishExperienceAndOutcome(
+              code = "EXA 2-17a",
+              eAndOLines = List(
+                ScottishExperienceAndOutcomeLine(
+                  sentence = "I can use my voice, musical instruments and music technology to experiment with sounds, pitch, melody, rhythm, timbre and dynamics.",
+                  bulletPoints = Nil
+                )
+              )
+            )
+          ),
+          scottishCurriculumLevel = ScottishCurriculumLevel.SECOND,
+          associatedBenchmarks = List(
+            "Uses strategies to estimate an answer to a calculation or problem, for example, doubling and rounding.",
+            "Rounds whole numbers to the nearest 10 and 100 and uses this routinely to estimate and check the reasonableness of a solution."
+          ),
+          curriculumAreaName = ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS,
+          eAndOSetSectionName = "Music",
+          eAndOSetSubSectionName = None,
+          eAndOSetSubSectionAuxiliaryText = Option.empty,
+          responsibilityOfAllPractitioners = false
+        ),
+
+
+        ScottishEsAndOsBySubSection(
+          allExperienceAndOutcomesAtTheSubSectionLevel = List(
+            SingleScottishExperienceAndOutcome(
               code = "MNU 0-01a",
               eAndOLines = List(
                 ScottishExperienceAndOutcomeLine(

@@ -7,7 +7,7 @@ import io.sudostream.timetoteach.messages.scottish.{CurriculumArea => _, _}
 trait EsOsAndBenchmarksBuilderHelper
 {
 
-  val NO_SUBSECTION_NAME = "NO_SUBSECTION_NAME"
+  val NO_SUBSECTION_NAME = "Es & Os plus Benchmarks"
 
   implicit def convertScottishCurriculumLevel(scottishLevel: ScottishCurriculumLevel): CurriculumLevel =
   {

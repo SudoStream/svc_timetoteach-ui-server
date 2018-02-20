@@ -1,11 +1,12 @@
 package curriculum.scotland
 
-import duplicate.model.{EarlyLevel, FirstLevel}
-import duplicate.model.esandos.Mathematics
+import duplicate.model.esandos.{ExpressiveArts, Mathematics}
+import duplicate.model.{EarlyLevel, FirstLevel, SecondLevel}
 import io.sudostream.timetoteach.messages.scottish.ScottishEsAndOsData
 import org.scalatest.FunSpec
 
-class EsOsAndBenchmarksBuilderImplTest extends FunSpec with CreateEsAndOs {
+class EsOsAndBenchmarksBuilderImplTest extends FunSpec with CreateEsAndOs
+{
 
   describe("Given a valid list of es and os as well as benchmarks, building them") {
     it("should be defined") {
@@ -51,6 +52,18 @@ class EsOsAndBenchmarksBuilderImplTest extends FunSpec with CreateEsAndOs {
       val scottishEsAndOsData: ScottishEsAndOsData = createScottishEsAndOsData()
       val maybeMergedEsOsAndBenchmarks = EsOsAndBenchmarksBuilderImpl.buildTheEsOsAndBenchmarks(scottishEsAndOsData)
       assert(maybeMergedEsOsAndBenchmarks.get(EarlyLevel)(Mathematics).setSectionNameToSubSections("Number, money and measure")("Estimation and rounding").eAndOs.size === 1)
+    }
+    it("should have [ScottishCurriculumLevel.SECOND][ScottishCurriculumAreaName.EXPRESSIVE_ARTS] with section" +
+      " 'Music' be defined") {
+      val scottishEsAndOsData: ScottishEsAndOsData = createScottishEsAndOsData()
+      val maybeMergedEsOsAndBenchmarks = EsOsAndBenchmarksBuilderImpl.buildTheEsOsAndBenchmarks(scottishEsAndOsData)
+      assert(maybeMergedEsOsAndBenchmarks.get(SecondLevel)(ExpressiveArts).setSectionNameToSubSections.isDefinedAt("Music"))
+    }
+    it("should have [ScottishCurriculumLevel.SECOND][ScottishCurriculumAreaName.EXPRESSIVE_ARTS] with section" +
+      " 'Music' sholud have 2 es and os") {
+      val scottishEsAndOsData: ScottishEsAndOsData = createScottishEsAndOsData()
+      val maybeMergedEsOsAndBenchmarks = EsOsAndBenchmarksBuilderImpl.buildTheEsOsAndBenchmarks(scottishEsAndOsData)
+      assert(maybeMergedEsOsAndBenchmarks.get(SecondLevel)(ExpressiveArts).setSectionNameToSubSections("Music")(EsOsAndBenchmarksBuilderImpl.NO_SUBSECTION_NAME).eAndOs.size == 2)
     }
 
     //////

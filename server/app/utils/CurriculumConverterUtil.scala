@@ -7,9 +7,9 @@ import play.api.Logger
 
 object CurriculumConverterUtil
 {
-  val logger: Logger = Logger
+  private val logger: Logger = Logger
 
-  implicit def convertSubjectToCurriculumArea(curriculumArea: String): CurriculumArea =
+  implicit def convertCurriculumAreaToModel(curriculumArea: String): CurriculumArea =
   {
     curriculumArea.toUpperCase match {
       case "MATHS" | "MATHEMATICS" => Mathematics

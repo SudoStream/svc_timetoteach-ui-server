@@ -1,5 +1,7 @@
 @import models.timetoteach.TimeToTeachUserId
 @import models.timetoteach.planning.ScottishCurriculumPlanningAreaWrapper
+@import curriculum.scotland.EsOsAndBenchmarksBuilderImpl.NO_SUBSECTION_NAME
+
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails, curriculumArea: ScottishCurriculumPlanningAreaWrapper, esOsAndBenchmarksList: List[duplicate.model.esandos.EsAndOsPlusBenchmarksForCurriculumAreaAndLevel])
 
 @timetoteachAppMain(handler, s"${classDetails.className.name} Termly Plans - ${curriculumArea.niceSpecificValueIfPresent().getOrElse(curriculumArea.niceValue())} - For Class",
@@ -100,29 +102,43 @@
                 Select the Es & Os and/or Benchmarks to cover this term</h5>
         </div>
 
-        @for(esOsAndBenchmarks <- esOsAndBenchmarksList) {
-            @for((esAndOsSectionMap, sectionIndex) <- esOsAndBenchmarks.setSectionNameToSubSections.zipWithIndex) {
-                <a class="btn btn-secondary termly-plans-es-and-os-section" data-toggle="collapse" href="#section_@sectionIndex" role="button"
+        @for(esOsAndBenchmarks <- esOsAndBenchmarksList.sortBy(elem => elem.curriculumLevel.order)) {
+            <div class="termly-plans-es-and-os-level-section-header">
+                <h4>@esOsAndBenchmarks.curriculumLevel.value.replace("Level", " Level")</h4>
+            </div>
+            @for((esAndOsSectionMap, sectionIndex) <- esOsAndBenchmarks.setSectionNameToSubSections.toList.sortBy(subsectionMap => subsectionMap._1).zipWithIndex) {
+                <a class="btn btn-secondary termly-plans-es-and-os-section" data-toggle="collapse" href="#section_@{sectionIndex}_@{esOsAndBenchmarks.curriculumLevel}" role="button"
                 aria-expanded="false" aria-controls="section_@sectionIndex">
                 @esAndOsSectionMap._1
                 </a>
                 <br>
 
-                <div class="collapse" id="section_@sectionIndex">
+                <div class="collapse" id="section_@{sectionIndex}_@{esOsAndBenchmarks.curriculumLevel}">
                     <div class="card card-body">
-                    @for((subjectSectionMap, subSectionIndex) <- esAndOsSectionMap._2.zipWithIndex) {
-                        <a class="btn btn-light termly-plans-es-and-os-subsection " data-toggle="collapse" href="#section_@{
-                            sectionIndex
-                        }_subsection_@subSectionIndex" role="button"
-                        aria-expanded="false" aria-controls="section_@{
-                            sectionIndex
-                        }_subsection_@subSectionIndex">
-                        @subjectSectionMap._1
-                        </a>
+                        @for((subjectSectionMap, subSectionIndex) <- esAndOsSectionMap._2.zipWithIndex) {
 
-                        <div class="collapse" id="section_@{
-                            sectionIndex
-                        }_subsection_@subSectionIndex">
+                            @if(subjectSectionMap._1 != NO_SUBSECTION_NAME) {
+
+                                <a class="btn btn-light termly-plans-es-and-os-subsection " data-toggle="collapse" href="#section_@{
+                                    sectionIndex
+                                }_subsection_@subSectionIndex" role="button"
+                                aria-expanded="false" aria-controls="section_@{
+                                    sectionIndex
+                                }_subsection_@subSectionIndex">
+                                @subjectSectionMap._1
+                                </a>
+
+                            }
+
+                            @if(subjectSectionMap._1 != NO_SUBSECTION_NAME) {
+                                <div class="collapse" id="section_@{
+                                    sectionIndex
+                                }_subsection_@subSectionIndex">
+                                } else {
+                                <div id="section_@{
+                                    sectionIndex
+                                }_subsection_@subSectionIndex">
+                                }
                             <div class="card card-body">
                                 @if(subjectSectionMap._2.auxiliaryText.nonEmpty) {
                                     <h6>@subjectSectionMap._2.auxiliaryText</h6>
@@ -169,12 +185,13 @@
                             </div>
                             </div>
                         </div>
-                    }
+
+                        }
 
                     </div>
-                </div>
+                    </div>
 
-            }
+                    }
         }
 
 
@@ -191,13 +208,12 @@
 
     </div>
 
-
-    <script>
-            localStorage.setItem("classId", "@classDetails.id.id");
-            localStorage.setItem("subject", "@curriculumArea");
-            localStorage.setItem("schoolId", "@classDetails.schoolDetails.id");
-            localStorage.setItem("tttUserId", "@tttUserId.value");
-    </script>
+        <script>
+                localStorage.setItem("classId", "@classDetails.id.id");
+                localStorage.setItem("subject", "@curriculumArea");
+                localStorage.setItem("schoolId", "@classDetails.schoolDetails.id");
+                localStorage.setItem("tttUserId", "@tttUserId.value");
+        </script>
 
 
     @scalajs.html.scripts("client", routes.Assets.versioned(_).toString, name => getClass.getResource(s"/public/$name") != null)

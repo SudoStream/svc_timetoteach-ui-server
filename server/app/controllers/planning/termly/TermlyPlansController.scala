@@ -38,7 +38,7 @@ class TermlyPlansController @Inject()(
 
   import TermlyPlansController.buildSchoolNameToClassesMap
 
-  val logger: Logger = Logger
+  private val logger: Logger = Logger
   private val postSelectedCurriculumAreasUrl = routes.TermlyPlansController.curriulumAreasSelected()
 
   def termlyPlans: Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest: AuthenticatedRequest[AnyContent] =>
@@ -138,6 +138,7 @@ class TermlyPlansController @Inject()(
 
   def termlyPlansClassLevel_SelectEsOsBenchmarksForCurriculumArea(classId: String, curriculumArea: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest: AuthenticatedRequest[AnyContent] =>
     import utils.CurriculumConverterUtil._
+    logger.debug(s"Will be selecting es, os and benchmarks for class($classId) and curriculumArea ($curriculumArea)")
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
     val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
@@ -152,7 +153,7 @@ class TermlyPlansController @Inject()(
       if maybeClassDetails.isDefined
       classDetails = maybeClassDetails.get
       maybeRelevantEsAndOs <- esAndOsReader.buildEsOsAndBenchmarks(
-        convertSubjectToCurriculumArea(curriculumArea)
+        convertCurriculumAreaToModel(curriculumArea)
       )
       if maybeRelevantEsAndOs.isDefined
     } yield {
@@ -186,7 +187,7 @@ class TermlyPlansController @Inject()(
       group = classDetails.groups.filter(group => group.groupId.id == groupId).head
       relevantEsAndOs <- esAndOsReader.buildEsOsAndBenchmarks(
         group.groupLevel,
-        convertSubjectToCurriculumArea(curriculumArea)
+        convertCurriculumAreaToModel(curriculumArea)
       )
     } yield {
       Ok(views.html.planning.termly.termlyPlansSelectEsOsBenchmarksForCurriculumAreaAtGroupLevel(new MyDeadboltHandler(userReader),

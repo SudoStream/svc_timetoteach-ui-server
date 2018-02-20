@@ -39,10 +39,13 @@ class EsOsAndBenchmarksBuilderImpl @Inject()(esAndOsReader: EsAndOsReaderService
   Future[Option[EsAndOsPlusBenchmarksForCurriculumAreaAndLevel]] =
   {
     logger.info(s"Building Es,Os and benchmarks for $curriculumLevel|$curriculumAreaName")
+
     allEsOsAndBenchmarks map {
       case Some(allEsAndOs) =>
+        logger.debug(s"allEsAndOs : ${allEsAndOs.keySet.toList.sortBy(elem => elem.order).toString()}")
         allEsAndOs.get(curriculumLevel) match {
           case Some(curriculumLevelMap) =>
+            logger.debug(s"curriculumLevelMap : ${curriculumLevelMap.keySet.toString()} for level ${curriculumLevel.toString}")
             curriculumLevelMap.get(curriculumAreaName)
           case None => None
         }
@@ -146,6 +149,8 @@ object EsOsAndBenchmarksBuilderImpl extends EsOsAndBenchmarksBuilderHelper
   : Map[CurriculumArea, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel] =
   {
 
+    logger.debug(s"Wanting to add ... ${nextEsAndOsBySubSection.curriculumAreaName} || ${nextEsAndOsBySubSection.toString}")
+    logger.debug(s"Currently we have ... ${maybeCurrentMapForCurriculumLevel.toString}")
     val newMapForCurriculumLevel: Map[CurriculumArea, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel] = maybeCurrentMapForCurriculumLevel match {
       case Some(currentMapForCurriculumLevel: Map[CurriculumArea, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel]) =>
 
@@ -160,7 +165,7 @@ object EsOsAndBenchmarksBuilderImpl extends EsOsAndBenchmarksBuilderHelper
                 val maybeEAndOSetSubSection: Option[EandOSetSubSection] = subSectionMap.get(nextEsAndOsBySubSection.eAndOSetSubSectionName.getOrElse(NO_SUBSECTION_NAME))
                 val newEAndOSetSubSection: EandOSetSubSection = maybeEAndOSetSubSection match {
                   case Some(eAndOSetSubSection) =>
-                    logger.warn("Would not expect this line to execute because EandOSetSubSection's should be only created once")
+                    logger.warn(s"Would not expect this line to execute because EandOSetSubSection's should be only created once, for ${eAndOSetSubSection.toString}")
                     eAndOSetSubSection
                   case None => EandOSetSubSection(
                     nextEsAndOsBySubSection.eAndOSetSubSectionAuxiliaryText.getOrElse(""),
@@ -169,11 +174,7 @@ object EsOsAndBenchmarksBuilderImpl extends EsOsAndBenchmarksBuilderHelper
                   )
                 }
 
-                subSectionMap + (nextEsAndOsBySubSection.eAndOSetSubSectionName.getOrElse(NO_SUBSECTION_NAME) -> EandOSetSubSection(
-                  nextEsAndOsBySubSection.eAndOSetSubSectionAuxiliaryText.getOrElse(""),
-                  nextEsAndOsBySubSection.allExperienceAndOutcomesAtTheSubSectionLevel,
-                  nextEsAndOsBySubSection.associatedBenchmarks
-                ))
+                subSectionMap + (nextEsAndOsBySubSection.eAndOSetSubSectionName.getOrElse(NO_SUBSECTION_NAME) -> newEAndOSetSubSection)
 
               case None =>
                 Map(nextEsAndOsBySubSection.eAndOSetSubSectionName.getOrElse(NO_SUBSECTION_NAME) -> EandOSetSubSection(
@@ -191,7 +192,7 @@ object EsOsAndBenchmarksBuilderImpl extends EsOsAndBenchmarksBuilderHelper
           case None =>
             createNewEsAndOsPlusBenchmarksForSubjectAndLevel(nextEsAndOsBySubSection)
         }
-        Map(convertScottishCurriculumAreaName(nextEsAndOsBySubSection.curriculumAreaName) -> newEsAndOsPlusBenchmarks)
+        currentMapForCurriculumLevel + (convertScottishCurriculumAreaName(nextEsAndOsBySubSection.curriculumAreaName) -> newEsAndOsPlusBenchmarks)
       case None =>
         Map(convertScottishCurriculumAreaName(nextEsAndOsBySubSection.curriculumAreaName) -> createNewEsAndOsPlusBenchmarksForSubjectAndLevel(nextEsAndOsBySubSection))
     }

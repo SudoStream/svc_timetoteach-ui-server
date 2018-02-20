@@ -46,7 +46,7 @@ object AddNewClassJsScreen {
                 id := s"select-group-type-$groupCounter",
                 `class` := "btn btn-outline-info",
                 option(value := "Select", "Select Group Type ... "),
-                option(value := "Maths", "Maths"),
+                option(value := "Mathematics", "Mathematics"),
                 option(value := "Reading", "Reading"),
                 option(value := "Writing", "Writing"),
                 option(value := "Spelling", "Spelling"),
