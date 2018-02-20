@@ -34,9 +34,33 @@ object ClassLevelPlanningJsScreen
     curriculumLevelFilterButton("Second")
     curriculumLevelFilterButton("Third")
     curriculumLevelFilterButton("Fourth")
+    showAlertIfAllFilterButtonsAreOff()
   }
 
-  def setCurriculumLevelFilterButtonsToNotDisplay(): Unit = {
+  def showAlertIfAllFilterButtonsAreOff(): Unit =
+  {
+    if (allFilterButtonsAreOff()) {
+      dom.document.getElementById("alert-div").asInstanceOf[HTMLDivElement].style.display = "block"
+    } else {
+      dom.document.getElementById("alert-div").asInstanceOf[HTMLDivElement].style.display = "none"
+    }
+  }
+
+  def allFilterButtonsAreOff(): Boolean =
+  {
+    global.console.log("Lets see if all filter buttons are off...")
+    val early = dom.document.getElementById("termly-plans-es-and-os-level-section-div-EarlyLevel").asInstanceOf[HTMLDivElement].style.display == "none"
+    val first = dom.document.getElementById("termly-plans-es-and-os-level-section-div-FirstLevel").asInstanceOf[HTMLDivElement].style.display == "none"
+    val second = dom.document.getElementById("termly-plans-es-and-os-level-section-div-SecondLevel").asInstanceOf[HTMLDivElement].style.display == "none"
+    val third = dom.document.getElementById("termly-plans-es-and-os-level-section-div-ThirdLevel").asInstanceOf[HTMLDivElement].style.display == "none"
+    val fourth = dom.document.getElementById("termly-plans-es-and-os-level-section-div-FourthLevel").asInstanceOf[HTMLDivElement].style.display == "none"
+    global.console.log(s"$early|$first|$second|$third|$fourth")
+
+    early && first && second && third && fourth
+  }
+
+  def setCurriculumLevelFilterButtonsToNotDisplay(): Unit =
+  {
     dom.document.getElementById("termly-plans-es-and-os-level-section-div-EarlyLevel").asInstanceOf[HTMLDivElement].style.display = "none"
     dom.document.getElementById("termly-plans-es-and-os-level-section-div-FirstLevel").asInstanceOf[HTMLDivElement].style.display = "none"
     dom.document.getElementById("termly-plans-es-and-os-level-section-div-SecondLevel").asInstanceOf[HTMLDivElement].style.display = "none"
@@ -51,12 +75,14 @@ object ClassLevelPlanningJsScreen
       val levelSectionDiv = dom.document.getElementById(s"termly-plans-es-and-os-level-section-div-${level}Level").asInstanceOf[HTMLDivElement]
       if (levelSectionDiv.style.display == "none") {
         levelSectionDiv.style.display = "block"
-        curriculumLevelFilterButton.classList.remove("btn-outline-dark")
-        curriculumLevelFilterButton.classList.add("btn-dark")
+        curriculumLevelFilterButton.classList.remove("btn-outline-info")
+        curriculumLevelFilterButton.classList.add("btn-warning")
+        showAlertIfAllFilterButtonsAreOff()
       } else {
         levelSectionDiv.style.display = "none"
-        curriculumLevelFilterButton.classList.add("btn-outline-dark")
-        curriculumLevelFilterButton.classList.remove("btn-dark")
+        curriculumLevelFilterButton.classList.add("btn-outline-info")
+        curriculumLevelFilterButton.classList.remove("btn-warning")
+        showAlertIfAllFilterButtonsAreOff()
       }
     })
 
