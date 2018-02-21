@@ -49,27 +49,26 @@
                             <a class="btn btn-outline-primary" role="button" href="@controllers.planning.classtimetable.routes.ClassTimetableController.classesHome()">
                                 Classes Home</a>
                         </li>
+                    </ul>
 
-                        <li class="nav-item manage-class-nav-item-on-left">
+                    <ul class="nav justify-content-end">
+                        <li class="nav-item manage-class-nav-item-on-right">
                             <a id="manage-class-goto-timetable" class="btn btn-info" role="button"
                             href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(classDetails.id.id)">
                                 Class Timetable</a>
                         </li>
 
-                        <li class="nav-item manage-class-nav-item-on-left">
+                        <li class="nav-item manage-class-nav-item-on-right">
                             <a class="btn btn-info" role="button"
                             href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(classDetails.id.id)">
                                 Termly Plans</a>
                         </li>
 
-                        <li class="nav-item manage-class-nav-item-on-left">
+                        <li class="nav-item manage-class-nav-item-on-right">
                             <button id="manage-class-goto-timetable" type="button" class="btn btn-info" disabled="true">
                                 Weekly Plans</button>
                         </li>
 
-                    </ul>
-
-                    <ul class="nav justify-content-end">
                         <li class="nav-item manage-class-nav-item-on-right">
                             <button id="manage-class-edit" type="button" class="btn btn-primary" disabled="true">
                                 Edit Class</button>
@@ -119,7 +118,7 @@
                             </div>
                         </div>
                         @for(group <- classDetails.groups.sortBy(group => group.groupLevel)) {
-                            @if(group.groupType.value.toLowerCase == "maths") {
+                            @if(group.groupType.value.toLowerCase == "mathematics") {
                                 <div class="manage-new-group-row">
                                     <div class="form-row manage-class-group-row">
 

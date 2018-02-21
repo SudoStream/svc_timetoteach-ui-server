@@ -68,8 +68,24 @@ object CurriculumArea {
   implicit def rw: RW[CurriculumArea] = macroRW
 }
 
-case object ExpressiveArts extends CurriculumArea {
+case object ExpressiveArts__Only extends CurriculumArea {
   val value = "EXPRESSIVE_ARTS"
+}
+
+case object ExpressiveArts__Art extends CurriculumArea {
+  val value = "EXPRESSIVE_ARTS__ART"
+}
+
+case object ExpressiveArts__Drama extends CurriculumArea {
+  val value = "EXPRESSIVE_ARTS__DRAMA"
+}
+
+case object ExpressiveArts__Dance extends CurriculumArea {
+  val value = "EXPRESSIVE_ARTS__DANCE"
+}
+
+case object ExpressiveArts__Music extends CurriculumArea {
+  val value = "EXPRESSIVE_ARTS__MUSIC"
 }
 
 case object HealthAndWellbeing extends CurriculumArea {

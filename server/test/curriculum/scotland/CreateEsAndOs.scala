@@ -38,7 +38,7 @@ trait CreateEsAndOs {
             "Uses strategies to estimate an answer to a calculation or problem, for example, doubling and rounding.",
             "Rounds whole numbers to the nearest 10 and 100 and uses this routinely to estimate and check the reasonableness of a solution."
           ),
-          curriculumAreaName = ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS,
+          curriculumAreaName = ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__ART,
           eAndOSetSectionName = "Music",
           eAndOSetSubSectionName = None,
           eAndOSetSubSectionAuxiliaryText = Option.empty,

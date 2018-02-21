@@ -13,8 +13,11 @@ object CurriculumConverterUtil
   {
     curriculumArea.toUpperCase match {
       case "MATHS" | "MATHEMATICS" => Mathematics
-      case "EXPRESSIVE_ARTS" | "EXPRESSIVE_ARTS__ART" |
-           "EXPRESSIVE_ARTS__DRAMA" | "EXPRESSIVE_ARTS__MUSIC" => ExpressiveArts
+      case "EXPRESSIVE_ARTS" => ExpressiveArts__Only
+      case "EXPRESSIVE_ARTS__ART" => ExpressiveArts__Art
+      case "EXPRESSIVE_ARTS__DRAMA" => ExpressiveArts__Drama
+      case "EXPRESSIVE_ARTS__DANCE" => ExpressiveArts__Dance
+      case "EXPRESSIVE_ARTS__MUSIC" => ExpressiveArts__Music
       case "HEALTH_AND_WELLBEING" | "HEALTH_AND_WELLBEING__PHYSICAL_EDUCATION" => HealthAndWellbeing
       case "LITERACY__WRITING" | "LITERACY__READING" | "LITERACY__LITERACY_AND_ENGLISH" => Languages_LiteracyAndEnglish
       case "LITERACY__CLASSICAL_LANGUAGES" => Languages_ClassicalLanguages
@@ -40,6 +43,7 @@ object CurriculumConverterUtil
       case "EXPRESSIVE_ARTS" => ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS
       case "EXPRESSIVE_ARTS__ART" => ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__ART
       case "EXPRESSIVE_ARTS__DRAMA" => ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__DRAMA
+      case "EXPRESSIVE_ARTS__DANCE" => ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__DANCE
       case "EXPRESSIVE_ARTS__MUSIC" => ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__MUSIC
       case "HEALTH_AND_WELLBEING" => ScottishCurriculumPlanningArea.HEALTH_AND_WELLBEING
       case "HEALTH_AND_WELLBEING__PHYSICAL_EDUCATION" => ScottishCurriculumPlanningArea.HEALTH_AND_WELLBEING

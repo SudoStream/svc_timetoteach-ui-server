@@ -53,6 +53,27 @@ class EsOsAndBenchmarksBuilderImpl @Inject()(esAndOsReader: EsAndOsReaderService
     }
   }
 
+  private def filterPerformanceEsAndOsForDramaAndMusic(
+                                                        curriculumArea_to_EoBenchmark_Tuple: (CurriculumArea,
+                                                          EsAndOsPlusBenchmarksForCurriculumAreaAndLevel),
+                                                        curriculumAreaName: CurriculumArea)
+  : Boolean =
+  {
+    if (curriculumArea_to_EoBenchmark_Tuple._1 == curriculumAreaName) {
+      true
+    } else {
+      if (curriculumAreaName == ExpressiveArts__Drama || curriculumAreaName == ExpressiveArts__Music) {
+        if (curriculumArea_to_EoBenchmark_Tuple._1 == ExpressiveArts__Only) {
+          true
+        } else {
+          false
+        }
+      } else {
+        false
+      }
+    }
+  }
+
   override def buildEsOsAndBenchmarks(curriculumAreaName: CurriculumArea): Future[Option[List[EsAndOsPlusBenchmarksForCurriculumAreaAndLevel]]] =
   {
     logger.info(s"Building Es,Os and benchmarks for $curriculumAreaName")
@@ -62,8 +83,10 @@ class EsOsAndBenchmarksBuilderImpl @Inject()(esAndOsReader: EsAndOsReaderService
         Some({
           for {
             (theCurriculumLevel, theCurriculumAreaToEsAndOs) <- allEsAndOs
-            filteredCurriculumAreaToEsAndOs = theCurriculumAreaToEsAndOs.filter(curriculumArea_to_EoBenchmark_Tuple =>
-              curriculumArea_to_EoBenchmark_Tuple._1 == curriculumAreaName)
+            filteredCurriculumAreaToEsAndOs = theCurriculumAreaToEsAndOs.filter {
+              curriculumArea_to_EoBenchmark_Tuple =>
+                filterPerformanceEsAndOsForDramaAndMusic(curriculumArea_to_EoBenchmark_Tuple, curriculumAreaName)
+            }
             filteredEsOsAndBenchmarks <- filteredCurriculumAreaToEsAndOs.values
           } yield filteredEsOsAndBenchmarks
         }.toList
@@ -149,8 +172,7 @@ object EsOsAndBenchmarksBuilderImpl extends EsOsAndBenchmarksBuilderHelper
   : Map[CurriculumArea, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel] =
   {
 
-    logger.debug(s"Wanting to add ... ${nextEsAndOsBySubSection.curriculumAreaName} || ${nextEsAndOsBySubSection.toString}")
-    logger.debug(s"Currently we have ... ${maybeCurrentMapForCurriculumLevel.toString}")
+    logger.debug(s"Wanting to add ... ${nextEsAndOsBySubSection.curriculumAreaName} ")
     val newMapForCurriculumLevel: Map[CurriculumArea, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel] = maybeCurrentMapForCurriculumLevel match {
       case Some(currentMapForCurriculumLevel: Map[CurriculumArea, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel]) =>
 

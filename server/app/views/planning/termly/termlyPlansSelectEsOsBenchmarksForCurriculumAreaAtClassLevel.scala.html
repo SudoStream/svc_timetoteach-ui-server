@@ -71,7 +71,6 @@
             </div>
         </div>
 
-
         <div class="termly-plans-overview-section">
             <h5 class="termly-plans-overview-section-header text-center">
                 Select the curriculum levels you wish to plan for</h5>
@@ -103,12 +102,14 @@
         </div>
 
         @for(esOsAndBenchmarks <- esOsAndBenchmarksList.sortBy(elem => elem.curriculumLevel.order)) {
-            <div id="termly-plans-es-and-os-level-section-div-@{
+
+            <div class="termly-plans-es-and-os-level-section-div-@{
                 esOsAndBenchmarks.curriculumLevel.value
             }">
                 <div class="termly-plans-es-and-os-level-section-header">
                     <h4>@esOsAndBenchmarks.curriculumLevel.value.replace("Level", " Level")</h4>
                 </div>
+
                 @for((esAndOsSectionMap, sectionIndex) <- esOsAndBenchmarks.setSectionNameToSubSections.toList.sortBy(subsectionMap => subsectionMap._1).zipWithIndex) {
                     <a class="btn btn-secondary termly-plans-es-and-os-section" data-toggle="collapse" href="#section_@{
                         sectionIndex

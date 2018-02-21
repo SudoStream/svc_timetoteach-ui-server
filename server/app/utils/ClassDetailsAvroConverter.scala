@@ -17,7 +17,7 @@ object ClassDetailsAvroConverter
       groupUnpickled: Group <- classDetails.groups
       groupId = GroupId(groupUnpickled.groupId.id)
       groupType = groupUnpickled.groupType.value.toLowerCase match {
-        case "maths" => GroupType.MATHS
+        case "maths" | "mathematics" => GroupType.MATHEMATICS
         case "reading" => GroupType.READING
         case "writing" => GroupType.WRITING
         case "spelling" => GroupType.SPELLING
@@ -53,7 +53,7 @@ object ClassDetailsAvroConverter
         case GroupType.SPELLING => duplicate.model.SpellingGroupType
         case GroupType.WRITING => duplicate.model.WritingGroupType
         case GroupType.READING => duplicate.model.ReadingGroupType
-        case GroupType.MATHS => duplicate.model.MathsGroupType
+        case GroupType.MATHEMATICS => duplicate.model.MathsGroupType
         case _ => duplicate.model.OtherGroupType
       }
       groupLevel = groupAvro.groupLevel match {
@@ -78,6 +78,7 @@ object ClassDetailsAvroConverter
     val classDetailsListAvroStyle = classDetailsCollection.values.map { classDetailsWrapper => classDetailsWrapper.classDetails }
 
     logger.debug(s"classDetailsListAvroStyle size = ${classDetailsListAvroStyle.size}")
+    logger.debug(s"classDetailsListAvroStyle = ${classDetailsListAvroStyle.toString}")
     logger.debug(s"schools size = ${schools.size}")
 
     for {

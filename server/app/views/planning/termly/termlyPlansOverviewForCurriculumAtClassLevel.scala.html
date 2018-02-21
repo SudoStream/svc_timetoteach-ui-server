@@ -63,8 +63,21 @@
                         </li>
                     </ul>
 
-
                     <ul class="nav justify-content-end">
+                        <li class="nav-item manage-class-nav-item-on-right">
+                            <a class="btn btn-info" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(classDetails.id.id)">
+                                @classDetails.className.name Termly Plans</a>
+                        </li>
+                        <li class="nav-item manage-class-nav-item-on-right">
+                            <a class="btn btn-info" role="button"
+                            href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(classDetails.id.id)">
+                                Manage @classDetails.className.name</a>
+                        </li>
+                        <li class="nav-item manage-class-nav-item-on-right">
+                            <a id="manage-class-goto-timetable" class="btn btn-info" role="button"
+                            href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(classDetails.id.id)">
+                                Class Timetable</a>
+                        </li>
                         <li class="nav-item manage-class-nav-item-rightmost">
                             <a id="termly-plans-edit" role="button" class="btn btn-primary"
                             href="#">

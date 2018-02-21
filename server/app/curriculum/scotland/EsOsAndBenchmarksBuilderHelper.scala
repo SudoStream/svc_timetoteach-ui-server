@@ -23,10 +23,11 @@ trait EsOsAndBenchmarksBuilderHelper
   implicit def convertScottishCurriculumAreaName(scottishAreaName: ScottishCurriculumPlanningArea): CurriculumArea =
   {
     scottishAreaName match {
-      case ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS => ExpressiveArts
-      case ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__ART => ExpressiveArts
-      case ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__DRAMA => ExpressiveArts
-      case ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__MUSIC => ExpressiveArts
+      case ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS => ExpressiveArts__Only
+      case ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__ART => ExpressiveArts__Art
+      case ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__DRAMA => ExpressiveArts__Drama
+      case ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__DANCE => ExpressiveArts__Dance
+      case ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__MUSIC => ExpressiveArts__Music
       case ScottishCurriculumPlanningArea.HEALTH_AND_WELLBEING => HealthAndWellbeing
       case ScottishCurriculumPlanningArea.HEALTH_AND_WELLBEING__PHYSICAL_EDUCATION => HealthAndWellbeing
       case ScottishCurriculumPlanningArea.LITERACY__WRITING => Languages_LiteracyAndEnglish

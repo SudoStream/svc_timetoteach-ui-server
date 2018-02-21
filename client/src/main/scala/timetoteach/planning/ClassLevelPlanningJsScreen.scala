@@ -4,7 +4,7 @@ import duplicate.model.{EandOsWithBenchmarks, TermlyPlansToSave}
 import org.scalajs.dom
 import org.scalajs.dom.ext.Ajax
 import org.scalajs.dom.ext.Ajax.InputData
-import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement}
+import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement, NodeList}
 import upickle.default.write
 
 import scala.collection.mutable
@@ -46,33 +46,60 @@ object ClassLevelPlanningJsScreen
     }
   }
 
+  private def allElementsAreOff(nodes: NodeList, tag: String): Boolean =
+  {
+    val nodeListSize = nodes.length
+    var index = 0
+    var numberElemsOff = 0
+    while (index < nodeListSize) {
+      val div = nodes(index).asInstanceOf[HTMLDivElement]
+      if (div.style.display == "none") {
+        numberElemsOff = numberElemsOff + 1
+      }
+
+      index = index + 1
+    }
+
+    numberElemsOff == nodeListSize
+  }
+
   def allFilterButtonsAreOff(): Boolean =
   {
-    global.console.log("Lets see if all filter buttons are off...")
-    val early = dom.document.getElementById("termly-plans-es-and-os-level-section-div-EarlyLevel").asInstanceOf[HTMLDivElement].style.display == "none"
-    val first = dom.document.getElementById("termly-plans-es-and-os-level-section-div-FirstLevel").asInstanceOf[HTMLDivElement].style.display == "none"
-    val second = dom.document.getElementById("termly-plans-es-and-os-level-section-div-SecondLevel").asInstanceOf[HTMLDivElement].style.display == "none"
-    val third = dom.document.getElementById("termly-plans-es-and-os-level-section-div-ThirdLevel").asInstanceOf[HTMLDivElement].style.display == "none"
-    val fourth = dom.document.getElementById("termly-plans-es-and-os-level-section-div-FourthLevel").asInstanceOf[HTMLDivElement].style.display == "none"
-    global.console.log(s"$early|$first|$second|$third|$fourth")
+    val earlys = dom.document.getElementsByClassName("termly-plans-es-and-os-level-section-div-EarlyLevel")
+    val firsts = dom.document.getElementsByClassName("termly-plans-es-and-os-level-section-div-FirstLevel")
+    val seconds = dom.document.getElementsByClassName("termly-plans-es-and-os-level-section-div-SecondLevel")
+    val thirds = dom.document.getElementsByClassName("termly-plans-es-and-os-level-section-div-ThirdLevel")
+    val fourths = dom.document.getElementsByClassName("termly-plans-es-and-os-level-section-div-FourthLevel")
 
-    early && first && second && third && fourth
+    allElementsAreOff(earlys, "earlys") && allElementsAreOff(firsts, "firsts") && allElementsAreOff(seconds, "seconds") &&
+      allElementsAreOff(thirds, "thirds") && allElementsAreOff(fourths, "fourths")
+  }
+
+  private def setNodesToNotDisplay(nodes: NodeList): Unit =
+  {
+    val nodeListSize = nodes.length
+    var index = 0
+    while (index < nodeListSize) {
+      val div = nodes(index).asInstanceOf[HTMLDivElement]
+      div.style.display = "none"
+      index = index + 1
+    }
   }
 
   def setCurriculumLevelFilterButtonsToNotDisplay(): Unit =
   {
-    dom.document.getElementById("termly-plans-es-and-os-level-section-div-EarlyLevel").asInstanceOf[HTMLDivElement].style.display = "none"
-    dom.document.getElementById("termly-plans-es-and-os-level-section-div-FirstLevel").asInstanceOf[HTMLDivElement].style.display = "none"
-    dom.document.getElementById("termly-plans-es-and-os-level-section-div-SecondLevel").asInstanceOf[HTMLDivElement].style.display = "none"
-    dom.document.getElementById("termly-plans-es-and-os-level-section-div-ThirdLevel").asInstanceOf[HTMLDivElement].style.display = "none"
-    dom.document.getElementById("termly-plans-es-and-os-level-section-div-FourthLevel").asInstanceOf[HTMLDivElement].style.display = "none"
+    setNodesToNotDisplay(dom.document.getElementsByClassName("termly-plans-es-and-os-level-section-div-EarlyLevel"))
+    setNodesToNotDisplay(dom.document.getElementsByClassName("termly-plans-es-and-os-level-section-div-FirstLevel"))
+    setNodesToNotDisplay(dom.document.getElementsByClassName("termly-plans-es-and-os-level-section-div-SecondLevel"))
+    setNodesToNotDisplay(dom.document.getElementsByClassName("termly-plans-es-and-os-level-section-div-ThirdLevel"))
+    setNodesToNotDisplay(dom.document.getElementsByClassName("termly-plans-es-and-os-level-section-div-FourthLevel"))
   }
 
-  def curriculumLevelFilterButton(level: String): Unit =
-  {
-    val curriculumLevelFilterButton = dom.document.getElementById(s"curriculumLevel${level}FilterButton").asInstanceOf[HTMLButtonElement]
-    curriculumLevelFilterButton.addEventListener("click", (e: dom.Event) => {
-      val levelSectionDiv = dom.document.getElementById(s"termly-plans-es-and-os-level-section-div-${level}Level").asInstanceOf[HTMLDivElement]
+  private def curriculumLevelFilterButtonInstance(nodes: NodeList, curriculumLevelFilterButton: HTMLButtonElement) : Unit = {
+    val nodeListSize = nodes.length
+    var index = 0
+    while (index < nodeListSize) {
+      val levelSectionDiv  = nodes(index).asInstanceOf[HTMLDivElement]
       if (levelSectionDiv.style.display == "none") {
         levelSectionDiv.style.display = "block"
         curriculumLevelFilterButton.classList.remove("btn-outline-info")
@@ -84,8 +111,18 @@ object ClassLevelPlanningJsScreen
         curriculumLevelFilterButton.classList.remove("btn-warning")
         showAlertIfAllFilterButtonsAreOff()
       }
-    })
 
+      index = index + 1
+    }
+  }
+
+  def curriculumLevelFilterButton(level: String): Unit =
+  {
+    val curriculumLevelFilterButton = dom.document.getElementById(s"curriculumLevel${level}FilterButton").asInstanceOf[HTMLButtonElement]
+    curriculumLevelFilterButton.addEventListener("click", (e: dom.Event) => {
+      val levelSectionDivs = dom.document.getElementsByClassName(s"termly-plans-es-and-os-level-section-div-${level}Level")
+      curriculumLevelFilterButtonInstance(levelSectionDivs,curriculumLevelFilterButton )
+    })
   }
 
   def clearButton(): Unit =

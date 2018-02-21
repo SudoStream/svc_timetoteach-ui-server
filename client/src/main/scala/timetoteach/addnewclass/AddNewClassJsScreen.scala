@@ -216,11 +216,11 @@ object AddNewClassJsScreen {
             groupTypeMaybe <- validateSelection(selectedGroupType, "Need to select a group type, e.g. Maths, Literacy etc")
             groupType = {
               println(s"groupTypeMaybe = '$groupTypeMaybe'")
-              groupTypeMaybe match {
-                case "Maths" => MathsGroupType
-                case "Reading" => ReadingGroupType
-                case "Writing" => WritingGroupType
-                case "Spelling" => SpellingGroupType
+              groupTypeMaybe.toUpperCase match {
+                case "MATHS" | "MATHEMATICS" => MathsGroupType
+                case "READING" => ReadingGroupType
+                case "WRITING" => WritingGroupType
+                case "SPELLING" => SpellingGroupType
                 case _ => OtherGroupType
               }
             }

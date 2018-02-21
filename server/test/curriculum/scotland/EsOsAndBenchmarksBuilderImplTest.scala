@@ -1,6 +1,6 @@
 package curriculum.scotland
 
-import duplicate.model.esandos.{ExpressiveArts, Mathematics}
+import duplicate.model.esandos.{ExpressiveArts__Art, Mathematics}
 import duplicate.model.{EarlyLevel, FirstLevel, SecondLevel}
 import io.sudostream.timetoteach.messages.scottish.ScottishEsAndOsData
 import org.scalatest.FunSpec
@@ -57,13 +57,13 @@ class EsOsAndBenchmarksBuilderImplTest extends FunSpec with CreateEsAndOs
       " 'Music' be defined") {
       val scottishEsAndOsData: ScottishEsAndOsData = createScottishEsAndOsData()
       val maybeMergedEsOsAndBenchmarks = EsOsAndBenchmarksBuilderImpl.buildTheEsOsAndBenchmarks(scottishEsAndOsData)
-      assert(maybeMergedEsOsAndBenchmarks.get(SecondLevel)(ExpressiveArts).setSectionNameToSubSections.isDefinedAt("Music"))
+      assert(maybeMergedEsOsAndBenchmarks.get(SecondLevel)(ExpressiveArts__Art).setSectionNameToSubSections.isDefinedAt("Music"))
     }
     it("should have [ScottishCurriculumLevel.SECOND][ScottishCurriculumAreaName.EXPRESSIVE_ARTS] with section" +
       " 'Music' sholud have 2 es and os") {
       val scottishEsAndOsData: ScottishEsAndOsData = createScottishEsAndOsData()
       val maybeMergedEsOsAndBenchmarks = EsOsAndBenchmarksBuilderImpl.buildTheEsOsAndBenchmarks(scottishEsAndOsData)
-      assert(maybeMergedEsOsAndBenchmarks.get(SecondLevel)(ExpressiveArts).setSectionNameToSubSections("Music")(EsOsAndBenchmarksBuilderImpl.NO_SUBSECTION_NAME).eAndOs.size == 2)
+      assert(maybeMergedEsOsAndBenchmarks.get(SecondLevel)(ExpressiveArts__Art).setSectionNameToSubSections("Music")(EsOsAndBenchmarksBuilderImpl.NO_SUBSECTION_NAME).eAndOs.size == 2)
     }
 
     //////
