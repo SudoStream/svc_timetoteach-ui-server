@@ -95,11 +95,12 @@ object ClassLevelPlanningJsScreen
     setNodesToNotDisplay(dom.document.getElementsByClassName("termly-plans-es-and-os-level-section-div-FourthLevel"))
   }
 
-  private def curriculumLevelFilterButtonInstance(nodes: NodeList, curriculumLevelFilterButton: HTMLButtonElement) : Unit = {
+  private def curriculumLevelFilterButtonInstance(nodes: NodeList, curriculumLevelFilterButton: HTMLButtonElement): Unit =
+  {
     val nodeListSize = nodes.length
     var index = 0
     while (index < nodeListSize) {
-      val levelSectionDiv  = nodes(index).asInstanceOf[HTMLDivElement]
+      val levelSectionDiv = nodes(index).asInstanceOf[HTMLDivElement]
       if (levelSectionDiv.style.display == "none") {
         levelSectionDiv.style.display = "block"
         curriculumLevelFilterButton.classList.remove("btn-outline-info")
@@ -116,12 +117,35 @@ object ClassLevelPlanningJsScreen
     }
   }
 
+  def headerVisibility(): Unit =
+  {
+    val currentHeaders = scala.collection.mutable.ArrayBuffer.empty[String]
+    val headerDivs = dom.document.getElementsByClassName("termly-plans-es-and-os-level-section-header")
+    val nodeListSize = headerDivs.length
+    var index = 0
+    while (index < nodeListSize) {
+      val headerDiv = headerDivs(index).asInstanceOf[HTMLDivElement]
+      val parentHeaderDiv = headerDiv.parentNode.asInstanceOf[HTMLDivElement]
+      val curriculumLevel = headerDiv.getAttribute("data-curriculum-level")
+      global.console.log(s"curriculumLevel = ${curriculumLevel}")
+      if (currentHeaders.contains(curriculumLevel)) {
+        headerDiv.asInstanceOf[HTMLDivElement].style.display = "none"
+      } else {
+        headerDiv.asInstanceOf[HTMLDivElement].style.display = "block"
+        currentHeaders += curriculumLevel
+      }
+
+      index = index + 1
+    }
+  }
+
   def curriculumLevelFilterButton(level: String): Unit =
   {
     val curriculumLevelFilterButton = dom.document.getElementById(s"curriculumLevel${level}FilterButton").asInstanceOf[HTMLButtonElement]
     curriculumLevelFilterButton.addEventListener("click", (e: dom.Event) => {
       val levelSectionDivs = dom.document.getElementsByClassName(s"termly-plans-es-and-os-level-section-div-${level}Level")
-      curriculumLevelFilterButtonInstance(levelSectionDivs,curriculumLevelFilterButton )
+      curriculumLevelFilterButtonInstance(levelSectionDivs, curriculumLevelFilterButton)
+      headerVisibility()
     })
   }
 

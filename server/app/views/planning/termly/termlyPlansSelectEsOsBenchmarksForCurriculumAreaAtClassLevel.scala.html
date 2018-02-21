@@ -101,27 +101,35 @@
                 Select the Es & Os and/or Benchmarks to cover this term</h5>
         </div>
 
-        @for(esOsAndBenchmarks <- esOsAndBenchmarksList.sortBy(elem => elem.curriculumLevel.order)) {
+        @for((esOsAndBenchmarks, outerIndex) <- esOsAndBenchmarksList.sortBy(elem => elem.curriculumLevel.order).zipWithIndex) {
 
             <div class="termly-plans-es-and-os-level-section-div-@{
                 esOsAndBenchmarks.curriculumLevel.value
             }">
-                <div class="termly-plans-es-and-os-level-section-header">
+                <div class="termly-plans-es-and-os-level-section-header" data-curriculum-level="@{
+                    esOsAndBenchmarks.curriculumLevel.value
+                }">
                     <h4>@esOsAndBenchmarks.curriculumLevel.value.replace("Level", " Level")</h4>
                 </div>
 
                 @for((esAndOsSectionMap, sectionIndex) <- esOsAndBenchmarks.setSectionNameToSubSections.toList.sortBy(subsectionMap => subsectionMap._1).zipWithIndex) {
                     <a class="btn btn-secondary termly-plans-es-and-os-section" data-toggle="collapse" href="#section_@{
+                        outerIndex
+                    }_@{
                         sectionIndex
                     }_@{
                         esOsAndBenchmarks.curriculumLevel
                     }" role="button"
-                    aria-expanded="false" aria-controls="section_@sectionIndex">
+                    aria-expanded="false" aria-controls="section_@{
+                        outerIndex
+                    }_@sectionIndex">
                     @esAndOsSectionMap._1
                     </a>
                     <br>
 
                     <div class="collapse" id="section_@{
+                        outerIndex
+                    }_@{
                         sectionIndex
                     }_@{
                         esOsAndBenchmarks.curriculumLevel
@@ -132,9 +140,13 @@
                                 @if(subjectSectionMap._1 != NO_SUBSECTION_NAME) {
 
                                     <a class="btn btn-light termly-plans-es-and-os-subsection " data-toggle="collapse" href="#section_@{
+                                        outerIndex
+                                    }_@{
                                         sectionIndex
                                     }_subsection_@subSectionIndex" role="button"
                                     aria-expanded="false" aria-controls="section_@{
+                                        outerIndex
+                                    }_@{
                                         sectionIndex
                                     }_subsection_@subSectionIndex">
                                     @subjectSectionMap._1
@@ -144,10 +156,14 @@
 
                                 @if(subjectSectionMap._1 != NO_SUBSECTION_NAME) {
                                     <div class="collapse" id="section_@{
+                                        outerIndex
+                                    }_@{
                                         sectionIndex
                                     }_subsection_@subSectionIndex">
                                     } else {
                                     <div id="section_@{
+                                        outerIndex
+                                    }_@{
                                         sectionIndex
                                     }_subsection_@subSectionIndex">
                                     }
