@@ -1,9 +1,9 @@
 package potentialmicroservice.planning.reader
 
 import javax.inject.{Inject, Singleton}
-
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
-import models.timetoteach.planning.{GroupId, CurriculumAreaTermlyPlan, TermlyCurriculumSelection}
+import models.timetoteach.planning.{CurriculumAreaTermlyPlan, GroupId, TermlyCurriculumSelection}
+import models.timetoteach.term.SchoolTerm
 import models.timetoteach.{ClassId, TimeToTeachUserId}
 import potentialmicroservice.planning.reader.dao.PlanReaderDao
 
@@ -14,9 +14,10 @@ class PlanningReaderServiceImpl @Inject()(planningReaderDao: PlanReaderDao) exte
 {
 
   override def currentTermlyCurriculumSelection(tttUserId: TimeToTeachUserId,
-                                                classId: ClassId): Future[Option[TermlyCurriculumSelection]] =
+                                                classId: ClassId,
+                                                term: SchoolTerm): Future[Option[TermlyCurriculumSelection]] =
   {
-    planningReaderDao.currentTermlyCurriculumSelection(tttUserId,classId)
+    planningReaderDao.currentTermlyCurriculumSelection(tttUserId, classId, term)
   }
 
 
@@ -29,7 +30,8 @@ class PlanningReaderServiceImpl @Inject()(planningReaderDao: PlanReaderDao) exte
   }
 
 
-  override def readCurriculumAreaTermlyPlanForClassLevel(tttUserId: TimeToTeachUserId, classId: ClassId, planningArea: ScottishCurriculumPlanningArea): Future[Option[CurriculumAreaTermlyPlan]] = {
+  override def readCurriculumAreaTermlyPlanForClassLevel(tttUserId: TimeToTeachUserId, classId: ClassId, planningArea: ScottishCurriculumPlanningArea): Future[Option[CurriculumAreaTermlyPlan]] =
+  {
     planningReaderDao.readCurriculumAreaTermlyPlanForClassLevel(tttUserId, classId, planningArea)
   }
 

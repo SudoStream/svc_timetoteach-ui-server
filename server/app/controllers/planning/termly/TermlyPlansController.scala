@@ -108,7 +108,8 @@ class TermlyPlansController @Inject()(
 
     val eventualMaybeCurrentTermlyCurriculumSelection = planningReaderService.currentTermlyCurriculumSelection(
       TimeToTeachUserId(tttUserId),
-      ClassId(classId)
+      ClassId(classId),
+      termService.currentSchoolTerm()
     )
 
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))

@@ -1,9 +1,9 @@
 package controllers.serviceproxies
 
 import javax.inject.{Inject, Singleton}
-
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
 import models.timetoteach.planning.{CurriculumAreaTermlyPlan, GroupId, TermlyCurriculumSelection}
+import models.timetoteach.term.SchoolTerm
 import models.timetoteach.{ClassId, TimeToTeachUserId}
 import potentialmicroservice.planning.reader.PlanningReaderService
 
@@ -13,9 +13,9 @@ import scala.concurrent.Future
 class PlanningReaderServiceProxyImpl @Inject()(planningReaderService: PlanningReaderService) extends PlanningReaderServiceProxy
 {
 
-  override def currentTermlyCurriculumSelection(tttUserId: TimeToTeachUserId, classId: ClassId): Future[Option[TermlyCurriculumSelection]] =
+  override def currentTermlyCurriculumSelection(tttUserId: TimeToTeachUserId, classId: ClassId, term: SchoolTerm): Future[Option[TermlyCurriculumSelection]] =
   {
-    planningReaderService.currentTermlyCurriculumSelection(tttUserId, classId)
+    planningReaderService.currentTermlyCurriculumSelection(tttUserId, classId, term)
   }
 
 

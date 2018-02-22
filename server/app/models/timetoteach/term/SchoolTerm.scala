@@ -13,6 +13,15 @@ case class SchoolTerm(
                      )
 
 case class SchoolYear(calendarYearStart: Int, maybeCalendarYearEnd: Option[Int])
+{
+  def niceValue: String =
+  {
+    val maybeEndYear = if (maybeCalendarYearEnd.isDefined) {
+      "-" + maybeCalendarYearEnd.get
+    } else ""
+    calendarYearStart.toString + maybeEndYear
+  }
+}
 
 object SchoolTermName extends Enumeration
 {

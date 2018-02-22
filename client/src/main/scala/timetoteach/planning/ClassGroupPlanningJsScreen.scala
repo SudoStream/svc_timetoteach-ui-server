@@ -98,7 +98,7 @@ object ClassGroupPlanningJsScreen {
         "Content-Type" -> "application/x-www-form-urlencoded",
         "X-Requested-With" -> "Accept"
       )
-      val theData = InputData.str2ajax(s"groupTermlyPlansPickled=$groupTermlyPlansPickled")
+      val theData = InputData.str2ajax(s"termlyPlansPickled=$groupTermlyPlansPickled")
 
       Ajax.post(
         url = theUrl,

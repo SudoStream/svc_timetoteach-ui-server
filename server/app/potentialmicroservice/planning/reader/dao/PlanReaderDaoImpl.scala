@@ -1,10 +1,10 @@
 package potentialmicroservice.planning.reader.dao
 
 import javax.inject.{Inject, Singleton}
-
 import dao.MongoDbConnection
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
 import models.timetoteach.planning.{CurriculumAreaTermlyPlan, GroupId, PlanType, TermlyCurriculumSelection}
+import models.timetoteach.term.SchoolTerm
 import models.timetoteach.{ClassId, TimeToTeachUserId}
 import org.mongodb.scala.bson.BsonDocument
 import org.mongodb.scala.{Document, MongoCollection}
@@ -23,14 +23,23 @@ class PlanReaderDaoImpl @Inject()(mongoDbConnection: MongoDbConnection) extends 
   private val termlyCurriculumSelectionCollection: MongoCollection[Document] = mongoDbConnection.getTermlyCurriculumSelectionCollection
 
   override def currentTermlyCurriculumSelection(tttUserId: TimeToTeachUserId,
-                                                classId: ClassId): Future[Option[TermlyCurriculumSelection]] =
+                                                classId: ClassId,
+                                                term: SchoolTerm): Future[Option[TermlyCurriculumSelection]] =
   {
-    logger.info(s"Looking for latest termly curriculum selection from Database: $tttUserId|$classId")
+    logger.info(s"Looking for latest termly curriculum selection from Database: $tttUserId|$classId|$term")
 
     val findMatcher = BsonDocument(
       TermlyCurriculumSelectionSchema.TTT_USER_ID -> tttUserId.value,
-      TermlyCurriculumSelectionSchema.CLASS_ID -> classId.value
+      TermlyCurriculumSelectionSchema.CLASS_ID -> classId.value,
+      TermlyCurriculumSelectionSchema.SCHOOL_TERM -> BsonDocument(
+        TermlyCurriculumSelectionSchema.SCHOOL_YEAR -> term.schoolYear.niceValue,
+        TermlyCurriculumSelectionSchema.SCHOOL_TERM_NAME -> term.schoolTermName.toString,
+        TermlyCurriculumSelectionSchema.SCHOOL_TERM_FIRST_DAY -> term.termFirstDay.toString,
+        TermlyCurriculumSelectionSchema.SCHOOL_TERM_LAST_DAY -> term.termLastDay.toString
+      )
     )
+
+    logger.debug(s"++++ Looking for latest termly curriculum selection from Database with matcher ${findMatcher.toString}")
 
     val futureFoundCurriculumSelectionDocuments = termlyCurriculumSelectionCollection.find(findMatcher).toFuture()
     futureFoundCurriculumSelectionDocuments.map {

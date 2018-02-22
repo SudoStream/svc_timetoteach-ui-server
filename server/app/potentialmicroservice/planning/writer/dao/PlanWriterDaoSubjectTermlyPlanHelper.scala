@@ -16,11 +16,6 @@ trait PlanWriterDaoSubjectTermlyPlanHelper {
       ""
     }
 
-    val endYear = if (planToSave.schoolTerm.schoolYear.maybeCalendarYearEnd.isDefined) {
-      "-" + planToSave.schoolTerm.schoolYear.maybeCalendarYearEnd.get
-    } else ""
-    val schoolYearValue: String = planToSave.schoolTerm.schoolYear.calendarYearStart.toString + endYear
-
     Document(
       TTT_USER_ID -> planToSave.tttUserId.value,
       CLASS_ID -> planToSave.classId.value,
@@ -29,7 +24,7 @@ trait PlanWriterDaoSubjectTermlyPlanHelper {
       CURRICULUM_PLANNING_AREA -> planToSave.planningArea.toString,
       CREATED_TIMESTAMP -> planToSave.createdTime.toString.replace("T", " "),
       SCHOOL_TERM -> BsonDocument(
-        SCHOOL_YEAR -> schoolYearValue,
+        SCHOOL_YEAR -> planToSave.schoolTerm.schoolYear.niceValue,
         SCHOOL_TERM_NAME -> planToSave.schoolTerm.schoolTermName.toString,
         SCHOOL_TERM_FIRST_DAY -> planToSave.schoolTerm.termFirstDay.toString,
         SCHOOL_TERM_LAST_DAY -> planToSave.schoolTerm.termLastDay.toString

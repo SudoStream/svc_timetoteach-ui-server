@@ -2,7 +2,8 @@ package potentialmicroservice.planning.reader
 
 import com.google.inject.ImplementedBy
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
-import models.timetoteach.planning.{GroupId, CurriculumAreaTermlyPlan, TermlyCurriculumSelection}
+import models.timetoteach.planning.{CurriculumAreaTermlyPlan, GroupId, TermlyCurriculumSelection}
+import models.timetoteach.term.SchoolTerm
 import models.timetoteach.{ClassId, TimeToTeachUserId}
 
 import scala.concurrent.Future
@@ -13,7 +14,8 @@ trait PlanningReaderService
 
   def currentTermlyCurriculumSelection(
                                         tttUserId: TimeToTeachUserId,
-                                        classId: ClassId
+                                        classId: ClassId,
+                                        term: SchoolTerm
                                       ): Future[Option[TermlyCurriculumSelection]]
 
   def readCurriculumAreaTermlyPlanForGroup(
