@@ -4,252 +4,252 @@
 
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails, curriculumArea: ScottishCurriculumPlanningAreaWrapper, esOsAndBenchmarksList: List[duplicate.model.esandos.EsAndOsPlusBenchmarksForCurriculumAreaAndLevel])
 
-@timetoteachAppMain(handler, s"${classDetails.className.name} Termly Plans - ${curriculumArea.niceSpecificValueIfPresent().getOrElse(curriculumArea.niceValue())} - For Class",
-    userPictureUri, userFirstName, userFamilyName) {
-    <div class="in-app-menu-small-devices">
-        <li class="nav-item nav-login-button">
-            <a class="btn btn-outline-primary btn-block" role="button" href="@routes.Application.timeToTeachApp()">
-                Dashboard</a>
-        </li>
+    @timetoteachAppMain(handler, s"${classDetails.className.name} Termly Plans - ${curriculumArea.niceSpecificValueIfPresent().getOrElse(curriculumArea.niceValue())} - For Class",
+        userPictureUri, userFirstName, userFamilyName) {
+        <div class="in-app-menu-small-devices">
+            <li class="nav-item nav-login-button">
+                <a class="btn btn-outline-primary btn-block" role="button" href="@routes.Application.timeToTeachApp()">
+                    Dashboard</a>
+            </li>
 
-        <li class="nav-item nav-login-button ">
-            <a class="btn btn-outline-primary btn-block" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlans()">
-                Termly Plans Home</a>
-        </li>
+            <li class="nav-item nav-login-button ">
+                <a class="btn btn-outline-primary btn-block" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlans()">
+                    Termly Plans Home</a>
+            </li>
 
-        <li class="nav-item nav-login-button ">
-            <a class="btn btn-info btn-block" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(classDetails.id.id)">
-                @classDetails.className.name Termly Plans</a>
-        </li>
+            <li class="nav-item nav-login-button ">
+                <a class="btn btn-info btn-block" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(classDetails.id.id)">
+                    @classDetails.className.name Termly Plans</a>
+            </li>
 
-        <li class="nav-item nav-login-button">
-            <a class="btn btn-outline-primary btn-block" role="button"
-            href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(classDetails.id.id)">
-                Manage @classDetails.className.name</a>
-        </li>
+            <li class="nav-item nav-login-button">
+                <a class="btn btn-outline-primary btn-block" role="button"
+                href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(classDetails.id.id)">
+                    Manage @classDetails.className.name</a>
+            </li>
 
-        <li class="nav-item nav-login-button">
-            <a id="manage-class-goto-timetable" class="btn btn-outline-primary btn-block" role="button"
-            href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(classDetails.id.id)">
-                Class Timetable</a>
-        </li>
+            <li class="nav-item nav-login-button">
+                <a id="manage-class-goto-timetable" class="btn btn-outline-primary btn-block" role="button"
+                href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(classDetails.id.id)">
+                    Class Timetable</a>
+            </li>
 
-    </div>
-} {
-    <div class="container">
-        <div class="manage-class-form-section">
-            <div class="in-app-menu-medium-and-up">
-                <div class="d-flex ">
-                    <ul class="nav mr-auto justify-content-between">
-                        <li class="nav-item manage-class-nav-item-leftmost">
-                            <a class="btn btn-outline-primary" role="button" href="@routes.Application.timeToTeachApp()">
-                                Dashboard</a>
-                        </li>
-                        <li class="nav-item manage-class-nav-item-on-left">
-                            <a class="btn btn-outline-primary" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlans()">
-                                Termly Plans Home</a>
-                        </li>
-                    </ul>
-                    <ul class="nav justify-content-end">
-                        <li class="nav-item manage-class-nav-item-on-right">
-                            <a class="btn btn-info" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(classDetails.id.id)">
-                                @classDetails.className.name Termly Plans</a>
-                        </li>
-                        <li class="nav-item manage-class-nav-item-on-right">
-                            <a class="btn btn-info" role="button"
-                            href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(classDetails.id.id)">
-                                Manage @classDetails.className.name</a>
-                        </li>
-                        <li class="nav-item manage-class-nav-item-rightmost">
-                            <a id="manage-class-goto-timetable" class="btn btn-info" role="button"
-                            href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(classDetails.id.id)">
-                                Class Timetable</a>
-                        </li>
-                    </ul>
-
-                </div>
-            </div>
         </div>
+    } {
+        <div class="container">
+            <div class="manage-class-form-section">
+                <div class="in-app-menu-medium-and-up">
+                    <div class="d-flex ">
+                        <ul class="nav mr-auto justify-content-between">
+                            <li class="nav-item manage-class-nav-item-leftmost">
+                                <a class="btn btn-outline-primary" role="button" href="@routes.Application.timeToTeachApp()">
+                                    Dashboard</a>
+                            </li>
+                            <li class="nav-item manage-class-nav-item-on-left">
+                                <a class="btn btn-outline-primary" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlans()">
+                                    Termly Plans Home</a>
+                            </li>
+                        </ul>
+                        <ul class="nav justify-content-end">
+                            <li class="nav-item manage-class-nav-item-on-right">
+                                <a class="btn btn-info" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(classDetails.id.id)">
+                                    @classDetails.className.name Termly Plans</a>
+                            </li>
+                            <li class="nav-item manage-class-nav-item-on-right">
+                                <a class="btn btn-info" role="button"
+                                href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(classDetails.id.id)">
+                                    Manage @classDetails.className.name</a>
+                            </li>
+                            <li class="nav-item manage-class-nav-item-rightmost">
+                                <a id="manage-class-goto-timetable" class="btn btn-info" role="button"
+                                href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(classDetails.id.id)">
+                                    Class Timetable</a>
+                            </li>
+                        </ul>
 
-        <div class="termly-plans-overview-section">
-            <h5 class="termly-plans-overview-section-header text-center">
-                Select the curriculum levels you wish to plan for</h5>
-            <div class="row curriculumLevelEarlyFilterSection">
-                <div class="col">
-                    <button id="curriculumLevelEarlyFilterButton" type="button" class="btn btn-outline-info btn-sm btn-block">
-                        Early</button>
-                </div>
-                <div class="col">
-                    <button id="curriculumLevelFirstFilterButton" type="button" class="btn btn-outline-info  btn-sm btn-block">
-                        First</button>
-                </div>
-                <div class="col">
-                    <button id="curriculumLevelSecondFilterButton" type="button" class="btn btn-outline-info  btn-sm btn-block">
-                        Second</button>
-                </div>
-                <div class="col">
-                    <button id="curriculumLevelThirdFilterButton" type="button" class="btn btn-outline-info  btn-sm btn-block">
-                        Third</button>
-                </div>
-                <div class="col">
-                    <button id="curriculumLevelFourthFilterButton" type="button" class="btn btn-outline-info  btn-sm btn-block">
-                        Fourth</button>
+                    </div>
                 </div>
             </div>
 
-            <h5 class="termly-plans-overview-section-header text-center">
-                Select the Es & Os and/or Benchmarks to cover this term</h5>
-        </div>
+            <div class="termly-plans-overview-section">
+                <h5 class="termly-plans-overview-section-header text-center">
+                    Select the curriculum levels you wish to plan for</h5>
+                <div class="row curriculumLevelEarlyFilterSection">
+                    <div class="col">
+                        <button id="curriculumLevelEarlyFilterButton" type="button" class="btn btn-outline-info btn-sm btn-block">
+                            Early</button>
+                    </div>
+                    <div class="col">
+                        <button id="curriculumLevelFirstFilterButton" type="button" class="btn btn-outline-info  btn-sm btn-block">
+                            First</button>
+                    </div>
+                    <div class="col">
+                        <button id="curriculumLevelSecondFilterButton" type="button" class="btn btn-outline-info  btn-sm btn-block">
+                            Second</button>
+                    </div>
+                    <div class="col">
+                        <button id="curriculumLevelThirdFilterButton" type="button" class="btn btn-outline-info  btn-sm btn-block">
+                            Third</button>
+                    </div>
+                    <div class="col">
+                        <button id="curriculumLevelFourthFilterButton" type="button" class="btn btn-outline-info  btn-sm btn-block">
+                            Fourth</button>
+                    </div>
+                </div>
 
-        @for((esOsAndBenchmarks, outerIndex) <- esOsAndBenchmarksList.sortBy(elem => elem.curriculumLevel.order).zipWithIndex) {
+                <h5 class="termly-plans-overview-section-header text-center">
+                    Select the Es & Os and/or Benchmarks to cover this term</h5>
+            </div>
 
-            <div class="termly-plans-es-and-os-level-section-div-@{
-                esOsAndBenchmarks.curriculumLevel.value
-            }">
-                <div class="termly-plans-es-and-os-level-section-header" data-curriculum-level="@{
+            @for((esOsAndBenchmarks, outerIndex) <- esOsAndBenchmarksList.sortBy(elem => elem.curriculumLevel.order).zipWithIndex) {
+
+                <div class="termly-plans-es-and-os-level-section-div-@{
                     esOsAndBenchmarks.curriculumLevel.value
                 }">
-                    <h4>@esOsAndBenchmarks.curriculumLevel.value.replace("Level", " Level")</h4>
-                </div>
-
-                @for((esAndOsSectionMap, sectionIndex) <- esOsAndBenchmarks.setSectionNameToSubSections.toList.sortBy(subsectionMap => subsectionMap._1).zipWithIndex) {
-                    <a class="btn btn-secondary termly-plans-es-and-os-section" data-toggle="collapse" href="#section_@{
-                        outerIndex
-                    }_@{
-                        sectionIndex
-                    }_@{
-                        esOsAndBenchmarks.curriculumLevel
-                    }" role="button"
-                    aria-expanded="false" aria-controls="section_@{
-                        outerIndex
-                    }_@sectionIndex">
-                    @esAndOsSectionMap._1
-                    </a>
-                    <br>
-
-                    <div class="collapse" id="section_@{
-                        outerIndex
-                    }_@{
-                        sectionIndex
-                    }_@{
-                        esOsAndBenchmarks.curriculumLevel
+                    <div class="termly-plans-es-and-os-level-section-header" data-curriculum-level="@{
+                        esOsAndBenchmarks.curriculumLevel.value
                     }">
-                        <div class="card card-body">
-                            @for((subjectSectionMap, subSectionIndex) <- esAndOsSectionMap._2.zipWithIndex) {
+                        <h4>@esOsAndBenchmarks.curriculumLevel.value.replace("Level", " Level")</h4>
+                    </div>
 
-                                @if(subjectSectionMap._1 != NO_SUBSECTION_NAME) {
+                    @for((esAndOsSectionMap, sectionIndex) <- esOsAndBenchmarks.setSectionNameToSubSections.toList.sortBy(subsectionMap => subsectionMap._1).zipWithIndex) {
+                        <a class="btn btn-secondary termly-plans-es-and-os-section" data-toggle="collapse" href="#section_@{
+                            outerIndex
+                        }_@{
+                            sectionIndex
+                        }_@{
+                            esOsAndBenchmarks.curriculumLevel
+                        }" role="button"
+                        aria-expanded="false" aria-controls="section_@{
+                            outerIndex
+                        }_@sectionIndex">
+                        @esAndOsSectionMap._1
+                        </a>
+                        <br>
 
-                                    <a class="btn btn-light termly-plans-es-and-os-subsection " data-toggle="collapse" href="#section_@{
-                                        outerIndex
-                                    }_@{
-                                        sectionIndex
-                                    }_subsection_@subSectionIndex" role="button"
-                                    aria-expanded="false" aria-controls="section_@{
-                                        outerIndex
-                                    }_@{
-                                        sectionIndex
-                                    }_subsection_@subSectionIndex">
-                                    @subjectSectionMap._1
-                                    </a>
+                        <div class="collapse" id="section_@{
+                            outerIndex
+                        }_@{
+                            sectionIndex
+                        }_@{
+                            esOsAndBenchmarks.curriculumLevel
+                        }">
+                            <div class="card card-body">
+                                @for((subjectSectionMap, subSectionIndex) <- esAndOsSectionMap._2.zipWithIndex) {
+
+                                    @if(subjectSectionMap._1 != NO_SUBSECTION_NAME) {
+
+                                        <a class="btn btn-light termly-plans-es-and-os-subsection " data-toggle="collapse" href="#section_@{
+                                            outerIndex
+                                        }_@{
+                                            sectionIndex
+                                        }_subsection_@subSectionIndex" role="button"
+                                        aria-expanded="false" aria-controls="section_@{
+                                            outerIndex
+                                        }_@{
+                                            sectionIndex
+                                        }_subsection_@subSectionIndex">
+                                        @subjectSectionMap._1
+                                        </a>
+
+                                    }
+
+                                    @if(subjectSectionMap._1 != NO_SUBSECTION_NAME) {
+                                        <div class="collapse" id="section_@{
+                                            outerIndex
+                                        }_@{
+                                            sectionIndex
+                                        }_subsection_@subSectionIndex">
+                                        } else {
+                                        <div id="section_@{
+                                            outerIndex
+                                        }_@{
+                                            sectionIndex
+                                        }_subsection_@subSectionIndex">
+                                        }
+                                    <div class="card card-body">
+                                        @if(subjectSectionMap._2.auxiliaryText.nonEmpty) {
+                                            <h6>@subjectSectionMap._2.auxiliaryText</h6>
+                                        }
+                                    <div class="row text-center">
+                                        <div class="col-lg-6 termly-plans-es-and-os-header">Experiences & Outcomes</div>
+                                        <div class="col-lg-6 termly-plans-es-and-os-header">Benchmarks</div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                        @for(eAndO <- subjectSectionMap._2.eAndOs) {
+                                            <div class="row termly-plans-es-and-os-code-and-eando-row termly-plans-eobenchmark-row"
+                                            data-curriculum-section="@esAndOsSectionMap._1" data-curriculum-subsection="@subjectSectionMap._1" data-eando-code="@eAndO.code">
+                                                <div class="col-lg-3 termly-plans-es-and-os-code">
+                                                @eAndO.code
+                                                </div>
+                                                <div class="col-lg-9 termly-plans-es-and-os-content termly-plans-es-and-os-eando">
+                                                @for(sentence <- eAndO.eAndOSentences) {
+                                                    <p>@sentence.value</p>
+                                                    @if(sentence.bulletPoints.nonEmpty) {
+                                                        <ul>
+                                                        }
+                                                    @for(bullet <- sentence.bulletPoints) {
+                                                        @if(bullet.value.nonEmpty) {
+                                                            <li>@bullet.value</li>
+                                                        }
+                                                    }
+                                                    @if(sentence.bulletPoints.nonEmpty) {
+                                                    </ul>
+                                                    }
+                                                }
+                                                </div>
+                                            </div>
+                                        }
+                                        </div>
+                                        <div class="col-lg-6 termly-plans-es-and-os-content">
+                                        @for(benchmark <- subjectSectionMap._2.benchmarks) {
+                                            <div class="termly-plans-es-and-os-benchmark termly-plans-eobenchmark-row"
+                                            data-curriculum-section="@esAndOsSectionMap._1" data-curriculum-subsection="@subjectSectionMap._1"
+                                            data-benchmark="@benchmark.value">@benchmark.value</div>
+                                        }
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
 
                                 }
 
-                                @if(subjectSectionMap._1 != NO_SUBSECTION_NAME) {
-                                    <div class="collapse" id="section_@{
-                                        outerIndex
-                                    }_@{
-                                        sectionIndex
-                                    }_subsection_@subSectionIndex">
-                                    } else {
-                                    <div id="section_@{
-                                        outerIndex
-                                    }_@{
-                                        sectionIndex
-                                    }_subsection_@subSectionIndex">
-                                    }
-                                <div class="card card-body">
-                                    @if(subjectSectionMap._2.auxiliaryText.nonEmpty) {
-                                        <h6>@subjectSectionMap._2.auxiliaryText</h6>
-                                    }
-                                <div class="row text-center">
-                                    <div class="col-lg-6 termly-plans-es-and-os-header">Experiences & Outcomes</div>
-                                    <div class="col-lg-6 termly-plans-es-and-os-header">Benchmarks</div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-lg-6">
-                                    @for(eAndO <- subjectSectionMap._2.eAndOs) {
-                                        <div class="row termly-plans-es-and-os-code-and-eando-row termly-plans-eobenchmark-row"
-                                        data-curriculum-section="@esAndOsSectionMap._1" data-curriculum-subsection="@subjectSectionMap._1" data-eando-code="@eAndO.code">
-                                            <div class="col-lg-3 termly-plans-es-and-os-code">
-                                            @eAndO.code
-                                            </div>
-                                            <div class="col-lg-9 termly-plans-es-and-os-content termly-plans-es-and-os-eando">
-                                            @for(sentence <- eAndO.eAndOSentences) {
-                                                <p>@sentence.value</p>
-                                                @if(sentence.bulletPoints.nonEmpty) {
-                                                    <ul>
-                                                    }
-                                                @for(bullet <- sentence.bulletPoints) {
-                                                    @if(bullet.value.nonEmpty) {
-                                                        <li>@bullet.value</li>
-                                                    }
-                                                }
-                                                @if(sentence.bulletPoints.nonEmpty) {
-                                                </ul>
-                                                }
-                                            }
-                                            </div>
-                                        </div>
-                                    }
-                                    </div>
-                                    <div class="col-lg-6 termly-plans-es-and-os-content">
-                                    @for(benchmark <- subjectSectionMap._2.benchmarks) {
-                                        <div class="termly-plans-es-and-os-benchmark termly-plans-eobenchmark-row"
-                                        data-curriculum-section="@esAndOsSectionMap._1" data-curriculum-subsection="@subjectSectionMap._1"
-                                        data-benchmark="@benchmark.value">@benchmark.value</div>
-                                    }
-                                    </div>
-                                </div>
-                                </div>
+                            </div>
                             </div>
 
                             }
+                </div>
+                }
 
-                        </div>
-                        </div>
-
-                        }
+            <div id="alert-div" class="text-center">
+                <div id = "alertIfAllFilterButtonsAreOffWarning" class = "alert alert-warning" role = "alert">
+                    <p>No Es & Os or Benchmarks to show because no curriculum levels have been selected.</p>
+                    <p>Please select at least one curriculum level from filters above.</p>
+                </div>
             </div>
-            }
 
-        <div id="alert-div" class="text-center">
-            <div id = "alertIfAllFilterButtonsAreOffWarning" class = "alert alert-warning" role = "alert">
-                <p>No Es & Os or Benchmarks to show because no curriculum levels have been selected.</p>
-                <p>Please select at least one curriculum level from filters above.</p>
+            <div class="row">
+                <div class="col-md-8"></div>
+                <div class="col-md-2">
+                    <button id="clear-termly-groups-button" type="button" class="btn btn-block btn-lg btn-secondary">
+                        Clear</button>
+                </div>
+                <div class="col-md-2">
+                    <button id="save-termly-groups-button" type="button" class="btn btn-block btn-lg btn-primary">Save</button>
+                </div>
             </div>
+
         </div>
 
-        <div class="row">
-            <div class="col-md-8"></div>
-            <div class="col-md-2">
-                <button id="clear-termly-groups-button" type="button" class="btn btn-block btn-lg btn-secondary">
-                    Clear</button>
-            </div>
-            <div class="col-md-2">
-                <button id="save-termly-groups-button" type="button" class="btn btn-block btn-lg btn-primary">Save</button>
-            </div>
-        </div>
-
-    </div>
-
-        <script>
-                localStorage.setItem("classId", "@classDetails.id.id");
-                localStorage.setItem("subject", "@curriculumArea");
-                localStorage.setItem("schoolId", "@classDetails.schoolDetails.id");
-                localStorage.setItem("tttUserId", "@tttUserId.value");
-        </script>
+            <script>
+                    localStorage.setItem("classId", "@classDetails.id.id");
+                    localStorage.setItem("curriculumArea", "@curriculumArea.value.toString");
+                    localStorage.setItem("schoolId", "@classDetails.schoolDetails.id");
+                    localStorage.setItem("tttUserId", "@tttUserId.value");
+            </script>
 
 
-    @scalajs.html.scripts("client", routes.Assets.versioned(_).toString, name => getClass.getResource(s"/public/$name") != null)
-}
+        @scalajs.html.scripts("client", routes.Assets.versioned(_).toString, name => getClass.getResource(s"/public/$name") != null)
+    }

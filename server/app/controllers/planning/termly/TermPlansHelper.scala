@@ -58,8 +58,8 @@ object TermPlansHelper
       case "golden-time" => ScottishCurriculumPlanningArea.NONE
       case "other" => ScottishCurriculumPlanningArea.NONE
       case "ict" => ScottishCurriculumPlanningArea.TECHNOLOGIES
-      case "music" => ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__MUSIC
-      case "drama" => ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__DRAMA
+      case "music" | "expressive_arts__music" => ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__MUSIC
+      case "drama" | "expressive_arts__drama" => ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__DRAMA
       case "health" => ScottishCurriculumPlanningArea.HEALTH_AND_WELLBEING
       case "teacher-covertime" => ScottishCurriculumPlanningArea.NONE
       case "assembly" => ScottishCurriculumPlanningArea.NONE
@@ -71,7 +71,7 @@ object TermPlansHelper
       case "physical-education" => ScottishCurriculumPlanningArea.HEALTH_AND_WELLBEING__PHYSICAL_EDUCATION
       case "soft-start" => ScottishCurriculumPlanningArea.NONE
       case "numeracy" => ScottishCurriculumPlanningArea.MATHEMATICS
-      case "art" => ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__ART
+      case "art" | "expressive_arts__art" => ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__ART
       case "rme" => ScottishCurriculumPlanningArea.RME__STANDARD
       case "play" => ScottishCurriculumPlanningArea.NONE
       case "modern-languages" => ScottishCurriculumPlanningArea.LITERACY__MODERN_LANGUAGES

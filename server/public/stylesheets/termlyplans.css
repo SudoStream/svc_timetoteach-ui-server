@@ -187,3 +187,7 @@
 .termly-plans-es-and-os-level-section-div-FourthLevel {
     display: none;
 }
+
+input#classLevelInputCurriculumArea {
+    text-align: center;
+}

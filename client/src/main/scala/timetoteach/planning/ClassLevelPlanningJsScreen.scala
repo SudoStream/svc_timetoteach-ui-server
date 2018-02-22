@@ -215,16 +215,15 @@ object ClassLevelPlanningJsScreen
       val groupTermlyPlansPickled = write[TermlyPlansToSave](groupTermlyPlans)
 
       val classId = dom.window.localStorage.getItem("classId")
-      val subject = dom.window.localStorage.getItem("subject")
-      val groupId = dom.window.localStorage.getItem("groupId")
+      val curriculumArea = dom.window.localStorage.getItem("curriculumArea")
 
       import scala.concurrent.ExecutionContext.Implicits.global
-      val theUrl = s"/termlysaveplanningforsubjectandgroup/$classId/$subject/$groupId"
+      val theUrl = s"/termlysaveplanningforcurriculumareaandclass/$classId/$curriculumArea"
       val theHeaders = Map(
         "Content-Type" -> "application/x-www-form-urlencoded",
         "X-Requested-With" -> "Accept"
       )
-      val theData = InputData.str2ajax(s"groupTermlyPlansPickled=$groupTermlyPlansPickled")
+      val theData = InputData.str2ajax(s"termlyPlansPickled=$groupTermlyPlansPickled")
 
       Ajax.post(
         url = theUrl,
@@ -236,7 +235,7 @@ object ClassLevelPlanningJsScreen
           println(s"response = '$responseText'")
           dom.window.setTimeout(() => {
             println(s"lets goto group planning overview")
-            dom.window.location.href = s"/termlyoverviewforcurriculumareaandgroup/$classId/$subject/$groupId"
+            dom.window.location.href = s"/termlyoverviewforcurriculumareaatclasslevel/$classId/$curriculumArea"
           }, 10)
         case Failure(ex) =>
           dom.window.alert("Something went wrong with saving group termly plans. Specifically : -" +

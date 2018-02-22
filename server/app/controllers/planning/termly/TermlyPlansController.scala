@@ -205,7 +205,7 @@ class TermlyPlansController @Inject()(
 
   val termlyPlansToSaveForm = Form(
     mapping(
-      "groupTermlyPlansPickled" -> text
+      "termlyPlansPickled" -> text
     )(TermlyPlansToSaveJson.apply)(TermlyPlansToSaveJson.unapply)
   )
 
@@ -229,6 +229,23 @@ class TermlyPlansController @Inject()(
     } yield Ok("Saved termly plans!")
   }
 
+  def savePlansForClass(classId: String, curriculumArea: String): Action[AnyContent] = Action.async { implicit request =>
+    val termlyPlansForGroup = termlyPlansToSaveForm.bindFromRequest.get
+    logger.debug(s"Termly Plans Pickled = #${termlyPlansForGroup.groupTermlyPlansPickled}#")
+
+    import upickle.default._
+    val termlyPlansToSave: TermlyPlansToSave = read[TermlyPlansToSave](termlyPlansForGroup.groupTermlyPlansPickled)
+    logger.debug(s"Termly plans Unpickled = ${termlyPlansToSave.toString}")
+
+    val termlyPlansAsModel = termsPlanHelper.convertTermlyPlanToModel(classId, termlyPlansToSave, None, curriculumArea)
+    val savedPlan = planningWriterService.saveSubjectTermlyPlan(termlyPlansAsModel)
+
+    for {
+      done <- savedPlan
+    } yield Ok("Saved termly plans!")
+  }
+
+
   def termlyOverviewForCurriculumAreaAtClassLevel(classId: String, curriculumArea: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest: AuthenticatedRequest[AnyContent] =>
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
@@ -239,6 +256,7 @@ class TermlyPlansController @Inject()(
 
     val futureMaybeCurriculumAreaTermlyPlanForClassLevel = findAnyCurrentTermlyPlanForCurriculumAreaAtClassLevel(classId, curriculumArea, tttUserId)
 
+    import utils.CurriculumConverterUtil.convertSubjectToScottishCurriculumPlanningAreaWrapper
     for {
       classes <- eventualClasses
       esAndOsCodeToDetailMap <- eventualEsAndOsToDetailMap
