@@ -39,7 +39,7 @@ class PlanReaderDaoImpl @Inject()(mongoDbConnection: MongoDbConnection) extends 
       )
     )
 
-    logger.debug(s"++++ Looking for latest termly curriculum selection from Database with matcher ${findMatcher.toString}")
+    logger.debug(s"Looking for latest termly curriculum selection from Database with matcher ${findMatcher.toString}")
 
     val futureFoundCurriculumSelectionDocuments = termlyCurriculumSelectionCollection.find(findMatcher).toFuture()
     futureFoundCurriculumSelectionDocuments.map {

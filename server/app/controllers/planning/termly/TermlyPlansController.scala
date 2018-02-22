@@ -112,6 +112,8 @@ class TermlyPlansController @Inject()(
       termService.currentSchoolTerm()
     )
 
+    // TODO: ANDY : Lets get overview of progress at curriculum level in here
+
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
     for {
       classes <- eventualClasses
