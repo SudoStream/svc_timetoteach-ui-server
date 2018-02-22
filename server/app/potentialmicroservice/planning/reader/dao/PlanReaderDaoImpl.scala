@@ -2,8 +2,9 @@ package potentialmicroservice.planning.reader.dao
 
 import javax.inject.{Inject, Singleton}
 import dao.MongoDbConnection
+import duplicate.model.ClassDetails
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
-import models.timetoteach.planning.{CurriculumAreaTermlyPlan, GroupId, PlanType, TermlyCurriculumSelection}
+import models.timetoteach.planning._
 import models.timetoteach.term.SchoolTerm
 import models.timetoteach.{ClassId, TimeToTeachUserId}
 import org.mongodb.scala.bson.BsonDocument
@@ -44,6 +45,15 @@ class PlanReaderDaoImpl @Inject()(mongoDbConnection: MongoDbConnection) extends 
     val futureFoundCurriculumSelectionDocuments = termlyCurriculumSelectionCollection.find(findMatcher).toFuture()
     futureFoundCurriculumSelectionDocuments.map {
       foundTermlyCurriculumSelectionDocs: Seq[Document] => findLatestVersionOfTermlyCurriculumSelection(foundTermlyCurriculumSelectionDocs.toList)
+    }
+  }
+
+  override def curriculumPlanProgress(tttUserId: TimeToTeachUserId,
+                                      classDetails: ClassDetails,
+                                      planningAreas: List[ScottishCurriculumPlanningArea],
+                                      term: SchoolTerm): Future[Option[CurriculumPlanProgressForClass]] = {
+    Future{
+      None
     }
   }
 

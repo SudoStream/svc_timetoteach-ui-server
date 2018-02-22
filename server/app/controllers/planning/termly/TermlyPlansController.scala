@@ -112,8 +112,6 @@ class TermlyPlansController @Inject()(
       termService.currentSchoolTerm()
     )
 
-    // TODO: ANDY : Lets get overview of progress at curriculum level in here
-
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
     for {
       classes <- eventualClasses
@@ -122,7 +120,16 @@ class TermlyPlansController @Inject()(
       if maybeClassDetails.isDefined
       classDetails = maybeClassDetails.get
 
-      maybeCurrentTermlyCurriculumSelection <- eventualMaybeCurrentTermlyCurriculumSelection
+      maybeCurrentTermlyCurriculumSelection: Option[TermlyCurriculumSelection] <- eventualMaybeCurrentTermlyCurriculumSelection
+
+      futureMaybeCurriculumPlanProgress = planningReaderService.curriculumPlanProgress(
+        TimeToTeachUserId(tttUserId),
+        classDetails,
+        maybeCurrentTermlyCurriculumSelection
+      )
+
+      maybeCurriculumPlanProgress  <- futureMaybeCurriculumPlanProgress
+
       route = maybeCurrentTermlyCurriculumSelection match {
         case Some(currentTermlyCurriculumSelection) =>
           Ok(views.html.planning.termly.termlyPlansForClassOverallOverview(new MyDeadboltHandler(userReader),
@@ -131,7 +138,8 @@ class TermlyPlansController @Inject()(
             userFamilyName,
             TimeToTeachUserId(tttUserId),
             classDetails,
-            currentTermlyCurriculumSelection
+            currentTermlyCurriculumSelection,
+            maybeCurriculumPlanProgress
           ))
         case None =>
           Redirect(routes.TermlyPlansController.termlyPlansSelectOverallCurriculumAreasForTheTerm(classId))
