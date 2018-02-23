@@ -31,8 +31,6 @@ trait PlanReaderDaoTermlyCurriculumSelectionHelper extends PlanReaderDaoCommonHe
     }
   }
 
-  ////////////////////// Implementation ////////////////////////
-
   private[dao] def findLatestVersionOfTermlyCurriculumSelectionLoop(foundTermlyCurriculumSelectionDocs: List[Document], currentLatestDoc: Document): Document =
   {
     if (foundTermlyCurriculumSelectionDocs.isEmpty) currentLatestDoc

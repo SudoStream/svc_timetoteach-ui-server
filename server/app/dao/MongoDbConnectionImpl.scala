@@ -1,10 +1,10 @@
 package dao
 
 import java.net.URI
-import javax.inject.Singleton
 
 import com.mongodb.connection.ClusterSettings
 import com.typesafe.config.ConfigFactory
+import javax.inject.Singleton
 import org.mongodb.scala.bson.BsonDocument
 import org.mongodb.scala.connection.{NettyStreamFactoryFactory, SslSettings}
 import org.mongodb.scala.{Document, MongoClient, MongoClientSettings, MongoCollection, ServerAddress}
@@ -12,11 +12,12 @@ import play.api.Logger
 import potentialmicroservice.planning.sharedschema.{TermlyCurriculumSelectionSchema, TermlyPlanningSchema}
 
 import scala.collection.JavaConverters._
-import scala.util.{Failure, Success}
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.{Failure, Success}
 
 @Singleton
-class MongoDbConnectionImpl extends MongoDbConnection with MiniKubeHelper {
+class MongoDbConnectionImpl extends MongoDbConnection with MiniKubeHelper
+{
 
   val logger: Logger = Logger
   private val config = ConfigFactory.load()
@@ -31,7 +32,8 @@ class MongoDbConnectionImpl extends MongoDbConnection with MiniKubeHelper {
   logger.info(s"======================================================== isLocalMongoDb: '$isLocalMongoDb'")
 
 
-  private def createMongoClient: MongoClient = {
+  private def createMongoClient: MongoClient =
+  {
     if (isLocalMongoDb || isMinikubeRun) {
       logger.info("Building local mongo db")
       buildLocalMongoDbClient
@@ -42,7 +44,8 @@ class MongoDbConnectionImpl extends MongoDbConnection with MiniKubeHelper {
     }
   }
 
-  private def buildLocalMongoDbClient = {
+  private def buildLocalMongoDbClient =
+  {
     val mongoKeystorePassword = try {
       sys.env("MONGODB_KEYSTORE_PASSWORD")
     } catch {
@@ -74,17 +77,20 @@ class MongoDbConnectionImpl extends MongoDbConnection with MiniKubeHelper {
   ensureTermlyPlanningIndexes()
   ensureTermlyCurriculumSelectionIndexes()
 
-  override def getTermlyPlanningCollection: MongoCollection[Document] = {
+  override def getTermlyPlanningCollection: MongoCollection[Document] =
+  {
     val planningDatabase = mongoDbClient.getDatabase(planningDatabaseName)
     planningDatabase.getCollection(termlyPlansCollectionName)
   }
 
-  override def getTermlyCurriculumSelectionCollection: MongoCollection[Document] = {
+  override def getTermlyCurriculumSelectionCollection: MongoCollection[Document] =
+  {
     val planningDatabase = mongoDbClient.getDatabase(planningDatabaseName)
     planningDatabase.getCollection(termlyCurriculumSelectionCollectionName)
   }
 
-  override def ensureTermlyPlanningIndexes(): Unit = {
+  override def ensureTermlyPlanningIndexes(): Unit =
+  {
     val mainIndex = BsonDocument(
       TermlyPlanningSchema.TTT_USER_ID -> 1,
       TermlyPlanningSchema.CLASS_ID -> 1,
@@ -94,12 +100,25 @@ class MongoDbConnectionImpl extends MongoDbConnection with MiniKubeHelper {
     logger.info(s"Ensuring index created on termly planning collection : ${mainIndex.toString}")
     val obs = getTermlyPlanningCollection.createIndex(mainIndex)
     obs.toFuture().onComplete {
-      case Success(msg) => logger.info(s"Ensure termly planning index attempt completed with msg : $msg")
-      case Failure(ex) => logger.info(s"Ensure termly planning index failed to complete: ${ex.getMessage}")
+      case Success(msg) => logger.info(s"Ensure termly planning index 1 attempt completed with msg : $msg")
+      case Failure(ex) => logger.info(s"Ensure termly planning index 1 failed to complete: ${ex.getMessage}")
     }
+    ////
+    val secondIndex = BsonDocument(
+      TermlyPlanningSchema.TTT_USER_ID -> 1,
+      TermlyPlanningSchema.CLASS_ID -> 1
+    )
+    logger.info(s"Ensuring index created on termly planning collection : ${secondIndex.toString}")
+    val obs2 = getTermlyPlanningCollection.createIndex(secondIndex)
+    obs2.toFuture().onComplete {
+      case Success(msg) => logger.info(s"Ensure termly planning index 2 attempt completed with msg : $msg")
+      case Failure(ex) => logger.info(s"Ensure termly planning index 2 failed to complete: ${ex.getMessage}")
+    }
+
   }
 
-  override def ensureTermlyCurriculumSelectionIndexes(): Unit = {
+  override def ensureTermlyCurriculumSelectionIndexes(): Unit =
+  {
     val mainIndex = BsonDocument(
       TermlyCurriculumSelectionSchema.TTT_USER_ID -> 1,
       TermlyCurriculumSelectionSchema.CLASS_ID -> 1

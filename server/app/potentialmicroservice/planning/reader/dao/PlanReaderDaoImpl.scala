@@ -1,9 +1,9 @@
 package potentialmicroservice.planning.reader.dao
 
-import javax.inject.{Inject, Singleton}
 import dao.MongoDbConnection
 import duplicate.model.ClassDetails
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
+import javax.inject.{Inject, Singleton}
 import models.timetoteach.planning._
 import models.timetoteach.term.SchoolTerm
 import models.timetoteach.{ClassId, TimeToTeachUserId}
@@ -51,9 +51,30 @@ class PlanReaderDaoImpl @Inject()(mongoDbConnection: MongoDbConnection) extends 
   override def curriculumPlanProgress(tttUserId: TimeToTeachUserId,
                                       classDetails: ClassDetails,
                                       planningAreas: List[ScottishCurriculumPlanningArea],
-                                      term: SchoolTerm): Future[Option[CurriculumPlanProgressForClass]] = {
-    Future{
-      None
+                                      term: SchoolTerm): Future[Option[CurriculumPlanProgressForClass]] =
+  {
+    logger.info(s"Looking for latest plan progress from Database: $tttUserId|$classDetails|$planningAreas|$term")
+
+    val findMatcher = BsonDocument(
+      TermlyPlanningSchema.TTT_USER_ID -> tttUserId.value,
+      TermlyPlanningSchema.CLASS_ID -> classDetails.id.id,
+      TermlyPlanningSchema.SCHOOL_TERM -> BsonDocument(
+        TermlyPlanningSchema.SCHOOL_YEAR -> term.schoolYear.niceValue,
+        TermlyPlanningSchema.SCHOOL_TERM_NAME -> term.schoolTermName.toString,
+        TermlyPlanningSchema.SCHOOL_TERM_FIRST_DAY -> term.termFirstDay.toString,
+        TermlyPlanningSchema.SCHOOL_TERM_LAST_DAY -> term.termLastDay.toString
+      )
+    )
+
+    logger.debug(s"Looking for latest termly curriculum selection from Database with matcher ${findMatcher.toString}")
+
+    val futureFoundCurriculumPlanningDocs = termlyPlanningCollection.find(findMatcher).toFuture()
+    futureFoundCurriculumPlanningDocs.map {
+      foundCurriculumPlanningDocs: Seq[Document] =>
+        buildCurriculumPlanProgressForClass(
+          foundCurriculumPlanningDocs.toList,
+          classDetails
+        )
     }
   }
 

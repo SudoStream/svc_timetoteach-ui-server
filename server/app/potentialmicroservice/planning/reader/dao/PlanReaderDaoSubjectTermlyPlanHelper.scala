@@ -1,11 +1,11 @@
 package potentialmicroservice.planning.reader.dao
 
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.time.{LocalDate, LocalDateTime}
 
-import duplicate.model.EandOsWithBenchmarks
-import models.timetoteach.planning.{GroupId, PlanType, CurriculumAreaConverter, CurriculumAreaTermlyPlan}
-import models.timetoteach.term.{SchoolTerm, SchoolTermName, SchoolYear}
+import duplicate.model.{ClassDetails, EandOsWithBenchmarks}
+import models.timetoteach.planning._
+import models.timetoteach.term.SchoolTerm
 import models.timetoteach.{ClassId, TimeToTeachUserId}
 import org.bson.{BsonArray, BsonDocument}
 import org.mongodb.scala.Document
@@ -14,10 +14,24 @@ import play.api.Logger
 import potentialmicroservice.planning.sharedschema.TermlyPlanningSchema
 import utils.mongodb.MongoDbSafety._
 
+case class _CurriculumAreaName(curriculumAreaName: String)
+
+case class _GroupId(groupId: String)
+
+
+object PlanReaderDaoSubjectTermlyPlanHelper {
+  val NO_GROUP_ID_FOUND = "NO_GROUP_ID_FOUND"
+  val CLASS_LEVEL = "CLASS_LEVEL"
+}
+
 trait PlanReaderDaoSubjectTermlyPlanHelper extends PlanReaderDaoCommonHelper
 {
+  import PlanReaderDaoSubjectTermlyPlanHelper.NO_GROUP_ID_FOUND
+  import PlanReaderDaoSubjectTermlyPlanHelper.CLASS_LEVEL
+
   private val logger: Logger = Logger
   private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
+
 
   def findLatestVersionOfTermlyPlan(foundTermlyPlanDocs: List[Document]): Option[CurriculumAreaTermlyPlan] =
   {
@@ -30,7 +44,77 @@ trait PlanReaderDaoSubjectTermlyPlanHelper extends PlanReaderDaoCommonHelper
     }
   }
 
-  ////////////////////// Implementation ////////////////////////
+
+  def buildCurriculumPlanProgressForClass(foundCurriculumPlanningDocs: List[Document], classDetails: ClassDetails): Option[CurriculumPlanProgressForClass] =
+  {
+    logger.debug(s"buildCurriculumPlanProgressForClass() size = ${foundCurriculumPlanningDocs.size}")
+    if (foundCurriculumPlanningDocs.isEmpty) {
+      None
+    } else {
+      val curriculumPlanningAreaToLatestDoc = buildCurriculumPlanProgressForClassLoop(foundCurriculumPlanningDocs, Map())
+      convertDocumentToCurriculumPlanProgressForClass(curriculumPlanningAreaToLatestDoc, classDetails)
+    }
+  }
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////// Implementation buildCurriculumPlanProgressForClass ////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+
+  private def extractGroupId(maybeGroupId: Option[String]) : String = {
+    val groupId = maybeGroupId.getOrElse(NO_GROUP_ID_FOUND)
+    if (groupId.isEmpty) {
+      CLASS_LEVEL
+    } else {
+      groupId
+    }
+  }
+
+  private[dao] def buildCurriculumPlanProgressForClassLoop(remainingDocs: List[Document],
+                                                           currentCurriculumProgressMap: Map[_CurriculumAreaName, Map[_GroupId, Document]])
+  : Map[_CurriculumAreaName, Map[_GroupId, Document]] =
+  {
+    if (remainingDocs.isEmpty) currentCurriculumProgressMap
+    else {
+      val nextDoc = remainingDocs.head
+      val maybeCurriculumAreaForNextDoc = safelyGetString(nextDoc, TermlyPlanningSchema.CURRICULUM_PLANNING_AREA)
+      val newCurriculumProgressMap: Map[_CurriculumAreaName, Map[_GroupId, Document]] = maybeCurriculumAreaForNextDoc match {
+        case Some(curriculumAreaForNextDoc) =>
+          val maybeGroupIdForNextDoc = safelyGetString(nextDoc, TermlyPlanningSchema.GROUP_ID)
+
+          if (currentCurriculumProgressMap.isDefinedAt(_CurriculumAreaName(curriculumAreaForNextDoc))) {
+            val currentGroupIdToLatestDocument = currentCurriculumProgressMap(_CurriculumAreaName(curriculumAreaForNextDoc))
+            val groupId =extractGroupId(maybeGroupIdForNextDoc)
+
+            val latestGroupIdToLatestDoc: Map[_GroupId, Document] = if (currentGroupIdToLatestDocument.isDefinedAt(_GroupId(groupId))) {
+              val currentLatestDoc = currentGroupIdToLatestDocument(_GroupId(groupId))
+              val latestDoc = findLatestVersionOfTermlyPlanDocLoop(nextDoc :: Nil, currentLatestDoc)
+              currentGroupIdToLatestDocument + (_GroupId(groupId) -> latestDoc)
+            } else {
+              currentGroupIdToLatestDocument + (_GroupId(groupId) -> nextDoc)
+            }
+
+            currentCurriculumProgressMap + (_CurriculumAreaName(curriculumAreaForNextDoc) -> latestGroupIdToLatestDoc)
+
+          } else {
+            currentCurriculumProgressMap + (_CurriculumAreaName(curriculumAreaForNextDoc) ->
+              Map(_GroupId(extractGroupId(maybeGroupIdForNextDoc)) -> nextDoc))
+          }
+        case None => currentCurriculumProgressMap
+      }
+      buildCurriculumPlanProgressForClassLoop(remainingDocs.tail, newCurriculumProgressMap)
+    }
+  }
+
+  private[dao] def convertDocumentToCurriculumPlanProgressForClass(curriculumPlanningAreaToLatestDoc:
+                                                                   Map[_CurriculumAreaName, Map[_GroupId, Document]],
+                                                                   classDetails: ClassDetails
+                                                                  )
+  : Option[CurriculumPlanProgressForClass] = ???
+
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////// Implementation findLatestVersionOfTermlyPlan //////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////////////
 
   private[dao] def findLatestVersionOfTermlyPlanDocLoop(foundTermlyPlanDocs: List[Document], currentLatestDoc: Document): Document =
   {

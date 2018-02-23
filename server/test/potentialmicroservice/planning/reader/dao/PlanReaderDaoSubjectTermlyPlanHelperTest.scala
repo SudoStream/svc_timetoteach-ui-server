@@ -2,6 +2,7 @@ package potentialmicroservice.planning.reader.dao
 
 import models.timetoteach.planning.PlanType
 import org.scalatest.FunSpec
+import potentialmicroservice.planning.sharedschema.TermlyPlanningSchema
 
 class PlanReaderDaoSubjectTermlyPlanHelperTest extends FunSpec
 {
@@ -64,5 +65,108 @@ class PlanReaderDaoSubjectTermlyPlanHelperTest extends FunSpec
       assert(maybeSubjectTermlyPlan.isDefined)
     }
   }
+
+  /////////////
+
+  describe("When given an empty list, buildCurriculumPlanProgressForClassLoop()") {
+    it("sholud returns an empty map") {
+      val curriculumPlanningAreaToLatestDoc = planReaderDao.buildCurriculumPlanProgressForClassLoop(Nil, Map())
+      assert(curriculumPlanningAreaToLatestDoc.isEmpty)
+    }
+  }
+
+  describe("Given a mix of maths, reading and art progress buildCurriculumPlanProgressForClassLoop()") {
+    it("should return a nonempty map") {
+      val curriculumPlanningAreaToLatestDoc = planReaderDao.buildCurriculumPlanProgressForClassLoop(
+        PlanReaderDaoHelperTermlyPlanTestHelper.createAListOfSeveralTermlyPlanDocumentsWithGroupsMixedUpWithDifferentCurriculumPlanningAreas(), Map())
+      assert(curriculumPlanningAreaToLatestDoc.nonEmpty)
+    }
+    it("should return a map with 3 keys") {
+      val curriculumPlanningAreaToLatestDoc = planReaderDao.buildCurriculumPlanProgressForClassLoop(
+        PlanReaderDaoHelperTermlyPlanTestHelper.createAListOfSeveralTermlyPlanDocumentsWithGroupsMixedUpWithDifferentCurriculumPlanningAreas(), Map())
+      assert(curriculumPlanningAreaToLatestDoc.keySet.size === 3)
+    }
+    it("should return a map with a 'MATHEMATICS' key") {
+      val curriculumPlanningAreaToLatestDoc = planReaderDao.buildCurriculumPlanProgressForClassLoop(
+        PlanReaderDaoHelperTermlyPlanTestHelper.createAListOfSeveralTermlyPlanDocumentsWithGroupsMixedUpWithDifferentCurriculumPlanningAreas(), Map())
+      assert(curriculumPlanningAreaToLatestDoc.isDefinedAt(_CurriculumAreaName("MATHEMATICS")))
+    }
+    it("should return a map with a 'EXPRESSIVE_ARTS__ART' key") {
+      val curriculumPlanningAreaToLatestDoc = planReaderDao.buildCurriculumPlanProgressForClassLoop(
+        PlanReaderDaoHelperTermlyPlanTestHelper.createAListOfSeveralTermlyPlanDocumentsWithGroupsMixedUpWithDifferentCurriculumPlanningAreas(), Map())
+      assert(curriculumPlanningAreaToLatestDoc.isDefinedAt(_CurriculumAreaName("EXPRESSIVE_ARTS__ART")))
+    }
+    it("should return a map with a 'LITERACY__WRITING' key") {
+      val curriculumPlanningAreaToLatestDoc = planReaderDao.buildCurriculumPlanProgressForClassLoop(
+        PlanReaderDaoHelperTermlyPlanTestHelper.createAListOfSeveralTermlyPlanDocumentsWithGroupsMixedUpWithDifferentCurriculumPlanningAreas(), Map())
+      assert(curriculumPlanningAreaToLatestDoc.isDefinedAt(_CurriculumAreaName("LITERACY__WRITING")))
+    }
+    it("should not have a 'TOODLY_DOO' key") {
+      val curriculumPlanningAreaToLatestDoc = planReaderDao.buildCurriculumPlanProgressForClassLoop(
+        PlanReaderDaoHelperTermlyPlanTestHelper.createAListOfSeveralTermlyPlanDocumentsWithGroupsMixedUpWithDifferentCurriculumPlanningAreas(), Map())
+      assert(!curriculumPlanningAreaToLatestDoc.isDefinedAt(_CurriculumAreaName("TOODLY_DOO")))
+    }
+    it("should have 1 maths groups") {
+      val curriculumPlanningAreaToLatestDoc = planReaderDao.buildCurriculumPlanProgressForClassLoop(
+        PlanReaderDaoHelperTermlyPlanTestHelper.createAListOfSeveralTermlyPlanDocumentsWithGroupsMixedUpWithDifferentCurriculumPlanningAreas(), Map())
+      assert(curriculumPlanningAreaToLatestDoc(_CurriculumAreaName("MATHEMATICS")).keys.size === 1)
+    }
+    it("should have a latest maths group doc with a group id of groupId_f842e787-cc90-483f-a321-49b68a252a80") {
+      val curriculumPlanningAreaToLatestDoc = planReaderDao.buildCurriculumPlanProgressForClassLoop(
+        PlanReaderDaoHelperTermlyPlanTestHelper.createAListOfSeveralTermlyPlanDocumentsWithGroupsMixedUpWithDifferentCurriculumPlanningAreas(), Map())
+      assert(curriculumPlanningAreaToLatestDoc(_CurriculumAreaName("MATHEMATICS")).isDefinedAt(_GroupId("groupId_f842e787-cc90-483f-a321-49b68a252a80")))
+    }
+    it("should have a latest maths group doc with an id of a21029985165479d9a049551") {
+      val curriculumPlanningAreaToLatestDoc = planReaderDao.buildCurriculumPlanProgressForClassLoop(
+        PlanReaderDaoHelperTermlyPlanTestHelper.createAListOfSeveralTermlyPlanDocumentsWithGroupsMixedUpWithDifferentCurriculumPlanningAreas(), Map())
+      val latestMathsGroupDoc = curriculumPlanningAreaToLatestDoc(_CurriculumAreaName("MATHEMATICS"))(_GroupId("groupId_f842e787-cc90-483f-a321-49b68a252a80"))
+
+      assert(latestMathsGroupDoc.getString(TermlyPlanningSchema._ID) === "a21029985165479d9a049551")
+    }
+
+    it("should have 3 writing groups") {
+      val curriculumPlanningAreaToLatestDoc = planReaderDao.buildCurriculumPlanProgressForClassLoop(
+        PlanReaderDaoHelperTermlyPlanTestHelper.createAListOfSeveralTermlyPlanDocumentsWithGroupsMixedUpWithDifferentCurriculumPlanningAreas(), Map())
+      assert(curriculumPlanningAreaToLatestDoc(_CurriculumAreaName("LITERACY__WRITING")).keys.size === 3)
+    }
+    it("should have 1 writing group with group id 'groupId_writing_one'") {
+      val curriculumPlanningAreaToLatestDoc = planReaderDao.buildCurriculumPlanProgressForClassLoop(
+        PlanReaderDaoHelperTermlyPlanTestHelper.createAListOfSeveralTermlyPlanDocumentsWithGroupsMixedUpWithDifferentCurriculumPlanningAreas(), Map())
+      assert(curriculumPlanningAreaToLatestDoc(_CurriculumAreaName("LITERACY__WRITING")).isDefinedAt(_GroupId("groupId_writing_one")))
+    }
+    it("should have 1 writing group with group id 'groupId_writing_two'") {
+      val curriculumPlanningAreaToLatestDoc = planReaderDao.buildCurriculumPlanProgressForClassLoop(
+        PlanReaderDaoHelperTermlyPlanTestHelper.createAListOfSeveralTermlyPlanDocumentsWithGroupsMixedUpWithDifferentCurriculumPlanningAreas(), Map())
+      assert(curriculumPlanningAreaToLatestDoc(_CurriculumAreaName("LITERACY__WRITING")).isDefinedAt(_GroupId("groupId_writing_two")))
+    }
+    it("should have 1 writing group with group id 'groupId_writing_three'") {
+      val curriculumPlanningAreaToLatestDoc = planReaderDao.buildCurriculumPlanProgressForClassLoop(
+        PlanReaderDaoHelperTermlyPlanTestHelper.createAListOfSeveralTermlyPlanDocumentsWithGroupsMixedUpWithDifferentCurriculumPlanningAreas(), Map())
+      assert(curriculumPlanningAreaToLatestDoc(_CurriculumAreaName("LITERACY__WRITING")).isDefinedAt(_GroupId("groupId_writing_three")))
+    }
+
+    // TODO: Ensure the latest docs are gotted above
+
+    it("should have 1 EXPRESSIVE_ARTS__ART group") {
+      val curriculumPlanningAreaToLatestDoc = planReaderDao.buildCurriculumPlanProgressForClassLoop(
+        PlanReaderDaoHelperTermlyPlanTestHelper.createAListOfSeveralTermlyPlanDocumentsWithGroupsMixedUpWithDifferentCurriculumPlanningAreas(), Map())
+      assert(curriculumPlanningAreaToLatestDoc(_CurriculumAreaName("EXPRESSIVE_ARTS__ART")).keys.size === 1)
+    }
+    it("should have 1 EXPRESSIVE_ARTS__ART group called CLASS_LEVEL ") {
+      import PlanReaderDaoSubjectTermlyPlanHelper.CLASS_LEVEL
+      val curriculumPlanningAreaToLatestDoc = planReaderDao.buildCurriculumPlanProgressForClassLoop(
+        PlanReaderDaoHelperTermlyPlanTestHelper.createAListOfSeveralTermlyPlanDocumentsWithGroupsMixedUpWithDifferentCurriculumPlanningAreas(), Map())
+      assert(curriculumPlanningAreaToLatestDoc(_CurriculumAreaName("EXPRESSIVE_ARTS__ART")).isDefinedAt(_GroupId(CLASS_LEVEL)))
+    }
+    it("should have 1 EXPRESSIVE_ARTS__ART group with id = 'z785defb5aa9a109ed704fy7z'") {
+      import PlanReaderDaoSubjectTermlyPlanHelper.CLASS_LEVEL
+      val curriculumPlanningAreaToLatestDoc = planReaderDao.buildCurriculumPlanProgressForClassLoop(
+        PlanReaderDaoHelperTermlyPlanTestHelper.createAListOfSeveralTermlyPlanDocumentsWithGroupsMixedUpWithDifferentCurriculumPlanningAreas(), Map())
+      val latestArtGroupDoc = curriculumPlanningAreaToLatestDoc(_CurriculumAreaName("EXPRESSIVE_ARTS__ART"))(_GroupId(CLASS_LEVEL))
+      assert(latestArtGroupDoc.getString(TermlyPlanningSchema._ID) === "z785defb5aa9a109ed704fy7z")
+    }
+
+  }
+
 
 }
