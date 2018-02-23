@@ -23,6 +23,7 @@ object ClassLevelPlanningJsScreen
 
   def loadJavascript(): Unit =
   {
+    global.console.log("Loading JS for class level planning")
     mouseoverHighlightEandOsAndBenchmarks()
     clickOnEandO()
     clickOnBenchmark()
