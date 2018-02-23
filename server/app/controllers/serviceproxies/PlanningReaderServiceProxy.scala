@@ -1,7 +1,5 @@
 package controllers.serviceproxies
 
-import java.time.LocalDateTime
-
 import com.google.inject.ImplementedBy
 import duplicate.model.ClassDetails
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
@@ -26,6 +24,12 @@ trait PlanningReaderServiceProxy
                               classDetails: ClassDetails,
                               maybeCurrentTermlyCurriculumSelection: Option[TermlyCurriculumSelection]
                             ): Future[Option[CurriculumPlanProgressForClass]]
+
+  def curriculumPlanProgressForClasses(
+                                        tttUserId: TimeToTeachUserId,
+                                        classes: List[ClassDetails],
+                                        term: SchoolTerm
+                                      ): Future[Map[duplicate.model.ClassId, Int]]
 
   def readCurriculumAreaTermlyPlanForGroup(
                                             tttUserId: TimeToTeachUserId,

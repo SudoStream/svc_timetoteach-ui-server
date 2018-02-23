@@ -51,13 +51,23 @@ class TermlyPlansController @Inject()(
 
     for {
       classes <- eventualClasses
+
+      futureMaybeCurriculumPlanProgress = planningReaderService.curriculumPlanProgressForClasses(
+        TimeToTeachUserId(tttUserId),
+        classes,
+        termService.currentSchoolTerm()
+      )
+
+      maybeCurriculumPlanProgress  <- futureMaybeCurriculumPlanProgress
+
     } yield {
       Ok(views.html.planning.termly.termlyPlansHome(new MyDeadboltHandler(userReader),
         userPictureUri,
         userFirstName,
         userFamilyName,
         TimeToTeachUserId(tttUserId),
-        buildSchoolNameToClassesMap(classes)
+        buildSchoolNameToClassesMap(classes),
+        Map()
       ))
     }
   }
@@ -383,9 +393,11 @@ class TermlyPlansController @Inject()(
           userFirstName,
           userFamilyName,
           TimeToTeachUserId(tttUserId),
-          buildSchoolNameToClassesMap(classes)
+          buildSchoolNameToClassesMap(classes),
+          Map()
         ))
       }
+      // TODO: ANDY : Empty Map above should have progress in it
     }
 
     val successFunction = { curriculumAreaSelectionData: CurriculumAreaSelectionData =>

@@ -19,12 +19,25 @@ trait PlanningReaderService
                                         term: SchoolTerm
                                       ): Future[Option[TermlyCurriculumSelection]]
 
+  def currentTermlyCurriculumSelection(
+                                        tttUserId: TimeToTeachUserId,
+                                        classIds: List[ClassId],
+                                        term: SchoolTerm
+                                      ): Future[Map[ClassId, Option[TermlyCurriculumSelection]]]
+
   def curriculumPlanProgress(
                               tttUserId: TimeToTeachUserId,
                               classDetails: ClassDetails,
                               planningAreas: List[ScottishCurriculumPlanningArea],
                               term: SchoolTerm
                             ): Future[Option[CurriculumPlanProgressForClass]]
+
+  def curriculumPlanProgressForClasses(
+                                        tttUserId: TimeToTeachUserId,
+                                        classes: List[ClassDetails],
+                                        classIdToPlanningSelection: Map[ClassId, List[ScottishCurriculumPlanningArea]],
+                                        term: SchoolTerm
+                                      ): Future[Map[duplicate.model.ClassId, Int]]
 
   def readCurriculumAreaTermlyPlanForGroup(
                                             tttUserId: TimeToTeachUserId,

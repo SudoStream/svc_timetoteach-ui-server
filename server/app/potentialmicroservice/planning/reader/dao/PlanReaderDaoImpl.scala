@@ -1,6 +1,7 @@
 package potentialmicroservice.planning.reader.dao
 
 import dao.MongoDbConnection
+import duplicate.model
 import duplicate.model.ClassDetails
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
 import javax.inject.{Inject, Singleton}
@@ -115,4 +116,15 @@ class PlanReaderDaoImpl @Inject()(mongoDbConnection: MongoDbConnection) extends 
       foundTermlyPlanDocs: Seq[Document] => findLatestVersionOfTermlyPlan(foundTermlyPlanDocs.toList)
     }
   }
+
+  override def curriculumPlanProgressForClasses(tttUserId: TimeToTeachUserId,
+                                                classes: List[ClassDetails],
+                                                classIdToPlanningSelection: Map[ClassId, List[ScottishCurriculumPlanningArea]],
+                                                term: SchoolTerm): Future[Map[model.ClassId, Int]] =
+  {
+    Future {
+      Map()
+    }
+  }
+
 }

@@ -1,5 +1,6 @@
 package controllers.serviceproxies
 
+import duplicate.model
 import duplicate.model.ClassDetails
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
 import javax.inject.{Inject, Singleton}
@@ -12,7 +13,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class PlanningReaderServiceProxyImpl @Inject()(planningReaderService: PlanningReaderService) extends PlanningReaderServiceProxy
+class PlanningReaderServiceProxyImpl @Inject()(planningReaderService: PlanningReaderService, termService: TermServiceProxy) extends PlanningReaderServiceProxy
 {
 
   override def currentTermlyCurriculumSelection(tttUserId: TimeToTeachUserId, classId: ClassId, term: SchoolTerm): Future[Option[TermlyCurriculumSelection]] =
@@ -29,7 +30,8 @@ class PlanningReaderServiceProxyImpl @Inject()(planningReaderService: PlanningRe
       case Some(currentTermlyCurriculumSelection) =>
         planningReaderService.curriculumPlanProgress(
           tttUserId,
-          classDetails, currentTermlyCurriculumSelection.planningAreas,
+          classDetails,
+          currentTermlyCurriculumSelection.planningAreas,
           currentTermlyCurriculumSelection.schoolTerm)
       case None => Future {
         None
@@ -49,6 +51,35 @@ class PlanningReaderServiceProxyImpl @Inject()(planningReaderService: PlanningRe
   override def readCurriculumAreaTermlyPlanForClassLevel(tttUserId: TimeToTeachUserId, classId: ClassId, planningArea: ScottishCurriculumPlanningArea): Future[Option[CurriculumAreaTermlyPlan]] =
   {
     planningReaderService.readCurriculumAreaTermlyPlanForClassLevel(tttUserId, classId, planningArea)
+  }
+
+  private def convertToPlanningAreas(classIdToTermlyCurriculumSelection: Map[ClassId, Option[TermlyCurriculumSelection]]):
+  Map[ClassId, List[ScottishCurriculumPlanningArea]] =
+  {
+    def safeConvert(maybeSelection: Option[TermlyCurriculumSelection]): List[ScottishCurriculumPlanningArea] =
+    {
+      maybeSelection match {
+        case Some(termlySelection) => termlySelection.planningAreas
+        case None => Nil
+      }
+    }
+
+    classIdToTermlyCurriculumSelection.toList.map(entryTuple => (entryTuple._1, safeConvert(entryTuple._2))).toMap
+  }
+
+  override def curriculumPlanProgressForClasses(tttUserId: TimeToTeachUserId, classes: List[ClassDetails], term: SchoolTerm): Future[Map[model.ClassId, Int]] =
+  {
+    val classIds = classes.map(aClass => models.timetoteach.ClassId(aClass.id.id))
+
+    for {
+      classIdToTermlyCurriculumSelection <- planningReaderService.currentTermlyCurriculumSelection(
+        tttUserId,
+        classIds,
+        termService.currentSchoolTerm()
+      )
+      classIdToPlanningAreas = convertToPlanningAreas(classIdToTermlyCurriculumSelection)
+      classIdToProgressPercent <- planningReaderService.curriculumPlanProgressForClasses(tttUserId, classes, classIdToPlanningAreas, term)
+    } yield classIdToProgressPercent
   }
 
 }

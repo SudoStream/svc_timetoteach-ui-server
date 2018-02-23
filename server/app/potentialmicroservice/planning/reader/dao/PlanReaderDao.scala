@@ -26,12 +26,19 @@ trait PlanReaderDao
                               term: SchoolTerm
                             ): Future[Option[CurriculumPlanProgressForClass]]
 
+  def curriculumPlanProgressForClasses(
+                                        tttUserId: TimeToTeachUserId,
+                                        classes: List[ClassDetails],
+                                        classIdToPlanningSelection: Map[ClassId, List[ScottishCurriculumPlanningArea]],
+                                        term: SchoolTerm
+                                      ): Future[Map[duplicate.model.ClassId, Int]]
+
   def readCurriculumAreaTermlyPlanForGroup(
-                             tttUserId: TimeToTeachUserId,
-                             classId: ClassId,
-                             groupId: GroupId,
-                             planningArea: ScottishCurriculumPlanningArea
-                           ): Future[Option[CurriculumAreaTermlyPlan]]
+                                            tttUserId: TimeToTeachUserId,
+                                            classId: ClassId,
+                                            groupId: GroupId,
+                                            planningArea: ScottishCurriculumPlanningArea
+                                          ): Future[Option[CurriculumAreaTermlyPlan]]
 
   def readCurriculumAreaTermlyPlanForClassLevel(
                                                  tttUserId: TimeToTeachUserId,
