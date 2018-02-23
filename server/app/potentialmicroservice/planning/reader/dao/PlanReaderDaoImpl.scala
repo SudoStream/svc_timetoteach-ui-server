@@ -73,7 +73,8 @@ class PlanReaderDaoImpl @Inject()(mongoDbConnection: MongoDbConnection) extends 
       foundCurriculumPlanningDocs: Seq[Document] =>
         buildCurriculumPlanProgressForClass(
           foundCurriculumPlanningDocs.toList,
-          classDetails
+          classDetails,
+          planningAreas
         )
     }
   }

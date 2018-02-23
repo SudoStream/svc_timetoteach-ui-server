@@ -185,5 +185,21 @@ class PlanReaderDaoSubjectTermlyPlanHelperTest extends FunSpec
 
   }
 
+  describe("Given 2 empty lists, createZeroedProgressMap()") {
+    it("should return an empty map") {
+      val zeroedProgressMap = planReaderDao.createZeroedProgressMap(Nil, Nil)
+      assert(zeroedProgressMap.isEmpty)
+    }
+  }
+
+  describe("Given a list of maths, writing and art, createZeroedProgressMap()") {
+    it("should return a map with 3 keys") {
+      val zeroedProgressMap = planReaderDao.createZeroedProgressMap(
+        PlanReaderDaoHelperTermlyPlanTestHelper.createScottishCurriculumPlanningAreaList(),
+        PlanReaderDaoHelperTermlyPlanTestHelper.createClassGroupsList()
+      )
+      assert(zeroedProgressMap.keySet.size === 3)
+    }
+  }
 
 }

@@ -1,5 +1,7 @@
 package potentialmicroservice.planning.reader.dao
 
+import duplicate.model._
+import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
 import org.mongodb.scala.Document
 import org.mongodb.scala.bson.{BsonArray, BsonDocument}
 
@@ -130,7 +132,6 @@ object PlanReaderDaoHelperTermlyPlanTestHelper
       )
 
 
-
     )
 
 
@@ -194,6 +195,59 @@ object PlanReaderDaoHelperTermlyPlanTestHelper
           )
         )
     )
+  }
+
+  def createScottishCurriculumPlanningAreaList(): List[ScottishCurriculumPlanningArea] =
+  {
+    ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__ART ::
+      ScottishCurriculumPlanningArea.MATHEMATICS ::
+      ScottishCurriculumPlanningArea.LITERACY__WRITING :: Nil
+  }
+
+  def createClassGroupsList(): List[Group] =
+  {
+    Group(
+      GroupId("groupId_f842e787-cc90-483f-a321-49b68a252a80"),
+      GroupName("Triangles"),
+      GroupDescription(""),
+      MathsGroupType,
+      EarlyLevel
+    ) ::
+      Group(
+        GroupId("groupId_squares"),
+        GroupName("Squares"),
+        GroupDescription(""),
+        MathsGroupType,
+        FirstLevel
+      ) ::
+      Group(
+        GroupId("groupId_circles"),
+        GroupName("Circles"),
+        GroupDescription(""),
+        MathsGroupType,
+        EarlyLevel
+      ) ::
+      Group(
+        GroupId("groupId_writing_one"),
+        GroupName("Shakeys"),
+        GroupDescription(""),
+        WritingGroupType,
+        EarlyLevel
+      ) ::
+      Group(
+        GroupId("groupId_writing_two"),
+        GroupName("Kafkas"),
+        GroupDescription(""),
+        WritingGroupType,
+        FirstLevel
+      ) ::
+      Group(
+        GroupId("groupId_writing_three"),
+        GroupName("Orwells"),
+        GroupDescription(""),
+        WritingGroupType,
+        EarlyLevel
+      ) :: Nil
   }
 
 }

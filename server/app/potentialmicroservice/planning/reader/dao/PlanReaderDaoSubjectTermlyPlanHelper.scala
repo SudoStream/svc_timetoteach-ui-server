@@ -3,7 +3,8 @@ package potentialmicroservice.planning.reader.dao
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-import duplicate.model.{ClassDetails, EandOsWithBenchmarks}
+import duplicate.model.{ClassDetails, EandOsWithBenchmarks, Group}
+import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
 import models.timetoteach.planning._
 import models.timetoteach.term.SchoolTerm
 import models.timetoteach.{ClassId, TimeToTeachUserId}
@@ -19,15 +20,15 @@ case class _CurriculumAreaName(curriculumAreaName: String)
 case class _GroupId(groupId: String)
 
 
-object PlanReaderDaoSubjectTermlyPlanHelper {
+object PlanReaderDaoSubjectTermlyPlanHelper
+{
   val NO_GROUP_ID_FOUND = "NO_GROUP_ID_FOUND"
   val CLASS_LEVEL = "CLASS_LEVEL"
 }
 
 trait PlanReaderDaoSubjectTermlyPlanHelper extends PlanReaderDaoCommonHelper
 {
-  import PlanReaderDaoSubjectTermlyPlanHelper.NO_GROUP_ID_FOUND
-  import PlanReaderDaoSubjectTermlyPlanHelper.CLASS_LEVEL
+  import PlanReaderDaoSubjectTermlyPlanHelper.{CLASS_LEVEL, NO_GROUP_ID_FOUND}
 
   private val logger: Logger = Logger
   private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
@@ -45,14 +46,16 @@ trait PlanReaderDaoSubjectTermlyPlanHelper extends PlanReaderDaoCommonHelper
   }
 
 
-  def buildCurriculumPlanProgressForClass(foundCurriculumPlanningDocs: List[Document], classDetails: ClassDetails): Option[CurriculumPlanProgressForClass] =
+  def buildCurriculumPlanProgressForClass(foundCurriculumPlanningDocs: List[Document],
+                                          classDetails: ClassDetails,
+                                          planningAreas: List[ScottishCurriculumPlanningArea]): Option[CurriculumPlanProgressForClass] =
   {
     logger.debug(s"buildCurriculumPlanProgressForClass() size = ${foundCurriculumPlanningDocs.size}")
     if (foundCurriculumPlanningDocs.isEmpty) {
       None
     } else {
       val curriculumPlanningAreaToLatestDoc = buildCurriculumPlanProgressForClassLoop(foundCurriculumPlanningDocs, Map())
-      convertDocumentToCurriculumPlanProgressForClass(curriculumPlanningAreaToLatestDoc, classDetails)
+      convertDocumentToCurriculumPlanProgressForClass(curriculumPlanningAreaToLatestDoc, classDetails.groups, planningAreas)
     }
   }
 
@@ -60,7 +63,8 @@ trait PlanReaderDaoSubjectTermlyPlanHelper extends PlanReaderDaoCommonHelper
   ////////////////////// Implementation buildCurriculumPlanProgressForClass ////////////////////////
   //////////////////////////////////////////////////////////////////////////////////////////////////
 
-  private def extractGroupId(maybeGroupId: Option[String]) : String = {
+  private def extractGroupId(maybeGroupId: Option[String]): String =
+  {
     val groupId = maybeGroupId.getOrElse(NO_GROUP_ID_FOUND)
     if (groupId.isEmpty) {
       CLASS_LEVEL
@@ -83,7 +87,7 @@ trait PlanReaderDaoSubjectTermlyPlanHelper extends PlanReaderDaoCommonHelper
 
           if (currentCurriculumProgressMap.isDefinedAt(_CurriculumAreaName(curriculumAreaForNextDoc))) {
             val currentGroupIdToLatestDocument = currentCurriculumProgressMap(_CurriculumAreaName(curriculumAreaForNextDoc))
-            val groupId =extractGroupId(maybeGroupIdForNextDoc)
+            val groupId = extractGroupId(maybeGroupIdForNextDoc)
 
             val latestGroupIdToLatestDoc: Map[_GroupId, Document] = if (currentGroupIdToLatestDocument.isDefinedAt(_GroupId(groupId))) {
               val currentLatestDoc = currentGroupIdToLatestDocument(_GroupId(groupId))
@@ -105,11 +109,40 @@ trait PlanReaderDaoSubjectTermlyPlanHelper extends PlanReaderDaoCommonHelper
     }
   }
 
+  private[dao] def createZeroedProgressMap(planningAreas: List[ScottishCurriculumPlanningArea],
+                                           classGroups: List[Group]):
+  Map[ScottishCurriculumPlanningAreaWrapper,
+    (OverallClassLevelProgressPercent, Map[Group, GroupLevelProgressPercent])] =
+  {
+    def buildZeroedMapLoop(planningAreasToAdd: List[ScottishCurriculumPlanningArea],
+                           currentZeroedMap: Map[ScottishCurriculumPlanningAreaWrapper,
+                             (OverallClassLevelProgressPercent, Map[Group, GroupLevelProgressPercent])]
+                          ): Map[ScottishCurriculumPlanningAreaWrapper,
+      (OverallClassLevelProgressPercent, Map[Group, GroupLevelProgressPercent])] =
+    {
+      if (planningAreas.isEmpty) {
+        currentZeroedMap
+      } else {
+        // TODO:
+        currentZeroedMap
+      }
+    }
+
+    buildZeroedMapLoop(planningAreas, Map())
+  }
+
   private[dao] def convertDocumentToCurriculumPlanProgressForClass(curriculumPlanningAreaToLatestDoc:
                                                                    Map[_CurriculumAreaName, Map[_GroupId, Document]],
-                                                                   classDetails: ClassDetails
+                                                                   classGroups: List[Group],
+                                                                   planningAreas: List[ScottishCurriculumPlanningArea]
                                                                   )
-  : Option[CurriculumPlanProgressForClass] = ???
+  : Option[CurriculumPlanProgressForClass] =
+  {
+    val initialZeroedProgress = createZeroedProgressMap(planningAreas, classGroups)
+    //    val groupLevelProgress = addGroupLevelProgressMap(initialZeroedProgress, curriculumPlanningAreaToLatestDoc)
+    //    calculateClassLevelProgressMap(groupLevelProgress)
+    None
+  }
 
 
   //////////////////////////////////////////////////////////////////////////////////////////////////
