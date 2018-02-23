@@ -122,6 +122,7 @@ object ClassLevelPlanningJsScreen
   {
     val currentHeaders = scala.collection.mutable.ArrayBuffer.empty[String]
     val headerDivs = dom.document.getElementsByClassName("termly-plans-es-and-os-level-section-header")
+    global.console.log(s"headerDivs : ${headerDivs.toString}")
     val nodeListSize = headerDivs.length
     var index = 0
     while (index < nodeListSize) {
@@ -144,7 +145,9 @@ object ClassLevelPlanningJsScreen
   {
     val curriculumLevelFilterButton = dom.document.getElementById(s"curriculumLevel${level}FilterButton").asInstanceOf[HTMLButtonElement]
     curriculumLevelFilterButton.addEventListener("click", (e: dom.Event) => {
+      global.console.log("clicked curriculumLevelFilterButton")
       val levelSectionDivs = dom.document.getElementsByClassName(s"termly-plans-es-and-os-level-section-div-${level}Level")
+      global.console.log(s"levelSectionDivs : ${levelSectionDivs.toString}")
       curriculumLevelFilterButtonInstance(levelSectionDivs, curriculumLevelFilterButton)
       headerVisibility()
     })
