@@ -1,8 +1,9 @@
 package potentialmicroservice.planning.reader.dao
 
-import models.timetoteach.planning.PlanType
+import duplicate.model.Group
+import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
+import models.timetoteach.planning.{GroupLevelProgressPercent, OverallClassLevelProgressPercent, PlanType, ScottishCurriculumPlanningAreaWrapper}
 import org.scalatest.FunSpec
-import potentialmicroservice.planning.reader.dao.PlanReaderDaoSubjectTermlyPlanHelper.CLASS_LEVEL
 import potentialmicroservice.planning.sharedschema.TermlyPlanningSchema
 
 class PlanReaderDaoSubjectTermlyPlanHelperTest extends FunSpec
@@ -31,7 +32,6 @@ class PlanReaderDaoSubjectTermlyPlanHelperTest extends FunSpec
         PlanReaderDaoHelperTermlyPlanTestHelper.createAListOfSeveralTermlyPlanDocumentsMixedUp().tail,
         PlanReaderDaoHelperTermlyPlanTestHelper.createAListOfSeveralTermlyPlanDocumentsMixedUp().head
       )
-      println(s"Document we think is latest has id = '${document.getString("_id")}'")
       assert(document.getString("_id") === "a21029985165479d9a049551")
     }
   }
@@ -200,6 +200,112 @@ class PlanReaderDaoSubjectTermlyPlanHelperTest extends FunSpec
       )
       assert(zeroedProgressMap.keySet.size === 3)
     }
+    it("should return a map with maths class level progress = zero") {
+      val zeroedProgressMap = planReaderDao.createZeroedProgressMap(
+        PlanReaderDaoHelperTermlyPlanTestHelper.createScottishCurriculumPlanningAreaList(),
+        PlanReaderDaoHelperTermlyPlanTestHelper.createClassGroupsList()
+      )
+      val maths = ScottishCurriculumPlanningAreaWrapper(ScottishCurriculumPlanningArea.MATHEMATICS)
+      assert(zeroedProgressMap(maths)._1.percentValue === 0)
+    }
+    it("should return a map with maths 3 maths groups") {
+      val zeroedProgressMap = planReaderDao.createZeroedProgressMap(
+        PlanReaderDaoHelperTermlyPlanTestHelper.createScottishCurriculumPlanningAreaList(),
+        PlanReaderDaoHelperTermlyPlanTestHelper.createClassGroupsList()
+      )
+      val maths = ScottishCurriculumPlanningAreaWrapper(ScottishCurriculumPlanningArea.MATHEMATICS)
+      assert(zeroedProgressMap(maths)._2.size === 3)
+    }
+    it("should return a map with maths one maths group id 'groupId_squares'") {
+      val zeroedProgressMap: Map[ScottishCurriculumPlanningAreaWrapper, (OverallClassLevelProgressPercent, Map[Group, GroupLevelProgressPercent])] = planReaderDao.createZeroedProgressMap(
+        PlanReaderDaoHelperTermlyPlanTestHelper.createScottishCurriculumPlanningAreaList(),
+        PlanReaderDaoHelperTermlyPlanTestHelper.createClassGroupsList()
+      )
+      val maths = ScottishCurriculumPlanningAreaWrapper(ScottishCurriculumPlanningArea.MATHEMATICS)
+      assert(zeroedProgressMap(maths)._2.keySet.count(group => group.groupId.id == "groupId_squares") === 1)
+    }
+    it("should return a map with maths one maths group id 'groupId_circles'") {
+      val zeroedProgressMap: Map[ScottishCurriculumPlanningAreaWrapper, (OverallClassLevelProgressPercent, Map[Group, GroupLevelProgressPercent])] = planReaderDao.createZeroedProgressMap(
+        PlanReaderDaoHelperTermlyPlanTestHelper.createScottishCurriculumPlanningAreaList(),
+        PlanReaderDaoHelperTermlyPlanTestHelper.createClassGroupsList()
+      )
+      val maths = ScottishCurriculumPlanningAreaWrapper(ScottishCurriculumPlanningArea.MATHEMATICS)
+      assert(zeroedProgressMap(maths)._2.keySet.count(group => group.groupId.id == "groupId_circles") === 1)
+    }
+    it("should return a map with maths one maths group id 'groupId_triangles'") {
+      val zeroedProgressMap: Map[ScottishCurriculumPlanningAreaWrapper, (OverallClassLevelProgressPercent, Map[Group, GroupLevelProgressPercent])] = planReaderDao.createZeroedProgressMap(
+        PlanReaderDaoHelperTermlyPlanTestHelper.createScottishCurriculumPlanningAreaList(),
+        PlanReaderDaoHelperTermlyPlanTestHelper.createClassGroupsList()
+      )
+      val maths = ScottishCurriculumPlanningAreaWrapper(ScottishCurriculumPlanningArea.MATHEMATICS)
+      assert(zeroedProgressMap(maths)._2.keySet.count(group => group.groupId.id == "groupId_triangles") === 1)
+    }
+    it("should return a map with maths ZERO maths group id 'toodlydoo'") {
+      val zeroedProgressMap: Map[ScottishCurriculumPlanningAreaWrapper, (OverallClassLevelProgressPercent, Map[Group, GroupLevelProgressPercent])] = planReaderDao.createZeroedProgressMap(
+        PlanReaderDaoHelperTermlyPlanTestHelper.createScottishCurriculumPlanningAreaList(),
+        PlanReaderDaoHelperTermlyPlanTestHelper.createClassGroupsList()
+      )
+      val maths = ScottishCurriculumPlanningAreaWrapper(ScottishCurriculumPlanningArea.MATHEMATICS)
+      assert(zeroedProgressMap(maths)._2.keySet.count(group => group.groupId.id == "toodlydoo") === 0)
+    }
+    it("should return a map with 3 writing groups") {
+      val zeroedProgressMap = planReaderDao.createZeroedProgressMap(
+        PlanReaderDaoHelperTermlyPlanTestHelper.createScottishCurriculumPlanningAreaList(),
+        PlanReaderDaoHelperTermlyPlanTestHelper.createClassGroupsList()
+      )
+      val writing = ScottishCurriculumPlanningAreaWrapper(ScottishCurriculumPlanningArea.LITERACY__WRITING)
+      assert(zeroedProgressMap(writing)._2.size === 3)
+    }
+    it("should return a map with one writing group id 'groupId_writing_one'") {
+      val zeroedProgressMap: Map[ScottishCurriculumPlanningAreaWrapper, (OverallClassLevelProgressPercent, Map[Group, GroupLevelProgressPercent])] = planReaderDao.createZeroedProgressMap(
+        PlanReaderDaoHelperTermlyPlanTestHelper.createScottishCurriculumPlanningAreaList(),
+        PlanReaderDaoHelperTermlyPlanTestHelper.createClassGroupsList()
+      )
+      val writing = ScottishCurriculumPlanningAreaWrapper(ScottishCurriculumPlanningArea.LITERACY__WRITING)
+      assert(zeroedProgressMap(writing)._2.keySet.count(group => group.groupId.id == "groupId_writing_one") === 1)
+    }
+    it("should return a map with one writing group id 'groupId_writing_two'") {
+      val zeroedProgressMap = planReaderDao.createZeroedProgressMap(
+        PlanReaderDaoHelperTermlyPlanTestHelper.createScottishCurriculumPlanningAreaList(),
+        PlanReaderDaoHelperTermlyPlanTestHelper.createClassGroupsList()
+      )
+      val writing = ScottishCurriculumPlanningAreaWrapper(ScottishCurriculumPlanningArea.LITERACY__WRITING)
+      assert(zeroedProgressMap(writing)._2.keySet.count(group => group.groupId.id == "groupId_writing_two") === 1)
+    }
+    it("should return a map with one writing group id 'groupId_writing_three'") {
+      val zeroedProgressMap = planReaderDao.createZeroedProgressMap(
+        PlanReaderDaoHelperTermlyPlanTestHelper.createScottishCurriculumPlanningAreaList(),
+        PlanReaderDaoHelperTermlyPlanTestHelper.createClassGroupsList()
+      )
+      val writing = ScottishCurriculumPlanningAreaWrapper(ScottishCurriculumPlanningArea.LITERACY__WRITING)
+      assert(zeroedProgressMap(writing)._2.keySet.count(group => group.groupId.id == "groupId_writing_three") === 1)
+    }
+    it("should return a map with reading not defined") {
+      val zeroedProgressMap = planReaderDao.createZeroedProgressMap(
+        PlanReaderDaoHelperTermlyPlanTestHelper.createScottishCurriculumPlanningAreaList(),
+        PlanReaderDaoHelperTermlyPlanTestHelper.createClassGroupsList()
+      )
+      val reading = ScottishCurriculumPlanningAreaWrapper(ScottishCurriculumPlanningArea.LITERACY__READING)
+      assert(!zeroedProgressMap.isDefinedAt(reading))
+    }
+    it("should return a map with 0 art group") {
+      val zeroedProgressMap = planReaderDao.createZeroedProgressMap(
+        PlanReaderDaoHelperTermlyPlanTestHelper.createScottishCurriculumPlanningAreaList(),
+        PlanReaderDaoHelperTermlyPlanTestHelper.createClassGroupsList()
+      )
+      val art = ScottishCurriculumPlanningAreaWrapper(ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__ART)
+      assert(zeroedProgressMap(art)._2.size === 0)
+    }
+    it("should return a map with art class level progress at 0") {
+      val zeroedProgressMap = planReaderDao.createZeroedProgressMap(
+        PlanReaderDaoHelperTermlyPlanTestHelper.createScottishCurriculumPlanningAreaList(),
+        PlanReaderDaoHelperTermlyPlanTestHelper.createClassGroupsList()
+      )
+      val art = ScottishCurriculumPlanningAreaWrapper(ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__ART)
+      assert(zeroedProgressMap(art)._1.percentValue === 0)
+    }
+
+
   }
 
 }

@@ -207,7 +207,7 @@ object PlanReaderDaoHelperTermlyPlanTestHelper
   def createClassGroupsList(): List[Group] =
   {
     Group(
-      GroupId("groupId_f842e787-cc90-483f-a321-49b68a252a80"),
+      GroupId("groupId_triangles"),
       GroupName("Triangles"),
       GroupDescription(""),
       MathsGroupType,

@@ -3,7 +3,7 @@ package potentialmicroservice.planning.reader.dao
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-import duplicate.model.{ClassDetails, EandOsWithBenchmarks, Group}
+import duplicate.model._
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
 import models.timetoteach.planning._
 import models.timetoteach.term.SchoolTerm
@@ -14,6 +14,8 @@ import org.mongodb.scala.bson.BsonValue
 import play.api.Logger
 import potentialmicroservice.planning.sharedschema.TermlyPlanningSchema
 import utils.mongodb.MongoDbSafety._
+
+import scala.annotation.tailrec
 
 case class _CurriculumAreaName(curriculumAreaName: String)
 
@@ -114,17 +116,31 @@ trait PlanReaderDaoSubjectTermlyPlanHelper extends PlanReaderDaoCommonHelper
   Map[ScottishCurriculumPlanningAreaWrapper,
     (OverallClassLevelProgressPercent, Map[Group, GroupLevelProgressPercent])] =
   {
+    @tailrec
     def buildZeroedMapLoop(planningAreasToAdd: List[ScottishCurriculumPlanningArea],
                            currentZeroedMap: Map[ScottishCurriculumPlanningAreaWrapper,
                              (OverallClassLevelProgressPercent, Map[Group, GroupLevelProgressPercent])]
                           ): Map[ScottishCurriculumPlanningAreaWrapper,
       (OverallClassLevelProgressPercent, Map[Group, GroupLevelProgressPercent])] =
     {
-      if (planningAreas.isEmpty) {
+      if (planningAreasToAdd.isEmpty) {
         currentZeroedMap
       } else {
-        // TODO:
-        currentZeroedMap
+        val nextPlanningAreaToAdd = ScottishCurriculumPlanningAreaWrapper(planningAreasToAdd.head)
+        val newVersionOfZeroedMap = if (currentZeroedMap.isDefinedAt(nextPlanningAreaToAdd)) {
+          logger.warn("To be honest I would be surprised if this line is exceuted. Will add all groups in a oner. Just returning current version")
+          currentZeroedMap
+        } else {
+          val newGroupsToAdd = classGroups.filter(group => group.groupType == nextPlanningAreaToAdd.groupType)
+          val newGroupToProgressMap = {
+            for {
+              group <- newGroupsToAdd
+            } yield (group, GroupLevelProgressPercent(0))
+          }.toMap
+
+          currentZeroedMap + (nextPlanningAreaToAdd -> (OverallClassLevelProgressPercent(0), newGroupToProgressMap))
+        }
+        buildZeroedMapLoop(planningAreasToAdd.tail, newVersionOfZeroedMap)
       }
     }
 
@@ -149,7 +165,8 @@ trait PlanReaderDaoSubjectTermlyPlanHelper extends PlanReaderDaoCommonHelper
   ////////////////////// Implementation findLatestVersionOfTermlyPlan //////////////////////////////
   //////////////////////////////////////////////////////////////////////////////////////////////////
 
-  private[dao] def findLatestVersionOfTermlyPlanDocLoop(foundTermlyPlanDocs: List[Document], currentLatestDoc: Document): Document =
+  private[dao] def findLatestVersionOfTermlyPlanDocLoop(foundTermlyPlanDocs: List[Document],
+                                                        currentLatestDoc: Document): Document =
   {
     if (foundTermlyPlanDocs.isEmpty) currentLatestDoc
     else {
@@ -206,7 +223,8 @@ trait PlanReaderDaoSubjectTermlyPlanHelper extends PlanReaderDaoCommonHelper
     }.toList
   }
 
-  private def convertToEsAndOsWithBenchmarks(maybeEandOsWithBenchmarks: Option[BsonValue]): List[EandOsWithBenchmarks] =
+  private def convertToEsAndOsWithBenchmarks(maybeEandOsWithBenchmarks: Option[BsonValue])
+  : List[EandOsWithBenchmarks] =
   {
     val maybeOsWithBenchmarks = for {
       esAndOsWithBenchmarksBsonValue <- maybeEandOsWithBenchmarks
@@ -229,7 +247,7 @@ trait PlanReaderDaoSubjectTermlyPlanHelper extends PlanReaderDaoCommonHelper
       classId <- safelyGetStringNoneIfBlank(doc, TermlyPlanningSchema.CLASS_ID)
       maybeGroupId = safelyGetStringNoneIfBlank(doc, TermlyPlanningSchema.GROUP_ID)
       groupId = maybeGroupId match {
-        case Some(id) => Some(GroupId(id))
+        case Some(id) => Some(models.timetoteach.planning.GroupId(id))
         case None => None
       }
       curriculumPlanningAreaValue <- safelyGetStringNoneIfBlank(doc, TermlyPlanningSchema.CURRICULUM_PLANNING_AREA)
