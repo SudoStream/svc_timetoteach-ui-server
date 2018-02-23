@@ -147,6 +147,16 @@ trait PlanReaderDaoSubjectTermlyPlanHelper extends PlanReaderDaoCommonHelper
     buildZeroedMapLoop(planningAreas, Map())
   }
 
+  private[dao] def addGroupLevelProgressMap(initialZeroedProgress:
+                                            Map[ScottishCurriculumPlanningAreaWrapper,
+                                              (OverallClassLevelProgressPercent, Map[Group, GroupLevelProgressPercent])],
+                                            curriculumPlanningAreaToLatestDoc: Map[_CurriculumAreaName, Map[_GroupId, Document]]):
+  Map[ScottishCurriculumPlanningAreaWrapper,
+    (OverallClassLevelProgressPercent, Map[Group, GroupLevelProgressPercent])] =
+  {
+    initialZeroedProgress
+  }
+
   private[dao] def convertDocumentToCurriculumPlanProgressForClass(curriculumPlanningAreaToLatestDoc:
                                                                    Map[_CurriculumAreaName, Map[_GroupId, Document]],
                                                                    classGroups: List[Group],
@@ -155,7 +165,7 @@ trait PlanReaderDaoSubjectTermlyPlanHelper extends PlanReaderDaoCommonHelper
   : Option[CurriculumPlanProgressForClass] =
   {
     val initialZeroedProgress = createZeroedProgressMap(planningAreas, classGroups)
-    //    val groupLevelProgress = addGroupLevelProgressMap(initialZeroedProgress, curriculumPlanningAreaToLatestDoc)
+    val groupLevelProgress = addGroupLevelProgressMap(initialZeroedProgress, curriculumPlanningAreaToLatestDoc)
     //    calculateClassLevelProgressMap(groupLevelProgress)
     None
   }

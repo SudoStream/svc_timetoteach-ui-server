@@ -199,6 +199,7 @@ object PlanReaderDaoHelperTermlyPlanTestHelper
 
   def createScottishCurriculumPlanningAreaList(): List[ScottishCurriculumPlanningArea] =
   {
+    ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__DRAMA ::
     ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__ART ::
       ScottishCurriculumPlanningArea.MATHEMATICS ::
       ScottishCurriculumPlanningArea.LITERACY__WRITING :: Nil
