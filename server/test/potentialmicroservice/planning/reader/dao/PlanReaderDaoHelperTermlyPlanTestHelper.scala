@@ -73,6 +73,7 @@ object PlanReaderDaoHelperTermlyPlanTestHelper
         curriculumPlanningArea = "EXPRESSIVE_ARTS__ART"
       ),
 
+
       createTermlyPlanMongoDocumentWithIdAndTimestamp(
         id = "h32pdefb5a9a109ed704la67",
         timestamp = "2018-02-09 21:17:30.349",
@@ -80,8 +81,32 @@ object PlanReaderDaoHelperTermlyPlanTestHelper
         curriculumPlanningArea = "LITERACY__WRITING"
       ),
       createTermlyPlanMongoDocumentWithIdAndTimestamp(
-        id = "qq2pdefb5a9a109ed704laqq",
+        id = "123pdefb5a9a109ed704l321",
+        timestamp = "2018-02-13 21:17:30.349",
+        maybeGroupId = Some("groupId_writing_one"),
+        curriculumPlanningArea = "LITERACY__WRITING"
+      ),
+      createTermlyPlanMongoDocumentWithIdAndTimestamp(
+        id = "444pdefb5a9a109ed704l444",
+        timestamp = "2018-02-05 21:17:30.349",
+        maybeGroupId = Some("groupId_writing_one"),
+        curriculumPlanningArea = "LITERACY__WRITING"
+      ),
+      createTermlyPlanMongoDocumentWithIdAndTimestamp(
+        id = "qq2pdefb5a9a109ed7040000",
         timestamp = "2018-02-09 21:17:30.349",
+        maybeGroupId = Some("groupId_writing_two"),
+        curriculumPlanningArea = "LITERACY__WRITING"
+      ),
+      createTermlyPlanMongoDocumentWithIdAndTimestamp(
+        id = "qq2pdefb5a9a109ed7041111",
+        timestamp = "2018-02-10 21:17:30.349",
+        maybeGroupId = Some("groupId_writing_two"),
+        curriculumPlanningArea = "LITERACY__WRITING"
+      ),
+      createTermlyPlanMongoDocumentWithIdAndTimestamp(
+        id = "qq2pdefb5a9a109ed7042222",
+        timestamp = "2018-02-11 21:17:30.349",
         maybeGroupId = Some("groupId_writing_two"),
         curriculumPlanningArea = "LITERACY__WRITING"
       ),
@@ -90,7 +115,21 @@ object PlanReaderDaoHelperTermlyPlanTestHelper
         timestamp = "2018-02-09 21:17:30.349",
         maybeGroupId = Some("groupId_writing_three"),
         curriculumPlanningArea = "LITERACY__WRITING"
+      ),
+      createTermlyPlanMongoDocumentWithIdAndTimestamp(
+        id = "1111defb5a9a109ed704laee",
+        timestamp = "2018-02-08 21:17:30.349",
+        maybeGroupId = Some("groupId_writing_three"),
+        curriculumPlanningArea = "LITERACY__WRITING"
+      ),
+      createTermlyPlanMongoDocumentWithIdAndTimestamp(
+        id = "8888defb5a9a109ed704laee",
+        timestamp = "2018-02-07 21:17:30.349",
+        maybeGroupId = Some("groupId_writing_three"),
+        curriculumPlanningArea = "LITERACY__WRITING"
       )
+
+
 
     )
 
