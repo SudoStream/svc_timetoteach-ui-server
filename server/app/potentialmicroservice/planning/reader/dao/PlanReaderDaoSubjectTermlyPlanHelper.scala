@@ -147,14 +147,78 @@ trait PlanReaderDaoSubjectTermlyPlanHelper extends PlanReaderDaoCommonHelper
     buildZeroedMapLoop(planningAreas, Map())
   }
 
-  private[dao] def addGroupLevelProgressMap(initialZeroedProgress:
+  def lookupGroup(groupId: _GroupId, classGroups: List[Group]): Option[Group] =
+  {
+    val foundGroups = classGroups.filter(group => group.groupId.id == groupId.groupId)
+    foundGroups.headOption
+  }
+
+  private[dao] def addGroupAndClassLevelProgressMap(initialZeroedProgress:
                                             Map[ScottishCurriculumPlanningAreaWrapper,
                                               (OverallClassLevelProgressPercent, Map[Group, GroupLevelProgressPercent])],
-                                            curriculumPlanningAreaToLatestDoc: Map[_CurriculumAreaName, Map[_GroupId, Document]]):
+                                                    curriculumPlanningAreaToLatestDoc: Map[_CurriculumAreaName, Map[_GroupId, Document]],
+                                                    classGroups: List[Group]):
   Map[ScottishCurriculumPlanningAreaWrapper,
     (OverallClassLevelProgressPercent, Map[Group, GroupLevelProgressPercent])] =
   {
-    initialZeroedProgress
+    @tailrec
+    def addGroupLevelProgressMapLoop(remainingGroupsToUpdate: List[(_CurriculumAreaName, _GroupId, Document)],
+                                     currentProgress: Map[ScottishCurriculumPlanningAreaWrapper,
+                                       (OverallClassLevelProgressPercent, Map[Group, GroupLevelProgressPercent])]):
+    Map[ScottishCurriculumPlanningAreaWrapper, (OverallClassLevelProgressPercent, Map[Group, GroupLevelProgressPercent])] =
+    {
+      if (remainingGroupsToUpdate.isEmpty) currentProgress
+      else {
+        val nextGroupProgressToAddTuple3 = remainingGroupsToUpdate.head
+        val maybeNextPlanningAreaToAdd = CurriculumAreaConverter.convertCurriculumAreaStringToModel(nextGroupProgressToAddTuple3._1.curriculumAreaName)
+        val nextProgress: Map[ScottishCurriculumPlanningAreaWrapper, (OverallClassLevelProgressPercent, Map[Group, GroupLevelProgressPercent])] = if (maybeNextPlanningAreaToAdd.isDefined) {
+          val planningAreaKey = ScottishCurriculumPlanningAreaWrapper(maybeNextPlanningAreaToAdd.get)
+          if (currentProgress.isDefinedAt(planningAreaKey)) {
+            val currentClassGroupProgressTuple = currentProgress(planningAreaKey)
+            val maybeNextGroupToAdd = lookupGroup(nextGroupProgressToAddTuple3._2, classGroups)
+            maybeNextGroupToAdd match {
+              case Some(group) => if (currentClassGroupProgressTuple._2.isDefinedAt(group)) {
+                logger.warn(s"ANDY ADD HERE YEAH!!!!!!!!!!!!!!!!")
+                // TODO: We are assuming at this point that if we have a document saved, then this is 100% at this group level
+                // Obviously there could be a list of 0 es and os, which would mean, or perhaps mean, no progress.
+                val newGroupProgressMap = currentClassGroupProgressTuple._2 + (group -> GroupLevelProgressPercent(100))
+                val classLevelPercent = newGroupProgressMap.values.map(wrapped => wrapped.percentValue).sum / newGroupProgressMap.values.size
+                val newClassGroupProgressTuple = (OverallClassLevelProgressPercent(classLevelPercent), newGroupProgressMap)
+                currentProgress + (planningAreaKey -> newClassGroupProgressTuple)
+              } else {
+                logger.warn(s"The group with id ${nextGroupProgressToAddTuple3._2} is NOT defined in the map. I would have expected it to be this point. Should already have been created.")
+                currentProgress
+              }
+              case None =>
+                if (nextGroupProgressToAddTuple3._2.groupId == CLASS_LEVEL) {
+                  logger.info(s"Okay, cool, we have a class level one to add here to ${planningAreaKey.niceValue()}")
+                  currentProgress + (planningAreaKey -> (OverallClassLevelProgressPercent(100), Map()))
+                } else {
+                  logger.warn(s"Could not find group with id ${nextGroupProgressToAddTuple3._2}")
+                  currentProgress
+                }
+            }
+          } else {
+            logger.warn(s"$planningAreaKey is not defined in the map. This is most odd")
+            currentProgress
+          }
+        } else {
+          logger.warn(s"The following planning area seems invalid : ${nextGroupProgressToAddTuple3._1.curriculumAreaName}")
+          currentProgress
+        }
+
+        addGroupLevelProgressMapLoop(remainingGroupsToUpdate.tail, nextProgress)
+      }
+    }
+
+    val curriculumPlanningAreaToLatestDocFlattened = {
+      for {
+        planningArea <- curriculumPlanningAreaToLatestDoc.keys
+        overallProgressAndGroupProgressTuple <- curriculumPlanningAreaToLatestDoc(planningArea)
+      } yield (planningArea, overallProgressAndGroupProgressTuple._1, curriculumPlanningAreaToLatestDoc(planningArea)(overallProgressAndGroupProgressTuple._1))
+    }.toList
+
+    addGroupLevelProgressMapLoop(curriculumPlanningAreaToLatestDocFlattened, initialZeroedProgress)
   }
 
   private[dao] def convertDocumentToCurriculumPlanProgressForClass(curriculumPlanningAreaToLatestDoc:
@@ -165,9 +229,8 @@ trait PlanReaderDaoSubjectTermlyPlanHelper extends PlanReaderDaoCommonHelper
   : Option[CurriculumPlanProgressForClass] =
   {
     val initialZeroedProgress = createZeroedProgressMap(planningAreas, classGroups)
-    val groupLevelProgress = addGroupLevelProgressMap(initialZeroedProgress, curriculumPlanningAreaToLatestDoc)
-    //    calculateClassLevelProgressMap(groupLevelProgress)
-    None
+    val groupAndClassLevelProgress = addGroupAndClassLevelProgressMap(initialZeroedProgress, curriculumPlanningAreaToLatestDoc, classGroups)
+    Some(CurriculumPlanProgressForClass(groupAndClassLevelProgress))
   }
 
 

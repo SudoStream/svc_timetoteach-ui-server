@@ -179,9 +179,9 @@ class PlanReaderDaoSubjectTermlyPlanHelperTest extends FunSpec
       val maths = ScottishCurriculumPlanningAreaWrapper(ScottishCurriculumPlanningArea.MATHEMATICS)
       assert(zeroedProgressMap(maths)._2.keySet.count(group => group.groupId.id == "groupId_circles") === 1)
     }
-    it("should return a map with maths one maths group id 'groupId_triangles'") {
+    it("should return a map with maths one maths group id 'groupId_f842e787-cc90-483f-a321-49b68a252a80'") {
       val maths = ScottishCurriculumPlanningAreaWrapper(ScottishCurriculumPlanningArea.MATHEMATICS)
-      assert(zeroedProgressMap(maths)._2.keySet.count(group => group.groupId.id == "groupId_triangles") === 1)
+      assert(zeroedProgressMap(maths)._2.keySet.count(group => group.groupId.id == "groupId_f842e787-cc90-483f-a321-49b68a252a80") === 1)
     }
     it("should return a map with maths ZERO maths group id 'toodlydoo'") {
       val maths = ScottishCurriculumPlanningAreaWrapper(ScottishCurriculumPlanningArea.MATHEMATICS)
@@ -227,7 +227,11 @@ class PlanReaderDaoSubjectTermlyPlanHelperTest extends FunSpec
       PlanReaderDaoHelperTermlyPlanTestHelper.createClassGroupsList()
     )
 
-    val groupLevelProgressMap = planReaderDao.addGroupLevelProgressMap(zeroedProgressMap, curriculumPlanningAreaToLatestDoc)
+    val groupLevelProgressMap = planReaderDao.addGroupAndClassLevelProgressMap(
+      zeroedProgressMap,
+      curriculumPlanningAreaToLatestDoc,
+      PlanReaderDaoHelperTermlyPlanTestHelper.createClassGroupsList()
+    )
 
     it("should have a drama progress of zero") {
       val drama = ScottishCurriculumPlanningAreaWrapper(ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__DRAMA)
@@ -237,5 +241,14 @@ class PlanReaderDaoSubjectTermlyPlanHelperTest extends FunSpec
       val drama = ScottishCurriculumPlanningAreaWrapper(ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__ART)
       assert(groupLevelProgressMap(drama)._1.percentValue == 100)
     }
+    it("should have an writing progress of 100") {
+      val writing = ScottishCurriculumPlanningAreaWrapper(ScottishCurriculumPlanningArea.LITERACY__WRITING)
+      assert(groupLevelProgressMap(writing)._1.percentValue == 100)
+    }
+    it("should have a maths progress of 33") {
+      val maths = ScottishCurriculumPlanningAreaWrapper(ScottishCurriculumPlanningArea.MATHEMATICS)
+      assert(groupLevelProgressMap(maths)._1.percentValue == 33)
+    }
+
   }
 }
