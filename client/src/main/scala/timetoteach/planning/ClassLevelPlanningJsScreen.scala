@@ -103,11 +103,13 @@ object ClassLevelPlanningJsScreen
     while (index < nodeListSize) {
       val levelSectionDiv = nodes(index).asInstanceOf[HTMLDivElement]
       if (levelSectionDiv.style.display == "none") {
+        global.console.log("selecttion currently none, make visible")
         levelSectionDiv.style.display = "block"
         curriculumLevelFilterButton.classList.remove("btn-outline-info")
         curriculumLevelFilterButton.classList.add("btn-warning")
         showAlertIfAllFilterButtonsAreOff()
       } else {
+        global.console.log("selecttion currently visible, make none")
         levelSectionDiv.style.display = "none"
         curriculumLevelFilterButton.classList.add("btn-outline-info")
         curriculumLevelFilterButton.classList.remove("btn-warning")
@@ -122,7 +124,7 @@ object ClassLevelPlanningJsScreen
   {
     val currentHeaders = scala.collection.mutable.ArrayBuffer.empty[String]
     val headerDivs = dom.document.getElementsByClassName("termly-plans-es-and-os-level-section-header")
-    global.console.log(s"headerDivs : ${headerDivs.toString}")
+    global.console.log(s"headerDivs length : ${headerDivs.length}")
     val nodeListSize = headerDivs.length
     var index = 0
     while (index < nodeListSize) {
@@ -147,7 +149,7 @@ object ClassLevelPlanningJsScreen
     curriculumLevelFilterButton.addEventListener("click", (e: dom.Event) => {
       global.console.log("clicked curriculumLevelFilterButton")
       val levelSectionDivs = dom.document.getElementsByClassName(s"termly-plans-es-and-os-level-section-div-${level}Level")
-      global.console.log(s"levelSectionDivs : ${levelSectionDivs.toString}")
+      global.console.log(s"levelSectionDivs size : ${levelSectionDivs.length}")
       curriculumLevelFilterButtonInstance(levelSectionDivs, curriculumLevelFilterButton)
       headerVisibility()
     })
