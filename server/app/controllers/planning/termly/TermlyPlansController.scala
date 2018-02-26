@@ -67,7 +67,7 @@ class TermlyPlansController @Inject()(
         userFamilyName,
         TimeToTeachUserId(tttUserId),
         buildSchoolNameToClassesMap(classes),
-        Map()
+        maybeCurriculumPlanProgress
       ))
     }
   }

@@ -15,6 +15,8 @@ import potentialmicroservice.planning.sharedschema.{TermlyCurriculumSelectionSch
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.util.control.NonFatal
+import scala.util.{Failure, Success}
 
 @Singleton
 class PlanReaderDaoImpl @Inject()(mongoDbConnection: MongoDbConnection) extends PlanReaderDao
@@ -49,15 +51,6 @@ class PlanReaderDaoImpl @Inject()(mongoDbConnection: MongoDbConnection) extends 
     }
   }
 
-  private def createClassIdArray(classes: List[ClassId]): BsonArray =
-  {
-    BsonArray({
-      for {
-        classId <- classes
-      } yield BsonString(classId.value)
-    })
-  }
-
   override def currentTermlyCurriculumSelection(tttUserId: TimeToTeachUserId, classes: List[ClassId], term: SchoolTerm): Future[Map[ClassId, Option[TermlyCurriculumSelection]]] =
   {
     logger.info(s"Looking for latest termly curriculum selection from Database for following class ids: $tttUserId|$term|${classes.toString}")
@@ -80,6 +73,12 @@ class PlanReaderDaoImpl @Inject()(mongoDbConnection: MongoDbConnection) extends 
     logger.debug(s"Looking for latest termly curriculum selection from Database with matcher ${findMatcher.toString}")
 
     val futureFoundCurriculumSelectionDocuments = termlyCurriculumSelectionCollection.find(findMatcher).toFuture()
+
+    futureFoundCurriculumSelectionDocuments.onComplete {
+      case Success(docsFound) => logger.debug(s"currentTermlyCurriculumSelection found ${docsFound.size}")
+      case Failure(ex) => logger.error("Problem finding termly selections : " + ex.getMessage)
+    }
+
     futureFoundCurriculumSelectionDocuments.map {
       foundTermlyCurriculumSelectionDocs: Seq[Document] => findLatestVersionOfTermlyCurriculumSelectionForEachClassId(foundTermlyCurriculumSelectionDocs.toList)
     }
@@ -122,9 +121,36 @@ class PlanReaderDaoImpl @Inject()(mongoDbConnection: MongoDbConnection) extends 
                                                 classIdToPlanningSelection: Map[ClassId, List[ScottishCurriculumPlanningArea]],
                                                 term: SchoolTerm): Future[Map[model.ClassId, Int]] =
   {
-    // TODO: ANDY
-    Future {
-      Map()
+    val listOfClassId_FutureMaybePlanProgress = for {
+      classDetails <- classes
+      planningAreasForClass = classIdToPlanningSelection(models.timetoteach.ClassId(classDetails.id.id))
+      futureMaybePlanProgress = curriculumPlanProgress(tttUserId, classDetails, planningAreasForClass, term)
+    } yield (classDetails.id, futureMaybePlanProgress)
+
+    val listOfFutureMaybePlanProgressWithHandleErrors = listOfClassId_FutureMaybePlanProgress.map { elem =>
+      (elem._1, elem._2.recover {
+        case NonFatal(e) =>
+          logger.warn(s"Had an issue processing plan progress: ${e.getMessage}")
+          None
+      }
+      )
+    }
+
+    val classIdToFutureInt = for {
+      classIdToEventualMaybeCurriculumPlanProgressTuple <- listOfFutureMaybePlanProgressWithHandleErrors
+      classId = classIdToEventualMaybeCurriculumPlanProgressTuple._1
+      eventualMaybeCurriculumPlanProgress = classIdToEventualMaybeCurriculumPlanProgressTuple._2
+      overallClassProgressPercent = eventualMaybeCurriculumPlanProgress map {
+        case Some(curriculumProgress) =>
+          val progressForCurriculumNumerator = curriculumProgress.curriculumProgressMap.values.map { elem => elem._1.percentValue }.sum
+          val progressForCurriculumDenominator = curriculumProgress.curriculumProgressMap.values.size
+          (classId, progressForCurriculumNumerator / progressForCurriculumDenominator)
+        case None => (classId, 0)
+      }
+    } yield overallClassProgressPercent
+
+    Future.sequence(classIdToFutureInt).map {
+      listOfClassIdToOverallProgressPercent => listOfClassIdToOverallProgressPercent.toMap
     }
   }
 
@@ -164,6 +190,18 @@ class PlanReaderDaoImpl @Inject()(mongoDbConnection: MongoDbConnection) extends 
     futureFoundTermlyPlanDocuments.map {
       foundTermlyPlanDocs: Seq[Document] => findLatestVersionOfTermlyPlan(foundTermlyPlanDocs.toList)
     }
+  }
+
+  ////
+
+
+  private def createClassIdArray(classes: List[ClassId]): BsonArray =
+  {
+    BsonArray({
+      for {
+        classId <- classes
+      } yield BsonString(classId.value)
+    })
   }
 
 }
