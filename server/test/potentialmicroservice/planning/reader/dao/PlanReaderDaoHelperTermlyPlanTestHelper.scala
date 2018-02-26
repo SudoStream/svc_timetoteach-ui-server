@@ -16,8 +16,8 @@ object PlanReaderDaoHelperTermlyPlanTestHelper
   {
     List(
       createTermlyPlanMongoDocumentWithIdAndTimestamp("204534664378917127976998", "2018-02-09 21:54:00.341", Some("groupId_f842e787-cc90-483f-a321-49b68a252a80")),
-      createTermlyPlanMongoDocumentWithIdAndTimestamp("1a7e0f39e9ff0d6d4d390e3c", "2018-02-09 21:33:43.347", Some("groupId_f842e787-cc90-483f-a321-49b68a252a80")),
-      createTermlyPlanMongoDocumentWithIdAndTimestamp("a21029985165479d9a049551", "2018-02-09 22:14:33.344", Some("groupId_f842e787-cc90-483f-a321-49b68a252a80")),
+      createTermlyPlanMongoDocumentWithIdAndTimestamp("1a7e0f39e9ff0d6d4d390e3c", "2018-02-09 21:33:43", Some("groupId_f842e787-cc90-483f-a321-49b68a252a80")),
+      createTermlyPlanMongoDocumentWithIdAndTimestamp("a21029985165479d9a049551", "2018-02-19 22:14:33.344", Some("groupId_f842e787-cc90-483f-a321-49b68a252a80")),
       createTermlyPlanMongoDocumentWithIdAndTimestamp("b38bcf3f4450361f4271b465", "2018-02-09 21:34:00.343", Some("groupId_f842e787-cc90-483f-a321-49b68a252a80")),
       createTermlyPlanMongoDocumentWithIdAndTimestamp("9a95defb5aa9a109ed704fea", "2018-02-09 21:17:30.349", Some("groupId_f842e787-cc90-483f-a321-49b68a252a80"))
     )

@@ -27,7 +27,7 @@ class PlanReaderDaoSubjectTermlyPlanHelperTest extends FunSpec
   }
 
   describe("When a list of several documents is provided, findLatestVersionOfTermlyPlanDocLoop()") {
-    it("should return a defined option") {
+    it("should return an id == a21029985165479d9a049551") {
       val document = planReaderDao.findLatestVersionOfTermlyPlanDocLoop(
         PlanReaderDaoHelperTermlyPlanTestHelper.createAListOfSeveralTermlyPlanDocumentsMixedUp().tail,
         PlanReaderDaoHelperTermlyPlanTestHelper.createAListOfSeveralTermlyPlanDocumentsMixedUp().head

@@ -252,8 +252,7 @@ trait PlanReaderDaoSubjectTermlyPlanHelper extends PlanReaderDaoCommonHelper
           val maybeCurrentTimestampIso = safelyGetString(currentLatestDoc, TermlyPlanningSchema.CREATED_TIMESTAMP)
           maybeCurrentTimestampIso match {
             case Some(currentTimestampIso) =>
-              val currentTimestamp = safelyParseTimestamp(nextTimestampIso)
-
+              val currentTimestamp = safelyParseTimestamp(currentTimestampIso)
               if (currentTimestamp.isBefore(nextTimestamp)) {
                 nextDoc
               } else {
@@ -268,16 +267,19 @@ trait PlanReaderDaoSubjectTermlyPlanHelper extends PlanReaderDaoCommonHelper
     }
   }
 
-  private def safelyParseTimestamp(nextTimestampIso: String) =
+  private def safelyParseTimestamp(nextTimestampIso: String) : LocalDateTime =
   {
-    try {
+    val time = try {
       LocalDateTime.parse(nextTimestampIso, formatter)
     } catch {
       case e: Throwable =>
         logger.warn(s"Failed to parse assumed fomat. ${formatter.toString}, trying ${formatter2.toString}")
         LocalDateTime.parse(nextTimestampIso, formatter2)
     }
+    logger.debug(s"Time parsed = '${time.toString}'")
+    time
   }
+
   private def convertDocumentEandOsWithBenchmarks(document: BsonDocument): Option[EandOsWithBenchmarks] =
   {
     try {
