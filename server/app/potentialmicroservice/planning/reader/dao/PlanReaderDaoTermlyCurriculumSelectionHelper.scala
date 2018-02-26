@@ -49,9 +49,9 @@ trait PlanReaderDaoTermlyCurriculumSelectionHelper extends PlanReaderDaoCommonHe
 
   @tailrec
   private[dao] final def findLatestVersionOfTermlyCurriculumSelectionForEachClassIdLoop(
-                                                                                   remainingTermlySelectionDocs: List[Document],
-                                                                                   currentMap: Map[ClassId, Document]
-                                                                                 ): Map[ClassId, Document] =
+                                                                                         remainingTermlySelectionDocs: List[Document],
+                                                                                         currentMap: Map[ClassId, Document]
+                                                                                       ): Map[ClassId, Document] =
   {
     if (remainingTermlySelectionDocs.isEmpty) currentMap
     else {
@@ -103,9 +103,16 @@ trait PlanReaderDaoTermlyCurriculumSelectionHelper extends PlanReaderDaoCommonHe
     }
     newLatestDoc
   }
+
   private[dao] def convertMapDocumentToTermlyCurriculumSelection(classIdToLatestDoc: Map[ClassId, Document]): Map[ClassId, Option[TermlyCurriculumSelection]] =
   {
-    Map()
+    {
+      for {
+        classId <- classIdToLatestDoc.keys
+        docToConvert = classIdToLatestDoc(classId)
+        maybeTermlyCurriculumSelection = convertDocumentToTermlyCurriculumSelection(docToConvert)
+      } yield (classId, maybeTermlyCurriculumSelection)
+    }.toMap
   }
 
   private[dao] def convertDocumentToTermlyCurriculumSelection(doc: Document): Option[TermlyCurriculumSelection] =

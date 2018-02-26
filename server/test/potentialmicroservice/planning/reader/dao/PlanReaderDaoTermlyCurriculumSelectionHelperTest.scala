@@ -78,30 +78,34 @@ class PlanReaderDaoTermlyCurriculumSelectionHelperTest extends FunSpec
     it("should return a non empty map") {
       assert(classIdToMaybeSelection.nonEmpty)
     }
-    it("should have a map with 3 keys"){
-      assert(classIdToMaybeSelection.keys.size == 3)
+    it("should have a map with 3 keys") {
+      assert(classIdToMaybeSelection.keys.size === 3)
     }
-    it("should have a map with the classid1 which has an id of 204534664378917127976998"){
-      assert(classIdToMaybeSelection(ClassId("classId1")).get("_id").get.asString().getValue == "204534664378917127976998")
+    it("should have a map with the classid1 which has an id of 204534664378917127976998") {
+      assert(classIdToMaybeSelection(ClassId("classId1")).get("_id").get.asString().getValue === "204534664378917127976998")
     }
-    it("should have a map with the classid2 which has an id of 448bcf3f4450361f4271b444"){
-      assert(classIdToMaybeSelection(ClassId("classId2")).get("_id").get.asString().getValue == "448bcf3f4450361f4271b444")
+    it("should have a map with the classid2 which has an id of 448bcf3f4450361f4271b444") {
+      assert(classIdToMaybeSelection(ClassId("classId2")).get("_id").get.asString().getValue === "448bcf3f4450361f4271b444")
     }
-    it("should have a map with the classid3 which has an id of 1010defb5aa9a109ed701010"){
-      assert(classIdToMaybeSelection(ClassId("classId3")).get("_id").get.asString().getValue == "1010defb5aa9a109ed701010")
+    it("should have a map with the classid3 which has an id of 1010defb5aa9a109ed701010") {
+      assert(classIdToMaybeSelection(ClassId("classId3")).get("_id").get.asString().getValue === "1010defb5aa9a109ed701010")
     }
   }
 
 
-  //  describe("When give a list of mixed class ids, findLatestVersionOfTermlyCurriculumSelectionForEachClassId()") {
-  //    it("should return a non empty map") {
-  //      val classIdToMaybeSelection =
-  //        planReaderTermlyCurriculumSelectionHelper.findLatestVersionOfTermlyCurriculumSelectionForEachClassId(
-  //          PlanReaderDaoHelperTermlyCurriculumSelectionTestHelper.
-  //            createAListOfSeveralTermlyCurriculumSelectionDocumentsMixedUpWithDifferentClassIds()
-  //        )
-  //      assert(classIdToMaybeSelection.nonEmpty)
-  //    }
-  //  }
+  describe("When give a list of mixed class ids, findLatestVersionOfTermlyCurriculumSelectionForEachClassId()") {
+    val classIdToMaybeSelection =
+      planReaderTermlyCurriculumSelectionHelper.findLatestVersionOfTermlyCurriculumSelectionForEachClassId(
+        PlanReaderDaoHelperTermlyCurriculumSelectionTestHelper.
+          createAListOfSeveralTermlyCurriculumSelectionDocumentsMixedUpWithDifferentClassIds()
+      )
+
+    it("should return a non empty map") {
+      assert(classIdToMaybeSelection.nonEmpty)
+    }
+    it("should return a map with 3 keys") {
+      assert(classIdToMaybeSelection.keySet.size === 3)
+    }
+  }
 
 }
