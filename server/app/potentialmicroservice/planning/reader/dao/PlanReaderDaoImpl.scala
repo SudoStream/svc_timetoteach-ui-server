@@ -8,7 +8,7 @@ import javax.inject.{Inject, Singleton}
 import models.timetoteach.planning._
 import models.timetoteach.term.SchoolTerm
 import models.timetoteach.{ClassId, TimeToTeachUserId}
-import org.mongodb.scala.bson.BsonDocument
+import org.mongodb.scala.bson.{BsonArray, BsonDocument, BsonString}
 import org.mongodb.scala.{Document, MongoCollection}
 import play.api.Logger
 import potentialmicroservice.planning.sharedschema.{TermlyCurriculumSelectionSchema, TermlyPlanningSchema}
@@ -49,6 +49,15 @@ class PlanReaderDaoImpl @Inject()(mongoDbConnection: MongoDbConnection) extends 
     }
   }
 
+  private def createClassIdArray(classes: List[ClassId]): BsonArray =
+  {
+    BsonArray({
+      for {
+        classId <- classes
+      } yield BsonString(classId.value)
+    })
+  }
+
   override def currentTermlyCurriculumSelection(tttUserId: TimeToTeachUserId, classes: List[ClassId], term: SchoolTerm): Future[Map[ClassId, Option[TermlyCurriculumSelection]]] =
   {
     logger.info(s"Looking for latest termly curriculum selection from Database for following class ids: $tttUserId|$term|${classes.toString}")
@@ -57,7 +66,7 @@ class PlanReaderDaoImpl @Inject()(mongoDbConnection: MongoDbConnection) extends 
       TermlyCurriculumSelectionSchema.TTT_USER_ID -> tttUserId.value,
 
       TermlyCurriculumSelectionSchema.CLASS_ID -> BsonDocument(
-        "$in" -> classes.map { classId => classId.value }.mkString(",")
+        "$in" -> createClassIdArray(classes)
       ),
 
       TermlyCurriculumSelectionSchema.SCHOOL_TERM -> BsonDocument(
