@@ -1,7 +1,6 @@
 package controllers.planning.termly
 
 import java.time.{LocalDateTime, LocalTime}
-import javax.inject.Inject
 
 import be.objectify.deadbolt.scala.cache.HandlerCache
 import be.objectify.deadbolt.scala.{AuthenticatedRequest, DeadboltActions}
@@ -10,12 +9,14 @@ import controllers.serviceproxies._
 import curriculum.scotland.EsOsAndBenchmarksBuilderImpl
 import duplicate.model.{ClassDetails, TermlyPlansToSave}
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
+
+import javax.inject.Inject
 import models.timetoteach.planning.{TermlyCurriculumSelection, _}
 import models.timetoteach.{ClassId, CookieNames, TimeToTeachUserId}
 import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms.{mapping, _}
-import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}
+import play.api.mvc._
 import security.MyDeadboltHandler
 import utils.TemplateUtils.getCookieStringFromRequest
 
@@ -58,7 +59,7 @@ class TermlyPlansController @Inject()(
         termService.currentSchoolTerm()
       )
 
-      maybeCurriculumPlanProgress  <- futureMaybeCurriculumPlanProgress
+      maybeCurriculumPlanProgress <- futureMaybeCurriculumPlanProgress
 
     } yield {
       Ok(views.html.planning.termly.termlyPlansHome(new MyDeadboltHandler(userReader),
@@ -138,7 +139,7 @@ class TermlyPlansController @Inject()(
         maybeCurrentTermlyCurriculumSelection
       )
 
-      maybeCurriculumPlanProgress  <- futureMaybeCurriculumPlanProgress
+      maybeCurriculumPlanProgress <- futureMaybeCurriculumPlanProgress
 
       route = maybeCurrentTermlyCurriculumSelection match {
         case Some(currentTermlyCurriculumSelection) =>
@@ -434,6 +435,12 @@ class TermlyPlansController @Inject()(
     formValidationResult.fold(errorFunction, successFunction)
   }
 
+
+//  def pdfTest() =
+//  {
+//    val pdfGenerator = new PdfGenerator
+//    pdfGenerator.ok(views.html.planning.termly.termlyPlansForClassOverallOverviewPdf.apply(), "http://localhost:9000")
+//  }
 
 }
 
