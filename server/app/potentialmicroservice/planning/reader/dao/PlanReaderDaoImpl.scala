@@ -49,6 +49,34 @@ class PlanReaderDaoImpl @Inject()(mongoDbConnection: MongoDbConnection) extends 
     }
   }
 
+  override def currentTermlyCurriculumSelection(tttUserId: TimeToTeachUserId, classes: List[ClassId], term: SchoolTerm): Future[Map[ClassId, Option[TermlyCurriculumSelection]]] =
+  {
+    logger.info(s"Looking for latest termly curriculum selection from Database for following class ids: $tttUserId|$term|${classes.toString}")
+
+    val findMatcher = BsonDocument(
+      TermlyCurriculumSelectionSchema.TTT_USER_ID -> tttUserId.value,
+
+      TermlyCurriculumSelectionSchema.CLASS_ID -> BsonDocument(
+        "$in" -> classes.map { classId => classId.value }.mkString(",")
+      ),
+
+      TermlyCurriculumSelectionSchema.SCHOOL_TERM -> BsonDocument(
+        TermlyCurriculumSelectionSchema.SCHOOL_YEAR -> term.schoolYear.niceValue,
+        TermlyCurriculumSelectionSchema.SCHOOL_TERM_NAME -> term.schoolTermName.toString,
+        TermlyCurriculumSelectionSchema.SCHOOL_TERM_FIRST_DAY -> term.termFirstDay.toString,
+        TermlyCurriculumSelectionSchema.SCHOOL_TERM_LAST_DAY -> term.termLastDay.toString
+      )
+    )
+
+    logger.debug(s"Looking for latest termly curriculum selection from Database with matcher ${findMatcher.toString}")
+
+    val futureFoundCurriculumSelectionDocuments = termlyCurriculumSelectionCollection.find(findMatcher).toFuture()
+    futureFoundCurriculumSelectionDocuments.map {
+      foundTermlyCurriculumSelectionDocs: Seq[Document] => findLatestVersionOfTermlyCurriculumSelectionForEachClassId(foundTermlyCurriculumSelectionDocs.toList)
+    }
+
+  }
+
   override def curriculumPlanProgress(tttUserId: TimeToTeachUserId,
                                       classDetails: ClassDetails,
                                       planningAreas: List[ScottishCurriculumPlanningArea],

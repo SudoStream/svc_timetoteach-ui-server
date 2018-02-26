@@ -13,6 +13,8 @@ import play.api.Logger
 import potentialmicroservice.planning.sharedschema.TermlyCurriculumSelectionSchema
 import utils.mongodb.MongoDbSafety.{safelyGetString, safelyGetStringNoneIfBlank}
 
+import scala.annotation.tailrec
+
 trait PlanReaderDaoTermlyCurriculumSelectionHelper extends PlanReaderDaoCommonHelper
 {
   private val logger: Logger = Logger
@@ -31,30 +33,79 @@ trait PlanReaderDaoTermlyCurriculumSelectionHelper extends PlanReaderDaoCommonHe
     }
   }
 
+  def findLatestVersionOfTermlyCurriculumSelectionForEachClassId(foundTermlyCurriculumSelectionDocs: List[Document]): Map[ClassId, Option[TermlyCurriculumSelection]] =
+  {
+    logger.debug(s"foundTermlyCurriculumSelectionDocs size = ${foundTermlyCurriculumSelectionDocs.size}")
+    if (foundTermlyCurriculumSelectionDocs.isEmpty) {
+      Map()
+    } else {
+      val latestVersionOfTermlyPlansDocMap = findLatestVersionOfTermlyCurriculumSelectionForEachClassIdLoop(
+        foundTermlyCurriculumSelectionDocs.tail, Map())
+      convertMapDocumentToTermlyCurriculumSelection(latestVersionOfTermlyPlansDocMap)
+    }
+  }
+
+  /////////////////////////////////////////// Impl /////////////////////////////
+
+  @tailrec
+  private[dao] final def findLatestVersionOfTermlyCurriculumSelectionForEachClassIdLoop(
+                                                                                   remainingTermlySelectionDocs: List[Document],
+                                                                                   currentMap: Map[ClassId, Document]
+                                                                                 ): Map[ClassId, Document] =
+  {
+    if (remainingTermlySelectionDocs.isEmpty) currentMap
+    else {
+      val nextDocToMaybeAdd = remainingTermlySelectionDocs.head
+      val maybeNextClassIdOfDoc = safelyGetString(nextDocToMaybeAdd, TermlyCurriculumSelectionSchema.CLASS_ID)
+      val nextMapVersion = maybeNextClassIdOfDoc match {
+        case Some(nextClassId) =>
+          currentMap.get(ClassId(nextClassId)) match {
+            case Some(nextDoc) =>
+              val currentLatestDoc = currentMap.getOrElse(ClassId(nextClassId), Document())
+              val newLatestDoc = mostRecentDoc(currentLatestDoc, nextDocToMaybeAdd)
+              currentMap + (ClassId(nextClassId) -> newLatestDoc)
+            case None =>
+              currentMap + (ClassId(nextClassId) -> nextDocToMaybeAdd)
+          }
+        case None => currentMap
+      }
+      findLatestVersionOfTermlyCurriculumSelectionForEachClassIdLoop(remainingTermlySelectionDocs.tail, nextMapVersion)
+    }
+  }
+
   private[dao] def findLatestVersionOfTermlyCurriculumSelectionLoop(foundTermlyCurriculumSelectionDocs: List[Document], currentLatestDoc: Document): Document =
   {
     if (foundTermlyCurriculumSelectionDocs.isEmpty) currentLatestDoc
     else {
       val nextDoc = foundTermlyCurriculumSelectionDocs.head
-      val maybeNextTimestampIso = safelyGetString(nextDoc, TermlyCurriculumSelectionSchema.CREATED_TIMESTAMP)
-      val newLatestDoc: Document = maybeNextTimestampIso match {
-        case Some(nextTimestampIso) =>
-          val nextTimestamp = LocalDateTime.parse(nextTimestampIso, formatter)
-          val maybeCurrentTimestampIso = safelyGetString(currentLatestDoc, TermlyCurriculumSelectionSchema.CREATED_TIMESTAMP)
-          maybeCurrentTimestampIso match {
-            case Some(currentTimestampIso) => val currentTimestamp = LocalDateTime.parse(currentTimestampIso, formatter)
-              if (currentTimestamp.isBefore(nextTimestamp)) {
-                nextDoc
-              } else {
-                currentLatestDoc
-              }
-            case None => currentLatestDoc
-          }
-        case None => currentLatestDoc
-      }
-
+      val newLatestDoc: Document = mostRecentDoc(currentLatestDoc, nextDoc)
       findLatestVersionOfTermlyCurriculumSelectionLoop(foundTermlyCurriculumSelectionDocs.tail, newLatestDoc)
     }
+  }
+
+  private def mostRecentDoc(currentLatestDoc: Document, nextDoc: Document) =
+  {
+    val maybeNextTimestampIso = safelyGetString(nextDoc, TermlyCurriculumSelectionSchema.CREATED_TIMESTAMP)
+    val newLatestDoc: Document = maybeNextTimestampIso match {
+      case Some(nextTimestampIso) =>
+        val nextTimestamp = LocalDateTime.parse(nextTimestampIso, formatter)
+        val maybeCurrentTimestampIso = safelyGetString(currentLatestDoc, TermlyCurriculumSelectionSchema.CREATED_TIMESTAMP)
+        maybeCurrentTimestampIso match {
+          case Some(currentTimestampIso) => val currentTimestamp = LocalDateTime.parse(currentTimestampIso, formatter)
+            if (currentTimestamp.isBefore(nextTimestamp)) {
+              nextDoc
+            } else {
+              currentLatestDoc
+            }
+          case None => currentLatestDoc
+        }
+      case None => currentLatestDoc
+    }
+    newLatestDoc
+  }
+  private[dao] def convertMapDocumentToTermlyCurriculumSelection(classIdToLatestDoc: Map[ClassId, Document]): Map[ClassId, Option[TermlyCurriculumSelection]] =
+  {
+    Map()
   }
 
   private[dao] def convertDocumentToTermlyCurriculumSelection(doc: Document): Option[TermlyCurriculumSelection] =

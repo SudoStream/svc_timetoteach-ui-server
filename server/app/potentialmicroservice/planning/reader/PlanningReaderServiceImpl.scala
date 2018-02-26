@@ -9,7 +9,6 @@ import models.timetoteach.term.SchoolTerm
 import models.timetoteach.{ClassId, TimeToTeachUserId}
 import potentialmicroservice.planning.reader.dao.PlanReaderDao
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
@@ -27,10 +26,7 @@ class PlanningReaderServiceImpl @Inject()(planningReaderDao: PlanReaderDao) exte
                                                 classIds: List[ClassId],
                                                 term: SchoolTerm): Future[Map[ClassId, Option[TermlyCurriculumSelection]]] =
   {
-    // TODO: ANDY
-    Future {
-      Map()
-    }
+    planningReaderDao.currentTermlyCurriculumSelection(tttUserId, classIds, term)
   }
 
   override def curriculumPlanProgress(tttUserId: TimeToTeachUserId,

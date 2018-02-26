@@ -19,6 +19,12 @@ trait PlanReaderDao
                                         term: SchoolTerm
                                       ): Future[Option[TermlyCurriculumSelection]]
 
+  def currentTermlyCurriculumSelection(
+                                        tttUserId: TimeToTeachUserId,
+                                        classes: List[ClassId],
+                                        term: SchoolTerm
+                                      ): Future[Map[ClassId, Option[TermlyCurriculumSelection]]]
+
   def curriculumPlanProgress(
                               tttUserId: TimeToTeachUserId,
                               classDetails: ClassDetails,
