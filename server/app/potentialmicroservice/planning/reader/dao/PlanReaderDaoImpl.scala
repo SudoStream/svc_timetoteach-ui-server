@@ -123,6 +123,7 @@ class PlanReaderDaoImpl @Inject()(mongoDbConnection: MongoDbConnection) extends 
   {
     val listOfClassId_FutureMaybePlanProgress = for {
       classDetails <- classes
+      if classIdToPlanningSelection.isDefinedAt(models.timetoteach.ClassId(classDetails.id.id))
       planningAreasForClass = classIdToPlanningSelection(models.timetoteach.ClassId(classDetails.id.id))
       futureMaybePlanProgress = curriculumPlanProgress(tttUserId, classDetails, planningAreasForClass, term)
     } yield (classDetails.id, futureMaybePlanProgress)
