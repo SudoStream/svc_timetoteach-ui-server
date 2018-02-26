@@ -1,7 +1,6 @@
 @import be.objectify.deadbolt.scala.AuthenticatedRequest
 @import models.timetoteach.TimeToTeachUserId
 @import models.timetoteach.planning.ScottishCurriculumPlanningAreaWrapper
-@import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails, planningAreas: List[ScottishCurriculumPlanningAreaWrapper], postSelectedCurriculumAreasUrl: Call, theForm: Form[controllers.planning.termly.TermlyPlansControllerFormHelper.CurriculumAreaSelectionData])(implicit request: AuthenticatedRequest[Any])
 
 @timetoteachAppMain(handler, s"${classDetails.className.name} Area Selection",
