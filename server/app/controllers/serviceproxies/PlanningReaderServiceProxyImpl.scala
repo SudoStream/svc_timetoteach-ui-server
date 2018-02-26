@@ -7,6 +7,7 @@ import javax.inject.{Inject, Singleton}
 import models.timetoteach.planning.{CurriculumAreaTermlyPlan, CurriculumPlanProgressForClass, GroupId, TermlyCurriculumSelection}
 import models.timetoteach.term.SchoolTerm
 import models.timetoteach.{ClassId, TimeToTeachUserId}
+import play.api.Logger
 import potentialmicroservice.planning.reader.PlanningReaderService
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -15,6 +16,7 @@ import scala.concurrent.Future
 @Singleton
 class PlanningReaderServiceProxyImpl @Inject()(planningReaderService: PlanningReaderService, termService: TermServiceProxy) extends PlanningReaderServiceProxy
 {
+  private val logger: Logger = Logger
 
   override def currentTermlyCurriculumSelection(tttUserId: TimeToTeachUserId, classId: ClassId, term: SchoolTerm): Future[Option[TermlyCurriculumSelection]] =
   {
@@ -56,6 +58,7 @@ class PlanningReaderServiceProxyImpl @Inject()(planningReaderService: PlanningRe
   private def convertToPlanningAreas(classIdToTermlyCurriculumSelection: Map[ClassId, Option[TermlyCurriculumSelection]]):
   Map[ClassId, List[ScottishCurriculumPlanningArea]] =
   {
+    logger.debug(s"incoming map to convertToPlanningAreas() is ${classIdToTermlyCurriculumSelection.toString}")
     def safeConvert(maybeSelection: Option[TermlyCurriculumSelection]): List[ScottishCurriculumPlanningArea] =
     {
       maybeSelection match {

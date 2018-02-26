@@ -21,6 +21,12 @@ object PlanReaderDaoHelperTermlyCurriculumSelectionTestHelper
     )
   }
 
+  def createAListOfOneTermlyCurriculumSelectionDocument(): List[Document] = {
+    List(
+      createTermlyCurriculumSelectionMongoDocumentWithIdAndTimestamp("204534664378917127976998", "2018-02-22 21:54:00.341", "classId1")
+    )
+  }
+
   def createAListOfSeveralTermlyCurriculumSelectionDocumentsMixedUpWithDifferentClassIds(): List[Document] =
   {
     List(

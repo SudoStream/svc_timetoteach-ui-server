@@ -108,4 +108,17 @@ class PlanReaderDaoTermlyCurriculumSelectionHelperTest extends FunSpec
     }
   }
 
+  describe("When give a list of 1 class ids, findLatestVersionOfTermlyCurriculumSelectionForEachClassId()") {
+    val classIdToMaybeSelection =
+      planReaderTermlyCurriculumSelectionHelper.findLatestVersionOfTermlyCurriculumSelectionForEachClassId(
+        PlanReaderDaoHelperTermlyCurriculumSelectionTestHelper.createAListOfOneTermlyCurriculumSelectionDocument()
+      )
+    it("should return a non empty map") {
+      assert(classIdToMaybeSelection.nonEmpty)
+    }
+    it("should return a map with 3 keys") {
+      assert(classIdToMaybeSelection.keySet.size === 1)
+    }
+  }
+
 }

@@ -75,7 +75,9 @@ class PlanReaderDaoImpl @Inject()(mongoDbConnection: MongoDbConnection) extends 
     val futureFoundCurriculumSelectionDocuments = termlyCurriculumSelectionCollection.find(findMatcher).toFuture()
 
     futureFoundCurriculumSelectionDocuments.onComplete {
-      case Success(docsFound) => logger.debug(s"currentTermlyCurriculumSelection found ${docsFound.size}")
+      case Success(docsFound) =>
+        logger.info(s"currentTermlyCurriculumSelection found ${docsFound.size}")
+        logger.debug(s"currentTermlyCurriculumSelection found ${docsFound.toString}")
       case Failure(ex) => logger.error("Problem finding termly selections : " + ex.getMessage)
     }
 
@@ -121,6 +123,8 @@ class PlanReaderDaoImpl @Inject()(mongoDbConnection: MongoDbConnection) extends 
                                                 classIdToPlanningSelection: Map[ClassId, List[ScottishCurriculumPlanningArea]],
                                                 term: SchoolTerm): Future[Map[model.ClassId, Int]] =
   {
+    logger.debug(s"curriculumPlanProgressForClasses() : ${classIdToPlanningSelection.toString()}")
+
     val listOfClassId_FutureMaybePlanProgress = for {
       classDetails <- classes
       if classIdToPlanningSelection.isDefinedAt(models.timetoteach.ClassId(classDetails.id.id))

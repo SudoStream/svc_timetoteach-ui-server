@@ -40,7 +40,7 @@ trait PlanReaderDaoTermlyCurriculumSelectionHelper extends PlanReaderDaoCommonHe
       Map()
     } else {
       val latestVersionOfTermlyPlansDocMap = findLatestVersionOfTermlyCurriculumSelectionForEachClassIdLoop(
-        foundTermlyCurriculumSelectionDocs.tail, Map())
+        foundTermlyCurriculumSelectionDocs, Map())
       convertMapDocumentToTermlyCurriculumSelection(latestVersionOfTermlyPlansDocMap)
     }
   }
