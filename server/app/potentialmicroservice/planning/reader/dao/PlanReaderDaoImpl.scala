@@ -80,6 +80,18 @@ class PlanReaderDaoImpl @Inject()(mongoDbConnection: MongoDbConnection) extends 
     }
   }
 
+  override def curriculumPlanProgressForClasses(tttUserId: TimeToTeachUserId,
+                                                classes: List[ClassDetails],
+                                                classIdToPlanningSelection: Map[ClassId, List[ScottishCurriculumPlanningArea]],
+                                                term: SchoolTerm): Future[Map[model.ClassId, Int]] =
+  {
+    // TODO: ANDY
+    Future {
+      Map()
+    }
+  }
+
+
   override def readCurriculumAreaTermlyPlanForGroup(tttUserId: TimeToTeachUserId,
                                                     classId: ClassId,
                                                     groupId: GroupId,
@@ -114,17 +126,6 @@ class PlanReaderDaoImpl @Inject()(mongoDbConnection: MongoDbConnection) extends 
     val futureFoundTermlyPlanDocuments = termlyPlanningCollection.find(findMatcher).toFuture()
     futureFoundTermlyPlanDocuments.map {
       foundTermlyPlanDocs: Seq[Document] => findLatestVersionOfTermlyPlan(foundTermlyPlanDocs.toList)
-    }
-  }
-
-  override def curriculumPlanProgressForClasses(tttUserId: TimeToTeachUserId,
-                                                classes: List[ClassDetails],
-                                                classIdToPlanningSelection: Map[ClassId, List[ScottishCurriculumPlanningArea]],
-                                                term: SchoolTerm): Future[Map[model.ClassId, Int]] =
-  {
-    // TODO: ANDY
-    Future {
-      Map()
     }
   }
 
