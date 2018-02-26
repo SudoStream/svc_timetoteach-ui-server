@@ -5,6 +5,7 @@ import org.scalajs.dom
 import org.scalajs.dom.ext.Ajax
 import org.scalajs.dom.ext.Ajax.InputData
 import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement}
+import timetoteach.planning.ClassLevelPlanningJsScreen.selectedEsAndOsWithBenchmarks
 import upickle.default.write
 
 import scala.collection.mutable
@@ -174,7 +175,7 @@ object ClassGroupPlanningJsScreen {
         val curriculumSection = theDiv.getAttribute("data-curriculum-section")
         val curriculumSubSection = theDiv.getAttribute("data-curriculum-subsection")
 
-        global.console.log(s"Selected Benchmark '$benchmarkValue'")
+        global.console.log(s"Selected the Benchmark '$benchmarkValue'||$curriculumSection||$curriculumSubSection")
         if (
           (selectedEsAndOsWithBenchmarks.nonEmpty &&
             selectedEsAndOsWithBenchmarks.isDefinedAt(curriculumSection) &&
@@ -183,6 +184,13 @@ object ClassGroupPlanningJsScreen {
           selectedEsAndOsWithBenchmarks(curriculumSection)(curriculumSubSection)._2.remove(benchmarkValue)
           setButtonDefaults(theDiv)
         } else {
+          if (!selectedEsAndOsWithBenchmarks.isDefinedAt(curriculumSection)) {
+            selectedEsAndOsWithBenchmarks = selectedEsAndOsWithBenchmarks + (curriculumSection -> mutable.Map.empty)
+          }
+          if (!selectedEsAndOsWithBenchmarks(curriculumSection).isDefinedAt(curriculumSubSection)) {
+            selectedEsAndOsWithBenchmarks(curriculumSection)(curriculumSubSection) = (scala.collection.mutable.Set.empty, scala.collection.mutable.Set.empty)
+          }
+
           selectedEsAndOsWithBenchmarks(curriculumSection)(curriculumSubSection)._2.add(benchmarkValue)
           theDiv.style.backgroundColor = "#016ecd"
           theDiv.style.color = "white"
