@@ -4,6 +4,7 @@ import org.scalajs.dom
 import timetoteach.addnewclass.AddNewClassJsScreen
 import timetoteach.classesHome.ClassHomeJsScreen
 import timetoteach.classtimetable.ClassTimetableScreen
+import timetoteach.manageClass.ManageClassJsScreen
 import timetoteach.planning.{ClassGroupPlanningJsScreen, ClassLevelPlanningJsScreen}
 import timetoteach.signup.SignupJs
 
@@ -34,6 +35,9 @@ object TimeToTeachApp extends js.JSApp
     }
     if (dom.document.location.toString.contains("termlyplanningforclassatclasslevel")) {
       ClassLevelPlanningJsScreen.loadJavascript()
+    }
+    if (dom.document.location.toString.contains("manageclass")) {
+      ManageClassJsScreen.loadJavascript()
     }
 
   }

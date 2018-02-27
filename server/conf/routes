@@ -43,6 +43,7 @@ GET           /addnewclass                                                      
 GET           /manageclass/:classId                                                             controllers.planning.classtimetable.ClassTimetableController.manageClass(classId)
 GET           /classtimetable/:classId                                                          controllers.planning.classtimetable.ClassTimetableController.classTimetable(classId)
 POST          /savenewclass                                                                     controllers.planning.classtimetable.ClassTimetableController.saveNewClass
+POST          /editclass                                                                        controllers.planning.classtimetable.ClassTimetableController.editClass
 DELETE        /deleteclass/:tttUserId/:classId                                                  controllers.planning.classtimetable.ClassTimetableController.deleteClass(tttUserId, classId)
 
 POST          /classtimetablesave                                                               controllers.planning.classtimetable.ClassTimetableController.classTimetableSave

@@ -36,7 +36,9 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
                                          cc: ControllerComponents,
                                          deadbolt: DeadboltActions,
                                          handlers: HandlerCache,
-                                         actionBuilder: ActionBuilders) extends AbstractController(cc) {
+                                         actionBuilder: ActionBuilders) extends AbstractController(cc)
+  with ClassTimetableControllerHelper
+{
 
   implicit val system: ActorSystem = ActorSystem()
   implicit val executor: ExecutionContextExecutor = system.dispatcher
@@ -47,7 +49,7 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
   private val userServicePort = config.getString("services.user-service-port")
   private val timeToTeachFacebookId = config.getString("login.details.facebook.timetoteach-facebook-id")
   private val timeToTeachFacebookSecret = config.getString("login.details.facebook.timetoteach-facebook-secret")
-  val logger: Logger.type = Logger
+  private val logger: Logger.type = Logger
 
   val defaultSchoolDayTimes = SchoolDayTimes(
     schoolDayStarts = LocalTime.of(9, 0),
@@ -145,7 +147,8 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
     }
   }
 
-  private def extractCommonHeaders(authRequest: AuthenticatedRequest[AnyContent]) = {
+  private def extractCommonHeaders(authRequest: AuthenticatedRequest[AnyContent]) =
+  {
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
     val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
@@ -237,6 +240,38 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
     }
   }
 
+  def editClass: Action[AnyContent] = Action.async { implicit request =>
+    val newClassFormBound = newClassForm.bindFromRequest.get
+    logger.debug(s"Edit Class Pickled = #${newClassFormBound.newClassPickled}#")
+    logger.debug(s"TTT User Id = ${newClassFormBound.tttUserId}")
+
+    import upickle.default._
+    val editedClass = read[ClassDetails](newClassFormBound.newClassPickled)
+
+    val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(
+      TimeToTeachUserId(newClassFormBound.tttUserId)
+    )
+
+    val upserted = {
+      for {
+        classes <- eventualClasses
+        classDetailsList = classes.filter(theClass => theClass.id.id == editedClass.id.id)
+        maybeClassDetails = classDetailsList.headOption
+        if maybeClassDetails.isDefined
+        currentClass = maybeClassDetails.get
+        mergedClass = mergeEditedClassWithCurrent(currentClass, editedClass)
+      } yield classTimetableWriter.upsertClass(
+        TimeToTeachUserId(newClassFormBound.tttUserId),
+        mergedClass.asInstanceOf[ClassDetails]
+      )
+    }.flatMap(res => res)
+
+    for {
+      done <- upserted
+    } yield Ok("Created new class!")
+
+
+  }
 
   def saveNewClass: Action[AnyContent] = Action.async { implicit request =>
     val newClassFormBound = newClassForm.bindFromRequest.get

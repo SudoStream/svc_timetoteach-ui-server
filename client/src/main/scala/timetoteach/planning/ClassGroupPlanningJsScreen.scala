@@ -5,14 +5,14 @@ import org.scalajs.dom
 import org.scalajs.dom.ext.Ajax
 import org.scalajs.dom.ext.Ajax.InputData
 import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement}
-import timetoteach.planning.ClassLevelPlanningJsScreen.selectedEsAndOsWithBenchmarks
 import upickle.default.write
 
 import scala.collection.mutable
 import scala.scalajs.js.Dynamic.global
 import scala.util.{Failure, Success}
 
-object ClassGroupPlanningJsScreen {
+object ClassGroupPlanningJsScreen
+{
 
   var selectedEsAndOsWithBenchmarks: scala.collection.mutable.Map[String, scala.collection.mutable.Map[String,
     (scala.collection.mutable.Set[String], scala.collection.mutable.Set[String])]] = scala.collection.mutable.Map.empty
@@ -21,7 +21,8 @@ object ClassGroupPlanningJsScreen {
   var eAndORowForegroundNormalColor: Option[String] = None
   var eAndORowBorderRadius: Option[String] = None
 
-  def loadJavascript(): Unit = {
+  def loadJavascript(): Unit =
+  {
     mouseoverHighlightEandOsAndBenchmarks()
     clickOnEandO()
     clickOnBenchmark()
@@ -29,7 +30,8 @@ object ClassGroupPlanningJsScreen {
     clearButton()
   }
 
-  def clearButton(): Unit = {
+  def clearButton(): Unit =
+  {
     val clearButton = dom.document.getElementById("clear-termly-groups-button").asInstanceOf[HTMLButtonElement]
     clearButton.addEventListener("click", (e: dom.Event) => {
       selectedEsAndOsWithBenchmarks.clear()
@@ -38,7 +40,8 @@ object ClassGroupPlanningJsScreen {
     })
   }
 
-  private def setDefaultsForAllButtonsByClass(classValue: String): Unit = {
+  private def setDefaultsForAllButtonsByClass(classValue: String): Unit =
+  {
     val element = dom.document.getElementsByClassName(classValue)
     val nodeListSize = element.length
     var index = 0
@@ -49,13 +52,15 @@ object ClassGroupPlanningJsScreen {
     }
   }
 
-  private def setButtonDefaults(theDiv: HTMLDivElement): Unit = {
+  private def setButtonDefaults(theDiv: HTMLDivElement): Unit =
+  {
     theDiv.style.backgroundColor = eAndORowBackgroundNormalColor.getOrElse("white")
     theDiv.style.color = eAndORowForegroundNormalColor.getOrElse("grey")
     theDiv.style.borderRadius = eAndORowBorderRadius.getOrElse("0")
   }
 
-  def convertEsAndOsToListFormat(selectedEsAndOsWithBenchmarks: mutable.Map[String, mutable.Map[String, (mutable.Set[String], mutable.Set[String])]]): List[EandOsWithBenchmarks] = {
+  def convertEsAndOsToListFormat(selectedEsAndOsWithBenchmarks: mutable.Map[String, mutable.Map[String, (mutable.Set[String], mutable.Set[String])]]): List[EandOsWithBenchmarks] =
+  {
     {
       for {
         section <- selectedEsAndOsWithBenchmarks.keys
@@ -68,7 +73,8 @@ object ClassGroupPlanningJsScreen {
     }.toList
   }
 
-  def saveButton(): Unit = {
+  def saveButton(): Unit =
+  {
     val saveButton = dom.document.getElementById("save-termly-groups-button").asInstanceOf[HTMLButtonElement]
     saveButton.addEventListener("click", (e: dom.Event) => {
       saveButton.disabled = true
@@ -122,7 +128,8 @@ object ClassGroupPlanningJsScreen {
     })
   }
 
-  def clickOnEandO(): Unit = {
+  def clickOnEandO(): Unit =
+  {
     val allEAndORows = dom.document.getElementsByClassName("termly-plans-es-and-os-code-and-eando-row")
     val nodeListSize = allEAndORows.length
     var index = 0
@@ -163,7 +170,8 @@ object ClassGroupPlanningJsScreen {
     }
   }
 
-  def clickOnBenchmark(): Unit = {
+  def clickOnBenchmark(): Unit =
+  {
     val allBenchmarkRows = dom.document.getElementsByClassName("termly-plans-es-and-os-benchmark")
     val nodeListSize = allBenchmarkRows.length
     var index = 0
@@ -203,7 +211,8 @@ object ClassGroupPlanningJsScreen {
   }
 
 
-  def mouseoverHighlightEandOsAndBenchmarks(): Unit = {
+  def mouseoverHighlightEandOsAndBenchmarks(): Unit =
+  {
     val allEAndOAndBenchmarkRows = dom.document.getElementsByClassName("termly-plans-eobenchmark-row")
     val nodeListSize = allEAndOAndBenchmarkRows.length
     var index = 0

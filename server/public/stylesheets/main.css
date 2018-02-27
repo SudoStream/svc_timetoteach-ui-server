@@ -543,6 +543,10 @@ img {
     float: right;
 }
 
+.save-edit-buttons {
+    float: right;
+}
+
 .clear-cancel-save-buttons a {
     color: white;
 }
