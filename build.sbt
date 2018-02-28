@@ -10,7 +10,7 @@ name := "timetoteach"
 val scalaV = "2.11.11"
 
 ///////////////////////////////////////////
-val WWW_TIMETOTEACH_VERSION = "0.0.1-267"
+val WWW_TIMETOTEACH_VERSION = "0.0.1-268"
 ///////////////////////////////////////////
 
 lazy val timetoteach_ui_server = (project in file("server")).settings(
@@ -41,7 +41,8 @@ lazy val timetoteach_ui_server = (project in file("server")).settings(
     "com.lihaoyi" %% "upickle" % "0.5.1",
     "org.mongodb.scala" %% "mongo-scala-driver" % "2.1.0",
     "io.netty" % "netty-all" % "4.1.15.Final",
-//    "it.innove" % "play2-pdf" % "1.6.0",
+    "com.builtamont" %% "play2-scala-pdf" % "2.0.0.P26",
+    "net.codingwell" %% "scala-guice" % "4.1.0",
 
     //test
     "org.scalatest" %% "scalatest" % "3.0.4" % "test",

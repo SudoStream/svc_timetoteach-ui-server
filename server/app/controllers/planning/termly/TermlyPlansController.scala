@@ -4,13 +4,13 @@ import java.time.{LocalDateTime, LocalTime}
 
 import be.objectify.deadbolt.scala.cache.HandlerCache
 import be.objectify.deadbolt.scala.{AuthenticatedRequest, DeadboltActions}
+import controllers.pdf.PdfGeneratorWrapper
 import controllers.planning.termly.TermlyPlansControllerFormHelper._
 import controllers.serviceproxies._
 import curriculum.scotland.EsOsAndBenchmarksBuilderImpl
 import duplicate.model.{ClassDetails, TermlyPlansToSave}
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
-
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import models.timetoteach.planning.{TermlyCurriculumSelection, _}
 import models.timetoteach.{ClassId, CookieNames, TimeToTeachUserId}
 import play.api.Logger
@@ -24,6 +24,7 @@ import scala.annotation.tailrec
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
+@Singleton
 class TermlyPlansController @Inject()(
                                        cc: ControllerComponents,
                                        userReader: UserReaderServiceProxyImpl,
@@ -34,6 +35,7 @@ class TermlyPlansController @Inject()(
                                        planningReaderService: PlanningReaderServiceProxy,
                                        termsPlanHelper: TermPlansHelper,
                                        termService: TermServiceProxy,
+                                       pdfGeneratorWrapper: PdfGeneratorWrapper,
                                        deadbolt: DeadboltActions) extends AbstractController(cc)
 {
 
@@ -435,12 +437,9 @@ class TermlyPlansController @Inject()(
     formValidationResult.fold(errorFunction, successFunction)
   }
 
-
-//  def pdfTest() =
-//  {
-//    val pdfGenerator = new PdfGenerator
-//    pdfGenerator.ok(views.html.planning.termly.termlyPlansForClassOverallOverviewPdf.apply(), "http://localhost:9000")
-//  }
+  def pdfTest = Action {
+    pdfGeneratorWrapper.pdfGenerator.ok(views.html.planning.termly.termlyPlansForClassOverallOverviewPdf.apply(), "http://localhost:9000")
+  }
 
 }
 
