@@ -187,6 +187,24 @@
     margin-bottom: 1rem;
 }
 
+.add-new-group-modal-row {
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+
+.add-new-group-modal-save {
+    margin-bottom: 1rem;
+}
+
+#addNewGroupModalBodyErrorsDiv {
+    display: none;
+}
+
+#addNewGroupModalBodyErrorsAlert {
+
+}
 
 @media screen and ( min-width: 990px) {
     .manage-new-group-row {

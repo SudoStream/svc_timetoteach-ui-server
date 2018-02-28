@@ -189,7 +189,7 @@
                         @for(group <- classDetails.groups.sortBy(group => group.groupLevel)) {
                             @if(group.groupType.value.toLowerCase == "reading") {
                                 <div class="manage-new-group-row">
-                                    <div class="form-row manage-class-group-row"  data-group-id="@group.groupId.id" data-group-type="reading">
+                                    <div class="form-row manage-class-group-row" data-group-id="@group.groupId.id" data-group-type="reading">
 
                                         <div class="row in-app-menu-small-devices in-app-menu-small-devices-row">
                                             <div class="col-sm-12 text-muted"><small>Group Name</small></div>
@@ -266,7 +266,7 @@
                         <label class="manage-class-desription-label manage-class-group-header">Other Groups</label>
                         @for(group <- classDetails.groups.sortBy(group => group.groupLevel)) {
                             @if(group.groupType.value.toLowerCase == "other") {
-                                <div class="form-row manage-class-group-row"  data-group-id="@group.groupId.id" data-group-type="other">
+                                <div class="form-row manage-class-group-row" data-group-id="@group.groupId.id" data-group-type="other">
                                     <div class="col-lg-6">
                                         <input type="text" name="groupName" class="form-control form-control-sm" disabled="true"
                                         placeholder="@{
@@ -280,7 +280,7 @@
                                         }">
                                     </div>
                                     @*<div class="col-lg-1">*@
-                                    @*<button type="button" class="close  delete-this-class-group" aria-label="Close">*@
+                                    @*<button type="button" class="close delete-this-class-group" aria-label="Close">*@
                                     @*<span aria-hidden="true">&times;</span>*@
                                     @*</button>*@
                                     @*</div>*@
@@ -308,7 +308,7 @@
                         @for(group <- classDetails.groups.sortBy(group => group.groupLevel)) {
                             @if(group.groupType.value.toLowerCase == "writing") {
                                 <div class="manage-new-group-row">
-                                    <div class="form-row manage-class-group-row"  data-group-id="@group.groupId.id" data-group-type="writing">
+                                    <div class="form-row manage-class-group-row" data-group-id="@group.groupId.id" data-group-type="writing">
 
                                         <div class="row in-app-menu-small-devices in-app-menu-small-devices-row">
                                             <div class="col-sm-12 text-muted"><small>Group Name</small></div>
@@ -395,7 +395,7 @@
                         @for(group <- classDetails.groups) {
                             @if(group.groupType.value.toLowerCase == "spelling") {
                                 <div class="manage-new-group-row">
-                                    <div class="form-row manage-class-group-row"  data-group-id="@group.groupId.id" data-group-type="spelling">
+                                    <div class="form-row manage-class-group-row" data-group-id="@group.groupId.id" data-group-type="spelling">
 
                                         <div class="row in-app-menu-small-devices in-app-menu-small-devices-row">
                                             <div class="col-sm-12 text-muted"><small>Group Name</small></div>
@@ -474,7 +474,7 @@
                         <label class="manage-class-desription-label manage-class-group-header">Other Groups</label>
                         @for(group <- classDetails.groups) {
                             @if(group.groupType.value.toLowerCase == "other") {
-                                <div class="form-row manage-class-group-row"  data-group-id="@group.groupId.id" data-group-type="other">
+                                <div class="form-row manage-class-group-row" data-group-id="@group.groupId.id" data-group-type="other">
                                     <div class="col-lg-6">
                                         <input type="text" name="groupName" class="form-control form-control-sm" disabled="true"
                                         placeholder="@{
@@ -502,8 +502,52 @@
             </div>
         </div>
 
+        <div class="modal" id="addNewGroupModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addNewGroupModalHeader">
+                            Add New [GROUP_TYPE] Group</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div id="addNewGroupModalBody" class="modal-body">
+                        <div id="addNewGroupModalBodyErrorsDiv">
+                            <div id="addNewGroupModalBodyErrorsAlert"></div>
+                        </div>
+
+                        <div class="add-new-group-modal-row">
+                            <input type := "text" class = "form-control" id = "add-group-name" name="add-group-name"
+                            placeholder = "Enter group name">
+                        </div>
+                        <div class="add-new-group-modal-row">
+                            <input type := "text" class = "form-control" id = "add-group-description" name="add-group-description"
+                            placeholder = "Enter group description">
+                        </div>
+                        <div class="add-new-group-modal-row">
+                            <select id="select-curriculum-level" name="select-curriculum-level" class="btn btn-outline-info">
+                                <option value="Select">Select Curriculum Level ...</option>
+                                <option value="Early">Early</option>
+                                <option value="Second">First</option>
+                                <option value="Third">Second</option>
+                                <option value="Early">Third</option>
+                                <option value="Early">Fourth</option>
+                            </select>
+                        </div>
+
+                        <div class="add-new-group-modal-save d-flex justify-content-center">
+                            <button id="add-new-groups-save-button" type="button" class="btn btn btn-primary add-new-class-button">
+                                Add Group</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div id="save-class-edit-changes-div" class="save-edit-buttons">
-            <button id="save-class-edit-changes-button" type="button" class="btn btn btn-primary" disabled="true">Save Changes</button>
+            <button id="save-class-edit-changes-button" type="button" class="btn btn btn-primary" disabled="true">
+                Save Changes</button>
         </div>
 
     </div>

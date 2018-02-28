@@ -1,8 +1,7 @@
 @import be.objectify.deadbolt.scala.AuthenticatedRequest
-@import models.timetoteach.classtimetable.SchoolDayTimes
-@import shared.model.classtimetable._
 @import models.timetoteach.TimeToTeachUserId
-@import shared.model.classtimetable.WWWClassTimetable
+@import models.timetoteach.classtimetable.SchoolDayTimes
+@import shared.model.classtimetable.{WWWClassTimetable, _}
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], schoolDayTimes: SchoolDayTimes, savedWwwClassTimetable: Option[WWWClassTimetable], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails)(implicit request: AuthenticatedRequest[Any])
 
 @timetoteachAppMain(handler, s"Class Timetable - " + classDetails.className.name,
@@ -22,7 +21,7 @@
         <li class="nav-item nav-login-button">
             <a class="btn btn-outline-primary btn-block" role="button"
             href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(classDetails.id.id)">
-            Manage @classDetails.className.name</a>
+                Manage @classDetails.className.name</a>
         </li>
 
         <li class="nav-item nav-login-button">
@@ -49,20 +48,20 @@
                             <a class="btn btn-outline-primary" role="button" href="@controllers.planning.classtimetable.routes.ClassTimetableController.classesHome()">
                                 Classes Home</a>
                         </li>
+                    </ul>
 
-                        <li class="nav-item manage-class-nav-item-on-left">
+                    <ul class="nav justify-content-end">
+                        <li class="nav-item manage-class-nav-item-on-right">
                             <a class="btn btn-info" role="button"
                             href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(classDetails.id.id)">
-                            Manage @classDetails.className.name</a>
+                                Manage @classDetails.className.name</a>
                         </li>
 
-                        <li class="nav-item manage-class-nav-item-on-left">
+                        <li class="nav-item manage-class-nav-item-on-rightmost">
                             <a class="btn btn-info" role="button"
                             href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(classDetails.id.id)">
                                 Termly Plans</a>
                         </li>
-
-
                     </ul>
 
                 </div>

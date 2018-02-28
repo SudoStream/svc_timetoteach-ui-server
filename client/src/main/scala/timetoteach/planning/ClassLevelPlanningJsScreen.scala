@@ -312,10 +312,12 @@ object ClassLevelPlanningJsScreen
           (selectedEsAndOsWithBenchmarks.nonEmpty &&
             selectedEsAndOsWithBenchmarks.isDefinedAt(curriculumSection) &&
             selectedEsAndOsWithBenchmarks(curriculumSection).isDefinedAt(curriculumSubSection)) &&
-            selectedEsAndOsWithBenchmarks(curriculumSection)(curriculumSubSection)._1.contains(benchmarkValue)) {
+            selectedEsAndOsWithBenchmarks(curriculumSection)(curriculumSubSection)._2.contains(benchmarkValue)) {
           selectedEsAndOsWithBenchmarks(curriculumSection)(curriculumSubSection)._2.remove(benchmarkValue)
+          global.console.log("Selected benchmark already present, lets de-select")
           setButtonDefaults(theDiv)
         } else {
+          global.console.log("Selected benchmark NOT already present, lets add")
           if (!selectedEsAndOsWithBenchmarks.isDefinedAt(curriculumSection)) {
             selectedEsAndOsWithBenchmarks = selectedEsAndOsWithBenchmarks + (curriculumSection -> mutable.Map.empty)
           }

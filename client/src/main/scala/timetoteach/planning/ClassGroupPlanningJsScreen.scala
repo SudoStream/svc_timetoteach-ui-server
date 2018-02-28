@@ -188,7 +188,7 @@ object ClassGroupPlanningJsScreen
           (selectedEsAndOsWithBenchmarks.nonEmpty &&
             selectedEsAndOsWithBenchmarks.isDefinedAt(curriculumSection) &&
             selectedEsAndOsWithBenchmarks(curriculumSection).isDefinedAt(curriculumSubSection)) &&
-            selectedEsAndOsWithBenchmarks(curriculumSection)(curriculumSubSection)._1.contains(benchmarkValue)) {
+            selectedEsAndOsWithBenchmarks(curriculumSection)(curriculumSubSection)._2.contains(benchmarkValue)) {
           selectedEsAndOsWithBenchmarks(curriculumSection)(curriculumSubSection)._2.remove(benchmarkValue)
           setButtonDefaults(theDiv)
         } else {

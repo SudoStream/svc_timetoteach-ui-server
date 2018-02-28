@@ -4,11 +4,17 @@ import duplicate.model._
 import org.scalajs.dom
 import org.scalajs.dom.ext.Ajax
 import org.scalajs.dom.ext.Ajax.InputData
-import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement, HTMLInputElement}
+import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement, HTMLInputElement, HTMLSelectElement}
+import scalatags.JsDom
 
 import scala.collection.mutable.ListBuffer
+import scala.scalajs.js
 import scala.scalajs.js.Dynamic.global
 import scala.util.{Failure, Success}
+import scalatags.JsDom.all.{`class`, div, _}
+import timetoteach.addnewclass.AddNewClassJsScreen.groupCounter
+
+import scala.collection.mutable
 
 object ManageClassJsScreen
 {
@@ -18,13 +24,190 @@ object ManageClassJsScreen
   // var groupsEdited: scala.collection.mutable.Map[String, ] = scala.collection.mutable.Set.empty
   // var newGroupsAdded:
 
+  var groupTypeCurrentlyAdding: Option[String] = None
+
   def loadJavascript(): Unit =
   {
     global.console.log("Adding js for Manage Class Screen")
     addDeleteGroupBehaviour()
     saveButton()
     makeSaveButtonEnabledIfStateHasChanged()
+    addNewGroupButtons()
+    addNewGroupSaveButton()
   }
+
+  private def createAlerts(errors: Seq[String]): JsDom.Modifier =
+  {
+    div()(
+     for(error <- errors) yield div(`class` := "alert alert-danger", role := "alert")(p(error))
+    )
+  }
+
+  def addNewGroupSaveButton(): Unit =
+  {
+    val addNewGroupSaveBtn = dom.document.getElementById("add-new-groups-save-button").asInstanceOf[HTMLButtonElement]
+    if (addNewGroupSaveBtn != null) {
+      addNewGroupSaveBtn.addEventListener("click", (e: dom.Event) => {
+        groupTypeCurrentlyAdding match {
+          case Some(groupValue) =>
+            val errorsAlert = dom.document.getElementById("addNewGroupModalBodyErrorsAlert").asInstanceOf[HTMLDivElement]
+            while (errorsAlert.firstChild != null) {
+              errorsAlert.removeChild(errorsAlert.firstChild)
+            }
+
+            val ERRORS: scala.collection.mutable.Set[String] = scala.collection.mutable.Set.empty
+
+            val groupName = dom.document.getElementById("add-group-name").asInstanceOf[HTMLInputElement].value
+            if (groupName == null || groupName.isEmpty) {
+              ERRORS += "Group Name should not be empty"
+              dom.document.getElementById("add-group-name").asInstanceOf[HTMLInputElement].style.borderColor = "red"
+            } else {
+              dom.document.getElementById("add-group-name").asInstanceOf[HTMLInputElement].style.borderColor = "green"
+            }
+
+            val groupDescription = dom.document.getElementById("add-group-description").asInstanceOf[HTMLInputElement].value
+            dom.document.getElementById("add-group-description").asInstanceOf[HTMLInputElement].style.borderColor = "green"
+
+            val groupLevel = dom.document.getElementById("select-curriculum-level").asInstanceOf[HTMLSelectElement].value
+            if (groupLevel == null || groupLevel.isEmpty || groupLevel == "Select") {
+              ERRORS += "Must select a valid group level"
+              dom.document.getElementById("select-curriculum-level").asInstanceOf[HTMLSelectElement].style.borderColor = "red"
+            } else {
+              dom.document.getElementById("select-curriculum-level").asInstanceOf[HTMLSelectElement].style.borderColor = "green"
+            }
+
+            global.console.log(s"Creating group with values ... $groupName|$groupDescription|$groupValue|$groupLevel")
+
+            if (ERRORS.nonEmpty) {
+              val errorsDiv = dom.document.getElementById("addNewGroupModalBodyErrorsDiv").asInstanceOf[HTMLDivElement]
+
+              val alertsMessage = div()(
+                div()(
+                  p("There was a problem with some of the input details:"),
+                  createAlerts(ERRORS.toSeq)
+                )
+              )
+
+              val child = dom.document.createElement("div")
+              child.innerHTML = alertsMessage.toString()
+
+              while (errorsAlert.firstChild != null) {
+                errorsAlert.removeChild(errorsAlert.firstChild)
+              }
+
+              errorsAlert.appendChild(child)
+
+              errorsDiv.style.display = "block"
+            }
+          case None =>
+            global.console.log("Error: No group type is currently set")
+        }
+      })
+    } else {
+      global.console.log("Error: Could not find button 'add-new-groups-save-button'")
+    }
+  }
+
+  def createNewGroupRow(): Unit =
+  {
+    //    <div class="manage-new-group-row">
+    //      <div class="form-row manage-class-group-row" data-group-id="@group.groupId.id" data-group-type="spelling">
+    //
+    //        <div class="row in-app-menu-small-devices in-app-menu-small-devices-row">
+    //          <div class="col-sm-12 text-muted"><small>Group Name</small></div>
+    //          <div class="col-sm-12 ">
+    //            <input type="text" name="groupName" class="form-control form-control-sm" disabled="true"
+    //                   placeholder="@{
+    //                                                    group.groupName.name
+    //                                                }">
+    //            </div>
+    //          </div>
+    //          <div class="col-lg-3 in-app-menu-medium-and-up">
+    //            <input id="group-name-@group.groupId.id" type="text" name="groupName" class="form-control form-control-sm editable-input-button"
+    //                   placeholder="@group.groupName.name" value="@group.groupName.name">
+    //            </div>
+    //
+    //
+    //            <div class="row in-app-menu-small-devices in-app-menu-small-devices-row">
+    //              <div class="col-sm-12 text-muted"><small>Description</small></div>
+    //              <div class="col-sm-12 ">
+    //                <input type="text" name="groupDescription" class="form-control form-control-sm" disabled="true"
+    //                       placeholder="@{
+    //                                                    group.groupDescription.name
+    //                                                }">
+    //                </div>
+    //              </div>
+    //              <div class="col-lg-5 in-app-menu-medium-and-up">
+    //                <input id="group-description-@group.groupId.id" type="text" name="groupDescription" class="form-control form-control-sm editable-input-button"
+    //                       placeholder="@group.groupDescription.name" value="@group.groupDescription.name">
+    //                </div>
+    //
+    //
+    //                <div class="row in-app-menu-small-devices in-app-menu-small-devices-row">
+    //                  <div class="col-sm-12 text-muted"><small>Level</small></div>
+    //                  <div class="col-sm-12 ">
+    //                    <input type="text" name="groupDescription" class="form-control form-control-sm" disabled="true"
+    //                           placeholder="@{
+    //                                                    group.groupLevel.value.toLowerCase.capitalize.replace("level", "")
+    //    }">
+    //    </div>
+    //    </div>
+    //    <div class="col-lg-2 in-app-menu-medium-and-up">
+    //      <input id="group-level-@group.groupId.id" type="text" name="groupType" class="form-control form-control-sm" disabled="true"
+    //             placeholder="@group.groupLevel.value.toLowerCase.capitalize.replace("level", "")">
+    //    </div>
+    //
+    //    <div class="row in-app-menu-small-devices in-app-menu-small-devices-row">
+    //      <br>
+    //        <div class="col-sm-6 ">
+    //          <button type="button" class="close  delete-this-class-group" aria-label="Close">
+    //            <span aria-hidden="true">&times;</span>
+    //          </button>
+    //        </div>
+    //      </div>
+    //      <div class="col-lg-1 in-app-menu-medium-and-up">
+    //        <button type="button" class="close delete-this-class-group" aria-label="Close">
+    //          <span aria-hidden="true">&times;</span>
+    //        </button>
+    //      </div>
+    //      <div class="col-lg-1 in-app-menu-medium-and-up"></div>
+    //
+    //    </div>
+    //    </div>
+
+  }
+
+  def addNewGroupButtons(): Unit =
+  {
+    //    option(value := "Mathematics", "Mathematics"),
+    //    option(value := "Reading", "Reading"),
+    //    option(value := "Writing", "Writing"),
+    //    option(value := "Spelling", "Spelling")
+
+    addNewMathsGroupButton("add-new-maths-groups-button", "Mathematics")
+  }
+
+  def addNewMathsGroupButton(elementId: String, groupType: String): Unit =
+  {
+    val addNewMathsGroupBtn = dom.document.getElementById(elementId).asInstanceOf[HTMLButtonElement]
+    if (addNewMathsGroupBtn != null) {
+      addNewMathsGroupBtn.addEventListener("click", (e: dom.Event) => {
+        val modalHeader = dom.document.getElementById("addNewGroupModalHeader")
+        if (modalHeader != null) {
+          modalHeader.innerHTML = s"Add New ${groupType.capitalize} Group"
+          groupTypeCurrentlyAdding = Some(groupType)
+
+          val $ = js.Dynamic.global.$
+          $("#addNewGroupModal").modal("show", "backdrop: static", "keyboard : false")
+        } else {
+          global.console.log("WARNING: Could not find button 'add-new-maths-groups-button'")
+        }
+      })
+    } else {
+      global.console.log(s"WARNING: Could not find button $elementId")
+    }
+  }
+
 
   def makeSaveButtonEnabledIfStateHasChanged(): Unit =
   {
