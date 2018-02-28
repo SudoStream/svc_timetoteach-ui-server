@@ -103,6 +103,7 @@
                                 <div class="col-lg-2"></div>
                             </div>
                         </div>
+                        <div id="mathematics-groups-section">
                         @for(group <- classDetails.groups.sortBy(group => group.groupLevel)) {
                             @if(group.groupType.value.toLowerCase == "mathematics") {
                                 <div class="manage-new-group-row">
@@ -143,7 +144,7 @@
                                                 }">
                                             </div>
                                         </div>
-                                        <div class="col-lg-2 in-app-menu-medium-and-up">
+                                        <div class="col-lg-3 in-app-menu-medium-and-up">
                                             <input id="group-level-@group.groupId.id" type="text" name="groupType" class="form-control form-control-sm" disabled="true"
                                             placeholder="@group.groupLevel.value.toLowerCase.capitalize.replace("level", "")">
                                         </div>
@@ -161,12 +162,12 @@
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
-                                        <div class="col-lg-1 in-app-menu-medium-and-up"></div>
 
                                     </div>
                                 </div>
                             }
                         }
+                        </div>
                         <div>
                             <button id="add-new-maths-groups-button" type="button" class="btn btn-sm btn-success add-new-class-button">
                                 Add New Maths Group</button>
@@ -186,6 +187,7 @@
                             </div>
                         </div>
 
+                        <div id="reading-groups-section">
                         @for(group <- classDetails.groups.sortBy(group => group.groupLevel)) {
                             @if(group.groupType.value.toLowerCase == "reading") {
                                 <div class="manage-new-group-row">
@@ -228,7 +230,7 @@
                                                 }">
                                             </div>
                                         </div>
-                                        <div class="col-lg-2 in-app-menu-medium-and-up">
+                                        <div class="col-lg-3 in-app-menu-medium-and-up">
                                             <input id="group-level-@group.groupId.id" type="text" name="groupType" class="form-control form-control-sm" disabled="true"
                                             placeholder="@group.groupLevel.value.toLowerCase.capitalize.replace("level", "")">
                                         </div>
@@ -246,12 +248,12 @@
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
-                                        <div class="col-lg-1 in-app-menu-medium-and-up"></div>
 
                                     </div>
                                 </div>
                             }
                         }
+                        </div>
                         <div>
                             <button id="add-new-reading-groups-button" type="button" class="btn btn-sm btn-success add-new-class-button">
                                 Add New Reading Group</button>
@@ -305,6 +307,7 @@
                                 <div class="col-lg-2"></div>
                             </div>
                         </div>
+                        <div id="writing-groups-section">
                         @for(group <- classDetails.groups.sortBy(group => group.groupLevel)) {
                             @if(group.groupType.value.toLowerCase == "writing") {
                                 <div class="manage-new-group-row">
@@ -349,7 +352,7 @@
                                                 }">
                                             </div>
                                         </div>
-                                        <div class="col-lg-2 in-app-menu-medium-and-up">
+                                        <div class="col-lg-3 in-app-menu-medium-and-up">
                                             <input id="group-level-@group.groupId.id" type="text" name="groupType" class="form-control form-control-sm" disabled="true"
                                             placeholder="@group.groupLevel.value.toLowerCase.capitalize.replace("level", "")">
                                         </div>
@@ -367,12 +370,11 @@
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
-                                        <div class="col-lg-1 in-app-menu-medium-and-up"></div>
-
                                     </div>
                                 </div>
                             }
                         }
+                        </div>
                         <div>
                             <button id="add-new-writing-groups-button" type="button" class="btn btn-sm btn-success add-new-class-button">
                                 Add New Writing Group</button>
@@ -392,6 +394,7 @@
                             </div>
                         </div>
 
+                        <div id="spelling-groups-section">
                         @for(group <- classDetails.groups) {
                             @if(group.groupType.value.toLowerCase == "spelling") {
                                 <div class="manage-new-group-row">
@@ -436,7 +439,7 @@
                                                 }">
                                             </div>
                                         </div>
-                                        <div class="col-lg-2 in-app-menu-medium-and-up">
+                                        <div class="col-lg-3 in-app-menu-medium-and-up">
                                             <input id="group-level-@group.groupId.id" type="text" name="groupType" class="form-control form-control-sm" disabled="true"
                                             placeholder="@group.groupLevel.value.toLowerCase.capitalize.replace("level", "")">
                                         </div>
@@ -454,12 +457,12 @@
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
-                                        <div class="col-lg-1 in-app-menu-medium-and-up"></div>
 
                                     </div>
                                 </div>
                             }
                         }
+                        </div>
                         <div>
                             <button id="add-new-spelling-groups-button" type="button" class="btn btn-sm btn-success add-new-class-button">
                                 Add New Spelling Group</button>
@@ -529,10 +532,10 @@
                             <select id="select-curriculum-level" name="select-curriculum-level" class="btn btn-outline-info">
                                 <option value="Select">Select Curriculum Level ...</option>
                                 <option value="Early">Early</option>
-                                <option value="Second">First</option>
-                                <option value="Third">Second</option>
-                                <option value="Early">Third</option>
-                                <option value="Early">Fourth</option>
+                                <option value="First">First</option>
+                                <option value="Second">Second</option>
+                                <option value="Third">Third</option>
+                                <option value="Fourth">Fourth</option>
                             </select>
                         </div>
 

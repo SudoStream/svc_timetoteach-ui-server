@@ -6,23 +6,20 @@ import org.scalajs.dom.ext.Ajax
 import org.scalajs.dom.ext.Ajax.InputData
 import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement, HTMLInputElement, HTMLSelectElement}
 import scalatags.JsDom
+import scalatags.JsDom.all.{`class`, div, _}
 
+import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.scalajs.js
 import scala.scalajs.js.Dynamic.global
 import scala.util.{Failure, Success}
-import scalatags.JsDom.all.{`class`, div, _}
-import timetoteach.addnewclass.AddNewClassJsScreen.groupCounter
-
-import scala.collection.mutable
 
 object ManageClassJsScreen
 {
   var newClassName: Option[String] = None
   var newClassDescription: Option[String] = None
   var groupIdsToBeDeleted: scala.collection.mutable.Set[String] = scala.collection.mutable.Set.empty
-  // var groupsEdited: scala.collection.mutable.Map[String, ] = scala.collection.mutable.Set.empty
-  // var newGroupsAdded:
+  var newGroupsAdded: scala.collection.mutable.Set[String] = scala.collection.mutable.Set.empty
 
   var groupTypeCurrentlyAdding: Option[String] = None
 
@@ -39,7 +36,7 @@ object ManageClassJsScreen
   private def createAlerts(errors: Seq[String]): JsDom.Modifier =
   {
     div()(
-     for(error <- errors) yield div(`class` := "alert alert-danger", role := "alert")(p(error))
+      for (error <- errors) yield div(`class` := "alert alert-danger", role := "alert")(p(error))
     )
   }
 
@@ -76,28 +73,25 @@ object ManageClassJsScreen
               dom.document.getElementById("select-curriculum-level").asInstanceOf[HTMLSelectElement].style.borderColor = "green"
             }
 
-            global.console.log(s"Creating group with values ... $groupName|$groupDescription|$groupValue|$groupLevel")
+            if (ERRORS.isEmpty) {
+              global.console.log(s"Creating group with values ... $groupName|$groupDescription|$groupValue|$groupLevel")
+              val classId = dom.window.localStorage.getItem("classId")
 
-            if (ERRORS.nonEmpty) {
-              val errorsDiv = dom.document.getElementById("addNewGroupModalBodyErrorsDiv").asInstanceOf[HTMLDivElement]
+              val groupId = GroupId(s"groupId_${java.util.UUID.randomUUID()}")
+              val groupTypeModel = groupTypeFromString(groupValue)
+              val groupNameModel = GroupName(groupName)
+              val groupDescriptionModel = GroupDescription(groupDescription)
+              val groupLevelModel = groupLevelFromString(groupLevel)
 
-              val alertsMessage = div()(
-                div()(
-                  p("There was a problem with some of the input details:"),
-                  createAlerts(ERRORS.toSeq)
-                )
-              )
+              createNewGroupRow(groupId, groupTypeModel, groupNameModel, groupDescriptionModel, groupLevelModel)
 
-              val child = dom.document.createElement("div")
-              child.innerHTML = alertsMessage.toString()
+              newGroupsAdded.add(groupId.id)
+              makeSaveButtonEnabledIfStateHasChanged()
 
-              while (errorsAlert.firstChild != null) {
-                errorsAlert.removeChild(errorsAlert.firstChild)
-              }
-
-              errorsAlert.appendChild(child)
-
-              errorsDiv.style.display = "block"
+              val $ = js.Dynamic.global.$
+              $("#addNewGroupModal").modal("hide")
+            } else {
+              showErrors(errorsAlert, ERRORS)
             }
           case None =>
             global.console.log("Error: No group type is currently set")
@@ -108,83 +102,98 @@ object ManageClassJsScreen
     }
   }
 
-  def createNewGroupRow(): Unit =
+  private def showErrors(errorsAlert: HTMLDivElement, ERRORS: mutable.Set[String]): Unit =
   {
-    //    <div class="manage-new-group-row">
-    //      <div class="form-row manage-class-group-row" data-group-id="@group.groupId.id" data-group-type="spelling">
-    //
-    //        <div class="row in-app-menu-small-devices in-app-menu-small-devices-row">
-    //          <div class="col-sm-12 text-muted"><small>Group Name</small></div>
-    //          <div class="col-sm-12 ">
-    //            <input type="text" name="groupName" class="form-control form-control-sm" disabled="true"
-    //                   placeholder="@{
-    //                                                    group.groupName.name
-    //                                                }">
-    //            </div>
-    //          </div>
-    //          <div class="col-lg-3 in-app-menu-medium-and-up">
-    //            <input id="group-name-@group.groupId.id" type="text" name="groupName" class="form-control form-control-sm editable-input-button"
-    //                   placeholder="@group.groupName.name" value="@group.groupName.name">
-    //            </div>
-    //
-    //
-    //            <div class="row in-app-menu-small-devices in-app-menu-small-devices-row">
-    //              <div class="col-sm-12 text-muted"><small>Description</small></div>
-    //              <div class="col-sm-12 ">
-    //                <input type="text" name="groupDescription" class="form-control form-control-sm" disabled="true"
-    //                       placeholder="@{
-    //                                                    group.groupDescription.name
-    //                                                }">
-    //                </div>
-    //              </div>
-    //              <div class="col-lg-5 in-app-menu-medium-and-up">
-    //                <input id="group-description-@group.groupId.id" type="text" name="groupDescription" class="form-control form-control-sm editable-input-button"
-    //                       placeholder="@group.groupDescription.name" value="@group.groupDescription.name">
-    //                </div>
-    //
-    //
-    //                <div class="row in-app-menu-small-devices in-app-menu-small-devices-row">
-    //                  <div class="col-sm-12 text-muted"><small>Level</small></div>
-    //                  <div class="col-sm-12 ">
-    //                    <input type="text" name="groupDescription" class="form-control form-control-sm" disabled="true"
-    //                           placeholder="@{
-    //                                                    group.groupLevel.value.toLowerCase.capitalize.replace("level", "")
-    //    }">
-    //    </div>
-    //    </div>
-    //    <div class="col-lg-2 in-app-menu-medium-and-up">
-    //      <input id="group-level-@group.groupId.id" type="text" name="groupType" class="form-control form-control-sm" disabled="true"
-    //             placeholder="@group.groupLevel.value.toLowerCase.capitalize.replace("level", "")">
-    //    </div>
-    //
-    //    <div class="row in-app-menu-small-devices in-app-menu-small-devices-row">
-    //      <br>
-    //        <div class="col-sm-6 ">
-    //          <button type="button" class="close  delete-this-class-group" aria-label="Close">
-    //            <span aria-hidden="true">&times;</span>
-    //          </button>
-    //        </div>
-    //      </div>
-    //      <div class="col-lg-1 in-app-menu-medium-and-up">
-    //        <button type="button" class="close delete-this-class-group" aria-label="Close">
-    //          <span aria-hidden="true">&times;</span>
-    //        </button>
-    //      </div>
-    //      <div class="col-lg-1 in-app-menu-medium-and-up"></div>
-    //
-    //    </div>
-    //    </div>
+    val errorsDiv = dom.document.getElementById("addNewGroupModalBodyErrorsDiv").asInstanceOf[HTMLDivElement]
+    val alertsMessage = div()(
+      div()(
+        p("There was a problem with some of the input details:"),
+        createAlerts(ERRORS.toSeq)
+      )
+    )
+    val child = dom.document.createElement("div")
+    child.innerHTML = alertsMessage.toString()
+    while (errorsAlert.firstChild != null) {
+      errorsAlert.removeChild(errorsAlert.firstChild)
+    }
+    errorsAlert.appendChild(child)
+    errorsDiv.style.display = "block"
+  }
 
+  def createNewGroupRow(groupId: GroupId,
+                        groupType: GroupType,
+                        groupName: GroupName,
+                        groupDescription: GroupDescription,
+                        groupLevel: CurriculumLevel): Unit =
+  {
+    val newAddGroupRow = div(`class` := "manage-new-group-row")(
+      div(`class` := "form-row manage-class-group-row",
+        attr("data-group-id") := s"${groupId.id}", attr("data-group-type") := s"${groupType.value.toLowerCase}")(
+
+        div(`class` := "col-lg-3 in-app-menu-medium-and-up")(
+          input(`id` := s"group-name-${groupId.id}", `type` := "text", `name` := "groupName",
+            `class` := "form-control form-control-sm editable-input-button",
+            `placeholder` := s"${groupName.name}", `value` := s"${groupName.name}")()
+        ),
+
+        div(`class` := "col-lg-5 in-app-menu-medium-and-up")(
+          input(`id` := s"group-description-${groupId.id}", `type` := "text", `name` := "groupDescription",
+            `class` := "form-control form-control-sm editable-input-button",
+            `placeholder` := s"${groupDescription.name}", `value` := s"${groupDescription.name}")()
+        ),
+
+        div(`class` := "col-lg-3 in-app-menu-medium-and-up")(
+          input(`id` := s"group-level-${groupId.id}", `type` := "text", `name` := "groupType",
+            `class` := "form-control form-control-sm editable-input-button",
+            `placeholder` := s"${groupLevel.value.toLowerCase.capitalize.replace("level", "")}",
+            `disabled` := "true")()
+        ),
+
+        div(`class` := "col-lg-1 in-app-menu-medium-and-up")(
+          button(`class` := "close delete-this-class-group", attr("aria-label") := "Close")(
+            span(attr("aria-hidden") := "true")(raw("&times;"))
+          )
+        )
+      )
+    )
+
+    val child = dom.document.createElement("div")
+    child.innerHTML = newAddGroupRow.toString()
+
+    val newGroupsDiv = dom.document.getElementById(s"${groupType.value.toLowerCase}-groups-section").asInstanceOf[HTMLDivElement]
+    if (newGroupsDiv != null) {
+      newGroupsDiv.appendChild(child)
+    } else {
+      global.console.log(s"ERROR: Could not find div '${groupType.value.toLowerCase}-groups-section'")
+    }
   }
 
   def addNewGroupButtons(): Unit =
   {
-    //    option(value := "Mathematics", "Mathematics"),
-    //    option(value := "Reading", "Reading"),
-    //    option(value := "Writing", "Writing"),
-    //    option(value := "Spelling", "Spelling")
-
     addNewMathsGroupButton("add-new-maths-groups-button", "Mathematics")
+    addNewMathsGroupButton("add-new-reading-groups-button", "Reading")
+    addNewMathsGroupButton("add-new-writing-groups-button", "Writing")
+    addNewMathsGroupButton("add-new-spelling-groups-button", "Spelling")
+  }
+
+  def clearAnyModalValuesFirst(): Unit =
+  {
+    val groupNameInput = dom.document.getElementById("add-group-name").asInstanceOf[HTMLInputElement]
+    if (groupNameInput != null) {
+      groupNameInput.value = ""
+    }
+
+    val groupDescriptionInput = dom.document.getElementById("add-group-description").asInstanceOf[HTMLInputElement]
+    if (groupDescriptionInput != null) {
+      groupDescriptionInput.value = ""
+    }
+
+    val groupLevelInput = dom.document.getElementById("select-curriculum-level").asInstanceOf[HTMLSelectElement]
+    if (groupLevelInput != null) {
+      groupLevelInput.selectedIndex = 0
+      groupLevelInput.value = "Select"
+    }
+
   }
 
   def addNewMathsGroupButton(elementId: String, groupType: String): Unit =
@@ -197,6 +206,8 @@ object ManageClassJsScreen
           modalHeader.innerHTML = s"Add New ${groupType.capitalize} Group"
           groupTypeCurrentlyAdding = Some(groupType)
 
+
+          clearAnyModalValuesFirst()
           val $ = js.Dynamic.global.$
           $("#addNewGroupModal").modal("show", "backdrop: static", "keyboard : false")
         } else {
@@ -227,6 +238,10 @@ object ManageClassJsScreen
 
     val saveEditsButton = dom.document.getElementById("save-class-edit-changes-button").asInstanceOf[HTMLButtonElement]
     if (groupIdsToBeDeleted.nonEmpty) {
+      saveEditsButton.disabled = false
+    }
+
+    if (newGroupsAdded.nonEmpty) {
       saveEditsButton.disabled = false
     }
   }
