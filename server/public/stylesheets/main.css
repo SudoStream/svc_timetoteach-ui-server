@@ -669,7 +669,7 @@ img {
 
 }
 
-@media screen and ( min-width: 1200px) {
+@media screen and ( min-width: 1400px) {
     #appBackground {
         margin-top: 3rem;
         background-image: url('/assets/images/appBackgroundAlt.jpeg');
