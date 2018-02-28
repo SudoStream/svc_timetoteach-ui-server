@@ -40,12 +40,12 @@
                 <div class="d-flex">
                     <ul class="nav mr-auto justify-content-between">
                         <li class="nav-item manage-class-nav-item-leftmost">
-                            <a class="btn btn-outline-primary" role="button" href="@routes.Application.timeToTeachApp()">
+                            <a class="btn btn-primary" role="button" href="@routes.Application.timeToTeachApp()">
                                 Dashboard</a>
                         </li>
 
                         <li class="nav-item manage-class-nav-item-on-left">
-                            <a class="btn btn-outline-primary" role="button" href="@controllers.planning.classtimetable.routes.ClassTimetableController.classesHome()">
+                            <a class="btn btn-primary" role="button" href="@controllers.planning.classtimetable.routes.ClassTimetableController.classesHome()">
                                 Classes Home</a>
                         </li>
                     </ul>
@@ -57,10 +57,15 @@
                                 Manage @classDetails.className.name</a>
                         </li>
 
-                        <li class="nav-item manage-class-nav-item-on-rightmost">
+                        <li class="nav-item manage-class-nav-item-on-right">
                             <a class="btn btn-info" role="button"
                             href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(classDetails.id.id)">
                                 Termly Plans</a>
+                        </li>
+
+                        <li class="nav-item manage-class-nav-item-on-rightmost">
+                            <button id="manage-class-goto-timetable" type="button" class="btn btn-info" disabled="true">
+                                Weekly Plans</button>
                         </li>
                     </ul>
 

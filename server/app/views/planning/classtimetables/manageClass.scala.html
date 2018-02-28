@@ -41,17 +41,17 @@
                 <div class="d-flex ">
                     <ul class="nav mr-auto justify-content-between">
                         <li class="nav-item manage-class-nav-item-leftmost">
-                            <a class="btn btn-outline-primary" role="button" href="@routes.Application.timeToTeachApp()">
+                            <a class="btn btn-primary" role="button" href="@routes.Application.timeToTeachApp()">
                                 Dashboard</a>
                         </li>
-
                         <li class="nav-item manage-class-nav-item-on-left">
-                            <a class="btn btn-outline-primary" role="button" href="@controllers.planning.classtimetable.routes.ClassTimetableController.classesHome()">
+                            <a class="btn btn-primary" role="button" href="@controllers.planning.classtimetable.routes.ClassTimetableController.classesHome()">
                                 Classes Home</a>
                         </li>
                     </ul>
 
                     <ul class="nav justify-content-end">
+
                         <li class="nav-item manage-class-nav-item-on-right">
                             <a id="manage-class-goto-timetable" class="btn btn-info" role="button"
                             href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(classDetails.id.id)">
