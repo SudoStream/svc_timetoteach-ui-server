@@ -5,6 +5,7 @@ import org.scalajs.dom
 import org.scalajs.dom.ext.Ajax
 import org.scalajs.dom.ext.Ajax.InputData
 import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement}
+import shared.util.PlanningHelper
 import upickle.default.write
 
 import scala.collection.mutable
@@ -93,7 +94,8 @@ object ClassGroupPlanningJsScreen
         esAndOsWithTheirBenchmarks
       )
 
-      val groupTermlyPlansPickled = write[TermlyPlansToSave](groupTermlyPlans)
+      val groupTermlyPlansPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[TermlyPlansToSave](groupTermlyPlans))
+      global.console.log(s"Pickled, this == $groupTermlyPlansPickled")
 
       val classId = dom.window.localStorage.getItem("classId")
       val subject = dom.window.localStorage.getItem("subject")

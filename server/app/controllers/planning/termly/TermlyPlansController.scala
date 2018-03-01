@@ -18,6 +18,7 @@ import play.api.data.Form
 import play.api.data.Forms.{mapping, _}
 import play.api.mvc._
 import security.MyDeadboltHandler
+import shared.util.PlanningHelper
 import utils.TemplateUtils.getCookieStringFromRequest
 
 import scala.annotation.tailrec
@@ -242,7 +243,7 @@ class TermlyPlansController @Inject()(
     logger.debug(s"Termly Plans Pickled = #${termlyPlansForGroup.groupTermlyPlansPickled}#")
 
     import upickle.default._
-    val termlyPlansToSave: TermlyPlansToSave = read[TermlyPlansToSave](termlyPlansForGroup.groupTermlyPlansPickled)
+    val termlyPlansToSave: TermlyPlansToSave = read[TermlyPlansToSave](PlanningHelper.decodeAnyNonFriendlyCharacters(termlyPlansForGroup.groupTermlyPlansPickled))
     logger.debug(s"Termly plans Unpickled = ${termlyPlansToSave.toString}")
 
     val termlyPlansAsModel = termsPlanHelper.convertTermlyPlanToModel(classId, termlyPlansToSave, Some(GroupId(groupId)), curriculumArea)
@@ -258,7 +259,7 @@ class TermlyPlansController @Inject()(
     logger.debug(s"Termly Plans Pickled = #${termlyPlansForGroup.groupTermlyPlansPickled}#")
 
     import upickle.default._
-    val termlyPlansToSave: TermlyPlansToSave = read[TermlyPlansToSave](termlyPlansForGroup.groupTermlyPlansPickled)
+    val termlyPlansToSave: TermlyPlansToSave = read[TermlyPlansToSave](PlanningHelper.decodeAnyNonFriendlyCharacters(termlyPlansForGroup.groupTermlyPlansPickled))
     logger.debug(s"Termly plans Unpickled = ${termlyPlansToSave.toString}")
 
     val termlyPlansAsModel = termsPlanHelper.convertTermlyPlanToModel(classId, termlyPlansToSave, None, curriculumArea)
