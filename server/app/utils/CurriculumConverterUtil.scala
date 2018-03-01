@@ -19,7 +19,9 @@ object CurriculumConverterUtil
       case "EXPRESSIVE_ARTS__DANCE" => ExpressiveArts__Dance
       case "EXPRESSIVE_ARTS__MUSIC" => ExpressiveArts__Music
       case "HEALTH_AND_WELLBEING" | "HEALTH_AND_WELLBEING__PHYSICAL_EDUCATION" => HealthAndWellbeing
-      case "LITERACY__WRITING" | "LITERACY__READING" | "LITERACY__LITERACY_AND_ENGLISH" => Languages_LiteracyAndEnglish
+      case "WRITING" | "LITERACY__WRITING" => Literacy_Writing
+      case "READING" | "LITERACY__READING" => Literacy_Reading
+      case "LITERACY__LISTENING_AND_TALKING" => Literacy_ListeningAndTalking
       case "LITERACY__CLASSICAL_LANGUAGES" => Languages_ClassicalLanguages
       case "LITERACY__GAELIC_LEARNERS" => Languages_Gaelic
       case "LITERACY__LITERACY_AND_GAIDLIG" => Languages_LiteracyAndGaidhlig
@@ -47,8 +49,9 @@ object CurriculumConverterUtil
       case "EXPRESSIVE_ARTS__MUSIC" => ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__MUSIC
       case "HEALTH_AND_WELLBEING" => ScottishCurriculumPlanningArea.HEALTH_AND_WELLBEING
       case "HEALTH_AND_WELLBEING__PHYSICAL_EDUCATION" => ScottishCurriculumPlanningArea.HEALTH_AND_WELLBEING
-      case "LITERACY__WRITING" => ScottishCurriculumPlanningArea.LITERACY__WRITING
-      case "LITERACY__READING" => ScottishCurriculumPlanningArea.LITERACY__READING
+      case "WRITING" | "LITERACY__WRITING" => ScottishCurriculumPlanningArea.LITERACY__WRITING
+      case "READING" | "LITERACY__READING" => ScottishCurriculumPlanningArea.LITERACY__READING
+      case "LITERACY__LISTENING_AND_TALKING" => ScottishCurriculumPlanningArea.LITERACY__LISTENING_AND_TALKING
       case "LITERACY__LITERACY_AND_ENGLISH" => ScottishCurriculumPlanningArea.LITERACY__WRITING
       case "LITERACY__CLASSICAL_LANGUAGES" => ScottishCurriculumPlanningArea.LITERACY__CLASSICAL_LANGUAGES
       case "LITERACY__GAELIC_LEARNERS" => ScottishCurriculumPlanningArea.LITERACY__GAELIC_LEARNERS

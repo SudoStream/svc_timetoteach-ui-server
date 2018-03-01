@@ -30,11 +30,11 @@ trait EsOsAndBenchmarksBuilderHelper
       case ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__MUSIC => ExpressiveArts__Music
       case ScottishCurriculumPlanningArea.HEALTH_AND_WELLBEING => HealthAndWellbeing
       case ScottishCurriculumPlanningArea.HEALTH_AND_WELLBEING__PHYSICAL_EDUCATION => HealthAndWellbeing
-      case ScottishCurriculumPlanningArea.LITERACY__WRITING => Languages_LiteracyAndEnglish
-      case ScottishCurriculumPlanningArea.LITERACY__READING => Languages_LiteracyAndEnglish
+      case ScottishCurriculumPlanningArea.LITERACY__WRITING => Literacy_Writing
+      case ScottishCurriculumPlanningArea.LITERACY__READING => Literacy_Reading
+      case ScottishCurriculumPlanningArea.LITERACY__LISTENING_AND_TALKING => Literacy_ListeningAndTalking
       case ScottishCurriculumPlanningArea.LITERACY__CLASSICAL_LANGUAGES => Languages_ClassicalLanguages
       case ScottishCurriculumPlanningArea.LITERACY__GAELIC_LEARNERS => Languages_Gaelic
-      case ScottishCurriculumPlanningArea.LITERACY__LITERACY_AND_ENGLISH => Languages_LiteracyAndEnglish
       case ScottishCurriculumPlanningArea.LITERACY__LITERACY_AND_GAIDLIG => Languages_LiteracyAndGaidhlig
       case ScottishCurriculumPlanningArea.LITERACY__MODERN_LANGUAGES => Languages_ModernLanguages
       case ScottishCurriculumPlanningArea.MATHEMATICS => Mathematics

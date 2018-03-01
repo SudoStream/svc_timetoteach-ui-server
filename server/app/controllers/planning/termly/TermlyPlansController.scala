@@ -83,6 +83,7 @@ class TermlyPlansController @Inject()(
         planningArea <- ScottishCurriculumPlanningArea.values()
         if planningArea != ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS
         if planningArea != ScottishCurriculumPlanningArea.NONE
+        if planningArea != ScottishCurriculumPlanningArea.LITERACY__LISTENING_AND_TALKING
       } yield ScottishCurriculumPlanningAreaWrapper(planningArea)
     }.toList
   }

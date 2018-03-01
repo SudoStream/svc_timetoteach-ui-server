@@ -63,9 +63,9 @@ object TermPlansHelper
       case "health" => ScottishCurriculumPlanningArea.HEALTH_AND_WELLBEING
       case "teacher-covertime" => ScottishCurriculumPlanningArea.NONE
       case "assembly" => ScottishCurriculumPlanningArea.NONE
-      case "reading" => ScottishCurriculumPlanningArea.LITERACY__READING
+      case "reading" | "literacy_reading" => ScottishCurriculumPlanningArea.LITERACY__READING
       case "spelling" => ScottishCurriculumPlanningArea.NONE
-      case "writing" => ScottishCurriculumPlanningArea.LITERACY__WRITING
+      case "writing" | "literacy_writing" => ScottishCurriculumPlanningArea.LITERACY__WRITING
       case "maths" | "mathematics" => ScottishCurriculumPlanningArea.MATHEMATICS
       case "topic" => ScottishCurriculumPlanningArea.TOPIC
       case "physical-education" => ScottishCurriculumPlanningArea.HEALTH_AND_WELLBEING__PHYSICAL_EDUCATION

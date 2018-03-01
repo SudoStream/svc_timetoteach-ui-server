@@ -74,6 +74,28 @@ class EsOsAndBenchmarksBuilderImpl @Inject()(esAndOsReader: EsAndOsReaderService
     }
   }
 
+  private def filterListeningAndTalkingEsAndOs(
+                                                curriculumArea_to_EoBenchmark_Tuple: (CurriculumArea,
+                                                  EsAndOsPlusBenchmarksForCurriculumAreaAndLevel),
+                                                curriculumAreaName: CurriculumArea)
+  : Boolean =
+  {
+    if (curriculumArea_to_EoBenchmark_Tuple._1 == curriculumAreaName) {
+      true
+    } else {
+      if (curriculumAreaName == Literacy_Reading || curriculumAreaName == Literacy_Writing ) {
+        if (curriculumArea_to_EoBenchmark_Tuple._1 == Literacy_ListeningAndTalking ) {
+          true
+        } else {
+          false
+        }
+      } else {
+        false
+      }
+    }
+  }
+
+
   override def buildEsOsAndBenchmarks(curriculumAreaName: CurriculumArea): Future[Option[List[EsAndOsPlusBenchmarksForCurriculumAreaAndLevel]]] =
   {
     logger.info(s"Building Es,Os and benchmarks for $curriculumAreaName")

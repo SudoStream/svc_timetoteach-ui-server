@@ -37,9 +37,13 @@
 }
 
 .termly-plans-overview-container {
-    padding-bottom: 5rem;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
 }
 
+.reselect-es-and-os-button {
+    margin-top: 3rem;
+}
 
 .termly-plans-overview-section-row {
     margin-bottom: 1.5rem;

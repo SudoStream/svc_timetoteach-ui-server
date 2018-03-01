@@ -100,8 +100,16 @@ case object Languages_Gaelic extends CurriculumArea {
   val value = "LANGUAGES_GAELIC"
 }
 
-case object Languages_LiteracyAndEnglish extends CurriculumArea {
-  val value = "LANGUAGES_LITERACY_AND_ENGLISH"
+case object Literacy_Writing extends CurriculumArea {
+  val value = "LITERACY__WRITING"
+}
+
+case object Literacy_Reading extends CurriculumArea {
+  val value = "LITERACY__READING"
+}
+
+case object Literacy_ListeningAndTalking extends CurriculumArea {
+  val value = "LITERACY__LISTENING_AND_TALKING"
 }
 
 case object Languages_LiteracyAndGaidhlig extends CurriculumArea {

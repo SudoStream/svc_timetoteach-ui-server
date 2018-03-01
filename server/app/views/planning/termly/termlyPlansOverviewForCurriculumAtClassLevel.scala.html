@@ -3,140 +3,143 @@
 @import models.timetoteach.planning.ScottishCurriculumPlanningAreaWrapper
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails, curriculumArea: ScottishCurriculumPlanningAreaWrapper, subjectTermlyPlan: CurriculumAreaTermlyPlan, esAndOsCodeToDetailMap: Map[String, duplicate.model.esandos.EandO])
 
-    @timetoteachAppMain(handler, s"${classDetails.className.name} Termly Plans - ${curriculumArea.niceSpecificValueIfPresent().getOrElse(curriculumArea.niceValue())} - Class Level",
-        userPictureUri, userFirstName, userFamilyName) {
-        <div class="in-app-menu-small-devices">
-            <li class="nav-item nav-login-button">
-                <a class="btn btn-outline-primary btn-block" role="button" href="@routes.Application.timeToTeachApp()">
-                    Dashboard</a>
-            </li>
+@timetoteachAppMain(handler, s"${classDetails.className.name} Termly Plans - ${curriculumArea.niceSpecificValueIfPresent().getOrElse(curriculumArea.niceValue())} - Class Level",
+    userPictureUri, userFirstName, userFamilyName) {
+    <div class="in-app-menu-small-devices">
+        <li class="nav-item nav-login-button">
+            <a class="btn btn-outline-primary btn-block" role="button" href="@routes.Application.timeToTeachApp()">
+                Dashboard</a>
+        </li>
 
-            <li class="nav-item nav-login-button ">
-                <a class="btn btn-outline-primary btn-block" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlans()">
-                    Termly Plans Home</a>
-            </li>
+        <li class="nav-item nav-login-button ">
+            <a class="btn btn-outline-primary btn-block" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlans()">
+                Termly Plans Home</a>
+        </li>
 
-            <li class="nav-item nav-login-button ">
-                <a class="btn btn-info btn-block" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(classDetails.id.id)">
-                    @classDetails.className.name Termly Plans</a>
-            </li>
+        <li class="nav-item nav-login-button ">
+            <a class="btn btn-info btn-block" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(classDetails.id.id)">
+                @classDetails.className.name Termly Plans</a>
+        </li>
 
-            <li class="nav-item nav-login-button">
-                <a class="btn btn-outline-primary btn-block" role="button"
-                href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(classDetails.id.id)">
-                    Manage @classDetails.className.name</a>
-            </li>
+        <li class="nav-item nav-login-button">
+            <a class="btn btn-outline-primary btn-block" role="button"
+            href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(classDetails.id.id)">
+                Manage @classDetails.className.name</a>
+        </li>
 
-            <li class="nav-item nav-login-button">
-                <a id="manage-class-goto-timetable" class="btn btn-outline-primary btn-block" role="button"
-                href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(classDetails.id.id)">
-                    Class Timetable</a>
-            </li>
+        <li class="nav-item nav-login-button">
+            <a id="manage-class-goto-timetable" class="btn btn-outline-primary btn-block" role="button"
+            href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(classDetails.id.id)">
+                Class Timetable</a>
+        </li>
+
+    </div>
+} {
+    <div class="container">
+        <div class="manage-class-form-section">
+            <div class="in-app-menu-medium-and-up">
+                <div class="d-flex ">
+                    <ul class="nav mr-auto justify-content-between">
+                        <li class="nav-item manage-class-nav-item-leftmost">
+                            <a class="btn btn-primary" role="button" href="@routes.Application.timeToTeachApp()">
+                                Dashboard</a>
+                        </li>
+                        <li class="nav-item manage-class-nav-item-on-left">
+                            <a class="btn btn-primary" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlans()">
+                                Termly Plans Home</a>
+                        </li>
+                    </ul>
+
+                    <ul class="nav justify-content-end">
+                        <li class="nav-item manage-class-nav-item-on-right">
+                            <a class="btn btn-info" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(classDetails.id.id)">
+                                @classDetails.className.name Termly Plans</a>
+                        </li>
+                        <li class="nav-item manage-class-nav-item-on-right">
+                            <a class="btn btn-info" role="button"
+                            href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(classDetails.id.id)">
+                                Manage @classDetails.className.name</a>
+                        </li>
+                        <li class="nav-item manage-class-nav-item-rightmost">
+                            <a id="manage-class-goto-timetable" class="btn btn-info" role="button"
+                            href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(classDetails.id.id)">
+                                Class Timetable</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="termly-plans-overview-section">
+            <form>
+                <div class="form-row">
+                    <div class="form-group col-md-4"></div>
+                    <div class="form-group col-md-4">
+                        <div class="text-center">
+                            <label for="classLevelInputCurriculumArea">Curriculum Area</label>
+                            <input type="text" class="form-control" id="classLevelInputCurriculumArea" placeholder="@{
+                                curriculumArea.niceSpecificValueIfPresent().getOrElse(curriculumArea.niceValue())
+                            }" disabled="true">
+                        </div>
+                    </div>
+                    <div class="form-group col-md-4"></div>
+                </div>
+            </form>
+
 
         </div>
-    } {
-        <div class="container">
-            <div class="manage-class-form-section">
-                <div class="in-app-menu-medium-and-up">
-                    <div class="d-flex ">
-                        <ul class="nav mr-auto justify-content-between">
-                            <li class="nav-item manage-class-nav-item-leftmost">
-                                <a class="btn btn-primary" role="button" href="@routes.Application.timeToTeachApp()">
-                                    Dashboard</a>
-                            </li>
-                            <li class="nav-item manage-class-nav-item-on-left">
-                                <a class="btn btn-primary" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlans()">
-                                    Termly Plans Home</a>
-                            </li>
-                        </ul>
 
-                        <ul class="nav justify-content-end">
-                            <li class="nav-item manage-class-nav-item-on-right">
-                                <a class="btn btn-info" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(classDetails.id.id)">
-                                    @classDetails.className.name Termly Plans</a>
-                            </li>
-                            <li class="nav-item manage-class-nav-item-on-right">
-                                <a class="btn btn-info" role="button"
-                                href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(classDetails.id.id)">
-                                    Manage @classDetails.className.name</a>
-                            </li>
-                            <li class="nav-item manage-class-nav-item-on-right">
-                                <a id="manage-class-goto-timetable" class="btn btn-info" role="button"
-                                href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(classDetails.id.id)">
-                                    Class Timetable</a>
-                            </li>
-                            <li class="nav-item manage-class-nav-item-rightmost">
-                                <a id="termly-plans-edit" role="button" class="btn btn-warning"
-                                href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansClassLevel_SelectEsOsBenchmarksForCurriculumArea(classDetails.id.id, curriculumArea.value.toString)">
-                                    Re-Select Es&Os/Benchmarks</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+        <div>
+            <div class="row text-center">
+                <div class="col-sm-6"><h4>Es & Os</h4></div>
+                <div class="col-sm-6"><h4>Benchmarks</h4></div>
             </div>
+            @for(esOsWithBenchmarks <- subjectTermlyPlan.eAndOsWithBenchmarks) {
+                <div class="row es-os-benchmarks-overview-row">
+                    <div class="col-sm-6">
+                    @for(eAndOCode <- esOsWithBenchmarks.eAndOCodes) {
+                        <div class="es-os-benchmarks-overview-row-with-just-code"><strong>@eAndOCode</strong>
+                            <div>
 
-
-            <div class="termly-plans-overview-section">
-                <form>
-                    <div class="form-row">
-                        <div class="form-group col-md-4"></div>
-                        <div class="form-group col-md-4">
-                            <div class="text-center">
-                                <label for="classLevelInputCurriculumArea">Curriculum Area</label>
-                                <input type="text" class="form-control" id="classLevelInputCurriculumArea" placeholder="@{
-                                    curriculumArea.niceSpecificValueIfPresent().getOrElse(curriculumArea.niceValue())
-                                }" disabled="true">
-                            </div>
-                        </div>
-                        <div class="form-group col-md-4"></div>
-                    </div>
-                </form>
-
-
-            </div>
-
-            <div>
-                <div class="row text-center">
-                    <div class="col-sm-6"><h4>Es & Os</h4></div>
-                    <div class="col-sm-6"><h4>Benchmarks</h4></div>
-                </div>
-                @for(esOsWithBenchmarks <- subjectTermlyPlan.eAndOsWithBenchmarks) {
-                    <div class="row es-os-benchmarks-overview-row">
-                        <div class="col-sm-6">
-                        @for(eAndOCode <- esOsWithBenchmarks.eAndOCodes) {
-                            <div class="es-os-benchmarks-overview-row-with-just-code"><strong>@eAndOCode</strong>
-                                <div>
-
-                                @if(esAndOsCodeToDetailMap.isDefinedAt(eAndOCode)) {
-                                    @for(sentence <- esAndOsCodeToDetailMap(eAndOCode).eAndOSentences) {
-                                        <div>@sentence.value</div>
-                                        @if(sentence.bulletPoints.nonEmpty) {
-                                            <ul>
-                                            }
-                                        @for(bullet <- sentence.bulletPoints) {
-                                            <li>@bullet.value</li>
+                            @if(esAndOsCodeToDetailMap.isDefinedAt(eAndOCode)) {
+                                @for(sentence <- esAndOsCodeToDetailMap(eAndOCode).eAndOSentences) {
+                                    <div>@sentence.value</div>
+                                    @if(sentence.bulletPoints.nonEmpty) {
+                                        <ul>
                                         }
-                                        @if(sentence.bulletPoints.nonEmpty) {
-                                        </ul>
-                                        }
+                                    @for(bullet <- sentence.bulletPoints) {
+                                        <li>@bullet.value</li>
+                                    }
+                                    @if(sentence.bulletPoints.nonEmpty) {
+                                    </ul>
                                     }
                                 }
+                            }
 
-                                </div>
                             </div>
-                        }
                         </div>
-                        <div class="col-sm-6">
-                        @for(benchmark <- esOsWithBenchmarks.benchmarks) {
-                            <p>@benchmark</p>
-                        }
-                        </div>
+                    }
                     </div>
-                }
+                    <div class="col-sm-6">
+                    @for(benchmark <- esOsWithBenchmarks.benchmarks) {
+                        <p>@benchmark</p>
+                    }
+                    </div>
+                </div>
+            }
+
+            <div class="d-flex justify-content-end reselect-es-and-os-button">
+                <div class="col-7"></div>
+                <div class="col-3">
+                    <a id="termly-plans-edit" role="button" class="btn btn-warning"
+                    href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansClassLevel_SelectEsOsBenchmarksForCurriculumArea(classDetails.id.id, curriculumArea.value.toString)">
+                        Re-Select Es&Os/Benchmarks</a>
+                </div>
             </div>
         </div>
 
 
-        </div>
+    </div>
 
-    }
+}

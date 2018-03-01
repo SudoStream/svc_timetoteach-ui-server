@@ -51,15 +51,10 @@
                             href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(classDetails.id.id)">
                                 Manage @classDetails.className.name</a>
                         </li>
-                        <li class="nav-item manage-class-nav-item-on-right">
+                        <li class="nav-item manage-class-nav-item-rightmos">
                             <a id="manage-class-goto-timetable" class="btn btn-info" role="button"
                             href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(classDetails.id.id)">
                                 Class Timetable</a>
-                        </li>
-                        <li class="nav-item manage-class-nav-item-rightmost">
-                            <a id="termly-plans-edit" role="button" class="btn btn-warning"
-                            href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansSelectOverallCurriculumAreasForTheTerm(classDetails.id.id)">
-                                Re-Select Curriculum Areas</a>
                         </li>
                     </ul>
                 </div>
@@ -194,7 +189,12 @@
             </div>
 
             <div class="d-flex justify-content-end">
-                <div class="col-10"></div>
+                <div class="col-7"></div>
+                <div class="col-3">
+                <a id="termly-plans-edit" role="button" class="btn btn-warning btn-sm"
+                href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansSelectOverallCurriculumAreasForTheTerm(classDetails.id.id)">
+                    Re-Select Curriculum Areas</a>
+                </div>
                 <div class="col-2">
                     <button class="btn btn-sm btn-danger btn-block" role="button" href="#" disabled="true">
                         Download PDF</button>
