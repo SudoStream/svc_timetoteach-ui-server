@@ -21,7 +21,8 @@ class ApplicationModule extends AbstractModule with ScalaModule {
   @Provides
   def providePdfGenerator(env: Environment): PdfGenerator = {
     val pdfGen = new PdfGenerator(env)
-    pdfGen.loadLocalFonts(Seq("fonts/opensans-regular.ttf"))
+//    pdfGen.loadLocalFonts(Seq("fonts/opensans-regular.ttf"))
+    pdfGen.loadLocalFonts(Seq("fonts/simplifica.ttf"))
     pdfGen
   }
 

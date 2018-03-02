@@ -88,7 +88,6 @@ object ManageClassJsScreen
               makeSaveButtonEnabledIfStateHasChanged()
 
               global.console.log("reload the javascript")
-              loadJavascript()
 
               val $ = js.Dynamic.global.$
               $("#addNewGroupModal").modal("hide")
