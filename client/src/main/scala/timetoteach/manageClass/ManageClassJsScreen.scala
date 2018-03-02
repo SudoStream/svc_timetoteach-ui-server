@@ -85,6 +85,7 @@ object ManageClassJsScreen
               createNewGroupRow(groupId, groupTypeModel, groupNameModel, groupDescriptionModel, groupLevelModel)
 
               newGroupsAdded.add(groupId.id)
+              addDeleteGroupBehaviour()
               makeSaveButtonEnabledIfStateHasChanged()
 
               global.console.log("reload the javascript")
@@ -134,22 +135,25 @@ object ManageClassJsScreen
         div(`class` := "col-lg-3 in-app-menu-medium-and-up")(
           input(`id` := s"group-name-${groupId.id}", `type` := "text", `name` := "groupName",
             `class` := "form-control form-control-sm editable-input-button",
+            `style` := "border-color:deepskyblue;",
             `placeholder` := s"${groupName.name}", `value` := s"${groupName.name}")()
         ),
 
         div(`class` := "col-lg-5 in-app-menu-medium-and-up")(
           input(`id` := s"group-description-${groupId.id}", `type` := "text", `name` := "groupDescription",
             `class` := "form-control form-control-sm editable-input-button",
+            `style` := "border-color:deepskyblue;",
             `placeholder` := s"${groupDescription.name}", `value` := s"${groupDescription.name}")()
         ),
 
         div(`class` := "col-lg-3 in-app-menu-medium-and-up")(
           input(`id` := s"group-level-${groupId.id}", `type` := "text", `name` := "groupType",
             `class` := "form-control form-control-sm editable-input-button",
+            `style` := "border-color:deepskyblue;",
             `placeholder` := s"${groupLevel.value.toLowerCase.capitalize.replace("level", "")}",
             `disabled` := "true")()
-        ),
-
+        )
+        ,
         div(`class` := "col-lg-1 in-app-menu-medium-and-up")(
           button(`class` := "close delete-this-class-group", attr("aria-label") := "Close")(
             span(attr("aria-hidden") := "true")(raw("&times;"))
@@ -403,6 +407,11 @@ object ManageClassJsScreen
       case Success(xhr) =>
         val responseText = xhr.responseText
         println(s"response = '$responseText'")
+        dom.window.setTimeout(() => {
+          println(s"lets goto group planning overview")
+          val classId = dom.window.localStorage.getItem("classId")
+          dom.window.location.href = s"/manageclass/$classId"
+        }, 10)
       case Failure(ex) =>
         dom.window.alert("Something went wrong with creating new class. Specifically : -" +
           s"\n\n${ex.toString}")
