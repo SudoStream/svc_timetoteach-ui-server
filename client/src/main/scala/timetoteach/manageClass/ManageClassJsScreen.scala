@@ -76,7 +76,6 @@ object ManageClassJsScreen
             if (ERRORS.isEmpty) {
               global.console.log(s"Creating group with values ... $groupName|$groupDescription|$groupValue|$groupLevel")
               val classId = dom.window.localStorage.getItem("classId")
-
               val groupId = GroupId(s"groupId_${java.util.UUID.randomUUID()}")
               val groupTypeModel = groupTypeFromString(groupValue)
               val groupNameModel = GroupName(groupName)
@@ -87,6 +86,9 @@ object ManageClassJsScreen
 
               newGroupsAdded.add(groupId.id)
               makeSaveButtonEnabledIfStateHasChanged()
+
+              global.console.log("reload the javascript")
+              loadJavascript()
 
               val $ = js.Dynamic.global.$
               $("#addNewGroupModal").modal("hide")

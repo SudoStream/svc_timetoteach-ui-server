@@ -39,7 +39,7 @@ class EsOsAndBenchmarksBuilderImpl @Inject()(esAndOsReader: EsAndOsReaderService
   Future[Option[EsAndOsPlusBenchmarksForCurriculumAreaAndLevel]] =
   {
     logger.info(s"Building Es,Os and benchmarks for $curriculumLevel|$curriculumAreaName")
-
+    logger.info(s"allEsOsAndBenchmarks ${allEsOsAndBenchmarks.toString}")
     allEsOsAndBenchmarks map {
       case Some(allEsAndOs) =>
         logger.debug(s"allEsAndOs : ${allEsAndOs.keySet.toList.sortBy(elem => elem.order).toString()}")

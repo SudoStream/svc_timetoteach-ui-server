@@ -101,8 +101,8 @@
                 <div class="row es-os-benchmarks-overview-row">
                     <div class="col-sm-6">
                     @for(eAndOCode <- esOsWithBenchmarks.eAndOCodes) {
-                        <p><strong>@eAndOCode</strong>
-                            <div>
+                        <p><strong><p>@eAndOCode</p></strong>
+                        <div>
 
                         @if(esAndOsCodeToDetailMap.isDefinedAt(eAndOCode)) {
                             @for(sentence <- esAndOsCodeToDetailMap(eAndOCode).eAndOSentences) {
@@ -119,27 +119,27 @@
                             }
                         }
 
-                    </div>
-                    </p>
+                        </div>
+                        </p>
                     }
+                    </div>
+                    <div class="col-sm-6">
+                    @for(benchmark <- esOsWithBenchmarks.benchmarks) {
+                        <p>@benchmark</p>
+                    }
+                    </div>
                 </div>
-                <div class="col-sm-6">
-                @for(benchmark <- esOsWithBenchmarks.benchmarks) {
-                    <p>@benchmark</p>
-                }
-                </div>
-            </div>
-        }
+            }
 
-    </div>
-    <div class="d-flex justify-content-end">
-        <div class="col-7"></div>
-        <div class="col-3">
-            <a id="termly-plans-edit" role="button" class="btn btn-warning"
-            href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansGroupLevel_SelectEsOsBenchmarksForCurriculumArea(classDetails.id.id, curriculumArea, groupDetails.groupId.id)">
-                Re-Select Es&Os/Benchmarks</a>
         </div>
-    </div>
+        <div class="d-flex justify-content-end">
+            <div class="col-7"></div>
+            <div class="col-3">
+                <a id="termly-plans-edit" role="button" class="btn btn-warning"
+                href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansGroupLevel_SelectEsOsBenchmarksForCurriculumArea(classDetails.id.id, curriculumArea, groupDetails.groupId.id)">
+                    Re-Select Es&Os/Benchmarks</a>
+            </div>
+        </div>
 
 
     </div>

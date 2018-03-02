@@ -1,211 +1,221 @@
 @import models.timetoteach.TimeToTeachUserId
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails, groupDetails: duplicate.model.Group, curriculumArea: String, maybeEsOsAndBenchmarks: Option[duplicate.model.esandos.EsAndOsPlusBenchmarksForCurriculumAreaAndLevel])
 
-    @timetoteachAppMain(handler, s"${classDetails.className.name} Termly Plans - $curriculumArea - ${groupDetails.groupName.name.capitalize}",
-        userPictureUri, userFirstName, userFamilyName) {
-        <div class="in-app-menu-small-devices">
-            <li class="nav-item nav-login-button">
-                <a class="btn btn-outline-primary btn-block" role="button" href="@routes.Application.timeToTeachApp()">
-                    Dashboard</a>
-            </li>
+@timetoteachAppMain(handler, s"${classDetails.className.name} Termly Plans - $curriculumArea - ${groupDetails.groupName.name.capitalize}",
+    userPictureUri, userFirstName, userFamilyName) {
+    <div class="in-app-menu-small-devices">
+        <li class="nav-item nav-login-button">
+            <a class="btn btn-outline-primary btn-block" role="button" href="@routes.Application.timeToTeachApp()">
+                Dashboard</a>
+        </li>
 
-            <li class="nav-item nav-login-button ">
-                <a class="btn btn-outline-primary btn-block" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlans()">
-                    Termly Plans Home</a>
-            </li>
+        <li class="nav-item nav-login-button ">
+            <a class="btn btn-outline-primary btn-block" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlans()">
+                Termly Plans Home</a>
+        </li>
 
-            <li class="nav-item nav-login-button ">
-                <a class="btn btn-info btn-block" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(classDetails.id.id)">
-                    @classDetails.className.name Termly Plans</a>
-            </li>
+        <li class="nav-item nav-login-button ">
+            <a class="btn btn-info btn-block" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(classDetails.id.id)">
+                @classDetails.className.name Termly Plans</a>
+        </li>
 
-            <li class="nav-item nav-login-button">
-                <a class="btn btn-outline-primary btn-block" role="button"
-                href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(classDetails.id.id)">
-                    Manage @classDetails.className.name</a>
-            </li>
+        <li class="nav-item nav-login-button">
+            <a class="btn btn-outline-primary btn-block" role="button"
+            href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(classDetails.id.id)">
+                Manage @classDetails.className.name</a>
+        </li>
 
-            <li class="nav-item nav-login-button">
-                <a id="manage-class-goto-timetable" class="btn btn-outline-primary btn-block" role="button"
-                href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(classDetails.id.id)">
-                    Class Timetable</a>
-            </li>
+        <li class="nav-item nav-login-button">
+            <a id="manage-class-goto-timetable" class="btn btn-outline-primary btn-block" role="button"
+            href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(classDetails.id.id)">
+                Class Timetable</a>
+        </li>
 
-        </div>
-    } {
-        <div class="container">
-            <div class="manage-class-form-section">
-                <div class="in-app-menu-medium-and-up">
-                    <div class="d-flex ">
-                        <ul class="nav mr-auto justify-content-between">
-                            <li class="nav-item manage-class-nav-item-leftmost">
-                                <a class="btn btn-primary" role="button" href="@routes.Application.timeToTeachApp()">
-                                    Dashboard</a>
-                            </li>
-                            <li class="nav-item manage-class-nav-item-on-left">
-                                <a class="btn btn-primary" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlans()">
-                                    Termly Plans Home</a>
-                            </li>
-                        </ul>
+    </div>
+} {
+    <div class="container">
+        <div class="manage-class-form-section">
+            <div class="in-app-menu-medium-and-up">
+                <div class="d-flex ">
+                    <ul class="nav mr-auto justify-content-between">
+                        <li class="nav-item manage-class-nav-item-leftmost">
+                            <a class="btn btn-primary" role="button" href="@routes.Application.timeToTeachApp()">
+                                Dashboard</a>
+                        </li>
+                        <li class="nav-item manage-class-nav-item-on-left">
+                            <a class="btn btn-primary" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlans()">
+                                Termly Plans Home</a>
+                        </li>
+                    </ul>
 
-                        <ul class="nav justify-content-end">
-                            <li class="nav-item manage-class-nav-item-on-right">
-                                <a class="btn btn-info" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(classDetails.id.id)">
-                                    @classDetails.className.name Termly Plans</a>
-                            </li>
-                            <li class="nav-item manage-class-nav-item-on-right">
-                                <a class="btn btn-info" role="button"
-                                href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(classDetails.id.id)">
-                                    Manage @classDetails.className.name</a>
-                            </li>
-                            <li class="nav-item manage-class-nav-item-rightmost">
-                                <a id="manage-class-goto-timetable" class="btn btn-info" role="button"
-                                href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(classDetails.id.id)">
-                                    Class Timetable</a>
-                            </li>
-                        </ul>
+                    <ul class="nav justify-content-end">
+                        <li class="nav-item manage-class-nav-item-on-right">
+                            <a class="btn btn-info" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(classDetails.id.id)">
+                                @classDetails.className.name Termly Plans</a>
+                        </li>
+                        <li class="nav-item manage-class-nav-item-on-right">
+                            <a class="btn btn-info" role="button"
+                            href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(classDetails.id.id)">
+                                Manage @classDetails.className.name</a>
+                        </li>
+                        <li class="nav-item manage-class-nav-item-rightmost">
+                            <a id="manage-class-goto-timetable" class="btn btn-info" role="button"
+                            href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(classDetails.id.id)">
+                                Class Timetable</a>
+                        </li>
+                    </ul>
 
-                    </div>
                 </div>
             </div>
+        </div>
 
 
-            <div class="termly-plans-overview-section">
-                <form>
-                    <div class="form-row">
-                        <div class="form-group col-md-4">
-                            <label for="inputSubject">Subject</label>
-                            <input type="text" class="form-control" id="inputSubject" placeholder="@curriculumArea" disabled="true">
-                        </div>
-                        <div class="form-group col-md-4">
-                            <label for="inputGroup">Group</label>
-                            <input type="text" class="form-control" id="inputGroup" placeholder="@groupDetails.groupName.name.capitalize" disabled="true">
-                        </div>
-                        <div class="form-group col-md-4">
-                            <label for="inputLevel">Curriculum Level</label>
-                            <input type="text" class="form-control" id="inputLevel" placeholder="@groupDetails.groupLevel.value.replace("Level", "")" disabled="true">
-                        </div>
+        <div class="termly-plans-overview-section">
+            <form>
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label for="inputSubject">Subject</label>
+                        <input type="text" class="form-control" id="inputSubject" placeholder="@curriculumArea" disabled="true">
                     </div>
-                </form>
+                    <div class="form-group col-md-4">
+                        <label for="inputGroup">Group</label>
+                        <input type="text" class="form-control" id="inputGroup" placeholder="@groupDetails.groupName.name.capitalize" disabled="true">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="inputLevel">Curriculum Level</label>
+                        <input type="text" class="form-control" id="inputLevel" placeholder="@groupDetails.groupLevel.value.replace("Level", "")" disabled="true">
+                    </div>
+                </div>
+            </form>
 
-                <h5 class="termly-plans-overview-section-header text-center">
-                    Select the Es & Os and/or Benchmarks to cover this term</h5>
-            </div>
+            <h5 class="termly-plans-overview-section-header text-center">
+                Select the Es & Os and/or Benchmarks to cover this term</h5>
+        </div>
 
-            @if(maybeEsOsAndBenchmarks.isDefined) {
+        @if(maybeEsOsAndBenchmarks.isDefined) {
 
-                @for((esAndOsSectionMap, sectionIndex) <- maybeEsOsAndBenchmarks.get.setSectionNameToSubSections.zipWithIndex) {
-                    <a class="btn btn-secondary termly-plans-es-and-os-section" data-toggle="collapse" href="#section_@sectionIndex" role="button"
-                    aria-expanded="false" aria-controls="section_@sectionIndex">
-                    @esAndOsSectionMap._1
-                    </a>
-                    <br>
+            @for((esAndOsSectionMap, sectionIndex) <- maybeEsOsAndBenchmarks.get.setSectionNameToSubSections.zipWithIndex) {
+                <a class="btn btn-secondary termly-plans-es-and-os-section" data-toggle="collapse" href="#section_@sectionIndex" role="button"
+                aria-expanded="false" aria-controls="section_@sectionIndex">
+                @esAndOsSectionMap._1
+                </a>
+                <br>
 
-                    <div class="collapse" id="section_@sectionIndex">
-                        <div class="card card-body">
-                        @for((subjectSectionMap, subSectionIndex) <- esAndOsSectionMap._2.zipWithIndex) {
-                            <a class="btn btn-light termly-plans-es-and-os-subsection " data-toggle="collapse" href="#section_@{
-                                sectionIndex
-                            }_subsection_@subSectionIndex" role="button"
-                            aria-expanded="false" aria-controls="section_@{
-                                sectionIndex
-                            }_subsection_@subSectionIndex">
-                            @subjectSectionMap._1
+                <div class="collapse" id="section_@sectionIndex">
+                    <div class="card card-body">
+                    @for((subjectSectionMap, subSectionIndex) <- esAndOsSectionMap._2.zipWithIndex) {
+                        <a class="btn btn-light termly-plans-es-and-os-subsection " data-toggle="collapse" href="#section_@{
+                            sectionIndex
+                        }_subsection_@subSectionIndex" role="button"
+                        aria-expanded="false" aria-controls="section_@{
+                            sectionIndex
+                        }_subsection_@subSectionIndex">
+                        @subjectSectionMap._1
 
-                            </a>
-                            <div class="collapse" id="section_@{
-                                sectionIndex
-                            }_subsection_@subSectionIndex">
+                        </a>
+                        <div class="collapse" id="section_@{
+                            sectionIndex
+                        }_subsection_@subSectionIndex">
 
-                                <div class="text-center">
-                                @if(subjectSectionMap._2.auxiliaryText.nonEmpty) {
-                                    <p class="muted">@subjectSectionMap._2.auxiliaryText</p>
-                                }
+                            <div class="text-center">
+                            @if(subjectSectionMap._2.auxiliaryText.nonEmpty) {
+                                <p class="muted">@subjectSectionMap._2.auxiliaryText</p>
+                            }
+                            </div>
+
+                            <div class="card card-body">
+                                <div class="row text-center">
+                                    <div class="col-lg-6 termly-plans-es-and-os-header">Experiences & Outcomes</div>
+                                    <div class="col-lg-6 termly-plans-es-and-os-header">Benchmarks</div>
                                 </div>
 
-                                <div class="card card-body">
-                                    <div class="row text-center">
-                                        <div class="col-lg-6 termly-plans-es-and-os-header">Experiences & Outcomes</div>
-                                        <div class="col-lg-6 termly-plans-es-and-os-header">Benchmarks</div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                        @for(eAndO <- subjectSectionMap._2.eAndOs) {
-                                            <div class="row termly-plans-es-and-os-code-and-eando-row termly-plans-eobenchmark-row"
-                                            data-curriculum-section="@esAndOsSectionMap._1" data-curriculum-subsection="@subjectSectionMap._1" data-eando-code="@eAndO.code">
-                                                <div class="col-lg-3 termly-plans-es-and-os-code">
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                    @for(eAndO <- subjectSectionMap._2.eAndOs) {
+                                        <div class="row termly-plans-es-and-os-code-and-eando-row termly-plans-eobenchmark-row"
+                                        data-curriculum-section="@esAndOsSectionMap._1" data-curriculum-subsection="@subjectSectionMap._1" data-eando-code="@eAndO.code">
+                                            <div class="col-lg-3 termly-plans-es-and-os-code">
+                                            @if(eAndO.code.split("/").size > 1) {
+                                                @for((code, codeindex) <- eAndO.code.split("/").toList.zipWithIndex) {
+                                                    <p>@code
+                                                        @if((codeindex + 1) < eAndO.code.split("/").size) {
+                                                            <span> /</span>
+                                                        }
+                                                    </p>
+                                                }
+                                            } else {
                                                 @eAndO.code
-                                                </div>
-                                                <div class="col-lg-9 termly-plans-es-and-os-content termly-plans-es-and-os-eando">
-                                                @for(sentence <- eAndO.eAndOSentences) {
-                                                    <p>@sentence.value</p>
-                                                    @if(sentence.bulletPoints.nonEmpty) {
-                                                        <ul>
-                                                        }
-                                                    @for(bullet <- sentence.bulletPoints) {
-                                                        @if(bullet.value.nonEmpty) {
-                                                            <li>@bullet.value</li>
-                                                        }
+                                            }
+                                            </div>
+                                            <div class="col-lg-9 termly-plans-es-and-os-content termly-plans-es-and-os-eando">
+                                            @for(sentence <- eAndO.eAndOSentences) {
+                                                <p>@sentence.value</p>
+                                                @if(sentence.bulletPoints.nonEmpty) {
+                                                    <ul>
                                                     }
-                                                    @if(sentence.bulletPoints.nonEmpty) {
-                                                    </ul>
+                                                @for(bullet <- sentence.bulletPoints) {
+                                                    @if(bullet.value.nonEmpty) {
+                                                        <li>@bullet.value</li>
                                                     }
                                                 }
-                                                </div>
+                                                @if(sentence.bulletPoints.nonEmpty) {
+                                                </ul>
+                                                }
+                                            }
                                             </div>
-                                        }
                                         </div>
-                                        <div class="col-lg-6 termly-plans-es-and-os-content">
-                                        @for(benchmark <- subjectSectionMap._2.benchmarks) {
-                                            <div class="termly-plans-es-and-os-benchmark termly-plans-eobenchmark-row"
-                                            data-curriculum-section="@esAndOsSectionMap._1" data-curriculum-subsection="@subjectSectionMap._1"
-                                            data-benchmark="@benchmark.value">@benchmark.value</div>
-                                        }
-                                        </div>
+                                    }
+                                    </div>
+                                    <div class="col-lg-6 termly-plans-es-and-os-content">
+                                    @for(benchmark <- subjectSectionMap._2.benchmarks) {
+                                        <div class="termly-plans-es-and-os-benchmark termly-plans-eobenchmark-row"
+                                        data-curriculum-section="@esAndOsSectionMap._1" data-curriculum-subsection="@subjectSectionMap._1"
+                                        data-benchmark="@benchmark.value">@benchmark.value</div>
+                                    }
                                     </div>
                                 </div>
                             </div>
-                        }
-
                         </div>
+                    }
+
                     </div>
-
-                }
-
-            } else {
-                <div class="alert alert-warning" role="alert">
-                    No Es & Os or Benchmarks defined for level='@{
-                    groupDetails.groupLevel.value.replace("Level", "")
-                }' & curriculum area='@{
-                    curriculumArea
-                }'
                 </div>
+
             }
 
-
-            <div class="row">
-                <div class="col-md-8"></div>
-                <div class="col-md-2">
-                    <button id="clear-termly-groups-button" type="button" class="btn btn-block btn-lg btn-secondary">
-                        Clear</button>
-                </div>
-                <div class="col-md-2">
-                    <button id="save-termly-groups-button" type="button" class="btn btn-block btn-lg btn-primary">Save</button>
-                </div>
+        } else {
+            <div class="alert alert-warning" role="alert">
+                No Es & Os or Benchmarks defined for level='@{
+                groupDetails.groupLevel.value.replace("Level", "")
+            }' & curriculum area='@{
+                curriculumArea
+            }'
             </div>
+        }
 
+
+        <div class="row">
+            <div class="col-md-8"></div>
+            <div class="col-md-2">
+                <button id="clear-termly-groups-button" type="button" class="btn btn-block btn-lg btn-secondary">
+                    Clear</button>
+            </div>
+            <div class="col-md-2">
+                <button id="save-termly-groups-button" type="button" class="btn btn-block btn-lg btn-primary">Save</button>
+            </div>
         </div>
 
-
-        <script>
-                localStorage.setItem("classId", "@classDetails.id.id");
-                localStorage.setItem("subject", "@curriculumArea");
-                localStorage.setItem("groupId", "@groupDetails.groupId.id");
-                localStorage.setItem("schoolId", "@classDetails.schoolDetails.id");
-                localStorage.setItem("tttUserId", "@tttUserId.value");
-        </script>
+    </div>
 
 
-        @scalajs.html.scripts("client", routes.Assets.versioned(_).toString, name => getClass.getResource(s"/public/$name") != null)
-    }
+    <script>
+            localStorage.setItem("classId", "@classDetails.id.id");
+            localStorage.setItem("subject", "@curriculumArea");
+            localStorage.setItem("groupId", "@groupDetails.groupId.id");
+            localStorage.setItem("schoolId", "@classDetails.schoolDetails.id");
+            localStorage.setItem("tttUserId", "@tttUserId.value");
+    </script>
+
+
+    @scalajs.html.scripts("client", routes.Assets.versioned(_).toString, name => getClass.getResource(s"/public/$name") != null)
+}

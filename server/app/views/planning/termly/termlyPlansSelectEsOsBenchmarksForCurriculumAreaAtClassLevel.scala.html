@@ -182,7 +182,17 @@
                                             <div class="row termly-plans-es-and-os-code-and-eando-row termly-plans-eobenchmark-row"
                                             data-curriculum-section="@esAndOsSectionMap._1" data-curriculum-subsection="@subjectSectionMap._1" data-eando-code="@eAndO.code">
                                                 <div class="col-lg-3 termly-plans-es-and-os-code">
-                                                @eAndO.code
+                                                    @if(eAndO.code.split("/").size > 1) {
+                                                        @for((code, codeindex) <- eAndO.code.split("/").toList.zipWithIndex) {
+                                                            <p>@code
+                                                                @if((codeindex + 1) < eAndO.code.split("/").size) {
+                                                                    <span> /</span>
+                                                                }
+                                                            </p>
+                                                        }
+                                                    } else {
+                                                        @eAndO.code
+                                                    }
                                                 </div>
                                                 <div class="col-lg-9 termly-plans-es-and-os-content termly-plans-es-and-os-eando">
                                                 @for(sentence <- eAndO.eAndOSentences) {
