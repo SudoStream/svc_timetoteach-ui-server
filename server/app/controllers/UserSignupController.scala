@@ -1,7 +1,6 @@
 package controllers
 
 import javax.inject.Inject
-
 import be.objectify.deadbolt.scala.cache.HandlerCache
 import be.objectify.deadbolt.scala.{ActionBuilders, DeadboltActions}
 import controllers.UserSignupController.UserData
@@ -11,6 +10,7 @@ import models.timetoteach._
 import play.api.Logger
 import play.api.data.Form
 import play.api.mvc._
+import utils.StringUtils.noWhiteSpaceAtAll
 import utils.TemplateUtils.getCookieStringFromRequest
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -98,10 +98,10 @@ class UserSignupController @Inject()(deadbolt: DeadboltActions,
       Future {
         Redirect(routes.UserSignupController.creatingNewUser())
           .withCookies(
-            Cookie(CookieNames.userDataFirstName, data.firstName),
-            Cookie(CookieNames.userDataFamilyName, data.familyName),
-            Cookie(CookieNames.userDataEmailAddress, data.emailAddress),
-            Cookie(CookieNames.userDataSchoolId, data.schoolId)
+            Cookie(CookieNames.userDataFirstName, noWhiteSpaceAtAll(data.firstName)),
+            Cookie(CookieNames.userDataFamilyName, noWhiteSpaceAtAll(data.familyName)),
+            Cookie(CookieNames.userDataEmailAddress, noWhiteSpaceAtAll(data.emailAddress)),
+            Cookie(CookieNames.userDataSchoolId, noWhiteSpaceAtAll(data.schoolId))
           )
       }
 
@@ -158,7 +158,7 @@ class UserSignupController @Inject()(deadbolt: DeadboltActions,
 
       val timeToTeachUserIdFuture = userWriterServiceProxy.createNewUser(theUser)
 
-//      signupEmailService.sendEmail(theUser)
+      signupEmailService.sendEmail(theUser)
 
       for {
         timeToTeachUserId <- timeToTeachUserIdFuture
@@ -166,7 +166,7 @@ class UserSignupController @Inject()(deadbolt: DeadboltActions,
         logger.debug(s"Time To Teach Id = '${timeToTeachUserId.value.toString}'")
         Redirect(routes.UserSignupController.signedUpCongrats())
           .withCookies(
-            Cookie(CookieNames.timetoteachId, timeToTeachUserId.value))
+            Cookie(CookieNames.timetoteachId, noWhiteSpaceAtAll(timeToTeachUserId.value)))
           .discardingCookies(
             DiscardingCookie(CookieNames.userDataFirstName),
             DiscardingCookie(CookieNames.userDataFamilyName),

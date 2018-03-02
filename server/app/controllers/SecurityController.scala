@@ -32,7 +32,7 @@ import play.api.mvc.{Cookie, _}
 
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContextExecutor, Future}
-
+import utils.StringUtils.noWhiteSpaceAtAll
 class SecurityController @Inject()(ws: WSClient,
                                    deadbolt: DeadboltActions,
                                    handlers: HandlerCache,
@@ -219,13 +219,13 @@ class SecurityController @Inject()(ws: WSClient,
         user =>
           Ok(payload.get("name").toString)
             .withCookies(
-              Cookie(CookieNames.timetoteachId, user.timeToTeachId),
-              Cookie(CookieNames.socialNetworkName, "GOOGLE"),
-              Cookie(CookieNames.socialNetworkUserId, payload.getSubject),
-              Cookie(CookieNames.socialNetworkEmail, payload.getEmail),
-              Cookie(CookieNames.socialNetworkPicture, payload.get("picture").toString),
-              Cookie(CookieNames.socialNetworkFamilyName, payload.get("family_name").toString),
-              Cookie(CookieNames.socialNetworkGivenName, payload.get("given_name").toString)
+              Cookie(CookieNames.timetoteachId, noWhiteSpaceAtAll(user.timeToTeachId)),
+              Cookie(CookieNames.socialNetworkName, noWhiteSpaceAtAll("GOOGLE")),
+              Cookie(CookieNames.socialNetworkUserId, noWhiteSpaceAtAll(payload.getSubject)),
+              Cookie(CookieNames.socialNetworkEmail, noWhiteSpaceAtAll(payload.getEmail)),
+              Cookie(CookieNames.socialNetworkPicture, noWhiteSpaceAtAll(payload.get("picture").toString)),
+              Cookie(CookieNames.socialNetworkFamilyName, noWhiteSpaceAtAll(payload.get("family_name").toString)),
+              Cookie(CookieNames.socialNetworkGivenName, noWhiteSpaceAtAll(payload.get("given_name").toString))
             )
             .bakeCookies()
       }
@@ -235,12 +235,12 @@ class SecurityController @Inject()(ws: WSClient,
         NotFound(payload.get("name").toString)
           .discardingCookies(DiscardingCookie(CookieNames.timetoteachId))
           .withCookies(
-            Cookie(CookieNames.socialNetworkFamilyName, payload.get("family_name").toString),
-            Cookie(CookieNames.socialNetworkGivenName, payload.get("given_name").toString),
-            Cookie(CookieNames.socialNetworkName, "GOOGLE"),
-            Cookie(CookieNames.socialNetworkUserId, payload.getSubject),
-            Cookie(CookieNames.socialNetworkEmail, payload.getEmail),
-            Cookie(CookieNames.socialNetworkPicture, payload.get("picture").toString)
+            Cookie(CookieNames.socialNetworkFamilyName, noWhiteSpaceAtAll(payload.get("family_name").toString)),
+            Cookie(CookieNames.socialNetworkGivenName, noWhiteSpaceAtAll(payload.get("given_name").toString)),
+            Cookie(CookieNames.socialNetworkName, noWhiteSpaceAtAll("GOOGLE")),
+            Cookie(CookieNames.socialNetworkUserId, noWhiteSpaceAtAll(payload.getSubject)),
+            Cookie(CookieNames.socialNetworkEmail, noWhiteSpaceAtAll(payload.getEmail)),
+            Cookie(CookieNames.socialNetworkPicture, noWhiteSpaceAtAll(payload.get("picture").toString))
           )
           .bakeCookies()
       }
@@ -287,13 +287,13 @@ class SecurityController @Inject()(ws: WSClient,
               user =>
                 Ok(s"${facebookUser.userFacebookGivenName} ${facebookUser.userFacebookFamilyName}")
                   .withCookies(
-                    Cookie(CookieNames.timetoteachId, user.timeToTeachId),
-                    Cookie(CookieNames.socialNetworkName, "FACEBOOK"),
-                    Cookie(CookieNames.socialNetworkUserId, facebookUser.userFacebookId),
-                    Cookie(CookieNames.socialNetworkEmail, facebookUser.userFacebookEmail),
-                    Cookie(CookieNames.socialNetworkPicture, facebookUser.userPictureUri),
-                    Cookie(CookieNames.socialNetworkFamilyName, facebookUser.userFacebookFamilyName),
-                    Cookie(CookieNames.socialNetworkGivenName, facebookUser.userFacebookGivenName)
+                    Cookie(CookieNames.timetoteachId, noWhiteSpaceAtAll(user.timeToTeachId)),
+                    Cookie(CookieNames.socialNetworkName, noWhiteSpaceAtAll("FACEBOOK")),
+                    Cookie(CookieNames.socialNetworkUserId, noWhiteSpaceAtAll(facebookUser.userFacebookId)),
+                    Cookie(CookieNames.socialNetworkEmail, noWhiteSpaceAtAll(facebookUser.userFacebookEmail)),
+                    Cookie(CookieNames.socialNetworkPicture, noWhiteSpaceAtAll(facebookUser.userPictureUri)),
+                    Cookie(CookieNames.socialNetworkFamilyName, noWhiteSpaceAtAll(facebookUser.userFacebookFamilyName)),
+                    Cookie(CookieNames.socialNetworkGivenName, noWhiteSpaceAtAll(facebookUser.userFacebookGivenName))
                   )
                   .bakeCookies()
             }
@@ -304,12 +304,12 @@ class SecurityController @Inject()(ws: WSClient,
               NotFound(s"${facebookUser.userFacebookGivenName} ${facebookUser.userFacebookFamilyName}")
                 .discardingCookies(DiscardingCookie(CookieNames.timetoteachId))
                 .withCookies(
-                  Cookie(CookieNames.socialNetworkFamilyName, facebookUser.userFacebookFamilyName),
-                  Cookie(CookieNames.socialNetworkGivenName, facebookUser.userFacebookGivenName),
-                  Cookie(CookieNames.socialNetworkName, "FACEBOOK"),
-                  Cookie(CookieNames.socialNetworkUserId, facebookUser.userFacebookId),
-                  Cookie(CookieNames.socialNetworkEmail, facebookUser.userFacebookEmail),
-                  Cookie(CookieNames.socialNetworkPicture, facebookUser.userPictureUri)
+                  Cookie(CookieNames.socialNetworkFamilyName, noWhiteSpaceAtAll(facebookUser.userFacebookFamilyName)),
+                  Cookie(CookieNames.socialNetworkGivenName, noWhiteSpaceAtAll(facebookUser.userFacebookGivenName)),
+                  Cookie(CookieNames.socialNetworkName, noWhiteSpaceAtAll("FACEBOOK")),
+                  Cookie(CookieNames.socialNetworkUserId, noWhiteSpaceAtAll(facebookUser.userFacebookId)),
+                  Cookie(CookieNames.socialNetworkEmail, noWhiteSpaceAtAll(facebookUser.userFacebookEmail)),
+                  Cookie(CookieNames.socialNetworkPicture, noWhiteSpaceAtAll(facebookUser.userPictureUri))
                 )
                 .bakeCookies()
             }
@@ -323,12 +323,12 @@ class SecurityController @Inject()(ws: WSClient,
         NotFound(s"${facebookUser.userFacebookGivenName} ${facebookUser.userFacebookFamilyName}")
           .discardingCookies(DiscardingCookie(CookieNames.timetoteachId))
           .withCookies(
-            Cookie(CookieNames.socialNetworkFamilyName, facebookUser.userFacebookFamilyName),
-            Cookie(CookieNames.socialNetworkGivenName, facebookUser.userFacebookGivenName),
-            Cookie(CookieNames.socialNetworkName, "FACEBOOK"),
-            Cookie(CookieNames.socialNetworkUserId, facebookUser.userFacebookId),
-            Cookie(CookieNames.socialNetworkEmail, facebookUser.userFacebookEmail),
-            Cookie(CookieNames.socialNetworkPicture, facebookUser.userPictureUri)
+            Cookie(CookieNames.socialNetworkFamilyName, noWhiteSpaceAtAll(facebookUser.userFacebookFamilyName)),
+            Cookie(CookieNames.socialNetworkGivenName, noWhiteSpaceAtAll(facebookUser.userFacebookGivenName)),
+            Cookie(CookieNames.socialNetworkName, noWhiteSpaceAtAll("FACEBOOK")),
+            Cookie(CookieNames.socialNetworkUserId, noWhiteSpaceAtAll(facebookUser.userFacebookId)),
+            Cookie(CookieNames.socialNetworkEmail, noWhiteSpaceAtAll(facebookUser.userFacebookEmail)),
+            Cookie(CookieNames.socialNetworkPicture, noWhiteSpaceAtAll(facebookUser.userPictureUri))
           )
           .bakeCookies()
       }
