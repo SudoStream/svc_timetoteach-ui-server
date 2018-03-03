@@ -2,9 +2,12 @@ package utils
 
 import io.sudostream.timetoteach.messages.systemwide.model
 import models.timetoteach.{Country, LocalAuthority, School}
+import play.api.Logger
 
 
 object SchoolConverter {
+
+  private val logger: Logger.type = Logger
 
   def convertMessageSchoolToLocalSchool(schoolToConvert: io.sudostream.timetoteach.messages.systemwide.model.School):
   School = {
@@ -69,7 +72,9 @@ object SchoolConverter {
       case "WEST_DUMBARTONSHIRE" => model.LocalAuthority.SCOTLAND__WEST_DUMBARTONSHIRE
       case "WEST_LOTHIAN" => model.LocalAuthority.SCOTLAND__WEST_LOTHIAN
       case "OTHER" => model.LocalAuthority.OTHER
-      case _ => model.LocalAuthority.UNKNOWN
+      case unknown =>
+        logger.warn(s"Local Authority is unknown - ${unknown}")
+        model.LocalAuthority.UNKNOWN
     }
   }
 
