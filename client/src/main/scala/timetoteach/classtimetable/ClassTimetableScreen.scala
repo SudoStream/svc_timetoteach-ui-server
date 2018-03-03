@@ -7,7 +7,7 @@ import org.scalajs.dom.Event
 import org.scalajs.dom.ext.Ajax.InputData
 import org.scalajs.dom.raw._
 import shared.model.classtimetable._
-import shared.util.{ClassTimetableUtil, LocalTimeUtil}
+import shared.util.{ClassTimetableUtil, LocalTimeUtil, PlanningHelper}
 
 import scala.scalajs.js
 import scala.scalajs.js.Dynamic.global
@@ -693,7 +693,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
       )
       val theClassTimetableId = dom.window.localStorage.getItem("timetableClassId")
       val theTimeToTeachUserId = dom.window.localStorage.getItem("timeToTeachUserId")
-      val theData = InputData.str2ajax(s"classTimetable=${classTimetable.toString}&" +
+      val theData = InputData.str2ajax(s"classTimetable=${PlanningHelper.encodeAnyJawnNonFriendlyCharacters(classTimetable.toString)}&" +
         s"classId=$theClassTimetableId&tttUserId=$theTimeToTeachUserId")
 
       Ajax.post(

@@ -1,8 +1,8 @@
 package controllers.planning.classtimetable
 
 import java.time.LocalTime
-import javax.inject.Inject
 
+import javax.inject.Inject
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
@@ -21,7 +21,7 @@ import play.api.data.Forms.{mapping, _}
 import play.api.mvc._
 import security.MyDeadboltHandler
 import shared.model.classtimetable.WwwClassId
-import shared.util.LocalTimeUtil
+import shared.util.{LocalTimeUtil, PlanningHelper}
 import utils.ClassTimetableConverterToAvro.convertJsonClassTimetableToWwwClassTimetable
 import utils.TemplateUtils.getCookieStringFromRequest
 
@@ -85,7 +85,7 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
     logger.debug(s"Class Id As Json = ${classTimetableFormBound.classId}")
     logger.debug(s"TTT User Id = ${classTimetableFormBound.tttUserId}")
 
-    val wwwClassTimetable = convertJsonClassTimetableToWwwClassTimetable(classTimetableFormBound.classTimetable)
+    val wwwClassTimetable = convertJsonClassTimetableToWwwClassTimetable(PlanningHelper.decodeAnyNonFriendlyCharacters(classTimetableFormBound.classTimetable))
     classTimetableWriter.upsertClassTimetables(
       TimeToTeachUserId(classTimetableFormBound.tttUserId),
       WwwClassId(classTimetableFormBound.classId),
