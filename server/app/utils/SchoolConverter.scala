@@ -69,7 +69,7 @@ object SchoolConverter {
       case "SOUTH_AYRSHIRE" => model.LocalAuthority.SCOTLAND__SOUTH_AYRSHIRE
       case "SOUTH_LANARKSHIRE" => model.LocalAuthority.SCOTLAND__SOUTH_LANARKSHIRE
       case "STIRLING" => model.LocalAuthority.SCOTLAND__STIRLING
-      case "WEST_DUMBARTONSHIRE" => model.LocalAuthority.SCOTLAND__WEST_DUMBARTONSHIRE
+      case "WEST_DUMBARTONSHIRE" | "WEST_DUNBARTONSHIRE" => model.LocalAuthority.SCOTLAND__WEST_DUMBARTONSHIRE
       case "WEST_LOTHIAN" => model.LocalAuthority.SCOTLAND__WEST_LOTHIAN
       case "OTHER" => model.LocalAuthority.OTHER
       case unknown =>
@@ -111,7 +111,7 @@ object SchoolConverter {
       case model.LocalAuthority.SCOTLAND__SOUTH_AYRSHIRE => LocalAuthority("SOUTH_AYRSHIRE")
       case model.LocalAuthority.SCOTLAND__SOUTH_LANARKSHIRE => LocalAuthority("SOUTH_LANARKSHIRE")
       case model.LocalAuthority.SCOTLAND__STIRLING => LocalAuthority("STIRLING")
-      case model.LocalAuthority.SCOTLAND__WEST_DUMBARTONSHIRE => LocalAuthority("WEST_DUMBARTONSHIRE")
+      case model.LocalAuthority.SCOTLAND__WEST_DUMBARTONSHIRE => LocalAuthority("WEST_DUNBARTONSHIRE")
       case model.LocalAuthority.SCOTLAND__WEST_LOTHIAN => LocalAuthority("WEST_LOTHIAN")
       case model.LocalAuthority.OTHER => LocalAuthority("OTHER")
       case _ => LocalAuthority("UNKNOWN")
