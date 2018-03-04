@@ -28,12 +28,12 @@
                          <a class="btn btn-primary" role="button" href="@routes.Application.timeToTeachApp()">
                              Dashboard</a>
                      </li>
-                 </ul>
+                     <li class="nav-item manage-class-nav-item-on-left">
+                         <a id="addNewClassBtn" class="rounded btn btn-success manage-class-nav-item-rightmost"
+                         href="@controllers.planning.classtimetable.routes.ClassTimetableController.addNewClass()" role="button">
+                             Add New Class</a>
+                     </li>
 
-                 <ul class="nav justify-content-end">
-                     <a id="addNewClassBtn" class="rounded btn btn-success manage-class-nav-item-rightmost"
-                     href="@controllers.planning.classtimetable.routes.ClassTimetableController.addNewClass()" role="button">
-                         Add New Class</a>
                  </ul>
              </div>
          </div>
