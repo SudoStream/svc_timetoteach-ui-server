@@ -203,3 +203,7 @@
 input#classLevelInputCurriculumArea {
     text-align: center;
 }
+
+#termly-plans-submit-button {
+    margin-bottom: 10rem;
+}
