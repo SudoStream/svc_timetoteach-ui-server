@@ -63,8 +63,14 @@ class PlanningHelperTest extends FunSpec
   }
 
   describe("Given a string, '&', encoding") {
-    it("[[AMPERSAND]]'") {
-      val decoded = PlanningHelper.encodeAnyJawnNonFriendlyCharacters("&")
+    it("should return the string  '[[AMPERSAND]]'") {
+      val encoded = PlanningHelper.encodeAnyJawnNonFriendlyCharacters("&")
+      assert(encoded === "[[AMPERSAND]]")
+    }
+  }
+  describe("Given a string, '[[AMPERSAND]]', encoding") {
+    it("should return the string '&'") {
+      val decoded = PlanningHelper.decodeAnyNonFriendlyCharacters("[[AMPERSAND]]")
       assert(decoded === "&")
     }
   }
