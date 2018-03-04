@@ -66,6 +66,25 @@
             <h5>Please select the curriculum areas you wish to plan for this term</h5>
         </div>
 
+        <div class="alert alert-info alert-dismissible fade show " role="alert" >
+            <div >
+                <p>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <strong>Note:</strong>
+                    Areas where Es And Os are currently available for testing are :-
+            <ul>
+                <li>Art</li>
+                <li>Drama</li>
+                <li>Music</li>
+                <li>Reading - Early,First & Second levels</li>
+                <li>Maths</li>
+            </ul>
+                </p>
+            </div>
+        </div>
+
 
         <form action="@postSelectedCurriculumAreasUrl.url" method="post" id="needs-validation" novalidate>
             @helper.CSRF.formField

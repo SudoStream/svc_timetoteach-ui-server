@@ -7,13 +7,45 @@ object PlanningHelper
   val JAWN_UNFRIENDLY_CHARACTERS = Map(
     "=" -> "[[EQUALS]]",
     "%" -> "[[PERCENT]]",
-    ";" -> "[[SEMICOLON]]"
+    ";" -> "[[SEMICOLON]]",
+    "&" -> "[[AMPERSAND]]",
+    "!" -> "[[EXCLAIMATION]]",
+    "\"" -> "[[DOUBLE_QUOTES]]",
+    "\'" -> "[[SINGLE_QUOTE]]",
+    ":" -> "[[COLON]]",
+    "$" -> "[[DOLLAR]]",
+    "^" -> "[[POWER]]",
+    "*" -> "[[STAR]]",
+    "-" -> "[[MINUS]]",
+    "+" -> "[[PLUS]]",
+    "(" -> "[[OPEN_PARENS]]",
+    ")" -> "[[CLOSE_PARENS]]",
+    "|" -> "[[BAR]]",
+    "\\" -> "[[BACKSLASH]]",
+    "," -> "[[COMMA]]",
+    "." -> "[[FULLSTOP]]"
   )
 
   val JAWN_UNFRIENDLY_CHARACTERS_DECODE = Map(
     "[[EQUALS]]" -> "=",
     "[[PERCENT]]" -> "%",
-    "[[SEMICOLON]]" -> ";"
+    "[[SEMICOLON]]" -> ";",
+    "[[AMPERSAND]]" -> "\u0026",
+    "[[EXCLAIMATION]]" -> "!",
+    "[[DOUBLE_QUOTES]]" -> "\"",
+    "[[SINGLE_QUOTE]]" -> "\'",
+    "[[COLON]]" -> ":",
+    "[[DOLLAR]]" -> "$",
+    "[[POWER]]" -> "^",
+    "[[STAR]]" -> "*",
+    "[[MINUS]]" -> "-",
+    "[[PLUS]]" -> "+",
+    "[[OPEN_PARENS]]" -> "(",
+    "[[CLOSE_PARENS]]" -> ")",
+    "[[BAR]]" -> "|",
+    "[[BACKSLASH]]" -> "\\",
+    "[[COMMA]]" -> ",",
+    "[[FULLSTOP]]" -> "."
   )
 
   def encodeAnyJawnNonFriendlyCharacters(stringToEncode: String): String =

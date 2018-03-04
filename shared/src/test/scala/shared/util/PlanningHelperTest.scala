@@ -61,4 +61,14 @@ class PlanningHelperTest extends FunSpec
       assert(decoded === "2/2 = 100%")
     }
   }
+
+  describe("Given a string, '&', encoding") {
+    it("[[AMPERSAND]]'") {
+      val decoded = PlanningHelper.encodeAnyJawnNonFriendlyCharacters("&")
+      assert(decoded === "&")
+    }
+  }
+
 }
+
+

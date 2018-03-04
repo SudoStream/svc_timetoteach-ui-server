@@ -704,7 +704,7 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
         case Success(xhr) =>
           val hello = xhr.responseText
           println(s"hello === $hello")
-          dom.window.location.href = s"/manageclass/$theClassTimetableId";
+          dom.window.location.href = s"/classtimetable/$theClassTimetableId";
         case Failure(ex) =>
           dom.window.alert("Something went wrong with saving class timetable. Specificically : -" +
             s"\n\n${ex.toString}")

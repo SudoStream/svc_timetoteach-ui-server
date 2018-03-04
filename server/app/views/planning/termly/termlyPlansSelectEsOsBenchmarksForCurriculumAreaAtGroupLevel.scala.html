@@ -95,7 +95,7 @@
         @if(maybeEsOsAndBenchmarks.isDefined) {
 
             @for((esAndOsSectionMap, sectionIndex) <- maybeEsOsAndBenchmarks.get.setSectionNameToSubSections.zipWithIndex) {
-                <a class="btn btn-secondary termly-plans-es-and-os-section" data-toggle="collapse" href="#section_@sectionIndex" role="button"
+                <a class="btn btn-warning termly-plans-es-and-os-section" data-toggle="collapse" href="#section_@sectionIndex" role="button"
                 aria-expanded="false" aria-controls="section_@sectionIndex">
                 @esAndOsSectionMap._1
                 </a>
