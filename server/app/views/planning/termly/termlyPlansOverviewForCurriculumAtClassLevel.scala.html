@@ -3,7 +3,7 @@
 @import models.timetoteach.planning.ScottishCurriculumPlanningAreaWrapper
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails, curriculumArea: ScottishCurriculumPlanningAreaWrapper, subjectTermlyPlan: CurriculumAreaTermlyPlan, esAndOsCodeToDetailMap: Map[String, duplicate.model.esandos.EandO])
 
-@timetoteachAppMain(handler, s"${classDetails.className.name} Termly Plans - ${curriculumArea.niceSpecificValueIfPresent().getOrElse(curriculumArea.niceValue())} - Class Level",
+@timetoteachAppMain(handler, s"Class ${classDetails.className.name}",
     userPictureUri, userFirstName, userFamilyName, Some(classDetails.id.id), None) {
     <div class="in-app-menu-small-devices">
         <li class="nav-item nav-login-button">

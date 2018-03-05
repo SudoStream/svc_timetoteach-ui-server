@@ -3,7 +3,7 @@
 @import models.timetoteach.ui.CLASS_TERMLY_PLANS
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails, currentTermlyCurriculumSelection: TermlyCurriculumSelection, maybeCurriculumPlanProgress: Option[CurriculumPlanProgressForClass])
 
-@timetoteachAppMain(handler, s"Termly Plans - ${classDetails.className.name}",
+@timetoteachAppMain(handler, s"Class ${classDetails.className.name}",
     userPictureUri, userFirstName, userFamilyName, Some(classDetails.id.id), Some(CLASS_TERMLY_PLANS)) {
     <div class="in-app-menu-small-devices">
         <li class="nav-item nav-login-button">
