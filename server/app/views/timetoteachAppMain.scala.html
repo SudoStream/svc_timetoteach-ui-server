@@ -115,22 +115,22 @@
 
             @if(maybeClassId.isDefined) {
                 <div class="in-app-menu-medium-and-up">
-                    <nav id="dashboard-nav" class="navbar navbar-secondary bg-info navbar-expand-lg ">
+                    <nav id="dashboard-nav" class="navbar navbar-primary bg-secondary navbar-expand-lg ">
                         <ul class="navbar-nav mx-auto">
                             <li class="nav-item ">
-                                <a class="btn btn-warning" role="button"
+                                <a class="btn btn-light text-dark" role="button"
                                 href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(maybeClassId.get)">
                                     Class Setup</a>
                             </li>
                             <div class="col-1"></div>
                             <li class="nav-item ">
-                                <a id="manage-class-goto-timetable" class="btn btn-warning" role="button"
+                                <a id="manage-class-goto-timetable" class="btn btn-light  text-dark" role="button"
                                 href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(maybeClassId.get)">
                                     Class Timetable</a>
                             </li>
                             <div class="col-1"></div>
                             <li class="nav-item">
-                                <a class="btn btn-warning" role="button"
+                                <a class="btn btn-light text-dark" role="button"
                                 href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(maybeClassId.get)">
                                     Class Termly Plans</a>
                             </li>
