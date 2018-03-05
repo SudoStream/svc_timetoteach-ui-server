@@ -269,6 +269,10 @@ img {
     width: 100%;
 }
 
+#doing-stuff {
+    display: none;
+}
+
 .congratsJumbo h1 {
     color: white;
 }

@@ -27,10 +27,9 @@ object ManageClassJsScreen
   {
     global.console.log("Adding js for Manage Class Screen")
     addDeleteGroupBehaviour()
-    saveButton()
-    makeSaveButtonEnabledIfStateHasChanged()
     addNewGroupButtons()
     addNewGroupSaveButton()
+    saveOnLostFocus()
   }
 
   private def createAlerts(errors: Seq[String]): JsDom.Modifier =
@@ -86,12 +85,12 @@ object ManageClassJsScreen
 
               newGroupsAdded.add(groupId.id)
               addDeleteGroupBehaviour()
-              makeSaveButtonEnabledIfStateHasChanged()
 
               global.console.log("reload the javascript")
 
               val $ = js.Dynamic.global.$
               $("#addNewGroupModal").modal("hide")
+              doSave()
             } else {
               showErrors(errorsAlert, ERRORS)
             }
@@ -225,29 +224,19 @@ object ManageClassJsScreen
   }
 
 
-  def makeSaveButtonEnabledIfStateHasChanged(): Unit =
+  def saveOnLostFocus(): Unit =
   {
     val editableInputElems = dom.document.getElementsByClassName("editable-input-button")
     val nodeListSize = editableInputElems.length
     var index = 0
     while (index < nodeListSize) {
+      global.console.log("Adding Focus out behaviour")
       val editableInputElement = editableInputElems(index).asInstanceOf[HTMLInputElement]
-      editableInputElement.addEventListener("click", (e: dom.Event) => {
-        val saveEditsButton = dom.document.getElementById("save-class-edit-changes-button").asInstanceOf[HTMLButtonElement]
-        saveEditsButton.disabled = false
+      editableInputElement.addEventListener("focusout", (e: dom.Event) => {
+        global.console.log("Focus out!")
+        doSave()
       })
       index = index + 1
-    }
-
-    ////
-
-    val saveEditsButton = dom.document.getElementById("save-class-edit-changes-button").asInstanceOf[HTMLButtonElement]
-    if (groupIdsToBeDeleted.nonEmpty) {
-      saveEditsButton.disabled = false
-    }
-
-    if (newGroupsAdded.nonEmpty) {
-      saveEditsButton.disabled = false
     }
   }
 
@@ -270,7 +259,7 @@ object ManageClassJsScreen
         }
 
         theRowDiv.parentNode.removeChild(theRowDiv)
-        makeSaveButtonEnabledIfStateHasChanged()
+        doSave()
       })
 
       index = index + 1
@@ -349,44 +338,40 @@ object ManageClassJsScreen
     updatedGroups.toList
   }
 
-  def saveButton(): Unit =
+  private def doSave() =
   {
-    val saveEditsToClassButton = dom.document.getElementById("save-class-edit-changes-button").asInstanceOf[HTMLButtonElement]
-    if (saveEditsToClassButton != null) {
-      saveEditsToClassButton.addEventListener("click", (e: dom.Event) => {
-        saveEditsToClassButton.disabled = true
-        println("Saving edits to class ...")
-        val tttUserId = dom.window.localStorage.getItem("timeToTeachUserId")
-        val classId = dom.window.localStorage.getItem("classId")
-        val className = valueOrPlaceholder(dom.document.getElementById("className").asInstanceOf[HTMLInputElement])
-        val classDescription = valueOrPlaceholder(dom.document.getElementById("classDescription").asInstanceOf[HTMLInputElement])
-        val groups: List[Group] = buildGroups()
-        println(s"timeToTeachUserId = '$tttUserId'\n" +
-          s"classId = '$classId'\n" +
-          s"ACTION: Removing ${groupIdsToBeDeleted.size} groups from class\n" +
-          s"New class name? ${newClassName.isDefined}\n" +
-          s"New class description? ${newClassDescription.isDefined}")
+    val $ = js.Dynamic.global.$
+    $("#doing-stuff").modal("show", "backdrop: static", "keyboard : false")
 
-        println(s"All the groups : ${groups.toString}")
+    println("Saving edits to class ...")
+    val tttUserId = dom.window.localStorage.getItem("timeToTeachUserId")
+    val classId = dom.window.localStorage.getItem("classId")
+    val className = valueOrPlaceholder(dom.document.getElementById("className").asInstanceOf[HTMLInputElement])
+    val classDescription = valueOrPlaceholder(dom.document.getElementById("classDescription").asInstanceOf[HTMLInputElement])
+    val groups: List[Group] = buildGroups()
+    println(s"timeToTeachUserId = '$tttUserId'\n" +
+      s"classId = '$classId'\n" +
+      s"ACTION: Removing ${groupIdsToBeDeleted.size} groups from class\n" +
+      s"New class name? ${newClassName.isDefined}\n" +
+      s"New class description? ${newClassDescription.isDefined}")
 
-        val newClassDetails = ClassDetails(
-          id = ClassId(classId),
-          schoolDetails = null,
-          className = ClassName(className),
-          classDescription = ClassDescription(classDescription),
-          groups = groups,
-          classTeachersWithWriteAccess = List(tttUserId),
-          subjectToMaybeGroupMap = Map()
-        )
+    println(s"All the groups : ${groups.toString}")
 
-        import upickle.default.{ReadWriter => RW, _}
-        val classDetailsPickled = write[ClassDetails](newClassDetails)
-        println(s"Edited Class Details Pickled: ###$classDetailsPickled###")
-        saveEditedClass(classDetailsPickled)
-      })
-    }
+    val newClassDetails = ClassDetails(
+      id = ClassId(classId),
+      schoolDetails = null,
+      className = ClassName(className),
+      classDescription = ClassDescription(classDescription),
+      groups = groups,
+      classTeachersWithWriteAccess = List(tttUserId),
+      subjectToMaybeGroupMap = Map()
+    )
+
+    import upickle.default.{ReadWriter => RW, _}
+    val classDetailsPickled = write[ClassDetails](newClassDetails)
+    println(s"Edited Class Details Pickled: ###$classDetailsPickled###")
+    saveEditedClass(classDetailsPickled)
   }
-
   def saveEditedClass(classDetailsPickled: String): Any =
   {
     import scala.concurrent.ExecutionContext.Implicits.global
@@ -408,6 +393,8 @@ object ManageClassJsScreen
         val responseText = xhr.responseText
         println(s"response = '$responseText'")
         dom.window.setTimeout(() => {
+          val $ = js.Dynamic.global.$
+          $("#doing-stuff").modal("hide")
           println(s"lets goto group planning overview")
           val classId = dom.window.localStorage.getItem("classId")
           dom.window.location.href = s"/manageclass/$classId"
