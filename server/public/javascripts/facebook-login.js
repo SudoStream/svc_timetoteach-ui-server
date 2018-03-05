@@ -3,7 +3,7 @@
     if (d.getElementById(id)) return;
     js = d.createElement(s);
     js.id = id;
-    js.src = '/public/javascripts/facebook-sdl.js';
+    js.src = '/public/javascripts/facebook-sdk.js';
     fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));
 
