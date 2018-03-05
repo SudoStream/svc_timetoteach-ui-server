@@ -24,7 +24,7 @@ class ApplicationModule extends AbstractModule with ScalaModule
   {
     val pdfGen = new PdfGenerator(env)
 //    pdfGen.loadLocalFonts(Seq("./public/fonts/simplifica.ttf"))
-    pdfGen.loadLocalFonts(Seq("/home/andy/projects/timeToTeach/svc_timetoteach-ui-server/server/target/web/public/test/public/fonts/simplifica.ttf"))
+//    pdfGen.loadLocalFonts(Seq("/home/andy/projects/timeToTeach/svc_timetoteach-ui-server/server/target/web/public/test/public/fonts/simplifica.ttf"))
 //    pdfGen.loadLocalFonts(Seq(routes.Assets.versioned("fonts/simplifica.ttf").absoluteURL()))
     pdfGen
   }
