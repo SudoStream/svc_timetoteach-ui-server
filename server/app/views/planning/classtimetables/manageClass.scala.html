@@ -1,7 +1,7 @@
 @import models.timetoteach.TimeToTeachUserId
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails)
 
-@timetoteachAppMain(handler, s"Manage Class - " + classDetails.className.name,
+@timetoteachAppMain(handler, s"Class Setup - " + classDetails.className.name,
     userPictureUri, userFirstName, userFamilyName, Some(classDetails.id.id)) {
 
     <div class="in-app-menu-small-devices">

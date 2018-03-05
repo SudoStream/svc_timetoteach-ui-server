@@ -15,7 +15,10 @@
     overflow-wrap: break-word;
     white-space: normal;
 }
+
 .panel-footer {
+    margin-top: 10rem;
+    z-index: 1000;
     width: 3.8rem;
     height: 8.6rem;
 
@@ -23,6 +26,7 @@
     position: fixed;
     align-self: center;
 }
+
 label {
     padding: 0;
     vertical-align: middle;
@@ -343,7 +347,7 @@ img {
 }
 
 #mainAppTopMargin {
-    padding-top: 1rem;
+    padding-top: 0.1rem;
 }
 
 #userSignupButton {
