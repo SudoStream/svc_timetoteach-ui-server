@@ -2,7 +2,7 @@
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails, groupDetails: duplicate.model.Group, curriculumArea: String, maybeEsOsAndBenchmarks: Option[duplicate.model.esandos.EsAndOsPlusBenchmarksForCurriculumAreaAndLevel])
 
 @timetoteachAppMain(handler, s"${classDetails.className.name} Termly Plans - $curriculumArea - ${groupDetails.groupName.name.capitalize}",
-    userPictureUri, userFirstName, userFamilyName) {
+    userPictureUri, userFirstName, userFamilyName, Some(classDetails.id.id)) {
     <div class="in-app-menu-small-devices">
         <li class="nav-item nav-login-button">
             <a class="btn btn-outline-primary btn-block" role="button" href="@routes.Application.timeToTeachApp()">
@@ -31,44 +31,30 @@
                 Class Timetable</a>
         </li>
 
+        @if(userPictureUri.isDefined) {
+            <li class="nav-item nav-login-button">
+                <a class="nav-link" href="#"><img class="img-circle-standard" src="@userPictureUri" height="32px"></a>
+            </li>
+        }
+        <li class="nav-item nav-login-button">
+        @if(userFirstName.isDefined) {
+            <a class="btn btn-sm btn-outline-primary btn-block" href="#" onclick="signOut();">
+                Sign Out</a>
+        } else {
+            <a class="btn btn-sm btn-outline-primary btn-block" href="@routes.Application.login()">
+                Log In</a>
+        }
+        </li>
+        <li class="nav-item nav-login-button ">
+            <a class="btn btn-sm btn-outline-primary btn-block" href="https://www.facebook.com/groups/305966139892476/">
+                <img src="@routes.Assets.versioned("icons/FB-f-Logo__blue_29.png")" alt="logo" height="19">
+                Facebook Group</a>
+        </li>
+
+
     </div>
 } {
     <div class="container">
-        <div class="manage-class-form-section">
-            <div class="in-app-menu-medium-and-up">
-                <div class="d-flex ">
-                    <ul class="nav mr-auto justify-content-between">
-                        <li class="nav-item manage-class-nav-item-leftmost">
-                            <a class="btn btn-primary" role="button" href="@routes.Application.timeToTeachApp()">
-                                Dashboard</a>
-                        </li>
-                        <li class="nav-item manage-class-nav-item-on-left">
-                            <a class="btn btn-primary" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlans()">
-                                Termly Plans Home</a>
-                        </li>
-                    </ul>
-
-                    <ul class="nav justify-content-end">
-                        <li class="nav-item manage-class-nav-item-on-right">
-                            <a class="btn btn-info" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(classDetails.id.id)">
-                                @classDetails.className.name Termly Plans</a>
-                        </li>
-                        <li class="nav-item manage-class-nav-item-on-right">
-                            <a class="btn btn-info" role="button"
-                            href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(classDetails.id.id)">
-                                Manage @classDetails.className.name</a>
-                        </li>
-                        <li class="nav-item manage-class-nav-item-rightmost">
-                            <a id="manage-class-goto-timetable" class="btn btn-info" role="button"
-                            href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(classDetails.id.id)">
-                                Class Timetable</a>
-                        </li>
-                    </ul>
-
-                </div>
-            </div>
-        </div>
-
 
         <div class="termly-plans-overview-section">
             <form>

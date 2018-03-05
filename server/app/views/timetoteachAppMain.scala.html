@@ -1,4 +1,4 @@
-@(handler: be.objectify.deadbolt.scala.DeadboltHandler, title: String, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String])(appNavMenuListItems: Html)(content: Html)
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, title: String, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], maybeClassId: Option[String])(appNavMenuListItems: Html)(content: Html)
 <!DOCTYPE html>
 <html>
     <head>
@@ -47,39 +47,98 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <div id="app-main-screen-title">
-                <h4 class="display-5 text-center">@title</h4>
+            <div id="app-main-screen-title" class="col-md-3 in-app-menu-medium-and-up">
+                <h5 class="display-5 text-dark app-main-screen-title">@title</h5>
             </div>
 
-            <div class="collapse navbar-collapse" id="startupNavbar">
-                <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+            <div class="d-flex col-md-6">
+                <div class="collapse navbar-collapse " id="startupNavbar">
+                    <ul class="navbar-nav mx-auto">
+                        <div class="row align-items-center">
 
-                    @appNavMenuListItems
+                            @appNavMenuListItems
 
-                    @if(userPictureUri.isDefined) {
-                        <li class="nav-item">
-                            <a class="nav-link" href="#"><img class="img-circle-standard" src="@userPictureUri" height="32px"></a>
-                        </li>
-                    }
-                    <div class="row row-for-mobile"><br></div>
-                    <li class="nav-item nav-login-button">
-                    @if(userFirstName.isDefined) {
-                        <a class="btn btn-outline-primary btn-block" href="#" onclick="signOut();">Sign Out</a>
-                    } else {
-                        <a class="btn btn-outline-primary btn-block" href="@routes.Application.login()">Log In</a>
-                    }
-                    </li>
-                    <li class="nav-item nav-login-button">
-                        <a class="btn btn-outline-primary btn-block" href="https://www.facebook.com/groups/305966139892476/">
-                            <img src="@routes.Assets.versioned("icons/FB-f-Logo__blue_29.png")" alt="logo" height="19">
-                            Facebook Group</a>
-                    </li>
+                            <li class="nav-item nav-login-button-dashboard in-app-menu-medium-and-up">
+                                <a class="btn btn-sm btn-outline-primary btn-block" role="button" href="@routes.Application.timeToTeachApp()">
+                                    Dashboard</a>
+                            </li>
+                            <li class="nav-item nav-login-button-dashboard in-app-menu-medium-and-up">
+                                <a class="btn btn-sm btn-outline-primary btn-block" role="button" href="@controllers.planning.classtimetable.routes.ClassTimetableController.classesHome()">
+                                    Classes Home</a>
+                            </li>
+                            <li class="nav-item nav-login-button-dashboard in-app-menu-medium-and-up">
+                                <a class="btn btn-sm btn-outline-primary btn-block" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlans()">
+                                    Termly Plans</a>
+                            </li>
+                        </div>
 
-                </ul>
+                    </ul>
+
+                </div>
+            </div>
+            <div class="d-flex col-md-3">
+                <div class="collapse navbar-collapse in-app-menu-medium-and-up" >
+                    <ul class="navbar-nav">
+
+                        <div class="row align-items-center">
+
+                            @if(userPictureUri.isDefined) {
+                                <li class="nav-item nav-login-button-picture">
+                                    <a class="nav-link" href="#"><img class="img-circle-standard" src="@userPictureUri" height="32px"></a>
+                                </li>
+                            }
+
+                            <li class="nav-item nav-login-button">
+                                <a href="https://www.facebook.com/groups/305966139892476/">
+                                    <img src="@routes.Assets.versioned("icons/FB-f-Logo__blue_29.png")" alt="logo" height="24"></a>
+                            </li>
+
+                            <li class="nav-item nav-login-button">
+                            @if(userFirstName.isDefined) {
+                                <a class="btn btn-sm btn-outline-primary btn-block" href="#" onclick="signOut();">
+                                    Sign Out</a>
+                            } else {
+                                <a class="btn btn-sm btn-outline-primary btn-block" href="@routes.Application.login()">
+                                    Log In</a>
+                            }
+                            </li>
+                        </div>
+
+                    </ul>
+
+                </div>
+
             </div>
         </nav>
 
         <div id="appBackground">
+
+            @if(maybeClassId.isDefined) {
+                <div class="in-app-menu-medium-and-up">
+                    <nav id="dashboard-nav" class="navbar navbar-secondary bg-info navbar-expand-lg ">
+                        <ul class="navbar-nav mx-auto">
+                            <li class="nav-item ">
+                                <a class="btn btn-warning" role="button"
+                                href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(maybeClassId.get)">
+                                    Class Setup</a>
+                            </li>
+                            <div class="col-1"></div>
+                            <li class="nav-item ">
+                                <a id="manage-class-goto-timetable" class="btn btn-warning" role="button"
+                                href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(maybeClassId.get)">
+                                    Class Timetable</a>
+                            </li>
+                            <div class="col-1"></div>
+                            <li class="nav-item">
+                                <a class="btn btn-warning" role="button"
+                                href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(maybeClassId.get)">
+                                    Class Termly Plans</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            }
+
             <div id="mainAppTopMargin"></div>
 
             <div class="container">
@@ -95,30 +154,16 @@
                         </p>
                     </div>
                 </div>
-                <div class="alert alert-secondary alert-dismissible fade show " role="alert" >
-                    <div class="d-flex justify-content-center">
-                        <a id="survey" class="btn btn-outline-danger btn-sm " href="https://www.surveymonkey.co.uk/r/VKXG7PP">
-                            Let Us Know What You Think
-                        </a>
-                    </div>
-                </div>
 
             </div>
 
 
-            @*<p>Note: This is a development version of Time To Teach Zone. It is for playing around with and giving an opportunity for early feedback</p>*@
-            @*</div>*@
+            <a id="survey" class="panel-footer btn btn-danger btn-sm" href="https://www.surveymonkey.co.uk/r/VKXG7PP">
+                <div class="side-button"><strong>Let Us Know What You Think</strong></div>
+            </a>
 
-            @*<div class="container">*@
-            @*<div id="class-timetable-subject-warning" class="alert alert-info alert-dismissible fade show text-center" role="alert" >*@
-            @*<button type="button" class="close" data-dismiss="alert" aria-label="Close">*@
-            @*<span aria-hidden="true">&times;</span>*@
-            @*</button>*@
-
-            @*<p>Note: This is a development version of Time To Teach Zone. It is for playing around with and giving an opportunity for early feedback</p>*@
-            @*</div>*@
-            @*</div>*@
             @content
+
         </div>
 
 
