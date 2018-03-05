@@ -20,12 +20,15 @@ function statusChangeCallback(response) {
 // Button.  See the onlogin handler attached to it in the sample
 // code below.
 function checkLoginState() {
+    console.log("check login state");
+
     FB.getLoginStatus(function(response) {
         statusChangeCallback(response);
     });
 }
 
 window.fbAsyncInit = function() {
+    console.log("hee");
     FB.init({
         appId      : '377986715954577',
         cookie     : true,  // enable cookies to allow the server to access
@@ -45,6 +48,8 @@ window.fbAsyncInit = function() {
     //    your app or not.
     //
     // These three cases are handled in the callback function.
+
+
 
     FB.getLoginStatus(function(response) {
         statusChangeCallback(response);

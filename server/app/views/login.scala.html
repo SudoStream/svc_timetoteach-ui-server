@@ -14,19 +14,23 @@
         <script type="text/javascript" src="@routes.Assets.versioned("javascripts/signin.js")"></script>
         <script type="text/javascript" src="@routes.Assets.versioned("javascripts/signout.js")"></script>
         <script type="text/javascript" src="@routes.Assets.versioned("javascripts/facebook-login.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.versioned("javascripts/facebook-sdk.js")"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
         <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("icons/ttt_owl.png")">
             <!-- Hotjar Tracking Code for www.dev.timetoteach.zone -->
         <script>
-                (function(h,o,t,j,a,r){
-                    h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
-                    h._hjSettings={hjid:801472,hjsv:6};
-                    a=o.getElementsByTagName('head')[0];
-                    r=o.createElement('script');r.async=1;
-                    r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+                (function (h, o, t, j, a, r) {
+                    h.hj = h.hj || function () {
+                        (h.hj.q = h.hj.q || []).push(arguments)
+                    };
+                    h._hjSettings = {hjid: 801472, hjsv: 6};
+                    a = o.getElementsByTagName('head')[0];
+                    r = o.createElement('script');
+                    r.async = 1;
+                    r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv;
                     a.appendChild(r);
-                })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+                })(window, document, 'https://static.hotjar.com/c/hotjar-', '.js?sv=');
         </script>
     </head>
     <body>
@@ -46,19 +50,19 @@
                         <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
                     </li>
                     @*<li class="nav-item">*@
-                        @*<a class="nav-link" href="/#feature-one">Features</a>*@
+                    @*<a class="nav-link" href="/#feature-one">Features</a>*@
                     @*</li>*@
                     @*<li class="nav-item">*@
-                        @*<a class="nav-link" href="/#pricing">Pricing</a>*@
+                    @*<a class="nav-link" href="/#pricing">Pricing</a>*@
                     @*</li>*@
                     @*<li class="nav-item">*@
-                        @*<a class="nav-link" href="/#news">News</a>*@
+                    @*<a class="nav-link" href="/#news">News</a>*@
                     @*</li>*@
                     @*<li class="nav-item">*@
-                        @*<a class="nav-link" href="/#about">About</a>*@
+                    @*<a class="nav-link" href="/#about">About</a>*@
                     @*</li>*@
                     @*<li class="nav-item">*@
-                        @*<a class="nav-link disabled" href="#">Blog</a>*@
+                    @*<a class="nav-link disabled" href="#">Blog</a>*@
                     @*</li>*@
                     <li class="nav-item nav-login-button">
                         <a class="btn btn-outline-primary" href="@routes.Application.login()">Log in</a>
@@ -110,9 +114,20 @@
                             <div class="loginButtonGroup border border-secondary rounded" >
 
                                 <div class="d-flex justify-content-center loginButton">
-                                    <div class="fb-login-button" data-max-rows="1" data-size="large" data-button-type="login_with"
-                                    scope="public_profile,email" onlogin="checkLoginState"
-                                    data-show-faces="false" data-auto-logout-link="false" data-use-continue-as="false"></div>
+
+                                    <div id="spinner"
+                                    style="
+                                        background: #4267b2;
+                                        border-radius: 5px;
+                                        color: white;
+                                        height: 40px;
+                                        text-align: center;
+                                        width: 236px;
+                                    ">Facebook Login Loading ...
+                                        <div class="fb-login-button" data-max-rows="1" data-size="large" data-button-type="login_with"
+                                        scope="public_profile,email" onlogin="checkLoginState"
+                                        data-show-faces="false" data-auto-logout-link="false" data-use-continue-as="false"></div>
+                                    </div>
                                 </div>
 
                                 <div class="d-flex justify-content-center loginButton">
@@ -171,7 +186,16 @@
             </div>
         </footer>
 
-
+        <div class="modal" id="doing-stuff" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addNewGroupModalHeader">
+                            ... logging in ... </h5>
+                    </div>
+                </div>
+            </div>
+        </div>
         @* ========================================================================================================*@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"
@@ -179,6 +203,15 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js"
         integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
 
+        <script>
+                var finished_rendering = function() {
+                    console.log("finished rendering plugins");
+                    var spinner = document.getElementById("spinner");
+                    spinner.removeAttribute("style");
+                    spinner.removeChild(spinner.childNodes[0]);
+                };
+                FB.Event.subscribe('xfbml.render', finished_rendering);
 
+        </script>
     </body>
 </html>

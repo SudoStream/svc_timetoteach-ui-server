@@ -3,7 +3,8 @@
     if (d.getElementById(id)) return;
     js = d.createElement(s);
     js.id = id;
-    js.src = 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.11&appId=377986715954577';
+    // js.src = 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.11&appId=377986715954577';
+    js.src = '/public/javascripts/facebook-sdl.js#xfbml=1&version=v2.11&appId=377986715954577';
     fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));
 
@@ -37,14 +38,17 @@ function statusChangeCallback(response) {
             };
             xhr.onloadend = function () {
                 if (xhr.status === 404) {
+                    $('#doing-stuff').modal('hide');
                     console.log("reply status :- " + xhr.status);
                     window.location.href = "/signupsteptwo";
                 } else {
+                    $('#doing-stuff').modal('hide');
                     console.log("reply status :- " + xhr.status);
                     window.setTimeout(goToApp, 500);
                 }
 
             };
+            $('#doing-stuff').modal('show');
             xhr.send(
                 'idtoken=' + response.authResponse.accessToken + '&' +
                 'userId=' + innerResponse.id + '&' +
@@ -53,6 +57,7 @@ function statusChangeCallback(response) {
                 'userGivenName=' + innerResponse.first_name + '&' +
                 'userFamilyName=' + innerResponse.last_name
             );
+
         });
 
     }
@@ -113,3 +118,4 @@ function testAPI() {
 
     });
 }
+
