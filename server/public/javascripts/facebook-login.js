@@ -3,13 +3,13 @@
     if (d.getElementById(id)) return;
     js = d.createElement(s);
     js.id = id;
-    // js.src = 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.11&appId=377986715954577';
-    js.src = '/public/javascripts/facebook-sdl.js#xfbml=1&version=v2.11&appId=377986715954577';
+    js.src = '/public/javascripts/facebook-sdl.js';
     fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));
 
 // This is called with the results from from FB.getLoginStatus().
 function statusChangeCallback(response) {
+
     console.log('Facebook statusChangeCallback');
     console.log(response);
     // The response object is returned with a status field that lets the
@@ -70,7 +70,9 @@ function statusChangeCallback(response) {
 // Button.  See the onlogin handler attached to it in the sample
 // code below.
 function checkLoginState() {
+
     FB.getLoginStatus(function (response) {
+
         statusChangeCallback(response);
     });
 }
