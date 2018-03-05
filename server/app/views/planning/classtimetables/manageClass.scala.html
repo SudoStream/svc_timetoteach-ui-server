@@ -1,8 +1,9 @@
 @import models.timetoteach.TimeToTeachUserId
+@import models.timetoteach.ui.CLASS_SETUP
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails)
 
 @timetoteachAppMain(handler, s"Class Setup - " + classDetails.className.name,
-    userPictureUri, userFirstName, userFamilyName, Some(classDetails.id.id)) {
+    userPictureUri, userFirstName, userFamilyName, Some(classDetails.id.id), Some(CLASS_SETUP)) {
 
     <div class="in-app-menu-small-devices">
         <li class="nav-item nav-login-button">

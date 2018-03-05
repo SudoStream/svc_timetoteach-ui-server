@@ -4,7 +4,7 @@
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails, curriculumArea: ScottishCurriculumPlanningAreaWrapper, subjectTermlyPlan: CurriculumAreaTermlyPlan, esAndOsCodeToDetailMap: Map[String, duplicate.model.esandos.EandO])
 
 @timetoteachAppMain(handler, s"${classDetails.className.name} Termly Plans - ${curriculumArea.niceSpecificValueIfPresent().getOrElse(curriculumArea.niceValue())} - Class Level",
-    userPictureUri, userFirstName, userFamilyName, Some(classDetails.id.id)) {
+    userPictureUri, userFirstName, userFamilyName, Some(classDetails.id.id), None) {
     <div class="in-app-menu-small-devices">
         <li class="nav-item nav-login-button">
             <a class="btn btn-outline-primary btn-block" role="button" href="@routes.Application.timeToTeachApp()">
@@ -52,11 +52,18 @@
                     <div class="form-group col-md-4"></div>
                 </div>
             </form>
-
-
         </div>
 
         <div>
+            <div id="reselect-and-download-pdf-section" class="d-flex justify-content-around">
+                <div class="col-3">
+                    <a id="termly-plans-edit" role="button" class="btn btn-outline-danger"
+                    href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansClassLevel_SelectEsOsBenchmarksForCurriculumArea(classDetails.id.id, curriculumArea.value.toString)">
+                        Re-Select Es&Os/Benchmarks</a>
+                </div>
+            </div>
+
+
             <div class="row text-center">
                 <div class="col-sm-6"><h4>Es & Os</h4></div>
                 <div class="col-sm-6"><h4>Benchmarks</h4></div>
@@ -95,14 +102,6 @@
                 </div>
             }
 
-            <div class="d-flex justify-content-end reselect-es-and-os-button">
-                <div class="col-7"></div>
-                <div class="col-3">
-                    <a id="termly-plans-edit" role="button" class="btn btn-warning"
-                    href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansClassLevel_SelectEsOsBenchmarksForCurriculumArea(classDetails.id.id, curriculumArea.value.toString)">
-                        Re-Select Es&Os/Benchmarks</a>
-                </div>
-            </div>
         </div>
 
 

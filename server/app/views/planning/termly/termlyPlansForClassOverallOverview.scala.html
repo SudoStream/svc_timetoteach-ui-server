@@ -1,9 +1,10 @@
 @import models.timetoteach.TimeToTeachUserId
 @import models.timetoteach.planning.{CurriculumPlanProgressForClass, TermlyCurriculumSelection}
+@import models.timetoteach.ui.CLASS_TERMLY_PLANS
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails, currentTermlyCurriculumSelection: TermlyCurriculumSelection, maybeCurriculumPlanProgress: Option[CurriculumPlanProgressForClass])
 
 @timetoteachAppMain(handler, s"Termly Plans - ${classDetails.className.name}",
-    userPictureUri, userFirstName, userFamilyName, Some(classDetails.id.id)) {
+    userPictureUri, userFirstName, userFamilyName, Some(classDetails.id.id), Some(CLASS_TERMLY_PLANS)) {
     <div class="in-app-menu-small-devices">
         <li class="nav-item nav-login-button">
             <a class="btn btn-outline-primary btn-block" role="button" href="@routes.Application.timeToTeachApp()">
@@ -34,20 +35,20 @@
         <div class="termly-plans-overview-section text-center">
             <h4 class="termly-plans-overview-section-header">Termly Plans</h4>
 
-            <div class="d-flex justify-content-around">
-                <div class="col-3">
-                    <a id="termly-plans-edit" role="button" class="btn btn-warning btn-sm btn-block"
-                    href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansSelectOverallCurriculumAreasForTheTerm(classDetails.id.id)">
-                        Re-Select Curriculum Areas</a>
-                </div>
-                <div class="col-3">
-                    <button class="btn btn-sm btn-danger btn-block" role="button" href="#" disabled="true">
-                        Download Termly Plan PDF</button>
-                </div>
-            </div>
-
-
             <div id="termly-plans-overview-of-all-classes-section">
+
+                <div id="reselect-and-download-pdf-section" class="d-flex justify-content-around">
+                    <div class="col-3">
+                        <a id="termly-plans-edit" role="button" class="btn btn-outline-danger btn-sm btn-block"
+                        href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansSelectOverallCurriculumAreasForTheTerm(classDetails.id.id)">
+                            Re-Select Curriculum Areas</a>
+                    </div>
+                    <div class="col-3">
+                        <button class="btn btn-sm btn-outline-danger btn-block" role="button" href="#" disabled="true">
+                            Download Termly Plan PDF</button>
+                    </div>
+                </div>
+
                 <div class="in-app-menu-medium-and-up">
                     <div class="termly-plans-overview-headers">
                         <div class="row">

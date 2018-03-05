@@ -1,7 +1,7 @@
 @import be.objectify.deadbolt.scala.AuthenticatedRequest
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler, title: String, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], devToggle: Boolean)(implicit request: AuthenticatedRequest[Any])
 
-@timetoteachAppMain(handler, "Dashboard", userPictureUri, userFirstName, userFamilyName, None) {
+@timetoteachAppMain(handler, "Dashboard", userPictureUri, userFirstName, userFamilyName, None, None) {
 
     <div class="in-app-menu-small-devices">
         <div class="row row-for-mobile"><br></div>

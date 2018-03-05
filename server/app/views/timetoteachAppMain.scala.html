@@ -1,4 +1,4 @@
-@(handler: be.objectify.deadbolt.scala.DeadboltHandler, title: String, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], maybeClassId: Option[String])(appNavMenuListItems: Html)(content: Html)
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, title: String, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], maybeClassId: Option[String], maybeClassContext: Option[models.timetoteach.ui.ClassIdContext])(appNavMenuListItems: Html)(content: Html)
 <!DOCTYPE html>
 <html>
     <head>
@@ -48,7 +48,7 @@
             </button>
 
             <div id="app-main-screen-title" class="col-md-3 in-app-menu-medium-and-up">
-                <h5 class="display-5 text-dark app-main-screen-title">@title</h5>
+                <h5 class="display-5 text-primary app-main-screen-title">@title</h5>
             </div>
 
             <div class="d-flex col-md-6">
@@ -59,15 +59,15 @@
                             @appNavMenuListItems
 
                             <li class="nav-item nav-login-button-dashboard in-app-menu-medium-and-up">
-                                <a class="btn btn-sm btn-outline-primary btn-block" role="button" href="@routes.Application.timeToTeachApp()">
+                                <a class="btn btn-sm btn-outline-dark btn-block" role="button" href="@routes.Application.timeToTeachApp()">
                                     Dashboard</a>
                             </li>
                             <li class="nav-item nav-login-button-dashboard in-app-menu-medium-and-up">
-                                <a class="btn btn-sm btn-outline-primary btn-block" role="button" href="@controllers.planning.classtimetable.routes.ClassTimetableController.classesHome()">
+                                <a class="btn btn-sm btn-outline-dark btn-block" role="button" href="@controllers.planning.classtimetable.routes.ClassTimetableController.classesHome()">
                                     Classes Home</a>
                             </li>
                             <li class="nav-item nav-login-button-dashboard in-app-menu-medium-and-up">
-                                <a class="btn btn-sm btn-outline-primary btn-block" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlans()">
+                                <a class="btn btn-sm btn-outline-dark btn-block" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlans()">
                                     Termly Plans</a>
                             </li>
                         </div>
@@ -117,23 +117,61 @@
                 <div class="in-app-menu-medium-and-up">
                     <nav id="dashboard-nav" class="navbar navbar-primary bg-secondary navbar-expand-lg ">
                         <ul class="navbar-nav mx-auto">
-                            <li class="nav-item ">
-                                <a class="btn btn-light text-dark" role="button"
-                                href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(maybeClassId.get)">
-                                    Class Setup</a>
-                            </li>
-                            <div class="col-1"></div>
-                            <li class="nav-item ">
-                                <a id="manage-class-goto-timetable" class="btn btn-light  text-dark" role="button"
-                                href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(maybeClassId.get)">
-                                    Class Timetable</a>
-                            </li>
-                            <div class="col-1"></div>
-                            <li class="nav-item">
-                                <a class="btn btn-light text-dark" role="button"
-                                href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(maybeClassId.get)">
-                                    Class Termly Plans</a>
-                            </li>
+                            @if(maybeClassContext.isDefined) {
+                                <li class="nav-item ">
+                                    @if(maybeClassContext.get.isInstanceOf[models.timetoteach.ui.CLASS_SETUP.type]) {
+                                        <a class="btn btn-warning" role="button"
+                                        href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(maybeClassId.get)">
+                                            Class Setup</a>
+                                    } else {
+                                        <a class="btn btn-light text-dark" role="button"
+                                        href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(maybeClassId.get)">
+                                            Class Setup</a>
+                                    }
+                                </li>
+                                <div class="col-1"></div>
+                                <li class="nav-item ">
+                                @if(maybeClassContext.get.isInstanceOf[models.timetoteach.ui.CLASS_TIMETABLE.type]) {
+                                    <a id="manage-class-goto-timetable" class="btn btn-warning" role="button"
+                                    href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(maybeClassId.get)">
+                                        Class Timetable</a>
+                                } else {
+                                    <a id="manage-class-goto-timetable" class="btn btn-light  text-dark" role="button"
+                                    href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(maybeClassId.get)">
+                                        Class Timetable</a>
+                                }
+                                </li>
+                                <div class="col-1"></div>
+                                <li class="nav-item">
+                                @if(maybeClassContext.get.isInstanceOf[models.timetoteach.ui.CLASS_TERMLY_PLANS.type]) {
+                                    <a class="btn btn-warning" role="button"
+                                    href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(maybeClassId.get)">
+                                        Class Termly Plans</a>
+                                } else {
+                                    <a class="btn btn-light text-dark" role="button"
+                                    href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(maybeClassId.get)">
+                                        Class Termly Plans</a>
+                                }
+                                </li>
+                            } else {
+                                <li class="nav-item ">
+                                    <a class="btn btn-light text-dark" role="button"
+                                    href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(maybeClassId.get)">
+                                        Class Setup</a>
+                                </li>
+                                <div class="col-1"></div>
+                                <li class="nav-item ">
+                                    <a id="manage-class-goto-timetable" class="btn btn-light  text-dark" role="button"
+                                    href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(maybeClassId.get)">
+                                        Class Timetable</a>
+                                </li>
+                                <div class="col-1"></div>
+                                <li class="nav-item">
+                                    <a class="btn btn-light text-dark" role="button"
+                                    href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(maybeClassId.get)">
+                                        Class Termly Plans</a>
+                                </li>
+                            }
                         </ul>
                     </nav>
                 </div>

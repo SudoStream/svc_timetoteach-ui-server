@@ -2,10 +2,11 @@
 @import models.timetoteach.TimeToTeachUserId
 @import models.timetoteach.classtimetable.SchoolDayTimes
 @import shared.model.classtimetable.{WWWClassTimetable, _}
+@import models.timetoteach.ui.CLASS_TIMETABLE
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], schoolDayTimes: SchoolDayTimes, savedWwwClassTimetable: Option[WWWClassTimetable], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails)(implicit request: AuthenticatedRequest[Any])
 
 @timetoteachAppMain(handler, s"Class Timetable - " + classDetails.className.name,
-    userPictureUri, userFirstName, userFamilyName, Some(classDetails.id.id)) {
+    userPictureUri, userFirstName, userFamilyName, Some(classDetails.id.id), Some(CLASS_TIMETABLE)) {
 
     <div class="in-app-menu-small-devices">
         <li class="nav-item nav-login-button">
