@@ -31,7 +31,7 @@ class DownloadPdfController @Inject()(
     localDate.format(formatter)
   }
 
-  def viewClassTermlyPlan(classId: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest: AuthenticatedRequest[AnyContent] =>
+  def pdfViewClassTermlyPlan(classId: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest: AuthenticatedRequest[AnyContent] =>
     val tttUserId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO ID")
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
     val eventualMaybeUser = userReader.getUserDetails(TimeToTeachUserId(tttUserId))
@@ -44,7 +44,7 @@ class DownloadPdfController @Inject()(
       maybeUser <- eventualMaybeUser
       if maybeUser.isDefined
       user = maybeUser.get
-    } yield Ok(views.html.planning.termly.viewClassTermlyPlan(
+    } yield Ok(views.html.planning.termly.pdfViewClassTermlyPlan(
       classDetails,
       termService.currentSchoolTerm(),
       createTodaysDatePretty(),
@@ -65,7 +65,7 @@ class DownloadPdfController @Inject()(
       maybeUser <- eventualMaybeUser
       if maybeUser.isDefined
       user = maybeUser.get
-    } yield pdfGeneratorWrapper.pdfGenerator.ok(views.html.planning.termly.viewClassTermlyPlan(
+    } yield pdfGeneratorWrapper.pdfGenerator.ok(views.html.planning.termly.pdfViewClassTermlyPlan(
       classDetails,
       termService.currentSchoolTerm(),
       createTodaysDatePretty(),
