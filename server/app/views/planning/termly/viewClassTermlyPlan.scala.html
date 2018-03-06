@@ -1,34 +1,128 @@
-@import models.timetoteach.term.SchoolTerm
-@import models.timetoteach.term.SchoolTermName
-@(classDetails: duplicate.model.ClassDetails, schoolTerm: SchoolTerm, todaysDatePretty: String)
+@import io.sudostream.timetoteach.messages.systemwide.model.User
+@import models.timetoteach.term.{SchoolTerm, SchoolTermName}
+@(classDetails: duplicate.model.ClassDetails, schoolTerm: SchoolTerm, todaysDatePretty: String, teachers: List[User])
 
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Class @{
-            classDetails.className.name
-        } : @{
-            SchoolTermName.niceValue(schoolTerm.schoolTermName)
-        } Termly Plan</title>
+        <title>View Termly Plan</title>
         <meta charset="utf-8">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
-        <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/termlyplanspdf.css")">
-        <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("icons/ttt_owl.png")">
+        <style type="text/css">
+                body {
+                    font-size: 10px;
+                }
 
+                table {
+                    width: 100%;
+                }
+
+                #main-header-row {
+                    margin-top: 40px;
+                }
+
+                #view-class-plans-termly-plan-header {
+                    margin-top: 35px;
+                    font-size: 12px;
+                }
+
+                .the-class-name {
+                    font-size: larger;
+                }
+
+                ul#horizontal-list {
+                    min-width: 696px;
+                    list-style: none;
+                    padding-top: 20px;
+                }
+
+                ul#horizontal-list li {
+                    display: inline;
+                }
+
+                .ttt-owl-image {
+                    padding-left: 3px;
+                    padding-right: 3px;
+                }
+
+                .make-float-right {
+                    display: inline-flex;
+                    float: right;
+                }
+
+                .message {
+                    margin-top: 100px;
+                }
+        </style>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
     </head>
 
-    <div class="text-center">
-        <h2 id="view-class-plans-termly-plan-header"><span class="text-muted view-class-plans-todays-date">@{
-            todaysDatePretty
-        }</span>
-            @{
-                classDetails.className.name
-            }, @{
-            SchoolTermName.niceValue(schoolTerm.schoolTermName)
-        } Plan, @{
-                schoolTerm.schoolYear.niceValue
-            }</h2>
+
+    <h6 class="text-muted">
+        <span>
+            Time To Teach
+            <img class="ttt-owl-image" src="public/icons/ttt_owl.png" alt="ttt owl" height="16">
+            <span class="ttt-url"><small>www.timetoteach.zone</small></span>
+        </span>
+        <span class="text-muted make-float-right">
+            <small>created : @{
+                todaysDatePretty
+            }
+            </small>
+        </span>
+    </h6>
+
+    <div class="text-center text-primary">
+        <h3>Termly Plan</h3>
     </div>
 
+    <div id="view-class-plans-termly-plan-header" class="text-center text-info">
+        <table >
+            <tr>
+                <th>
+                    @{
+                        classDetails.schoolDetails.name
+                    },
+                    @{
+                        classDetails.schoolDetails.address.split(" ").toList.last
+                    }
+                </th>
+                <th>
+                    Class:
+                    <strong>
+                        <span class="the-class-name">@{
+                            classDetails.className.name
+                        }
+                        </span>
+                    </strong>
+                </th>
+                <th>
+                    @{
+                        SchoolTermName.niceValue(schoolTerm.schoolTermName)
+                    },
+                    @{
+                        java.time.LocalDate.now().getYear
+                    }
+                </th>
+                <th>
+                    Teachers:
+                    <span>
+                    @for((teacher, index) <- teachers.zipWithIndex) {
+                        @{
+                            teacher.fullName
+                        }
+                        @if((index + 1) < teachers.size) {
+                            ,
+                        }
+                    }
+                    </span>
+                </th>
+            </tr>
+        </table>
+
+    </div>
+
+    <div class="text-center message text-secondary">
+        <h3>... Plan Details coming soon ...</h3>
+    </div>
 
 </html>

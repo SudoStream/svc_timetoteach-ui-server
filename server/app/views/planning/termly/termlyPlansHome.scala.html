@@ -27,9 +27,9 @@
                 <div class="in-app-menu-medium-and-up">
                     <div class="termly-plans-overview-headers">
                         <div class="row">
-                            <div class="col-lg-2"><small class="text-muted">Class Name</small></div>
+                            <div class="col-lg-3"><small class="text-muted">Class Name</small></div>
                             <div class="col-lg-2"><small class="text-muted">Termly Plan Progress</small></div>
-                            <div class="col-lg-6"><small class="text-muted">Teachers</small></div>
+                            <div class="col-lg-5"><small class="text-muted">Teachers</small></div>
                         </div>
                     </div>
                 </div>
@@ -37,10 +37,10 @@
                 @for(teacherClass <- schoolName_to_class._2) {
                     <div class="termly-plans-overview-row">
                         <div class="row">
-                            <div class="col-xs-3 col-lg-2">
+                            <div class="col-xs-5 col-lg-3">
                                 <a class="btn btn-sm btn-primary btn-block" role="button"
                                 href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(teacherClass.id.id)">
-                                @teacherClass.className.name</a>
+                                @teacherClass.className.name Termly Plan</a>
                             </div>
                             <div class="col-xs-3 col-lg-2">
                                 <div class="progress">
@@ -62,9 +62,10 @@
                                 }
                                 </div>
                             </div>
-                            <div class="col-xs-0 col-lg-6 muted">@userFirstName @userFamilyName</div>
+                            <div class="col-xs-0 col-lg-5 muted">@userFirstName @userFamilyName</div>
                             <div class="col-xs-3 col-lg-2">
-                                <button class="btn btn-sm btn-danger btn-block" role="button" href="#" disabled="true">Download PDF</button>
+                                <a class="btn btn-sm btn-outline-info btn-block" role="button"
+                                href="@controllers.planning.termly.routes.DownloadPdfController.downloadClassPdf(teacherClass.id.id)">Download Plan PDF</a>
                             </div>
                         </div>
                     </div>
