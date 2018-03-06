@@ -1,6 +1,7 @@
 @import io.sudostream.timetoteach.messages.systemwide.model.User
+@import models.timetoteach.planning.pdf.CurriculumAreaTermlyPlanForPdfWrapper
 @import models.timetoteach.term.{SchoolTerm, SchoolTermName}
-@(classDetails: duplicate.model.ClassDetails, schoolTerm: SchoolTerm, todaysDatePretty: String, teachers: List[User])
+@(classDetails: duplicate.model.ClassDetails, schoolTerm: SchoolTerm, todaysDatePretty: String, teachers: List[User], termlyPlan: CurriculumAreaTermlyPlanForPdfWrapper)
 
 <!DOCTYPE html>
 <html>
@@ -8,12 +9,35 @@
         <title>View Termly Plan</title>
         <meta charset="utf-8">
         <style type="text/css">
+                li {
+                    list-style-type: none;
+                }
+
                 body {
                     font-size: 10px;
                 }
 
                 table {
+                    border-collapse: collapse;
                     width: 100%;
+                }
+
+                .main-table th, .main-table td {
+                    text-align: left;
+                    padding: 8px;
+                }
+
+                .main-table th {
+                    background-color: #718FA9;
+                    color: #f7f7f7;
+                }
+
+                .main-table tr:nth-child(even) {
+                    background-color: #f2f2f2;
+                }
+
+                .main-table tr:nth-child(odd) {
+                    background-color: #f7f7f7;
                 }
 
                 #main-header-row {
@@ -40,7 +64,30 @@
                 }
 
                 .message {
-                    margin-top: 100px;
+                    margin-top: 25px;
+                    margin-bottom: 25px;
+                }
+
+                .new-curriculum-area {
+                    padding: 5px;
+
+                    margin-bottom: 80px;
+                    /*background-color: #f6f6ff;*/
+                    margin-top: 10px;
+                }
+
+                .single-benchmark {
+                    margin-top: 5px;
+                    margin-bottom: 5px;
+                }
+
+                .single-eando-code {
+                    margin-top: 5px;
+                    margin-bottom: 5px;
+                }
+
+                .new-group {
+                    margin-top: 20px;
                 }
         </style>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
@@ -108,11 +155,63 @@
                 </th>
             </tr>
         </table>
-
     </div>
 
-    <div class="text-center message text-secondary">
-        <h3>... Plan Details coming soon ...</h3>
+    <div class="text-center message text-secondary font-italic font-weight-bold">
+        ... Plan Details below is a work in progress ...
     </div>
+
+    <div>
+    @for(planningAreaWrapper <- termlyPlan.fullTermlyPlan.keys.toList.sortBy(elem => elem.niceValue())) {
+        <div class="new-curriculum-area">
+            <h4 class="text-center">
+            @{
+                planningAreaWrapper.niceValue()
+            }
+            </h4>
+
+            @for(curriculumAreaTermlyPlan <- termlyPlan.fullTermlyPlan(planningAreaWrapper)) {
+                <h3 class="text-primary font-weight-bold new-group">@{
+                    curriculumAreaTermlyPlan.maybeGroup match {
+                        case Some(group) => s"${group.groupName.name}"
+                        case None => ""
+                    }
+                }</h3>
+
+                <table class="main-table">
+                    <tr>
+                        <th class="text-center ">Es & Os</th>
+                        <th class="text-center ">Benchmarks</th>
+                    </tr>
+
+                    @for(esOsBenchmarks <- curriculumAreaTermlyPlan.eAndOsWithBenchmarks) {
+                        <tr>
+                            <td width="50%">
+                                <ul class="single-eando-code">
+                                @for(eAndO <- esOsBenchmarks.eAndOCodes) {
+                                    <li>
+                                    @eAndO
+                                    </li>
+                                }
+                                </ul>
+                            </td>
+                            <td width="50%">
+                                <ul class="single-benchmark">
+                                @for(benchmark <- esOsBenchmarks.benchmarks) {
+                                    <li>
+                                    @benchmark
+                                    </li>
+                                }
+                                </ul>
+                            </td>
+                        </tr>
+
+                    }
+                </table>
+            }
+        </div>
+    }
+    </div>
+
 
 </html>

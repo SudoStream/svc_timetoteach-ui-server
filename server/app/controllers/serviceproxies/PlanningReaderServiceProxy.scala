@@ -44,4 +44,10 @@ trait PlanningReaderServiceProxy
                                                  planningArea: ScottishCurriculumPlanningArea
                                                ): Future[Option[CurriculumAreaTermlyPlan]]
 
+  def allClassTermlyPlans(
+                                                 tttUserId: TimeToTeachUserId,
+                                                 classDetails: ClassDetails,
+                                                 planningAreas: List[ScottishCurriculumPlanningArea]
+                                               ): Future[List[CurriculumAreaTermlyPlan]]
+
 }

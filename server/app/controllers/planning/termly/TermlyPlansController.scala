@@ -349,7 +349,7 @@ class TermlyPlansController @Inject()(
     } yield route
   }
 
-  private def findAnyCurrentTermlyPlanForCurriculumAreaAtClassLevel(classId: String, curriculumArea: String, tttUserId: String) =
+  private def findAnyCurrentTermlyPlanForCurriculumAreaAtClassLevel(classId: String, curriculumArea: String, tttUserId: String): Future[Option[CurriculumAreaTermlyPlan]] =
   {
     CurriculumAreaConverter.convertCurriculumAreaStringToModel(curriculumArea) match {
       case Some(curriculumPlanningArea) =>

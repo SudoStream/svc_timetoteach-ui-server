@@ -36,7 +36,6 @@ POST          /termlysaveplanningforsubjectandgroup/:classId/:curriculumArea/:gr
 POST          /termlysaveplanningforcurriculumareaandclass/:classId/:curriculumArea             controllers.planning.termly.TermlyPlansController.savePlansForClass(classId, curriculumArea)
 GET           /termlyoverviewforcurriculumareaandgroup/:classId/:curriculumArea/:groupId        controllers.planning.termly.TermlyPlansController.termlyOverviewForCurriculumAreaAtGroupLevel(classId, curriculumArea, groupId)
 GET           /termlyoverviewforcurriculumareaatclasslevel/:classId/:curriculumArea             controllers.planning.termly.TermlyPlansController.termlyOverviewForCurriculumAreaAtClassLevel(classId,curriculumArea)
-GET           /termlyplanningviewclassplan/:classId                                             controllers.planning.termly.DownloadPdfController.pdfViewClassTermlyPlan(classId)
 GET           /termlyplanningdownloadclassplan/:classId                                         controllers.planning.termly.DownloadPdfController.downloadClassPdf(classId)
 
 GET           /classes                                                                          controllers.planning.classtimetable.ClassTimetableController.classesHome

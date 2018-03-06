@@ -12,6 +12,7 @@ import potentialmicroservice.planning.reader.PlanningReaderService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.util.control.NonFatal
 
 @Singleton
 class PlanningReaderServiceProxyImpl @Inject()(planningReaderService: PlanningReaderService, termService: TermServiceProxy) extends PlanningReaderServiceProxy
@@ -55,10 +56,75 @@ class PlanningReaderServiceProxyImpl @Inject()(planningReaderService: PlanningRe
     planningReaderService.readCurriculumAreaTermlyPlanForClassLevel(tttUserId, classId, planningArea)
   }
 
+  override def allClassTermlyPlans(tttUserId: TimeToTeachUserId,
+                                   classDetails: ClassDetails,
+                                   planningAreas: List[ScottishCurriculumPlanningArea]): Future[List[CurriculumAreaTermlyPlan]] =
+  {
+    //TODO: Performance - this can be imporoved to be one DB call rather than a db call for every curriculum area
+    logger.debug(s"readCurriculumAreaTermlyPlanAtClassLevelForPlanningAreas() - " +
+      s"${tttUserId.value} ${classDetails.id.id} ${planningAreas.toString()}")
+
+    val eventualMaybePlansAtClassLevel = extractPlansForClassLevelAreas(tttUserId, ClassId(classDetails.id.id), planningAreas)
+    val eventualMaybePlansAtGroupLevel = extractPlansForGroupLevelAreas(tttUserId, classDetails, planningAreas)
+
+    /////////////
+
+    val eventualMaybeTermlyPlans = Future.sequence(eventualMaybePlansAtClassLevel ++ eventualMaybePlansAtGroupLevel)
+
+    for {
+      maybeTermlyPlans <- eventualMaybeTermlyPlans
+    } yield maybeTermlyPlans.flatten
+  }
+
+  private def extractPlansForGroupLevelAreas(tttUserId: TimeToTeachUserId,
+                                             classDetails: ClassDetails,
+                                             planningAreas: List[ScottishCurriculumPlanningArea])
+  : List[Future[Option[CurriculumAreaTermlyPlan]]] =
+  {
+    val eventualMaybeCurriculumTermlyPlansAtGroupLevel: List[Future[Option[CurriculumAreaTermlyPlan]]] =
+      for {
+        planningArea <- planningAreas
+        group <- classDetails.groups
+        eventualMaybeCurriculumTermlyPlan = readCurriculumAreaTermlyPlanForGroup(
+          tttUserId,
+          ClassId(classDetails.id.id),
+          GroupId(group.groupId.id),
+          planningArea)
+      } yield eventualMaybeCurriculumTermlyPlan
+
+    val eventualMaybeCurriculumTermlyPlansWithHandledErrors = eventualMaybeCurriculumTermlyPlansAtGroupLevel.map { elem =>
+      elem.recover {
+        case NonFatal(e) =>
+          logger.warn(s"Had an issue processing plan progress: ${e.getMessage}")
+          None
+      }
+    }
+    eventualMaybeCurriculumTermlyPlansWithHandledErrors
+  }
+  private def extractPlansForClassLevelAreas(tttUserId: TimeToTeachUserId,
+                                             classId: ClassId,
+                                             planningAreas: List[ScottishCurriculumPlanningArea]): List[Future[Option[CurriculumAreaTermlyPlan]]] =
+  {
+    val eventualMaybeCurriculumTermlyPlansAtClassLevel: List[Future[Option[CurriculumAreaTermlyPlan]]] =
+      for {
+        planningArea <- planningAreas
+        eventualMaybeCurriculumTermlyPlan = readCurriculumAreaTermlyPlanForClassLevel(tttUserId, classId, planningArea)
+      } yield eventualMaybeCurriculumTermlyPlan
+
+    val eventualMaybeCurriculumTermlyPlansWithHandledErrors = eventualMaybeCurriculumTermlyPlansAtClassLevel.map { elem =>
+      elem.recover {
+        case NonFatal(e) =>
+          logger.warn(s"Had an issue processing plan progress: ${e.getMessage}")
+          None
+      }
+    }
+    eventualMaybeCurriculumTermlyPlansWithHandledErrors
+  }
   private def convertToPlanningAreas(classIdToTermlyCurriculumSelection: Map[ClassId, Option[TermlyCurriculumSelection]]):
   Map[ClassId, List[ScottishCurriculumPlanningArea]] =
   {
     logger.debug(s"incoming map to convertToPlanningAreas() is ${classIdToTermlyCurriculumSelection.toString}")
+
     def safeConvert(maybeSelection: Option[TermlyCurriculumSelection]): List[ScottishCurriculumPlanningArea] =
     {
       maybeSelection match {
