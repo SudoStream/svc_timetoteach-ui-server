@@ -77,17 +77,21 @@
                 }
 
                 .single-benchmark {
-                    margin-top: 5px;
-                    margin-bottom: 5px;
+                    margin-top: 8px;
+                    margin-bottom: 8px;
                 }
 
                 .single-eando-code {
-                    margin-top: 5px;
-                    margin-bottom: 5px;
+                    margin-top: 8px;
+                    margin-bottom: 8px;
                 }
 
                 .new-group {
-                    margin-top: 20px;
+                    margin-top: 40px;
+                }
+
+                footer {
+                    page-break-after: always;
                 }
         </style>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
@@ -171,12 +175,20 @@
             </h4>
 
             @for(curriculumAreaTermlyPlan <- termlyPlan.fullTermlyPlan(planningAreaWrapper)) {
-                <h3 class="text-primary font-weight-bold new-group">@{
+                <div class="text-primary font-weight-bold new-group">
+                    <h3>@{
                     curriculumAreaTermlyPlan.maybeGroup match {
-                        case Some(group) => s"${group.groupName.name}"
+                        case Some(group) => s"${group.groupName.name} - ${group.groupLevel.value.replace("Level", " Level")}"
                         case None => ""
                     }
                 }</h3>
+                    <h5 class="text-muted">@{
+                        curriculumAreaTermlyPlan.maybeGroup match {
+                            case Some(group) => s"${group.groupDescription.name}"
+                            case None => ""
+                        }
+                    }</h5>
+                </div>
 
                 <table class="main-table">
                     <tr>
@@ -187,18 +199,18 @@
                     @for(esOsBenchmarks <- curriculumAreaTermlyPlan.eAndOsWithBenchmarks) {
                         <tr>
                             <td width="50%">
-                                <ul class="single-eando-code">
+                                <ul >
                                 @for(eAndO <- esOsBenchmarks.eAndOCodes) {
-                                    <li>
+                                    <li class="single-eando-code">
                                     @eAndO
                                     </li>
                                 }
                                 </ul>
                             </td>
                             <td width="50%">
-                                <ul class="single-benchmark">
+                                <ul>
                                 @for(benchmark <- esOsBenchmarks.benchmarks) {
-                                    <li>
+                                    <li class="single-benchmark">
                                     @benchmark
                                     </li>
                                 }
@@ -210,6 +222,7 @@
                 </table>
             }
         </div>
+        <footer></footer>
     }
     </div>
 
