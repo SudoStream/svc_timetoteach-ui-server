@@ -147,6 +147,10 @@
                                     <a class="btn btn-warning" role="button"
                                     href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(maybeClassId.get)">
                                         Class Termly Plans</a>
+                                } else if(maybeClassContext.get.isInstanceOf[models.timetoteach.ui.CLASS_TERMLY_PLANS_LOWER.type]) {
+                                    <a class="btn btn-outline-warning" role="button"
+                                    href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(maybeClassId.get)">
+                                        Class Termly Plans</a>
                                 } else {
                                     <a class="btn btn-light text-dark" role="button"
                                     href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(maybeClassId.get)">
