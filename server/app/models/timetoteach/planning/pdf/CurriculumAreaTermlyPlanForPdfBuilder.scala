@@ -43,7 +43,6 @@ object CurriculumAreaTermlyPlanForPdfBuilder
 
   private def convert(head: CurriculumAreaTermlyPlan, classDetails: ClassDetails): CurriculumAreaTermlyPlanForPdf =
   {
-    logger.error(s"convert(...) ${head.maybeGroupId.toString} ?= ${classDetails.groups.toString()} ")
     val groupIdToSearchFor = head.maybeGroupId.getOrElse(models.timetoteach.planning.GroupId("NOPE")).value
     val maybeGroup = classDetails.groups.find(group => group.groupId.id == groupIdToSearchFor)
 
