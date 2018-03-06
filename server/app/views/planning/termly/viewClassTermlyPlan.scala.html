@@ -12,25 +12,10 @@
         } Termly Plan</title>
         <meta charset="utf-8">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
-        <link rel="stylesheet" media="all" href="@routes.Assets.versioned("stylesheets/termlyplanspdf.css")">
+        <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/termlyplanspdf.css")">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("icons/ttt_owl.png")">
 
     </head>
-
-    <div id="view-class-plans-top-buttons">
-        <div class="d-flex justify-content-around">
-            <div class="col-xl-3 col-md-3 col-sm-4 col-sm-5">
-                <a id="view-class-plans-back-button" role="button" class="btn btn-outline-info btn-sm btn-block"
-                href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(classDetails.id.id)">
-                    Back To Class Termly Plans</a>
-            </div>
-            <div class="col-xl-3 col-md-3 col-sm-4 col-sm-5">
-                <a id="view-class-plans-download-pdf-button" class="btn btn-sm btn-outline-info btn-block" role="button"
-                href="@controllers.planning.termly.routes.DownloadPdfController.downloadClassPdf(classDetails.id.id)">
-                    Download Termly Plan PDF</a>
-            </div>
-        </div>
-    </div>
 
     <div class="text-center">
         <h2 id="view-class-plans-termly-plan-header"><span class="text-muted view-class-plans-todays-date">@{
