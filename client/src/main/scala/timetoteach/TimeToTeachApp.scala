@@ -5,7 +5,7 @@ import timetoteach.addnewclass.AddNewClassJsScreen
 import timetoteach.classesHome.ClassHomeJsScreen
 import timetoteach.classtimetable.ClassTimetableScreen
 import timetoteach.manageClass.ManageClassJsScreen
-import timetoteach.planning.{ClassGroupPlanningJsScreen, ClassLevelPlanningJsScreen}
+import timetoteach.planning.termly.{ClassGroupPlanningJsScreen, ClassLevelPlanningJsScreen, TermlyPlanningForClassAllSubjectsJsScreen}
 import timetoteach.signup.SignupJs
 
 import scala.scalajs.js
@@ -38,6 +38,9 @@ object TimeToTeachApp extends js.JSApp
     }
     if (dom.document.location.toString.contains("manageclass")) {
       ManageClassJsScreen.loadJavascript()
+    }
+    if (dom.document.location.toString.contains("termlyplanningfortheclassallsubjects")) {
+      TermlyPlanningForClassAllSubjectsJsScreen.loadJavascript()
     }
 
   }

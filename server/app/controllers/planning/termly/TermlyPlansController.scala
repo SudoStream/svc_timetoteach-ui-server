@@ -439,10 +439,6 @@ class TermlyPlansController @Inject()(
     formValidationResult.fold(errorFunction, successFunction)
   }
 
-  def pdfTest = Action {
-    pdfGeneratorWrapper.pdfGenerator.ok(views.html.planning.termly.termlyPlansForClassOverallOverviewPdf.apply(), "http://localhost:9000")
-  }
-
 }
 
 object TermlyPlansController

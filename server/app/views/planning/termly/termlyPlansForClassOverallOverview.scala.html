@@ -39,13 +39,19 @@
 
                 <div id="reselect-and-download-pdf-section" class="d-flex justify-content-around">
                     <div class="col-3">
-                        <a id="termly-plans-edit" role="button" class="btn btn-outline-danger btn-sm btn-block"
+                        <a id="termly-plans-edit" role="button" class="btn btn-outline-info btn-sm btn-block"
                         href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansSelectOverallCurriculumAreasForTheTerm(classDetails.id.id)">
                             Re-Select Curriculum Areas</a>
                     </div>
                     <div class="col-3">
-                        <button class="btn btn-sm btn-outline-danger btn-block" role="button" href="#" disabled="true">
-                            Download Termly Plan PDF</button>
+                        <a id="download-termly-plan-pdf" class="btn btn-sm btn-outline-info btn-block" role="button"
+                        href="@controllers.planning.termly.routes.DownloadPdfController.viewClassTermlyPlan(classDetails.id.id)">
+                            View Overall Plan</a>
+                    </div>
+                    <div class="col-3">
+                        <a id="download-termly-plan-pdf" class="btn btn-sm btn-outline-info btn-block" role="button"
+                        href="@controllers.planning.termly.routes.DownloadPdfController.downloadClassPdf(classDetails.id.id)">
+                            Download Termly Plan PDF</a>
                     </div>
                 </div>
 
@@ -174,4 +180,6 @@
 
         </div>
     </div>
+
+    @scalajs.html.scripts("client", routes.Assets.versioned(_).toString, name => getClass.getResource(s"/public/$name") != null)
 }
