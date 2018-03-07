@@ -217,7 +217,16 @@ input#classLevelInputCurriculumArea {
     display: none;
 }
 
+.class-level-button {
+    width: 12rem;
+    font-size: smaller;
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+
 .curriculum-area-button {
     width: 7rem;
     font-size: smaller;
+    margin-left: 1rem;
+    margin-right: 1rem;
 }
