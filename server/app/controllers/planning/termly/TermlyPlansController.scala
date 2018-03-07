@@ -345,6 +345,7 @@ class TermlyPlansController @Inject()(
 
 
   def termlyOverviewForCurriculumAreaAtGroupLevelWithNoGroupId(classId: String, curriculumArea: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest: AuthenticatedRequest[AnyContent] =>
+    logger.debug(s"termlyOverviewForCurriculumAreaAtGroupLevelWithNoGroupId() : $classId == $curriculumArea")
     val tttUserId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO ID")
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
     for {
@@ -353,7 +354,7 @@ class TermlyPlansController @Inject()(
       maybeClassDetails: Option[ClassDetails] = classDetailsList.headOption
       if maybeClassDetails.isDefined
       classDetails = maybeClassDetails.get
-      maybeGroup = classDetails.groups.sortBy(aGroup => aGroup.groupLevel.order).headOption
+      maybeGroup = classDetails.groups.filter(elem => elem.groupType.value.toLowerCase == curriculumArea.split("__").toList.last.toLowerCase).sortBy(aGroup => aGroup.groupLevel.order).headOption
       if maybeGroup.isDefined
     } yield Redirect(routes.TermlyPlansController.termlyOverviewForCurriculumAreaAtGroupLevel(
       classId,

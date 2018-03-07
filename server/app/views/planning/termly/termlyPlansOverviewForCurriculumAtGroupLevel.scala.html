@@ -1,8 +1,6 @@
 @import models.timetoteach.TimeToTeachUserId
-@import models.timetoteach.planning.CurriculumAreaTermlyPlan
+@import models.timetoteach.planning.{CurriculumAreaTermlyPlan, ScottishCurriculumPlanningAreaWrapper, TermlyCurriculumSelection}
 @import models.timetoteach.ui.CLASS_TERMLY_PLANS_LOWER
-@import models.timetoteach.planning.TermlyCurriculumSelection
-@import models.timetoteach.planning.ScottishCurriculumPlanningAreaWrapper
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails, groupDetails: duplicate.model.Group, curriculumArea: String, subjectTermlyPlan: CurriculumAreaTermlyPlan, esAndOsCodeToDetailMap: Map[String, duplicate.model.esandos.EandO], currentTermlyCurriculumSelection: TermlyCurriculumSelection)
 
 @timetoteachAppMain(handler, s"Class ${classDetails.className.name}",
@@ -46,100 +44,82 @@
                 @if(group.groupType.value.toLowerCase == ScottishCurriculumPlanningAreaWrapper(subjectTermlyPlan.planningArea).niceSpecificValueIfPresent().getOrElse(ScottishCurriculumPlanningAreaWrapper(subjectTermlyPlan.planningArea).niceValue()).toLowerCase) {
                     <li class="nav-item">
                         <a class="nav-link active" id="tab_@group.groupId.id" data-toggle="tab"
-                        href="#content_@group.groupId.id" role="tab" aria-controls="tab_@group.groupId.id" aria-selected="true">
-                            @group.groupName.name <div class="text-muted group-level-subscript">@group.groupLevel.value.replace("Level"," Level")</div></a>
+                        href="#content_@group.groupName.name" role="tab" aria-controls="tab_@group.groupId.id" aria-selected="true">
+                            @group.groupName.name <div class="text-muted group-level-subscript">@group.groupLevel.value.replace("Level", " Level")</div></a>
                     </li>
                 }
             }
             </ul>
 
             <div class="tab-content" id="myTabContent">
-                <div class="tab-pane fade show active teachers-classes" id="2017_2018" role="tabpanel" aria-labelledby="2017_2018-tab">
+                <div class="tab-pane fade show active teachers-classes" id="content_@groupDetails.groupName.name" role="tabpanel" aria-labelledby="2017_2018-tab">
                     <div class="">
                     @if(classDetails.groups.isEmpty) {
                         <div class="teacher-classes-deck">
                             <h5 class="noClassesMsg text-center">No Groups.</h5>
                         </div>
                     } else {
+                        <div class="termly-plans-overview-section">
 
+                            <div class="termly-plans-overview-container">
+                                <div id="reselect-and-download-pdf-section" class="d-flex justify-content-around">
+                                    <div class="col-3">
+                                        <a id="termly-plans-edit" role="button" class="btn btn-outline-primary bg-light"
+                                        href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansGroupLevel_SelectEsOsBenchmarksForCurriculumArea(classDetails.id.id, curriculumArea, groupDetails.groupId.id)">
+                                            Re-Select Es&Os/Benchmarks</a>
+                                    </div>
+                                </div>
+
+                                <div class="row text-center">
+                                    <div class="col-sm-6"><h4>Es & Os</h4></div>
+                                    <div class="col-sm-6"><h4>Benchmarks</h4></div>
+                                </div>
+                                @for(esOsWithBenchmarks <- subjectTermlyPlan.eAndOsWithBenchmarks) {
+                                    <div class="row es-os-benchmarks-overview-row">
+                                        <div class="col-sm-6">
+                                        @for(eAndOCode <- esOsWithBenchmarks.eAndOCodes) {
+                                            <p><strong><p>@eAndOCode</p></strong>
+                                            <div>
+
+                                            @if(esAndOsCodeToDetailMap.isDefinedAt(eAndOCode)) {
+                                                @for(sentence <- esAndOsCodeToDetailMap(eAndOCode).eAndOSentences) {
+                                                    <p>@sentence.value</p>
+                                                    @if(sentence.bulletPoints.nonEmpty) {
+                                                        <ul>
+                                                        }
+                                                    @for(bullet <- sentence.bulletPoints) {
+                                                        <li>@bullet.value</li>
+                                                    }
+                                                    @if(sentence.bulletPoints.nonEmpty) {
+                                                    </ul>
+                                                    }
+                                                }
+                                            }
+
+                                            </div>
+                                            </p>
+                                        }
+                                        </div>
+                                        <div class="col-sm-6">
+                                        @for(benchmark <- esOsWithBenchmarks.benchmarks) {
+                                            <p>@benchmark</p>
+                                        }
+                                        </div>
+                                    </div>
+                                }
+
+                            </div>
+                        </div>
                     }
                     </div>
                 </div>
             </div>
 
 
-            <div class="termly-plans-overview-section">
-
-                <form>
-                    <div class="form-row">
-                        <div class="form-group col-md-4">
-                            <label for="inputSubject">Subject</label>
-                            <input type="text" class="form-control" id="inputSubject" placeholder="@curriculumArea" disabled="true">
-                        </div>
-                        <div class="form-group col-md-4">
-                            <label for="inputGroup">Group</label>
-                            <input type="text" class="form-control" id="inputGroup" placeholder="@groupDetails.groupName.name.capitalize" disabled="true">
-                        </div>
-                        <div class="form-group col-md-4">
-                            <label for="inputLevel">Curriculum Level</label>
-                            <input type="text" class="form-control" id="inputLevel" placeholder="@groupDetails.groupLevel.value.replace("Level", "")" disabled="true">
-                        </div>
-                    </div>
-                </form>
-
-
-            </div>
-
-            <div class="termly-plans-overview-container">
-                <div id="reselect-and-download-pdf-section" class="d-flex justify-content-around">
-                    <div class="col-3">
-                        <a id="termly-plans-edit" role="button" class="btn btn-outline-primary bg-light"
-                        href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansGroupLevel_SelectEsOsBenchmarksForCurriculumArea(classDetails.id.id, curriculumArea, groupDetails.groupId.id)">
-                            Re-Select Es&Os/Benchmarks</a>
-                    </div>
-                </div>
-
-                <div class="row text-center">
-                    <div class="col-sm-6"><h4>Es & Os</h4></div>
-                    <div class="col-sm-6"><h4>Benchmarks</h4></div>
-                </div>
-                @for(esOsWithBenchmarks <- subjectTermlyPlan.eAndOsWithBenchmarks) {
-                    <div class="row es-os-benchmarks-overview-row">
-                        <div class="col-sm-6">
-                        @for(eAndOCode <- esOsWithBenchmarks.eAndOCodes) {
-                            <p><strong><p>@eAndOCode</p></strong>
-                            <div>
-
-                            @if(esAndOsCodeToDetailMap.isDefinedAt(eAndOCode)) {
-                                @for(sentence <- esAndOsCodeToDetailMap(eAndOCode).eAndOSentences) {
-                                    <p>@sentence.value</p>
-                                    @if(sentence.bulletPoints.nonEmpty) {
-                                        <ul>
-                                        }
-                                    @for(bullet <- sentence.bulletPoints) {
-                                        <li>@bullet.value</li>
-                                    }
-                                    @if(sentence.bulletPoints.nonEmpty) {
-                                    </ul>
-                                    }
-                                }
-                            }
-
-                            </div>
-                            </p>
-                        }
-                        </div>
-                        <div class="col-sm-6">
-                        @for(benchmark <- esOsWithBenchmarks.benchmarks) {
-                            <p>@benchmark</p>
-                        }
-                        </div>
-                    </div>
-                }
-
-            </div>
-
         </div>
+
+
+    </div>
 
     </div>
 
