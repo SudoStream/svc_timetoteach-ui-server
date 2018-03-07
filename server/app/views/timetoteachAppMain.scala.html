@@ -182,25 +182,28 @@
                         </li>
                     }
                     </ul>
+                    <div class="col-lg-2"></div>
                 </nav>
 
 
                 @if(maybeCurrentTermlyCurriculumSelection.isDefined) {
                     <nav id="dashboard-nav-3" class="navbar navbar-primary bg-dark navbar-expand-lg">
-                        <a class="navbar-brand text-light" href="#">Curriculum Areas</a>
+                        <div class="col-lg-2">
+                            <a class="navbar-brand text-light" href="#">Curriculum Areas</a>
+                        </div>
 
                         <ul class="navbar-nav mx-auto">
                             @for((planningArea,planningAreaIndex) <- maybeCurrentTermlyCurriculumSelection.get._1.planningAreas.map(area => ScottishCurriculumPlanningAreaWrapper(area)).zipWithIndex){
                                     @if(planningArea.planAtGroupLevel) {
                                         @if(planningArea.value.toString == maybeCurrentTermlyCurriculumSelection.get._2) {
                                                 <li class="nav-item">
-                                                    <a role="button" class="btn btn-warning btn-sm btn-block"
+                                                    <a role="button" class="btn btn-warning btn-sm btn-block curriculum-area-button"
                                                     href="@controllers.planning.termly.routes.TermlyPlansController.termlyOverviewForCurriculumAreaAtGroupLevelWithNoGroupId(maybeClassId.getOrElse("NONE"), planningArea.value.toString)">
                                                     @planningArea.niceSpecificValueIfPresent().getOrElse(planningArea.niceValue())</a>
                                                 </li>
                                         } else {
                                                 <li class="nav-item">
-                                                    <a role="button" class="btn btn-success btn-sm btn-block"
+                                                    <a role="button" class="btn btn-success btn-sm btn-block curriculum-area-button"
                                                     href="@controllers.planning.termly.routes.TermlyPlansController.termlyOverviewForCurriculumAreaAtGroupLevelWithNoGroupId(maybeClassId.getOrElse("NONE"), planningArea.value.toString)">
                                                     @planningArea.niceSpecificValueIfPresent().getOrElse(planningArea.niceValue())</a>
                                                 </li>
@@ -212,13 +215,13 @@
                                     } else {
                                         @if(planningArea.value.toString == maybeCurrentTermlyCurriculumSelection.get._2) {
                                             <li class="nav-item">
-                                                <a role="button" class="btn btn-warning btn-sm btn-block"
+                                                <a role="button" class="btn btn-warning btn-sm btn-block curriculum-area-button"
                                                 href="@controllers.planning.termly.routes.TermlyPlansController.termlyOverviewForCurriculumAreaAtClassLevel(maybeClassId.getOrElse("NONE"), planningArea.value.toString)">
                                                     @planningArea.niceSpecificValueIfPresent().getOrElse(planningArea.niceValue())</a>
                                             </li>
                                         } else {
                                             <li class="nav-item">
-                                                <a role="button" class="btn btn-success btn-sm btn-block"
+                                                <a role="button" class="btn btn-success btn-sm btn-block curriculum-area-button"
                                                 href="@controllers.planning.termly.routes.TermlyPlansController.termlyOverviewForCurriculumAreaAtClassLevel(maybeClassId.getOrElse("NONE"), planningArea.value.toString)">
                                                     @planningArea.niceSpecificValueIfPresent().getOrElse(planningArea.niceValue())</a>
                                             </li>
@@ -230,6 +233,7 @@
 
                             }
                         </ul>
+                        <div class="col-lg-2"></div>
                     </nav>
 
                 }

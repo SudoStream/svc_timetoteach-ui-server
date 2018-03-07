@@ -216,3 +216,8 @@ input#classLevelInputCurriculumArea {
 #generating-pdf {
     display: none;
 }
+
+.curriculum-area-button {
+    width: 7rem;
+    font-size: smaller;
+}
