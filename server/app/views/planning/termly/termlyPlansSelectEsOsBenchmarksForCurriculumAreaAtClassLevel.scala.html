@@ -81,7 +81,7 @@
                     </div>
 
                     @for((esAndOsSectionMap, sectionIndex) <- esOsAndBenchmarks.setSectionNameToSubSections.toList.sortBy(subsectionMap => subsectionMap._1).zipWithIndex) {
-                        <a class="btn btn-warning termly-plans-es-and-os-section" data-toggle="collapse" href="#section_@{
+                        <a class="btn btn-warning termly-plans-es-and-os-section termly-plans-es-and-os-section-btn" data-toggle="collapse" href="#section_@{
                             outerIndex
                         }_@{
                             sectionIndex

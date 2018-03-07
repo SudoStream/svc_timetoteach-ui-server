@@ -37,22 +37,35 @@
 } {
     <div class="container">
 
-        <div class="termly-plans-overview-section">
+        <div class="termly-plans-overview-section-header">
+
+            <h4 class="text-center group-curriculum-area-header">
+            @curriculumArea.toLowerCase.capitalize.split("__").toList.map(word => word.capitalize).mkString(" ")</h4>
 
             <ul class="nav nav-tabs" id="tab-for-all-groups" role="tablist">
             @for(group <- classDetails.groups.sortBy(elem => elem.groupLevel.order)) {
                 @if(group.groupType.value.toLowerCase == ScottishCurriculumPlanningAreaWrapper(subjectTermlyPlan.planningArea).niceSpecificValueIfPresent().getOrElse(ScottishCurriculumPlanningAreaWrapper(subjectTermlyPlan.planningArea).niceValue()).toLowerCase) {
-                    <li class="nav-item">
-                        <a class="nav-link active" id="tab_@group.groupId.id" data-toggle="tab"
-                        href="#content_@group.groupName.name" role="tab" aria-controls="tab_@group.groupId.id" aria-selected="true">
-                            @group.groupName.name <div class="text-muted group-level-subscript">@group.groupLevel.value.replace("Level", " Level")</div></a>
-                    </li>
+                    @if(group.groupId.id == groupDetails.groupId.id) {
+                        <li class="nav-item">
+                            <a class="nav-link active" id="tab_@group.groupId.id"
+                            href="@controllers.planning.termly.routes.TermlyPlansController.termlyOverviewForCurriculumAreaAtGroupLevel(classDetails.id.id, subjectTermlyPlan.planningArea.toString, group.groupId.id)"
+                            role="tab" aria-controls="tab_@group.groupId.id" aria-selected="true">
+                                @group.groupName.name <div class="text-muted group-level-subscript">@group.groupLevel.value.replace("Level", " Level")</div></a>
+                        </li>
+                    } else {
+                        <li class="nav-item">
+                            <a class="nav-link" id="tab_@group.groupId.id"
+                            href="@controllers.planning.termly.routes.TermlyPlansController.termlyOverviewForCurriculumAreaAtGroupLevel(classDetails.id.id, subjectTermlyPlan.planningArea.toString, group.groupId.id)"
+                            role="tab" aria-controls="tab_@group.groupId.id" aria-selected="false">
+                                @group.groupName.name <div class="text-muted group-level-subscript">@group.groupLevel.value.replace("Level", " Level")</div></a>
+                        </li>
+                    }
                 }
             }
             </ul>
 
             <div class="tab-content" id="myTabContent">
-                <div class="tab-pane fade show active teachers-classes" id="content_@groupDetails.groupName.name" role="tabpanel" aria-labelledby="2017_2018-tab">
+                <div class="tab-pane fade show active group-tab-content" id="content_@groupDetails.groupName.name" role="tabpanel" aria-labelledby="2017_2018-tab">
                     <div class="">
                     @if(classDetails.groups.isEmpty) {
                         <div class="teacher-classes-deck">
@@ -71,8 +84,8 @@
                                 </div>
 
                                 <div class="row text-center">
-                                    <div class="col-sm-6"><h4>Es & Os</h4></div>
-                                    <div class="col-sm-6"><h4>Benchmarks</h4></div>
+                                    <div class="col-sm-6"><h5>Es & Os</h5></div>
+                                    <div class="col-sm-6"><h5>Benchmarks</h5></div>
                                 </div>
                                 @for(esOsWithBenchmarks <- subjectTermlyPlan.eAndOsWithBenchmarks) {
                                     <div class="row es-os-benchmarks-overview-row">

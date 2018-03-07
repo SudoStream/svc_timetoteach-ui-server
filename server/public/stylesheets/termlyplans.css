@@ -28,8 +28,6 @@
 }
 
 .termly-plans-overview-section {
-    margin-top: 2rem;
-    margin-bottom: 2rem;
 }
 
 .termly-plans-overview-section-header {
@@ -37,6 +35,8 @@
 }
 
 .termly-plans-overview-container {
+    padding-left: 2rem;
+    padding-right: 2rem;
     padding-bottom: 1rem;
     margin-bottom: 1rem;
 }
@@ -61,6 +61,10 @@
 .termly-plans-es-and-os-section {
     margin-top: 0.5rem;
     margin-bottom: 0.3rem;
+}
+
+.termly-plans-es-and-os-section {
+    width: 35rem;
 }
 
 .termly-plans-es-and-os-subsection {
@@ -105,8 +109,11 @@
 
 .es-os-benchmarks-overview-row {
     padding: 0.5rem;
+    margin-top: 0.75rem;
+    margin-bottom: 0.75rem;
     background: rgba(250, 250, 250, 0.75);
     border: 1px solid #e3e3e3;
+    font-size: smaller;
 }
 
 .es-os-benchmarks-overview-row-with-just-code {
@@ -209,8 +216,8 @@ input#classLevelInputCurriculumArea {
 }
 
 #reselect-and-download-pdf-section{
-    margin-top: 1rem;
-    margin-bottom: 2rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.75rem;
 }
 
 #generating-pdf {
@@ -233,4 +240,19 @@ input#classLevelInputCurriculumArea {
 
 .group-level-subscript {
     font-size: x-small;
+}
+
+.group-curriculum-area-header {
+    margin-bottom: 1rem;
+}
+
+.group-tab-content {
+    background: white;
+    border-left: 1px solid #d9d9d9;
+    border-right: 1px solid #d9d9d9;
+    border-bottom: 1px solid #d9d9d9;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 1rem;
+    padding-bottom: 5rem;
 }
