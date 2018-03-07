@@ -230,3 +230,7 @@ input#classLevelInputCurriculumArea {
     margin-left: 1rem;
     margin-right: 1rem;
 }
+
+.group-level-subscript {
+    font-size: x-small;
+}
