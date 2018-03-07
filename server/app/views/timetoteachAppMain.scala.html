@@ -139,11 +139,11 @@
                         @if(maybeClassContext.get.isInstanceOf[models.timetoteach.ui.CLASS_TIMETABLE.type]) {
                             <a id="manage-class-goto-timetable" class="btn btn-warning btn-sm class-level-button" role="button"
                             href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(maybeClassId.get)">
-                                Class Timetable</a>
+                                Timetable</a>
                         } else {
                             <a id="manage-class-goto-timetable" class="btn btn-light text-dark btn-sm class-level-button" role="button"
                             href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(maybeClassId.get)">
-                                Class Timetable</a>
+                                Timetable</a>
                         }
                         </li>
 
@@ -151,15 +151,15 @@
                             @if(maybeClassContext.get.isInstanceOf[models.timetoteach.ui.CLASS_TERMLY_PLANS.type]) {
                                 <a class="btn btn-warning btn-sm class-level-button" role="button"
                                 href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(maybeClassId.get)">
-                                    Class Termly Plans</a>
+                                    Termly Plans</a>
                             } else if(maybeClassContext.get.isInstanceOf[models.timetoteach.ui.CLASS_TERMLY_PLANS_LOWER.type]) {
                             <a class="btn btn-outline-warning btn-sm class-level-button" role="button"
                             href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(maybeClassId.get)">
-                                Class Termly Plans</a>
+                                Termly Plans</a>
                             } else {
                             <a class="btn btn-light text-dark btn-sm class-level-button" role="button"
                             href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(maybeClassId.get)">
-                                Class Termly Plans</a>
+                                Termly Plans</a>
                             }
                         </li>
                     } else {
@@ -172,13 +172,13 @@
                         <li class="nav-item ">
                             <a id="manage-class-goto-timetable btn-sm class-level-button" class="btn btn-light  text-dark" role="button"
                             href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(maybeClassId.get)">
-                                Class Timetable</a>
+                                Timetable</a>
                         </li>
 
                         <li class="nav-item">
                             <a class="btn btn-light text-dark btn-sm class-level-button" role="button"
                             href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(maybeClassId.get)">
-                                Class Termly Plans</a>
+                                Termly Plans</a>
                         </li>
                     }
                     </ul>
