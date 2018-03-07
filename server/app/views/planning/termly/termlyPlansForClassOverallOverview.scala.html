@@ -39,14 +39,14 @@
 
                 <div id="reselect-and-download-pdf-section" class="d-flex justify-content-around">
                     <div class="col-3">
-                        <a id="termly-plans-edit" role="button" class="btn btn-outline-info btn-sm btn-block"
+                        <a id="termly-plans-edit" role="button" class="btn btn-outline-primary btn-sm btn-block bg-light"
                         href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansSelectOverallCurriculumAreasForTheTerm(classDetails.id.id)">
                             Re-Select Curriculum Areas</a>
                     </div>
                     <div class="col-3">
-                        <a id="download-termly-plan-pdf" class="btn btn-sm btn-outline-info btn-block" role="button"
+                        <a id="download-termly-plan-pdf" class="btn btn-sm btn-outline-danger btn-block bg-light" role="button"
                         href="@controllers.planning.termly.routes.DownloadPdfController.downloadClassPdf(classDetails.id.id)">
-                            View Termly Plan PDF</a>
+                            Download Plan PDF</a>
                     </div>
                 </div>
 

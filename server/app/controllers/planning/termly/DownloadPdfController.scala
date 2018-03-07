@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter
 import be.objectify.deadbolt.scala.{AuthenticatedRequest, DeadboltActions}
 import controllers.pdf.PdfGeneratorWrapper
 import controllers.serviceproxies.{ClassTimetableReaderServiceProxyImpl, PlanningReaderServiceProxy, TermServiceProxy, UserReaderServiceProxyImpl}
+import curriculum.scotland.EsOsAndBenchmarksBuilderImpl
 import duplicate.model.ClassDetails
 import javax.inject.{Inject, Singleton}
 import models.timetoteach.planning.pdf.CurriculumAreaTermlyPlanForPdfBuilder
@@ -23,6 +24,7 @@ class DownloadPdfController @Inject()(
                                        termService: TermServiceProxy,
                                        userReader: UserReaderServiceProxyImpl,
                                        planningReaderService: PlanningReaderServiceProxy,
+                                       esAndOsReader: EsOsAndBenchmarksBuilderImpl,
                                        deadbolt: DeadboltActions) extends AbstractController(cc)
 {
 
@@ -39,6 +41,7 @@ class DownloadPdfController @Inject()(
     val eventualMaybeUser = userReader.getUserDetails(tttUserId)
     val eventualMaybeCurriculumSelection = planningReaderService.
       currentTermlyCurriculumSelection(tttUserId, ClassId(classId), termService.currentSchoolTerm())
+    val eventualEsAndOsToDetailMap = esAndOsReader.esAndOsCodeToEsAndOsDetailMap()
 
     for {
       classes <- eventualClasses
@@ -57,12 +60,15 @@ class DownloadPdfController @Inject()(
         allClassTermlyPlans(tttUserId, classDetails, curriculumSelection.planningAreas)
       classTermlyPlan <- eventualClassTermlyPlan
       classTermlyPlanPdf = CurriculumAreaTermlyPlanForPdfBuilder.buildCurriculumAreaTermlyPlanForPdf(classTermlyPlan, classDetails)
+
+      esAndOsCodeToDetailMap <- eventualEsAndOsToDetailMap
     } yield pdfGeneratorWrapper.pdfGenerator.ok(views.html.planning.termly.pdfViewClassTermlyPlan(
       classDetails,
       termService.currentSchoolTerm(),
       createTodaysDatePretty(),
       List(user),
-      classTermlyPlanPdf
+      classTermlyPlanPdf,
+      esAndOsCodeToDetailMap
     ), "http://localhost:9000")
   }
 

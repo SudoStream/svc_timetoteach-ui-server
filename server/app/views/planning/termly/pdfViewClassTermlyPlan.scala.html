@@ -1,7 +1,7 @@
 @import io.sudostream.timetoteach.messages.systemwide.model.User
 @import models.timetoteach.planning.pdf.CurriculumAreaTermlyPlanForPdfWrapper
 @import models.timetoteach.term.{SchoolTerm, SchoolTermName}
-@(classDetails: duplicate.model.ClassDetails, schoolTerm: SchoolTerm, todaysDatePretty: String, teachers: List[User], termlyPlan: CurriculumAreaTermlyPlanForPdfWrapper)
+@(classDetails: duplicate.model.ClassDetails, schoolTerm: SchoolTerm, todaysDatePretty: String, teachers: List[User], termlyPlan: CurriculumAreaTermlyPlanForPdfWrapper, esAndOsCodeToDetailMap: Map[String, duplicate.model.esandos.EandO])
 
 <!DOCTYPE html>
 <html>
@@ -79,6 +79,10 @@
                 .single-benchmark {
                     margin-top: 8px;
                     margin-bottom: 8px;
+                }
+
+                .single-benchmark-ul li {
+                    list-style-type: disc;
                 }
 
                 .single-eando-code {
@@ -166,7 +170,7 @@
     </div>
 
     <div>
-    @for(planningAreaWrapper <- termlyPlan.fullTermlyPlan.keys.toList.sortBy(elem => elem.niceValue())) {
+    @for((planningAreaWrapper, pageIndex) <- termlyPlan.fullTermlyPlan.keys.toList.sortBy(elem => elem.niceValue()).zipWithIndex) {
         <div class="new-curriculum-area">
             <h4 class="text-center">
             @{
@@ -177,17 +181,17 @@
             @for(curriculumAreaTermlyPlan <- termlyPlan.fullTermlyPlan(planningAreaWrapper)) {
                 <div class="text-primary font-weight-bold new-group">
                     <h3>@{
-                    curriculumAreaTermlyPlan.maybeGroup match {
-                        case Some(group) => s"${group.groupName.name} - ${group.groupLevel.value.replace("Level", " Level")}"
-                        case None => ""
-                    }
-                }</h3>
-                    <h5 class="text-muted">@{
+                        curriculumAreaTermlyPlan.maybeGroup match {
+                            case Some(group) => s"${group.groupName.name} - ${group.groupLevel.value.replace("Level", " Level")}"
+                            case None => ""
+                        }
+                    }</h3>
+                    <div class="text-muted">@{
                         curriculumAreaTermlyPlan.maybeGroup match {
                             case Some(group) => s"${group.groupDescription.name}"
                             case None => ""
                         }
-                    }</h5>
+                    }</div>
                 </div>
 
                 <table class="main-table">
@@ -200,20 +204,47 @@
                         <tr>
                             <td width="50%">
                                 <ul >
-                                @for(eAndO <- esOsBenchmarks.eAndOCodes) {
+                                @for(eAndOCode <- esOsBenchmarks.eAndOCodes) {
                                     <li class="single-eando-code">
-                                    @eAndO
+                                        <strong>@eAndOCode</strong>
+                                        @if(esAndOsCodeToDetailMap.isDefinedAt(eAndOCode)) {
+                                            @for(sentence <- esAndOsCodeToDetailMap(eAndOCode).eAndOSentences) {
+                                                <p>@sentence.value</p>
+                                                @if(sentence.bulletPoints.nonEmpty) {
+                                                    <ul>
+                                                    }
+                                                @for(bullet <- sentence.bulletPoints) {
+                                                    <li>@bullet.value</li>
+                                                }
+                                                @if(sentence.bulletPoints.nonEmpty) {
+                                                </ul>
+                                                }
+                                            }
+                                        }
+
                                     </li>
                                 }
+                                    @if(esOsBenchmarks.eAndOCodes.isEmpty){
+                                        <li class="single-benchmark text-muted">
+                                            No Es & Os selected.
+                                        </li>
+                                    }
+
                                 </ul>
+
                             </td>
                             <td width="50%">
-                                <ul>
+                                <ul class="single-benchmark-ul">
                                 @for(benchmark <- esOsBenchmarks.benchmarks) {
                                     <li class="single-benchmark">
                                     @benchmark
                                     </li>
                                 }
+                                    @if(esOsBenchmarks.benchmarks.isEmpty){
+                                        <li class="single-benchmark text-muted">
+                                            No Benchmarks selected.
+                                        </li>
+                                    }
                                 </ul>
                             </td>
                         </tr>
@@ -225,6 +256,5 @@
         <footer></footer>
     }
     </div>
-
 
 </html>
