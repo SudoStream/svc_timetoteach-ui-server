@@ -1,6 +1,8 @@
 @import io.sudostream.timetoteach.messages.systemwide.model.User
 @import models.timetoteach.planning.pdf.CurriculumAreaTermlyPlanForPdfWrapper
 @import models.timetoteach.term.{SchoolTerm, SchoolTermName}
+@import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
+@import models.timetoteach.planning.ScottishCurriculumPlanningAreaWrapper
 @(classDetails: duplicate.model.ClassDetails, schoolTerm: SchoolTerm, todaysDatePretty: String, teachers: List[User], termlyPlan: CurriculumAreaTermlyPlanForPdfWrapper, esAndOsCodeToDetailMap: Map[String, duplicate.model.esandos.EandO])
 
 <!DOCTYPE html>
@@ -40,12 +42,8 @@
                     background-color: #f7f7f7;
                 }
 
-                #main-header-row {
-                    margin-top: 40px;
-                }
-
                 #view-class-plans-termly-plan-header {
-                    margin-top: 35px;
+                    margin-top: 15px;
                     font-size: 12px;
                 }
 
@@ -63,6 +61,11 @@
                     float: right;
                 }
 
+                .make-float-left {
+                    display: inline-flex;
+                    float: left;
+                }
+
                 .message {
                     margin-top: 25px;
                     margin-bottom: 25px;
@@ -73,7 +76,7 @@
 
                     margin-bottom: 80px;
                     /*background-color: #f6f6ff;*/
-                    margin-top: 10px;
+                    margin-top: 40px;
                 }
 
                 .single-benchmark {
@@ -97,28 +100,34 @@
                 footer {
                     page-break-after: always;
                 }
+
         </style>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
     </head>
 
 
+    <div class="text-center message text-secondary font-italic font-weight-bold">
+        ... Plan Details below is a work in progress ...
+    </div>
+
     <h6 class="text-muted">
-        <span>
+        <span class="make-float-left">
             Time To Teach
             <img class="ttt-owl-image" src="public/icons/ttt_owl.png" alt="ttt owl" height="16">
             <span class="ttt-url"><small>www.timetoteach.zone</small></span>
         </span>
-        <span class="text-muted make-float-right">
-            <small>created : @{
-                todaysDatePretty
-            }
-            </small>
-        </span>
+        <div class="text-center text-primary">
+            <h2>Termly Plan
+                <span class="text-muted make-float-right">
+                    <h6>
+                        <small>created : @{
+                            todaysDatePretty
+                        }</small>
+                    </h6>
+                </span>
+            </h2>
+        </div>
     </h6>
-
-    <div class="text-center text-primary">
-        <h2>Termly Plan</h2>
-    </div>
 
     <div id="view-class-plans-termly-plan-header" class="text-center text-info">
         <table >
@@ -165,12 +174,29 @@
         </table>
     </div>
 
-    <div class="text-center message text-secondary font-italic font-weight-bold">
-        ... Plan Details below is a work in progress ...
-    </div>
-
     <div>
     @for((planningAreaWrapper, pageIndex) <- termlyPlan.fullTermlyPlan.keys.toList.sortBy(elem => elem.niceValue()).zipWithIndex) {
+        @if(pageIndex > 0) {
+            <h6 class="text-muted">
+                <span class="make-float-left">
+                    Time To Teach
+                    <img class="ttt-owl-image" src="public/icons/ttt_owl.png" alt="ttt owl" height="16">
+                    <span class="ttt-url"><small>www.timetoteach.zone</small></span>
+                </span>
+                <div class="text-center text-primary">
+                    <h2>Termly Plan
+                        <span class="text-muted make-float-right">
+                            <h6>
+                                <small>created : @{
+                                    todaysDatePretty
+                                }</small>
+                            </h6>
+                        </span>
+                    </h2>
+                </div>
+            </h6>
+        }
+
         <div class="new-curriculum-area">
             <h4 class="text-center">
             @{
@@ -178,21 +204,33 @@
             }
             </h4>
 
-            @for(curriculumAreaTermlyPlan <- termlyPlan.fullTermlyPlan(planningAreaWrapper)) {
-                <div class="text-primary font-weight-bold new-group">
-                    <h3>@{
-                        curriculumAreaTermlyPlan.maybeGroup match {
-                            case Some(group) => s"${group.groupName.name} - ${group.groupLevel.value.replace("Level", " Level")}"
-                            case None => ""
-                        }
-                    }</h3>
-                    <div class="text-muted">@{
-                        curriculumAreaTermlyPlan.maybeGroup match {
-                            case Some(group) => s"${group.groupDescription.name}"
-                            case None => ""
-                        }
-                    }</div>
-                </div>
+            @for((curriculumAreaTermlyPlan, groupIndex) <- termlyPlan.fullTermlyPlan(planningAreaWrapper).sortBy(elem => elem.orderNumber).zipWithIndex) {
+                @if(groupIndex == 0) {
+                    <div class="text-primary font-weight-bold">
+                    } else {
+                    <div class="text-primary font-weight-bold new-group">
+                    }
+                <h3>@{
+                    curriculumAreaTermlyPlan.maybeGroup match {
+                        case Some(group) => s"${group.groupName.name} - ${group.groupLevel.value.replace("Level", " Level")}"
+                        case None => ""
+                    }
+                }</h3>
+                <div class="text-muted">@{
+                    curriculumAreaTermlyPlan.maybeGroup match {
+                        case Some(group) => s"${group.groupDescription.name}"
+                        case None => ""
+                    }
+                }</div>
+            </div>
+
+                @if(planningAreaWrapper.value == ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS) {
+                    <h3 class="text-primary font-weight-bold">
+                    @{
+                        ScottishCurriculumPlanningAreaWrapper(curriculumAreaTermlyPlan.planningArea).niceSpecificValueIfPresent().getOrElse("")
+                    }
+                    </h3>
+                }
 
                 <table class="main-table">
                     <tr>
@@ -204,27 +242,27 @@
                         <tr>
                             <td width="50%">
                                 <ul >
-                                @for(eAndOCode <- esOsBenchmarks.eAndOCodes) {
-                                    <li class="single-eando-code">
-                                        <strong>@eAndOCode</strong>
-                                        @if(esAndOsCodeToDetailMap.isDefinedAt(eAndOCode)) {
-                                            @for(sentence <- esAndOsCodeToDetailMap(eAndOCode).eAndOSentences) {
-                                                <p>@sentence.value</p>
-                                                @if(sentence.bulletPoints.nonEmpty) {
-                                                    <ul>
+                                    @for(eAndOCode <- esOsBenchmarks.eAndOCodes) {
+                                        <li class="single-eando-code">
+                                            <strong>@eAndOCode</strong>
+                                            @if(esAndOsCodeToDetailMap.isDefinedAt(eAndOCode)) {
+                                                @for(sentence <- esAndOsCodeToDetailMap(eAndOCode).eAndOSentences) {
+                                                    <p>@sentence.value</p>
+                                                    @if(sentence.bulletPoints.nonEmpty) {
+                                                        <ul>
+                                                        }
+                                                    @for(bullet <- sentence.bulletPoints) {
+                                                        <li>@bullet.value</li>
                                                     }
-                                                @for(bullet <- sentence.bulletPoints) {
-                                                    <li>@bullet.value</li>
-                                                }
-                                                @if(sentence.bulletPoints.nonEmpty) {
-                                                </ul>
+                                                    @if(sentence.bulletPoints.nonEmpty) {
+                                                    </ul>
+                                                    }
                                                 }
                                             }
-                                        }
 
-                                    </li>
-                                }
-                                    @if(esOsBenchmarks.eAndOCodes.isEmpty){
+                                        </li>
+                                    }
+                                    @if(esOsBenchmarks.eAndOCodes.isEmpty) {
                                         <li class="single-benchmark text-muted">
                                             No Es & Os selected.
                                         </li>
@@ -235,12 +273,12 @@
                             </td>
                             <td width="50%">
                                 <ul class="single-benchmark-ul">
-                                @for(benchmark <- esOsBenchmarks.benchmarks) {
-                                    <li class="single-benchmark">
-                                    @benchmark
-                                    </li>
-                                }
-                                    @if(esOsBenchmarks.benchmarks.isEmpty){
+                                    @for(benchmark <- esOsBenchmarks.benchmarks) {
+                                        <li class="single-benchmark">
+                                        @benchmark
+                                        </li>
+                                    }
+                                    @if(esOsBenchmarks.benchmarks.isEmpty) {
                                         <li class="single-benchmark text-muted">
                                             No Benchmarks selected.
                                         </li>
@@ -254,7 +292,7 @@
             }
         </div>
         <footer></footer>
-    }
+        }
     </div>
 
 </html>

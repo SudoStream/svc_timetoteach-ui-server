@@ -23,3 +23,9 @@ case class CurriculumAreaTermlyPlanForPdf(
                                            createdTime: LocalDateTime,
                                            eAndOsWithBenchmarks: List[EandOsWithBenchmarks]
                                          )
+{
+  val orderNumber = maybeGroup match {
+    case Some(group) => group.groupLevel.order
+    case None => 0
+  }
+}

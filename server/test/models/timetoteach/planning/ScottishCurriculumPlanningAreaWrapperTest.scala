@@ -16,6 +16,11 @@ class ScottishCurriculumPlanningAreaWrapperTest
     assert(wrapper.niceValue() === "Expressive Arts : Art")
   }
 
+  test("EXPRESSIVE_ARTS__ART nice header value is 'Expressive Arts'") {
+    val wrapper = ScottishCurriculumPlanningAreaWrapper(ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__ART)
+    assert(wrapper.niceHeaderValueIfPresent().get === "Expressive Arts")
+  }
+
   test("RME__STANDARD nice value is 'RME : Standard'") {
     val wrapper = ScottishCurriculumPlanningAreaWrapper(ScottishCurriculumPlanningArea.RME__STANDARD)
     assert(wrapper.niceValue() === "RME : Religious & Moral Education")

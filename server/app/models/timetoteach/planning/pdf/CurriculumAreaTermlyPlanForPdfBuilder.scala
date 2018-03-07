@@ -1,6 +1,7 @@
 package models.timetoteach.planning.pdf
 
 import duplicate.model.ClassDetails
+import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
 import models.timetoteach.planning.{CurriculumAreaTermlyPlan, ScottishCurriculumPlanningAreaWrapper}
 import play.api.Logger
 
@@ -29,7 +30,9 @@ object CurriculumAreaTermlyPlanForPdfBuilder
       if (remainingPlans.isEmpty) currentMap
       else {
         val nextPlan: CurriculumAreaTermlyPlanForPdf = convert(remainingPlans.head, classDetails)
-        val nextPlanCurriculum = ScottishCurriculumPlanningAreaWrapper(nextPlan.planningArea)
+        val nextPlanCurriculum = ScottishCurriculumPlanningAreaWrapper(
+          convertPlanningAreasToTopLevelWhereRequired(nextPlan.planningArea)
+        )
         val nextPlanList = currentMap.get(nextPlanCurriculum) match {
           case Some(listAlreadyPresent) => nextPlan :: listAlreadyPresent
           case None => nextPlan :: Nil
@@ -56,6 +59,22 @@ object CurriculumAreaTermlyPlanForPdfBuilder
       head.createdTime,
       head.eAndOsWithBenchmarks
     )
+  }
+
+  private def convertPlanningAreasToTopLevelWhereRequired(planningArea: ScottishCurriculumPlanningArea): ScottishCurriculumPlanningArea =
+  {
+    val planWrapped = ScottishCurriculumPlanningAreaWrapper(planningArea)
+    val niceHeaderValueIfPresent = planWrapped.niceHeaderValueIfPresent()
+    niceHeaderValueIfPresent match {
+      case Some(header) =>
+        if (header == "Expressive Arts") {
+          ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS
+        }
+        else {
+          planningArea
+        }
+      case None => planningArea
+    }
   }
 
 }
