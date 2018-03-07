@@ -4,7 +4,7 @@
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails, currentTermlyCurriculumSelection: TermlyCurriculumSelection, maybeCurriculumPlanProgress: Option[CurriculumPlanProgressForClass])
 
 @timetoteachAppMain(handler, s"Class ${classDetails.className.name}",
-    userPictureUri, userFirstName, userFamilyName, Some(classDetails.id.id), Some(CLASS_TERMLY_PLANS)) {
+    userPictureUri, userFirstName, userFamilyName, Some(classDetails.id.id), Some(CLASS_TERMLY_PLANS), Some(currentTermlyCurriculumSelection,"NONE")) {
     <div class="in-app-menu-small-devices">
         <li class="nav-item nav-login-button">
             <a class="btn btn-outline-primary btn-block" role="button" href="@routes.Application.timeToTeachApp()">

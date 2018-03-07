@@ -2,10 +2,11 @@
 @import models.timetoteach.planning.CurriculumAreaTermlyPlan
 @import models.timetoteach.planning.ScottishCurriculumPlanningAreaWrapper
 @import models.timetoteach.ui.CLASS_TERMLY_PLANS_LOWER
-@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails, curriculumArea: ScottishCurriculumPlanningAreaWrapper, subjectTermlyPlan: CurriculumAreaTermlyPlan, esAndOsCodeToDetailMap: Map[String, duplicate.model.esandos.EandO])
+@import models.timetoteach.planning.TermlyCurriculumSelection
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails, curriculumArea: ScottishCurriculumPlanningAreaWrapper, subjectTermlyPlan: CurriculumAreaTermlyPlan, esAndOsCodeToDetailMap: Map[String, duplicate.model.esandos.EandO], currentTermlyCurriculumSelection: TermlyCurriculumSelection)
 
 @timetoteachAppMain(handler, s"Class ${classDetails.className.name}",
-    userPictureUri, userFirstName, userFamilyName, Some(classDetails.id.id), Some(CLASS_TERMLY_PLANS_LOWER)) {
+    userPictureUri, userFirstName, userFamilyName, Some(classDetails.id.id), Some(CLASS_TERMLY_PLANS_LOWER), Some(currentTermlyCurriculumSelection, subjectTermlyPlan.planningArea.toString)) {
     <div class="in-app-menu-small-devices">
         <li class="nav-item nav-login-button">
             <a class="btn btn-outline-primary btn-block" role="button" href="@routes.Application.timeToTeachApp()">
@@ -58,7 +59,7 @@
         <div>
             <div id="reselect-and-download-pdf-section" class="d-flex justify-content-around">
                 <div class="col-3">
-                    <a id="termly-plans-edit" role="button" class="btn btn-outline-info"
+                    <a id="termly-plans-edit" role="button" class="btn btn-outline-primary bg-light"
                     href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansClassLevel_SelectEsOsBenchmarksForCurriculumArea(classDetails.id.id, curriculumArea.value.toString)">
                         Re-Select Es&Os/Benchmarks</a>
                 </div>

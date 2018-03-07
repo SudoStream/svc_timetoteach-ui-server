@@ -1,4 +1,6 @@
-@(handler: be.objectify.deadbolt.scala.DeadboltHandler, title: String, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], maybeClassId: Option[String], maybeClassContext: Option[models.timetoteach.ui.ClassIdContext])(appNavMenuListItems: Html)(content: Html)
+@import models.timetoteach.planning.TermlyCurriculumSelection
+@import models.timetoteach.planning.ScottishCurriculumPlanningAreaWrapper
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, title: String, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], maybeClassId: Option[String], maybeClassContext: Option[models.timetoteach.ui.ClassIdContext], maybeCurrentTermlyCurriculumSelection: Option[(TermlyCurriculumSelection, String)])(appNavMenuListItems: Html)(content: Html)
 <!DOCTYPE html>
 <html>
     <head>
@@ -48,7 +50,7 @@
             </button>
 
             <div id="app-main-screen-title" class="col-md-3 in-app-menu-medium-and-up">
-                <h5 class="display-5 text-primary app-main-screen-title">@title</h5>
+                <h5 class="display-5 text-primary app-main-screen-title"></h5>
             </div>
 
             <div class="d-flex col-md-6">
@@ -113,73 +115,127 @@
 
         <div id="appBackground">
 
-            @if(maybeClassId.isDefined) {
-                <div class="in-app-menu-medium-and-up">
-                    <nav id="dashboard-nav" class="navbar navbar-primary bg-secondary navbar-expand-lg ">
-                        <ul class="navbar-nav mx-auto">
-                            @if(maybeClassContext.isDefined) {
-                                <li class="nav-item ">
-                                    @if(maybeClassContext.get.isInstanceOf[models.timetoteach.ui.CLASS_SETUP.type]) {
-                                        <a class="btn btn-warning" role="button"
-                                        href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(maybeClassId.get)">
-                                            Class Setup</a>
-                                    } else {
-                                        <a class="btn btn-light text-dark" role="button"
-                                        href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(maybeClassId.get)">
-                                            Class Setup</a>
-                                    }
-                                </li>
-                                <div class="col-1"></div>
-                                <li class="nav-item ">
-                                @if(maybeClassContext.get.isInstanceOf[models.timetoteach.ui.CLASS_TIMETABLE.type]) {
-                                    <a id="manage-class-goto-timetable" class="btn btn-warning" role="button"
-                                    href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(maybeClassId.get)">
-                                        Class Timetable</a>
-                                } else {
-                                    <a id="manage-class-goto-timetable" class="btn btn-light  text-dark" role="button"
-                                    href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(maybeClassId.get)">
-                                        Class Timetable</a>
-                                }
-                                </li>
-                                <div class="col-1"></div>
-                                <li class="nav-item">
-                                @if(maybeClassContext.get.isInstanceOf[models.timetoteach.ui.CLASS_TERMLY_PLANS.type]) {
-                                    <a class="btn btn-warning" role="button"
-                                    href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(maybeClassId.get)">
-                                        Class Termly Plans</a>
-                                } else if(maybeClassContext.get.isInstanceOf[models.timetoteach.ui.CLASS_TERMLY_PLANS_LOWER.type]) {
-                                    <a class="btn btn-outline-warning" role="button"
-                                    href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(maybeClassId.get)">
-                                        Class Termly Plans</a>
-                                } else {
-                                    <a class="btn btn-light text-dark" role="button"
-                                    href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(maybeClassId.get)">
-                                        Class Termly Plans</a>
-                                }
-                                </li>
+        @if(maybeClassId.isDefined) {
+            <div class="in-app-menu-medium-and-up">
+                <nav id="dashboard-nav-2" class="navbar navbar-primary bg-secondary navbar-expand-lg ">
+                    <div class="col-lg-2">
+                        <a class="navbar-brand text-light" href="#">@title</a>
+                    </div>
+                    <ul class="navbar-nav mx-auto">
+                    @if(maybeClassContext.isDefined) {
+                        <li class="nav-item ">
+                        @if(maybeClassContext.get.isInstanceOf[models.timetoteach.ui.CLASS_SETUP.type]) {
+                            <a class="btn btn-warning btn-sm" role="button"
+                            href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(maybeClassId.get)">
+                                Class Setup</a>
+                        } else {
+                            <a class="btn btn-light text-dark btn-sm" role="button"
+                            href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(maybeClassId.get)">
+                                Class Setup</a>
+                        }
+                        </li>
+                        <div class="col-1"></div>
+                        <li class="nav-item ">
+                        @if(maybeClassContext.get.isInstanceOf[models.timetoteach.ui.CLASS_TIMETABLE.type]) {
+                            <a id="manage-class-goto-timetable" class="btn btn-warning btn-sm" role="button"
+                            href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(maybeClassId.get)">
+                                Class Timetable</a>
+                        } else {
+                            <a id="manage-class-goto-timetable" class="btn btn-light text-dark btn-sm" role="button"
+                            href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(maybeClassId.get)">
+                                Class Timetable</a>
+                        }
+                        </li>
+                        <div class="col-1"></div>
+                        <li class="nav-item">
+                            @if(maybeClassContext.get.isInstanceOf[models.timetoteach.ui.CLASS_TERMLY_PLANS.type]) {
+                                <a class="btn btn-warning btn-sm" role="button"
+                                href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(maybeClassId.get)">
+                                    Class Termly Plans</a>
+                            } else if(maybeClassContext.get.isInstanceOf[models.timetoteach.ui.CLASS_TERMLY_PLANS_LOWER.type]) {
+                            <a class="btn btn-outline-warning btn-sm" role="button"
+                            href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(maybeClassId.get)">
+                                Class Termly Plans</a>
                             } else {
-                                <li class="nav-item ">
-                                    <a class="btn btn-light text-dark" role="button"
-                                    href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(maybeClassId.get)">
-                                        Class Setup</a>
-                                </li>
-                                <div class="col-1"></div>
-                                <li class="nav-item ">
-                                    <a id="manage-class-goto-timetable" class="btn btn-light  text-dark" role="button"
-                                    href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(maybeClassId.get)">
-                                        Class Timetable</a>
-                                </li>
-                                <div class="col-1"></div>
-                                <li class="nav-item">
-                                    <a class="btn btn-light text-dark" role="button"
-                                    href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(maybeClassId.get)">
-                                        Class Termly Plans</a>
-                                </li>
+                            <a class="btn btn-light text-dark btn-sm" role="button"
+                            href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(maybeClassId.get)">
+                                Class Termly Plans</a>
+                            }
+                        </li>
+                    } else {
+                        <li class="nav-item ">
+                            <a class="btn btn-light text-dark btn-sm" role="button"
+                            href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(maybeClassId.get)">
+                                Class Setup</a>
+                        </li>
+                        <div class="col-1"></div>
+                        <li class="nav-item ">
+                            <a id="manage-class-goto-timetable btn-sm" class="btn btn-light  text-dark" role="button"
+                            href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(maybeClassId.get)">
+                                Class Timetable</a>
+                        </li>
+                        <div class="col-1"></div>
+                        <li class="nav-item">
+                            <a class="btn btn-light text-dark btn-sm" role="button"
+                            href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(maybeClassId.get)">
+                                Class Termly Plans</a>
+                        </li>
+                    }
+                    </ul>
+                </nav>
+
+
+                @if(maybeCurrentTermlyCurriculumSelection.isDefined) {
+                    <nav id="dashboard-nav-3" class="navbar navbar-primary bg-dark navbar-expand-lg">
+                        <a class="navbar-brand text-light" href="#">Curriculum Areas</a>
+
+                        <ul class="navbar-nav mx-auto">
+                            @for((planningArea,planningAreaIndex) <- maybeCurrentTermlyCurriculumSelection.get._1.planningAreas.map(area => ScottishCurriculumPlanningAreaWrapper(area)).zipWithIndex){
+                                    @if(planningArea.planAtGroupLevel) {
+                                        @if(planningArea.value.toString == maybeCurrentTermlyCurriculumSelection.get._2) {
+                                                <li class="nav-item">
+                                                    <a role="button" class="btn btn-warning btn-sm btn-block"
+                                                    href="@controllers.planning.termly.routes.TermlyPlansController.termlyOverviewForCurriculumAreaAtGroupLevelWithNoGroupId(maybeClassId.getOrElse("NONE"), planningArea.value.toString)">
+                                                    @planningArea.niceSpecificValueIfPresent().getOrElse(planningArea.niceValue())</a>
+                                                </li>
+                                        } else {
+                                                <li class="nav-item">
+                                                    <a role="button" class="btn btn-success btn-sm btn-block"
+                                                    href="@controllers.planning.termly.routes.TermlyPlansController.termlyOverviewForCurriculumAreaAtGroupLevelWithNoGroupId(maybeClassId.getOrElse("NONE"), planningArea.value.toString)">
+                                                    @planningArea.niceSpecificValueIfPresent().getOrElse(planningArea.niceValue())</a>
+                                                </li>
+                                        }
+
+                                        @if((planningAreaIndex + 1) < maybeCurrentTermlyCurriculumSelection.get._1.planningAreas.size) {
+                                                <div class="col-1"></div>
+                                        }
+                                    } else {
+                                        @if(planningArea.value.toString == maybeCurrentTermlyCurriculumSelection.get._2) {
+                                            <li class="nav-item">
+                                                <a role="button" class="btn btn-warning btn-sm btn-block"
+                                                href="@controllers.planning.termly.routes.TermlyPlansController.termlyOverviewForCurriculumAreaAtClassLevel(maybeClassId.getOrElse("NONE"), planningArea.value.toString)">
+                                                    @planningArea.niceSpecificValueIfPresent().getOrElse(planningArea.niceValue())</a>
+                                            </li>
+                                        } else {
+                                            <li class="nav-item">
+                                                <a role="button" class="btn btn-success btn-sm btn-block"
+                                                href="@controllers.planning.termly.routes.TermlyPlansController.termlyOverviewForCurriculumAreaAtClassLevel(maybeClassId.getOrElse("NONE"), planningArea.value.toString)">
+                                                    @planningArea.niceSpecificValueIfPresent().getOrElse(planningArea.niceValue())</a>
+                                            </li>
+                                        }
+                                        @if((planningAreaIndex + 1 )< maybeCurrentTermlyCurriculumSelection.get._1.planningAreas.size) {
+                                            <div class="col-1"></div>
+                                        }
+                                    }
+
                             }
                         </ul>
                     </nav>
-                </div>
-            }
+
+                }
+
+            </div>
+        }
 
             <div id="mainAppTopMargin"></div>
 

@@ -2,10 +2,11 @@
 @import models.timetoteach.TimeToTeachUserId
 @import models.timetoteach.planning.ScottishCurriculumPlanningAreaWrapper
 @import models.timetoteach.ui.CLASS_TERMLY_PLANS_LOWER
-@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails, planningAreas: List[ScottishCurriculumPlanningAreaWrapper], postSelectedCurriculumAreasUrl: Call, theForm: Form[controllers.planning.termly.TermlyPlansControllerFormHelper.CurriculumAreaSelectionData])(implicit request: AuthenticatedRequest[Any])
+@import models.timetoteach.planning.TermlyCurriculumSelection
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails, planningAreas: List[ScottishCurriculumPlanningAreaWrapper], postSelectedCurriculumAreasUrl: Call, theForm: Form[controllers.planning.termly.TermlyPlansControllerFormHelper.CurriculumAreaSelectionData], currentTermlyCurriculumSelection: TermlyCurriculumSelection)(implicit request: AuthenticatedRequest[Any])
 
 @timetoteachAppMain(handler, s"Class ${classDetails.className.name}",
-    userPictureUri, userFirstName, userFamilyName, Some(classDetails.id.id), Some(CLASS_TERMLY_PLANS_LOWER)) {
+    userPictureUri, userFirstName, userFamilyName, Some(classDetails.id.id), Some(CLASS_TERMLY_PLANS_LOWER), Some(currentTermlyCurriculumSelection, "NONE")) {
     <div class="in-app-menu-small-devices">
         <li class="nav-item nav-login-button">
             <a class="btn btn-outline-primary btn-block" role="button" href="@routes.Application.timeToTeachApp()">
