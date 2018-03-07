@@ -49,9 +49,13 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <div id="app-main-screen-title" class="col-md-3 in-app-menu-medium-and-up">
-                <h5 class="display-5 text-primary app-main-screen-title"></h5>
-            </div>
+            <a id="app-main-screen-title" class="navbar-brand col-md-3 in-app-menu-medium-and-up" href="/">
+                <h5 class="display-5 text-primary">
+                    <img src="@routes.Assets.versioned("icons/ttt_owl.png")" alt="logo" height="26">
+                    <span class="ttt-icon-writing-main display-5">Time to TEACH</span>
+                </h5>
+            </a>
+
 
             <div class="d-flex col-md-6">
                 <div class="collapse navbar-collapse " id="startupNavbar">
@@ -61,15 +65,15 @@
                             @appNavMenuListItems
 
                             <li class="nav-item nav-login-button-dashboard in-app-menu-medium-and-up">
-                                <a class="btn btn-sm btn-outline-dark btn-block" role="button" href="@routes.Application.timeToTeachApp()">
+                                <a class="btn btn-sm btn-info btn-block" role="button" href="@routes.Application.timeToTeachApp()">
                                     Dashboard</a>
                             </li>
                             <li class="nav-item nav-login-button-dashboard in-app-menu-medium-and-up">
-                                <a class="btn btn-sm btn-outline-dark btn-block" role="button" href="@controllers.planning.classtimetable.routes.ClassTimetableController.classesHome()">
+                                <a class="btn btn-sm btn-info btn-block" role="button" href="@controllers.planning.classtimetable.routes.ClassTimetableController.classesHome()">
                                     Classes Home</a>
                             </li>
                             <li class="nav-item nav-login-button-dashboard in-app-menu-medium-and-up">
-                                <a class="btn btn-sm btn-outline-dark btn-block" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlans()">
+                                <a class="btn btn-sm btn-info btn-block" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlans()">
                                     Termly Plans</a>
                             </li>
                         </div>
