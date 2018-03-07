@@ -3,6 +3,7 @@ package timetoteach.planning.termly
 import org.scalajs.dom
 import org.scalajs.dom.raw.HTMLButtonElement
 
+import scala.scalajs.js
 import scala.scalajs.js.Dynamic.global
 
 object TermlyPlanningForClassAllSubjectsJsScreen
@@ -17,7 +18,8 @@ object TermlyPlanningForClassAllSubjectsJsScreen
   {
     val downloadPdfButton = dom.document.getElementById("download-termly-plan-pdf").asInstanceOf[HTMLButtonElement]
     downloadPdfButton.addEventListener("click", (e: dom.Event) => {
-
+      val $ = js.Dynamic.global.$
+      $("#generating-pdf").modal("show", "backdrop: static", "keyboard : false")
     })
   }
 }

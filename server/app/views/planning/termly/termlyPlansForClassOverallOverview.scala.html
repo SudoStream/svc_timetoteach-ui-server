@@ -172,9 +172,21 @@
                 }
             </div>
 
-
         </div>
+
+        <div class="modal" id="generating-pdf" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title text-center" id="addNewGroupModalHeader">
+                            Generating PDF ...</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
+
 
     @scalajs.html.scripts("client", routes.Assets.versioned(_).toString, name => getClass.getResource(s"/public/$name") != null)
 }
