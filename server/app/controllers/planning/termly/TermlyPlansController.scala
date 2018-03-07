@@ -249,7 +249,8 @@ class TermlyPlansController @Inject()(
         group,
         curriculumArea,
         relevantEsAndOs,
-        maybeCurrentTermlyCurriculumSelection.get
+        maybeCurrentTermlyCurriculumSelection.get,
+        curriculumArea
       ))
     }
   }

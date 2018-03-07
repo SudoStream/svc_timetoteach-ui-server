@@ -1,7 +1,7 @@
 @import models.timetoteach.TimeToTeachUserId
+@import models.timetoteach.planning.{CurriculumAreaTermlyPlan, ScottishCurriculumPlanningAreaWrapper, TermlyCurriculumSelection}
 @import models.timetoteach.ui.CLASS_TERMLY_PLANS_LOWER
-@import models.timetoteach.planning.TermlyCurriculumSelection
-@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails, groupDetails: duplicate.model.Group, curriculumArea: String, maybeEsOsAndBenchmarks: Option[duplicate.model.esandos.EsAndOsPlusBenchmarksForCurriculumAreaAndLevel], currentTermlyCurriculumSelection: TermlyCurriculumSelection)
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails, groupDetails: duplicate.model.Group, curriculumArea: String, maybeEsOsAndBenchmarks: Option[duplicate.model.esandos.EsAndOsPlusBenchmarksForCurriculumAreaAndLevel], currentTermlyCurriculumSelection: TermlyCurriculumSelection, planAreaWrapper: ScottishCurriculumPlanningAreaWrapper)
 
 @timetoteachAppMain(handler, s"Class ${classDetails.className.name}",
     userPictureUri, userFirstName, userFamilyName, Some(classDetails.id.id), Some(CLASS_TERMLY_PLANS_LOWER), Some(currentTermlyCurriculumSelection, curriculumArea)) {
@@ -58,128 +58,141 @@
 } {
     <div class="container">
 
-        <div class="termly-plans-overview-section">
-            <form>
-                <div class="form-row">
-                    <div class="form-group col-md-4">
-                        <label for="inputSubject">Subject</label>
-                        <input type="text" class="form-control" id="inputSubject" placeholder="@curriculumArea" disabled="true">
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label for="inputGroup">Group</label>
-                        <input type="text" class="form-control" id="inputGroup" placeholder="@groupDetails.groupName.name.capitalize" disabled="true">
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label for="inputLevel">Curriculum Level</label>
-                        <input type="text" class="form-control" id="inputLevel" placeholder="@groupDetails.groupLevel.value.replace("Level", "")" disabled="true">
-                    </div>
-                </div>
-            </form>
-
-            <h5 class="termly-plans-overview-section-header text-center">
-                Select the Es & Os and/or Benchmarks to cover this term</h5>
+        <div class="termly-plans-overview-section-header">
+            <h4 class="text-center group-curriculum-area-header">
+            @curriculumArea.toLowerCase.capitalize.split("__").toList.map(word => word.capitalize).mkString(" ")</h4>
         </div>
 
-        @if(maybeEsOsAndBenchmarks.isDefined) {
+        <ul class="nav nav-tabs" id="tab-for-all-groups" role="tablist">
+        @for(group <- classDetails.groups.sortBy(elem => elem.groupLevel.order)) {
+            @if(group.groupType.value.toLowerCase == planAreaWrapper.niceSpecificValueIfPresent().getOrElse(planAreaWrapper.niceValue()).toLowerCase) {
+                @if(group.groupId.id == groupDetails.groupId.id) {
+                    <li class="nav-item">
+                        <a class="nav-link active group-active-tab" id="tab_@group.groupId.id"
+                        href="@controllers.planning.termly.routes.TermlyPlansController.termlyOverviewForCurriculumAreaAtGroupLevel(classDetails.id.id, planAreaWrapper.value.toString, group.groupId.id)"
+                        role="tab" aria-controls="tab_@group.groupId.id" aria-selected="true">
+                            @group.groupName.name <div class="text-muted group-level-subscript">@group.groupLevel.value.replace("Level", " Level")</div></a>
+                    </li>
+                } else {
+                    <li class="nav-item">
+                        <a class="nav-link" id="tab_@group.groupId.id"
+                        href="@controllers.planning.termly.routes.TermlyPlansController.termlyOverviewForCurriculumAreaAtGroupLevel(classDetails.id.id, planAreaWrapper.value.toString, group.groupId.id)"
+                        role="tab" aria-controls="tab_@group.groupId.id" aria-selected="false">
+                            @group.groupName.name <div class="text-muted group-level-subscript">@group.groupLevel.value.replace("Level", " Level")</div></a>
+                    </li>
+                }
+            }
+        }
+        </ul>
 
-            @for((esAndOsSectionMap, sectionIndex) <- maybeEsOsAndBenchmarks.get.setSectionNameToSubSections.zipWithIndex) {
-                <a class="btn btn-warning termly-plans-es-and-os-section" data-toggle="collapse" href="#section_@sectionIndex" role="button"
-                aria-expanded="false" aria-controls="section_@sectionIndex">
-                @esAndOsSectionMap._1
-                </a>
-                <br>
 
-                <div class="collapse" id="section_@sectionIndex">
-                    <div class="card card-body">
-                    @for((subjectSectionMap, subSectionIndex) <- esAndOsSectionMap._2.zipWithIndex) {
-                        <a class="btn btn-light termly-plans-es-and-os-subsection " data-toggle="collapse" href="#section_@{
-                            sectionIndex
-                        }_subsection_@subSectionIndex" role="button"
-                        aria-expanded="false" aria-controls="section_@{
-                            sectionIndex
-                        }_subsection_@subSectionIndex">
-                        @subjectSectionMap._1
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active group-tab-content" id="content_@groupDetails.groupName.name" role="tabpanel" aria-labelledby="2017_2018-tab">
+                <div class="">
 
-                        </a>
-                        <div class="collapse" id="section_@{
-                            sectionIndex
-                        }_subsection_@subSectionIndex">
+                    <div class="termly-plans-overview-section-header text-center select-the-es-and-os-header">
+                        Select the Es & Os and/or Benchmarks to cover this term for the <strong class="text-info">@groupDetails.groupName.name</strong> group</div>
 
-                            <div class="text-center">
-                            @if(subjectSectionMap._2.auxiliaryText.nonEmpty) {
-                                <p class="muted">@subjectSectionMap._2.auxiliaryText</p>
-                            }
-                            </div>
 
-                            <div class="card card-body">
-                                <div class="row text-center">
-                                    <div class="col-lg-6 termly-plans-es-and-os-header">Experiences & Outcomes</div>
-                                    <div class="col-lg-6 termly-plans-es-and-os-header">Benchmarks</div>
-                                </div>
+                    @if(maybeEsOsAndBenchmarks.isDefined) {
 
-                                <div class="row">
-                                    <div class="col-lg-6">
-                                    @for(eAndO <- subjectSectionMap._2.eAndOs) {
-                                        <div class="row termly-plans-es-and-os-code-and-eando-row termly-plans-eobenchmark-row"
-                                        data-curriculum-section="@esAndOsSectionMap._1" data-curriculum-subsection="@subjectSectionMap._1" data-eando-code="@eAndO.code">
-                                            <div class="col-lg-3 termly-plans-es-and-os-code">
-                                            @if(eAndO.code.split("/").size > 1) {
-                                                @for((code, codeindex) <- eAndO.code.split("/").toList.zipWithIndex) {
-                                                    <p>@code
-                                                        @if((codeindex + 1) < eAndO.code.split("/").size) {
-                                                            <span> /</span>
-                                                        }
-                                                    </p>
-                                                }
-                                            } else {
-                                                @eAndO.code
-                                            }
+                        @for((esAndOsSectionMap, sectionIndex) <- maybeEsOsAndBenchmarks.get.setSectionNameToSubSections.zipWithIndex) {
+                            <a class="btn btn-warning termly-plans-es-and-os-section" data-toggle="collapse" href="#section_@sectionIndex" role="button"
+                            aria-expanded="false" aria-controls="section_@sectionIndex">
+                            @esAndOsSectionMap._1
+                            </a>
+                            <br>
+
+                            <div class="collapse termly-plans-es-and-os-subsection-div" id="section_@sectionIndex">
+                                <div class="card card-body">
+                                @for((subjectSectionMap, subSectionIndex) <- esAndOsSectionMap._2.zipWithIndex) {
+                                    <a class="btn btn-success termly-plans-es-and-os-subsection " data-toggle="collapse" href="#section_@{
+                                        sectionIndex
+                                    }_subsection_@subSectionIndex" role="button"
+                                    aria-expanded="false" aria-controls="section_@{
+                                        sectionIndex
+                                    }_subsection_@subSectionIndex">
+                                    @subjectSectionMap._1
+
+                                    </a>
+                                    <div class="collapse termly-plans-es-and-os-subsection-div-inner" id="section_@{
+                                        sectionIndex
+                                    }_subsection_@subSectionIndex">
+
+                                        <div class="card card-body">
+                                            <div class="row text-center">
+                                                <div class="col-lg-6 termly-plans-es-and-os-header">Experiences & Outcomes</div>
+                                                <div class="col-lg-6 termly-plans-es-and-os-header">Benchmarks</div>
                                             </div>
-                                            <div class="col-lg-9 termly-plans-es-and-os-content termly-plans-es-and-os-eando">
-                                            @for(sentence <- eAndO.eAndOSentences) {
-                                                <p>@sentence.value</p>
-                                                @if(sentence.bulletPoints.nonEmpty) {
-                                                    <ul>
-                                                    }
-                                                @for(bullet <- sentence.bulletPoints) {
-                                                    @if(bullet.value.nonEmpty) {
-                                                        <li>@bullet.value</li>
-                                                    }
+
+                                            <div class="row">
+                                                <div class="col-lg-6">
+                                                @for(eAndO <- subjectSectionMap._2.eAndOs) {
+                                                    <div class="row termly-plans-es-and-os-code-and-eando-row termly-plans-eobenchmark-row"
+                                                    data-curriculum-section="@esAndOsSectionMap._1" data-curriculum-subsection="@subjectSectionMap._1" data-eando-code="@eAndO.code">
+                                                        <div class="col-lg-3 termly-plans-es-and-os-code">
+                                                        @if(eAndO.code.split("/").size > 1) {
+                                                            @for((code, codeindex) <- eAndO.code.split("/").toList.zipWithIndex) {
+                                                                <p>@code
+                                                                    @if((codeindex + 1) < eAndO.code.split("/").size) {
+                                                                        <span> /</span>
+                                                                    }
+                                                                </p>
+                                                            }
+                                                        } else {
+                                                            @eAndO.code
+                                                        }
+                                                        </div>
+                                                        <div class="col-lg-9 termly-plans-es-and-os-content termly-plans-es-and-os-eando">
+                                                        @for(sentence <- eAndO.eAndOSentences) {
+                                                            <p>@sentence.value</p>
+                                                            @if(sentence.bulletPoints.nonEmpty) {
+                                                                <ul>
+                                                                }
+                                                            @for(bullet <- sentence.bulletPoints) {
+                                                                @if(bullet.value.nonEmpty) {
+                                                                    <li>@bullet.value</li>
+                                                                }
+                                                            }
+                                                            @if(sentence.bulletPoints.nonEmpty) {
+                                                            </ul>
+                                                            }
+                                                        }
+                                                        </div>
+                                                    </div>
                                                 }
-                                                @if(sentence.bulletPoints.nonEmpty) {
-                                                </ul>
+                                                </div>
+                                                <div class="col-lg-6 termly-plans-es-and-os-content">
+                                                @for(benchmark <- subjectSectionMap._2.benchmarks) {
+                                                    <div class="termly-plans-es-and-os-benchmark termly-plans-eobenchmark-row"
+                                                    data-curriculum-section="@esAndOsSectionMap._1" data-curriculum-subsection="@subjectSectionMap._1"
+                                                    data-benchmark="@benchmark.value">@benchmark.value</div>
                                                 }
-                                            }
+                                                </div>
                                             </div>
                                         </div>
-                                    }
                                     </div>
-                                    <div class="col-lg-6 termly-plans-es-and-os-content">
-                                    @for(benchmark <- subjectSectionMap._2.benchmarks) {
-                                        <div class="termly-plans-es-and-os-benchmark termly-plans-eobenchmark-row"
-                                        data-curriculum-section="@esAndOsSectionMap._1" data-curriculum-subsection="@subjectSectionMap._1"
-                                        data-benchmark="@benchmark.value">@benchmark.value</div>
-                                    }
-                                    </div>
+                                }
+
                                 </div>
                             </div>
+
+                        }
+
+                    } else {
+                        <div class="alert alert-warning" role="alert">
+                            No Es & Os or Benchmarks defined for level='@{
+                            groupDetails.groupLevel.value.replace("Level", "")
+                        }' & curriculum area='@{
+                            curriculumArea
+                        }'
                         </div>
                     }
 
-                    </div>
+
                 </div>
-
-            }
-
-        } else {
-            <div class="alert alert-warning" role="alert">
-                No Es & Os or Benchmarks defined for level='@{
-                groupDetails.groupLevel.value.replace("Level", "")
-            }' & curriculum area='@{
-                curriculumArea
-            }'
             </div>
-        }
+        </div>
 
 
         <div class="row">

@@ -68,8 +68,15 @@
 }
 
 .termly-plans-es-and-os-subsection {
-    margin-top: 0.15rem;
-    margin-bottom: 0.15rem;
+    margin-top: 1.3rem;
+}
+
+.termly-plans-es-and-os-subsection-div .card-body {
+    background-color: lightgrey;
+}
+
+.termly-plans-es-and-os-subsection-div-inner .card-body {
+    background-color: white;
 }
 
 .termly-plans-es-and-os-code {
@@ -255,4 +262,8 @@ input#classLevelInputCurriculumArea {
     padding-right: 1rem;
     padding-top: 1rem;
     padding-bottom: 5rem;
+}
+
+.select-the-es-and-os-header {
+    margin-bottom: 2rem;
 }
