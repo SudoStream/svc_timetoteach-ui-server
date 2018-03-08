@@ -38,6 +38,8 @@ trait PlanWriterDaoSubjectTermlyPlanHelper {
       for {
         osWithBenchmarks <- eandOsWithBenchmarksList
       } yield BsonDocument(
+        SELECTED_SECTION_NAME -> osWithBenchmarks.sectionName,
+        SELECTED_SUBSECTION_NAME -> osWithBenchmarks.subsectionName,
         SELECTED_ES_AND_OS -> convertListOfStringToBsonArray(osWithBenchmarks.eAndOCodes),
         SELECTED_BENCHMARKS -> convertListOfStringToBsonArray(osWithBenchmarks.benchmarks)
       )

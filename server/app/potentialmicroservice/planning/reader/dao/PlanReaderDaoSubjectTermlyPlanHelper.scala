@@ -267,7 +267,7 @@ trait PlanReaderDaoSubjectTermlyPlanHelper extends PlanReaderDaoCommonHelper
     }
   }
 
-  private def safelyParseTimestamp(nextTimestampIso: String) : LocalDateTime =
+  private def safelyParseTimestamp(nextTimestampIso: String): LocalDateTime =
   {
     val time = try {
       LocalDateTime.parse(nextTimestampIso, formatter)
@@ -283,6 +283,19 @@ trait PlanReaderDaoSubjectTermlyPlanHelper extends PlanReaderDaoCommonHelper
   private def convertDocumentEandOsWithBenchmarks(document: BsonDocument): Option[EandOsWithBenchmarks] =
   {
     try {
+
+      val selectSection =  if(document.keySet().contains(TermlyPlanningSchema.SELECTED_SECTION_NAME)) {
+        document.getString(TermlyPlanningSchema.SELECTED_SECTION_NAME).getValue
+      } else {
+        ""
+      }
+
+      val selectSubSection =  if(document.keySet().contains(TermlyPlanningSchema.SELECTED_SUBSECTION_NAME)) {
+        document.getString(TermlyPlanningSchema.SELECTED_SUBSECTION_NAME).getValue
+      } else {
+        ""
+      }
+
       val selectedEsAndOsBsonArray = document.getArray(TermlyPlanningSchema.SELECTED_ES_AND_OS)
       val selectedEsAndOsList = convertBsonArrayToListOfString(selectedEsAndOsBsonArray)
 
@@ -290,7 +303,7 @@ trait PlanReaderDaoSubjectTermlyPlanHelper extends PlanReaderDaoCommonHelper
       val selectedBenchmarksList = convertBsonArrayToListOfString(selectedBenchmarksBsonArray)
 
       Some(
-        EandOsWithBenchmarks(selectedEsAndOsList, selectedBenchmarksList)
+        EandOsWithBenchmarks(selectSection, selectSubSection, selectedEsAndOsList, selectedBenchmarksList)
       )
     } catch {
       case ex: Exception =>

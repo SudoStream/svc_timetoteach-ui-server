@@ -16,6 +16,8 @@ object TermlyPlanningSchema {
   val SCHOOL_TERM_FIRST_DAY = "schoolTermFirstDay"
   val SCHOOL_TERM_LAST_DAY = "schoolTermLastDay"
 
+  val SELECTED_SECTION_NAME = "selectedSectionName"
+  val SELECTED_SUBSECTION_NAME = "selectedSubsectionName"
   val SELECTED_ES_AND_OS_WITH_BENCHMARKS = "selectedEsAndOsWithBenchmarks"
   val SELECTED_ES_AND_OS = "selectedEsAndOs"
   val SELECTED_BENCHMARKS = "selectedBenchmarks"

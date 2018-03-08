@@ -1,8 +1,9 @@
+@import curriculum.scotland.EsOsAndBenchmarksBuilderImpl
+@import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
 @import io.sudostream.timetoteach.messages.systemwide.model.User
+@import models.timetoteach.planning.ScottishCurriculumPlanningAreaWrapper
 @import models.timetoteach.planning.pdf.CurriculumAreaTermlyPlanForPdfWrapper
 @import models.timetoteach.term.{SchoolTerm, SchoolTermName}
-@import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
-@import models.timetoteach.planning.ScottishCurriculumPlanningAreaWrapper
 @(classDetails: duplicate.model.ClassDetails, schoolTerm: SchoolTerm, todaysDatePretty: String, teachers: List[User], termlyPlan: CurriculumAreaTermlyPlanForPdfWrapper, esAndOsCodeToDetailMap: Map[String, duplicate.model.esandos.EandO])
 
 <!DOCTYPE html>
@@ -73,9 +74,7 @@
 
                 .new-curriculum-area {
                     padding: 5px;
-
                     margin-bottom: 80px;
-                    /*background-color: #f6f6ff;*/
                     margin-top: 40px;
                 }
 
@@ -101,6 +100,26 @@
                     page-break-after: always;
                 }
 
+                .subsection-header {
+                    background-color: white;
+                    /*font-weight: bold;*/
+                }
+
+                #subsection-header-div {
+                    padding-top: 20px;
+                }
+
+                .the-main-termly-plan-header {
+                    font-size: larger;
+                }
+
+                .new-curriculum-area-header {
+                    /*font-size: larger;*/
+                }
+
+                .date-stamp {
+                    font-size: xx-small;
+                }
         </style>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
     </head>
@@ -111,20 +130,20 @@
             <img class="ttt-owl-image" src="public/icons/ttt_owl.png" alt="ttt owl" height="16">
             <span class="ttt-url"><small>www.timetoteach.zone</small></span>
         </span>
-        <div class="text-center text-primary">
-            <h2>Termly Plan
+        <div class="text-center text-primary the-main-termly-plan-header">
+            <h1>Termly Plan
                 <span class="text-muted make-float-right">
-                    <h6>
+                    <div class="date-stamp">
                         <small>created : @{
                             todaysDatePretty
                         }</small>
-                    </h6>
+                    </div>
                 </span>
-            </h2>
+            </h1>
         </div>
     </h6>
 
-    <div id="view-class-plans-termly-plan-header" class="text-center text-info">
+    <div id="view-class-plans-termly-plan-header" class="text-center text-secondary">
         <table >
             <tr>
                 <th>
@@ -132,7 +151,7 @@
                         classDetails.schoolDetails.name
                     },
                     @{
-                        classDetails.schoolDetails.address.split(" ").toList.last
+                        classDetails.schoolDetails.address.split(",").toList.last.split(" ").toList.map(el => el.capitalize).mkString(" ")
                     }
                 </th>
                 <th>
@@ -178,26 +197,26 @@
                     <img class="ttt-owl-image" src="public/icons/ttt_owl.png" alt="ttt owl" height="16">
                     <span class="ttt-url"><small>www.timetoteach.zone</small></span>
                 </span>
-                <div class="text-center text-primary">
-                    <h2>Termly Plan
+                <div class="text-center text-primary the-main-termly-plan-header">
+                    <h1>Termly Plan
                         <span class="text-muted make-float-right">
-                            <h6>
+                            <div class="date-stamp">
                                 <small>created : @{
                                     todaysDatePretty
                                 }</small>
-                            </h6>
+                            </div>
                         </span>
-                    </h2>
+                    </h1>
                 </div>
             </h6>
         }
 
         <div class="new-curriculum-area">
-            <h4 class="text-center">
+            <h2 class="text-center text-dark new-curriculum-area-header">
             @{
                 planningAreaWrapper.niceValue()
             }
-            </h4>
+            </h2>
 
             @for((curriculumAreaTermlyPlan, groupIndex) <- termlyPlan.fullTermlyPlan(planningAreaWrapper).sortBy(elem => elem.orderNumber).zipWithIndex) {
                 @if(groupIndex == 0) {
@@ -211,12 +230,6 @@
                         case None => ""
                     }
                 }</h3>
-                <div class="text-muted">@{
-                    curriculumAreaTermlyPlan.maybeGroup match {
-                        case Some(group) => s"${group.groupDescription.name}"
-                        case None => ""
-                    }
-                }</div>
             </div>
 
                 @if(planningAreaWrapper.value == ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS) {
@@ -233,7 +246,26 @@
                         <th class="text-center ">Benchmarks</th>
                     </tr>
 
-                    @for(esOsBenchmarks <- curriculumAreaTermlyPlan.eAndOsWithBenchmarks) {
+                    @for((esOsBenchmarks, esOsBenchmarksIndex) <- curriculumAreaTermlyPlan.eAndOsWithBenchmarks.zipWithIndex) {
+                        <tr>
+                            <td class="subsection-header text-info">
+                                @if(esOsBenchmarksIndex > 0) {
+                                    <div id="subsection-header-div">
+                                    } else {
+                                    <div>
+                                    }
+
+                                @if(esOsBenchmarks.subsectionName != EsOsAndBenchmarksBuilderImpl.NO_SUBSECTION_NAME) {
+                                    @esOsBenchmarks.subsectionName
+                                } else {
+                                    @{
+                                        esOsBenchmarks.sectionName
+                                    }
+                                }
+                            </div>
+                            </td>
+
+                        </tr>
                         <tr>
                             <td width="50%">
                                 <ul >

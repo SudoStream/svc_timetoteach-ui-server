@@ -15,6 +15,8 @@ class TermPlansHelperTest extends FunSpec
   private val SCHOOL_ID = "school3333"
   private val CLASS_ID = "classId12312321"
   private val USER_ID = "userId123"
+  private val SECTION_NAME = "Section1"
+  private val SUBSECTION_NAME = "Data"
   private val E_AND_O_CODES = List("CODE1", "CODE2")
   private val BENCHMARKS = List("Benchmark1", "Benchmark2", "Benchmark3")
   private val GROUP_ID = "groupAbc"
@@ -27,6 +29,8 @@ class TermPlansHelperTest extends FunSpec
       TermlyPlansToSave(
         USER_ID,
         List(EandOsWithBenchmarks(
+          SECTION_NAME,
+          SUBSECTION_NAME,
           E_AND_O_CODES,
           BENCHMARKS
         ))

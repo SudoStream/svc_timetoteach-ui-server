@@ -7,15 +7,19 @@ case class TermlyPlansToSave(
                               eandOsWithBenchmarks: List[EandOsWithBenchmarks]
                             )
 
-object TermlyPlansToSave {
+object TermlyPlansToSave
+{
   implicit def rw: RW[TermlyPlansToSave] = macroRW
 }
 
 case class EandOsWithBenchmarks(
+                                 sectionName: String,
+                                 subsectionName: String,
                                  eAndOCodes: List[String],
                                  benchmarks: List[String]
                                )
 
-object EandOsWithBenchmarks {
+object EandOsWithBenchmarks
+{
   implicit def rw: RW[EandOsWithBenchmarks] = macroRW
 }

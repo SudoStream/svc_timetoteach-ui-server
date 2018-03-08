@@ -3,6 +3,7 @@
 @import models.timetoteach.planning.ScottishCurriculumPlanningAreaWrapper
 @import models.timetoteach.ui.CLASS_TERMLY_PLANS_LOWER
 @import models.timetoteach.planning.TermlyCurriculumSelection
+@import curriculum.scotland.EsOsAndBenchmarksBuilderImpl
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails, curriculumArea: ScottishCurriculumPlanningAreaWrapper, subjectTermlyPlan: CurriculumAreaTermlyPlan, esAndOsCodeToDetailMap: Map[String, duplicate.model.esandos.EandO], currentTermlyCurriculumSelection: TermlyCurriculumSelection)
 
 @timetoteachAppMain(handler, s"Class ${classDetails.className.name}",
@@ -59,6 +60,13 @@
                 <div class="col-sm-6"><h4>Benchmarks</h4></div>
             </div>
             @for(esOsWithBenchmarks <- subjectTermlyPlan.eAndOsWithBenchmarks) {
+                <div class="display-6 subsection-name-display text-info">
+                @if(esOsWithBenchmarks.subsectionName != EsOsAndBenchmarksBuilderImpl.NO_SUBSECTION_NAME) {
+                    @esOsWithBenchmarks.subsectionName
+                } else {
+                    @{esOsWithBenchmarks.sectionName}
+                }
+                </div>
                 <div class="row es-os-benchmarks-overview-row">
                     <div class="col-sm-6">
                     @for(eAndOCode <- esOsWithBenchmarks.eAndOCodes) {

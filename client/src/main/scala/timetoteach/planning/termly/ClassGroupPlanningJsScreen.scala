@@ -68,6 +68,8 @@ object ClassGroupPlanningJsScreen
         subsection <- selectedEsAndOsWithBenchmarks(section).keys
         esAndOsToBenchmarksTuple = selectedEsAndOsWithBenchmarks(section)(subsection)
       } yield EandOsWithBenchmarks(
+        section,
+        subsection,
         esAndOsToBenchmarksTuple._1.toList,
         esAndOsToBenchmarksTuple._2.toList
       )
