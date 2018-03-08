@@ -30,6 +30,24 @@ object ManageClassJsScreen
     addNewGroupButtons()
     addNewGroupSaveButton()
     saveOnLostFocus()
+//    popovers()
+  }
+
+  def popovers(): Unit =
+  {
+    val $ = js.Dynamic.global.$
+
+    $(dom.document).ready(() => {
+      dom.window.setTimeout(() => {
+        $("[data-toggle=\"popover\"]").popover("show")
+      }, 1000)
+
+      dom.window.setTimeout(() => {
+        $("[data-toggle=\"popover\"]").popover("hide")
+      }, 5000)
+
+    })
+
   }
 
   private def createAlerts(errors: Seq[String]): JsDom.Modifier =

@@ -269,3 +269,7 @@ input#classLevelInputCurriculumArea {
 .select-the-es-and-os-header {
     margin-bottom: 2rem;
 }
+
+#es-and-os-alert {
+    display: none;
+}

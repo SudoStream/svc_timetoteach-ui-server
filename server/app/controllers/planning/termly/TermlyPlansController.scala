@@ -12,6 +12,7 @@ import duplicate.model.{ClassDetails, TermlyPlansToSave}
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
 import javax.inject.{Inject, Singleton}
 import models.timetoteach.planning.{TermlyCurriculumSelection, _}
+import models.timetoteach.term.SchoolTerm
 import models.timetoteach.{ClassId, CookieNames, TimeToTeachUserId}
 import play.api.Logger
 import play.api.data.Form
@@ -108,7 +109,6 @@ class TermlyPlansController @Inject()(
       if maybeClassDetails.isDefined
       classDetails = maybeClassDetails.get
       maybeCurrentTermlyCurriculumSelection: Option[TermlyCurriculumSelection] <- eventualMaybeCurrentTermlyCurriculumSelection
-      if maybeCurrentTermlyCurriculumSelection.isDefined
     } yield
       Ok(views.html.planning.termly.termlyPlansSelectOverallCurriculumAreasForTheTerm(
         new MyDeadboltHandler(userReader),
@@ -120,7 +120,15 @@ class TermlyPlansController @Inject()(
         createScottishCurriculumPlanningAreaWrapperList(),
         postSelectedCurriculumAreasUrl,
         curriculumAreaSelectionDataForm,
-        maybeCurrentTermlyCurriculumSelection.get
+        maybeCurrentTermlyCurriculumSelection.getOrElse(
+          TermlyCurriculumSelection(
+            TimeToTeachUserId(tttUserId),
+            ClassId(classId),
+            Nil,
+            LocalDateTime.now(),
+            termService.currentSchoolTerm()
+          )
+        )
       )(authRequest))
   }
 

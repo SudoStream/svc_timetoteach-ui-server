@@ -9,18 +9,39 @@ import scala.util.{Failure, Success}
 import scalatags.JsDom
 import scalatags.JsDom.all.{`class`, div, span, _}
 
-object ClassHomeJsScreen {
+object ClassHomeJsScreen
+{
 
-  def loadJavascript(): Unit = {
+  def loadJavascript(): Unit =
+  {
     deleteClassBehaviour()
     goToClassBehaviour()
+    popovers()
   }
 
   private var classIdToDelete: Option[String] = None
   private var classNameToDelete: Option[String] = None
   private var currentUserId: Option[String] = None
 
-  def deleteClassBehaviour(): Unit = {
+  def popovers(): Unit =
+  {
+    val $ = js.Dynamic.global.$
+
+    $(dom.document).ready(() => {
+      dom.window.setTimeout(() => {
+        $("[data-toggle=\"popover\"]").popover("show")
+      }, 1000)
+
+      dom.window.setTimeout(() => {
+        $("[data-toggle=\"popover\"]").popover("hide")
+      }, 5000)
+
+    })
+
+  }
+
+  def deleteClassBehaviour(): Unit =
+  {
     val deleteTeacherClassButtons = dom.document.getElementsByClassName("delete-teacher-class-btn")
     val nodeListSize = deleteTeacherClassButtons.length
     var index = 0
@@ -45,7 +66,8 @@ object ClassHomeJsScreen {
     }
   }
 
-  def goToClassBehaviour(): Unit = {
+  def goToClassBehaviour(): Unit =
+  {
     val gotoClassButtons = dom.document.getElementsByClassName("teachers-classes-goto-btn")
     val nodeListSize = gotoClassButtons.length
     var index = 0
@@ -61,7 +83,8 @@ object ClassHomeJsScreen {
 
   }
 
-  def addYesDeleteTheClassBehaviour(): Unit = {
+  def addYesDeleteTheClassBehaviour(): Unit =
+  {
     val yesDeleteTheClassButton = dom.document.getElementById("yes-delete-the-class-btn").asInstanceOf[HTMLButtonElement]
     yesDeleteTheClassButton.addEventListener("click", (e: dom.Event) => {
       println(s"YES to deleting class ${classNameToDelete.getOrElse("[NO CLASS FOUND]")}")
@@ -91,7 +114,8 @@ object ClassHomeJsScreen {
     })
   }
 
-  def addModalAreYouSureWantToDeleteClass(): Unit = {
+  def addModalAreYouSureWantToDeleteClass(): Unit =
+  {
     removeAnyOlderModal()
     val child = dom.document.createElement("div")
     child.innerHTML = modalAreYouSureWantToDeleteClass().toString()
@@ -99,14 +123,16 @@ object ClassHomeJsScreen {
     newGroupsDiv.appendChild(child)
   }
 
-  private def removeAnyOlderModal() = {
+  private def removeAnyOlderModal() =
+  {
     val oldModal = dom.document.getElementById("modalAreYouSureWantToDeleteClass").asInstanceOf[Div]
     if (oldModal != null) {
       oldModal.parentElement.removeChild(oldModal)
     }
   }
 
-  def modalAreYouSureWantToDeleteClass(): JsDom.TypedTag[Div] = {
+  def modalAreYouSureWantToDeleteClass(): JsDom.TypedTag[Div] =
+  {
     div(`id` := "modalAreYouSureWantToDeleteClass", `class` := "modal", attr("tabindex") := "-1", role := "dialog")(
       div(`class` := "modal-dialog", role := "document")(
         div(`class` := "modal-content")(

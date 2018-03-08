@@ -190,7 +190,7 @@
                 </nav>
 
 
-                @if(maybeCurrentTermlyCurriculumSelection.isDefined) {
+                @if(maybeCurrentTermlyCurriculumSelection.isDefined && maybeCurrentTermlyCurriculumSelection.get._1.planningAreas.nonEmpty) {
                     <nav id="dashboard-nav-3" class="navbar navbar-primary bg-dark navbar-expand-lg">
                         <div class="col-md-1">
                             <a class="navbar-brand text-light" href="#">Curriculum Areas</a>
