@@ -25,6 +25,11 @@
                     a.appendChild(r);
                 })(window, document, 'https://static.hotjar.com/c/hotjar-', '.js?sv=');
         </script>
+        <script>(function (t, e, s, o) {
+            var n, c, l;
+            t.SMCX = t.SMCX || [], e.getElementById(o) || (n = e.getElementsByTagName(s), c = n[n.length - 1], l = e.createElement(s), l.type = "text/javascript", l.async = !0, l.id = o, l.src = ["https:" === location.protocol ? "https://" : "http://", "widget.surveymonkey.com/collect/website/js/tRaiETqnLgj758hTBazgdxpg8vYGqkSwI8r6XxqwmV5R6_2FuuNhBlNJmxihgx5av5.js"].join(""), c.parentNode.insertBefore(l, c))
+        })(window, document, "script", "smcx-sdk");</script>
+
     </head>
     <body>
 
@@ -43,14 +48,14 @@
                         <a class="nav-link" href="#home">Home <span class="sr-only">(current)</span></a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="#our-mission">Mission</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="#feature-deck">Deck</a>
                     </li>
-                    @if(showFrontPageFeatures) {
+                    @if(false) {
                         <li class="nav-item">
                             <a class="nav-link" href="#feature-one">Features</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#pricing">Pricing</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#news">News</a>
@@ -60,7 +65,13 @@
                         </li>
                     }
                     <li class="nav-item">
-                        <a class="nav-link" href="#about">About</a>
+                        <a class="nav-link" href="#learn-more">Learn More</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about-us">About Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#pricing">Pricing</a>
                     </li>
 
                     <li class="nav-item nav-login-button">
@@ -99,7 +110,7 @@
                 <p>Designed specifically for the Scottish Curriculum for Excellence</p>
                 <br>
                 <p>
-                    <a href="#about" class="btn btn-lg btn-success">Learn More</a>
+                    <a href="#learn-more" class="btn btn-lg btn-success">Learn More</a>
                     <a href="@routes.UserSignupController.signupStep1()" class="btn btn-lg btn-primary">Sign Up</a>
                 </p>
                 <a id="facebook-group-button" class="btn btn-primary btn-lg" href="https://www.facebook.com/groups/305966139892476/">
@@ -132,6 +143,27 @@
                 </div>
             </div>
         </div>
+
+
+        <section id="our-mission" class="feature-alt">
+            <div class="container about-us-section h-100">
+                <div class="card about-us-section">
+                    <div class="card-header text-center">
+                        <h4>Our Mission</h4>
+                    </div>
+                    <div class="card-body">
+                        <blockquote class="blockquote mb-0 text-center text-info">
+                            <p class="mission-quote">
+                                To provide teachers in Scotland with cutting edge software to considerably reduce the
+                                time they spend planning ... </p>
+                            <p class="mission-quote">... allowing them more ‘<strong>Time to Teach</strong>’.</p>
+
+                        </blockquote>
+                    </div>
+                </div>
+            </div>
+        </section>
+
 
         <section id="feature-deck" class="feature-dark">
             <div class="container">
@@ -188,7 +220,7 @@
             </div>
         </section>
 
-        @if(showFrontPageFeatures) {
+        @if(false) {
 
             <section id="feature-one">
                 <div class="container">
@@ -463,116 +495,29 @@
                 </div>
             </section>
 
-            <section id="pricing" >
-                <div class="container">
-                    <div class="feature-content ">
-                        <div class="text-center">
-                            <h1 class="display-4">Pricing</h1>
-                            <p class="lead">
-                                Time To Teach has simple pricing
-                            </p>
-                            <div class="card-deck col-xs-12">
-                                <div class="card col-xs-12 col-md-4">
-                                    <div class="card-body ">
-                                        <h4 class="card-title">Free</h4>
-                                        <hr align="center" width="50%">
-                                        <h6 class="card-subtitle">No cost forever and ever!</h6>
-
-                                        <p class="card-text">
-                                            <span class="display-4">£0</span>/month
-                                        </p>
-
-                                        <p>Access to the community and many resources. Ideal for trying out.</p>
-
-                                        <div class="text-left">
-                                            <ul class="list-unstyled">
-                                                <li><img class="check-icon" src="@routes.Assets.versioned("/icons/octicons_6_0_1/lib/svg/check.png")" alt="Check">
-                                                    Some cool feature one</li>
-                                                <li><img class="check-icon" src="@routes.Assets.versioned("/icons/octicons_6_0_1/lib/svg/check.png")" alt="Check">
-                                                    Another thing that is great</li>
-                                                <li><img class="check-icon" src="@routes.Assets.versioned("/icons/octicons_6_0_1/lib/svg/check.png")" alt="Check">
-                                                    Don't forget this too</li>
-                                                <li><img class="check-icon" src="@routes.Assets.versioned("/icons/octicons_6_0_1/lib/svg/check.png")" alt="Check">
-                                                    Finally this comes free as well</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-
-                                    <button type="button" class="btn btn-outline-success pricing-btn" data-toggle="modal" data-target="#myModal">
-                                        Sign Up
-                                    </button>
-                                </div>
-
-                                <div class="card col-xs-12 col-md-4">
-                                    <div class="card-body">
-                                        <h4 class="card-title">Standard</h4>
-                                        <hr align="center" width="50%">
-                                        <h6 class="card-subtitle">Easy planning and management of lessons.</h6>
-
-                                        <p class="card-text">
-                                            <span class="display-4">£3</span>/month
-                                        </p>
-
-                                        <p>A big step forward to efficiency for busy teachers.</p>
-
-                                        <div class="text-left">
-                                            <ul class="list-unstyled">
-                                                <li><img class="check-icon" src="@routes.Assets.versioned("/icons/octicons_6_0_1/lib/svg/check.png")" alt="Check">
-                                                    Some cool feature one</li>
-                                                <li><img class="check-icon" src="@routes.Assets.versioned("/icons/octicons_6_0_1/lib/svg/check.png")" alt="Check">
-                                                    Another thing that is great</li>
-                                                <li><img class="check-icon" src="@routes.Assets.versioned("/icons/octicons_6_0_1/lib/svg/check.png")" alt="Check">
-                                                    Don't forget this too</li>
-                                                <li><img class="check-icon" src="@routes.Assets.versioned("/icons/octicons_6_0_1/lib/svg/check.png")" alt="Check">
-                                                    Finally this comes free as well</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-
-                                    <button type="button" class="btn btn-outline-success align-bottom pricing-btn" data-toggle="modal" data-target="#myModal">
-                                        Sign Up
-                                    </button>
-
-                                </div>
-
-                                <div class="card col-xs-12 col-md-4">
-                                    <div class="card-body">
-                                        <h4 class="card-title">Premium</h4>
-                                        <hr align="center" width="50%">
-                                        <h6 class="card-subtitle">Full integration with your country's curriculum.</h6>
-                                        <p class="card-text">
-                                            <span class="display-4">£6</span>/month
-                                        </p>
-
-                                        <p>Currently only available in Scotland <img src="@routes.Assets.versioned("icons/flags/scotlandFlag.png")" alt="Scotland Flag" height="16px"></p>
-
-                                        <div class="text-left">
-                                            <ul class="list-unstyled">
-                                                <li><img class="check-icon" src="@routes.Assets.versioned("/icons/octicons_6_0_1/lib/svg/check.png")" alt="Check">
-                                                    Some cool feature one</li>
-                                                <li><img class="check-icon" src="@routes.Assets.versioned("/icons/octicons_6_0_1/lib/svg/check.png")" alt="Check">
-                                                    Another thing that is great</li>
-                                                <li><img class="check-icon" src="@routes.Assets.versioned("/icons/octicons_6_0_1/lib/svg/check.png")" alt="Check">
-                                                    Don't forget this too</li>
-                                                <li><img class="check-icon" src="@routes.Assets.versioned("/icons/octicons_6_0_1/lib/svg/check.png")" alt="Check">
-                                                    Finally this comes free as well</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-
-                                    <button type="button" class="btn btn-outline-success pricing-btn" data-toggle="modal" data-target="#myModal">
-                                        Sign Up
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
 
         }
 
-        <section id="about">
+        <section id="learn-more" class="feature-alt">
+            <div class="container about-us-section h-100 ">
+
+                <div class="text-center learn-more-question-header-div">
+                    <h3 class="text-primary learn-more-question-header">
+                        Do you love teaching but fed up with all the paperwork and planning?</h3>
+                    <h3 class="text-primary learn-more-question-header">Do you want a better life-work balance?</h3>
+                </div>
+
+                <p class="lead">
+                    Primary teachers in Scotland currently spend an average of 72 hours each term on planning!</p>
+
+                <p class="lead">
+                    We have designed an online tool to reduce the time you spend planning and allow you to spend more time on the things that really matter to you.</p>
+
+            </div>
+        </section>
+
+
+        <section id="about-us">
             <div class="section-content">
                 <div class="container h-100">
                     <div class="row">
@@ -580,23 +525,17 @@
                             <div class="about-text about-us">
                                 <h3 class="display-4 text-dark text-center">Hello!</h3>
 
-                                <div class="card about-us-section">
-                                    <div class="card-header text-center">
-                                        <h4>Our Mission</h4>
-                                    </div>
-                                    <div class="card-body">
-                                        <blockquote class="blockquote mb-0 text-center text-info">
-                                            <p>Provide teachers in Scotland with cutting edge software to considerably reduce the
-                                                time they spend planning, allowing them more ‘Time to Teach’.</p>
-                                        </blockquote>
-                                    </div>
-                                </div>
-
                                 <h4 class="about-us-section">Who are we?</h4>
 
                                 <p class="lead">
                                     We are a husband & wife team looking to solve the very important problem of excessive
                                     planning in primary school teaching.
+                                </p>
+
+                                <p>
+                                    We are the perfect team for solving the problem of excessive planning! Yvonne is
+                                    an experienced primary teacher, and Andy is a highly experienced software engineer.
+                                    Together we have built a tool for teachers to help them achieve a better life-work balance
                                 </p>
                             </div>
                         </div>
@@ -636,15 +575,17 @@
             </div>
         </section>
 
+
+
+
         <section class="feature-alt about-us-section">
             <div class="container">
                 <div class="row">
                     <div class="about-us-section-inner">
-                        <h4 >Why are we doing this?</h4>
-                        <div class="row">
+                        <h4 class="why-are-we-doing-this-header">Why are we doing this?</h4>
+                        <div class="row why-are-we-doing-this-block">
                             <div class="col-1"></div>
                             <div class="col-10">
-                                <h6 class="about-us-section-inner">Yvonne's Story</h6>
                                 <blockquote class="small-blockquote text-muted">
                                             &ldquo;As an experienced primary teacher with a young family of my own, I found juggling teaching and
                                         family life very difficult.
@@ -659,6 +600,9 @@
                                     Andy knew that it was entirely feasible to create
                                     software which would automate planning for teachers, however we knew it was a big project.
                                     He has now been building the software since August 2017 and we are on schedule to have it ready by August 2018.&ldquo;
+                                    <footer class="blockquote-footer text-dark">
+                                        Yvonne
+                                    </footer>
                                 </blockquote>
 
                             </div>
@@ -671,7 +615,7 @@
                                 Help us on our journey by proving that this is a tool which teachers in
                                 Scotland deserve to have. We know most teachers already pay for essentials like glue
                                 sticks, pencils and paper, so we will always aim to keep costs to teachers as low as
-                                possible. Our ultimate goal is to secure deals at Local Authorities or school level so
+                                possible. Our ultimate goal is to secure deals at Local Authority and/or School level so
                                 that teachers don’t have to pay.
                             </p>
 
@@ -686,42 +630,180 @@
             </div>
         </section>
 
-        <section >
+        <section class="about-us-section">
             <div class="container">
                 <div class="row">
-                    <div class="about-us-section-inner">
-                        <h4 >The Evidence</h4>
+                    <div id="the-evidence-div">
+                        <div class="row">
+                            <div class="about-us-section-inner">
+                                <h4 >The Evidence</h4>
 
-                        <h5 class="display-6 about-us-section-inner">
-                            We surveyed 680 current primary teachers in Scotland. They confirmed that there is a
-                            real need for something to be done to reduce the workload of teachers. Here are just
-                            some of our findings:
-                        </h5>
-                    </div>
-                </div>
-                <div class="row align-items-center about-us-section-inner">
-                    <div class="col-lg-3 ml-auto ">
-                        <h6>Excessive planning?</h6>
-                        <h5>Sure appears so!</h5>
-                        <p class="lead">
-                            A staggering <strong>97%</strong> agreed.
-                        </p>
-                    </div>
-                    <div class="col-lg-9 d-none d-md-block">
-                        <img src="@routes.Assets.versioned("images/questionExcessivePlanning.png")" alt="">
-                    </div>
-                </div>
-                <div class="row align-items-center about-us-section-inner">
-                    <div class="col-lg-2 ml-auto ">
-                        <h6>Where are the time sinks?</h6>
-                        <h5>Planning & resources!</h5>
-                    </div>
-                    <div class="col-lg-10 d-none d-md-block">
-                        <img src="@routes.Assets.versioned("images/questionTimeConsuming.png")" alt="">
+                                <h5 class="display-6 about-us-section-inner">
+                                    We surveyed 680 current primary teachers in Scotland. They confirmed that there is a
+                                    real need for something to be done to reduce the workload of teachers. Here are just
+                                    some of our findings:
+                                </h5>
+                            </div>
+                        </div>
+                        <div class="row align-items-center about-us-section-inner">
+                            <div class="col-lg-3 ml-auto ">
+                                <h6>Excessive planning?</h6>
+                                <h5>Sure appears so!</h5>
+                                <p class="lead">
+                                    A staggering <strong>97%</strong> agreed.
+                                </p>
+                            </div>
+                            <div class="col-lg-9 d-none d-md-block">
+                                <img src="@routes.Assets.versioned("images/questionExcessivePlanning.png")" alt="">
+                            </div>
+                        </div>
+                        <div class="row align-items-center about-us-section-inner">
+                            <div class="col-lg-2 ml-auto ">
+                                <h6>Where are the time sinks?</h6>
+                                <h5>Planning & resources!</h5>
+                            </div>
+                            <div class="col-lg-10 d-none d-md-block">
+                                <img src="@routes.Assets.versioned("images/questionTimeConsuming.png")" alt="">
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
+
+
+
+        <section id="pricing" >
+            <div class="container">
+                <div class="feature-content ">
+                    <div class="">
+                        <div class="col-lg-6">
+                            <h1 class="display-4">Pricing</h1>
+                            <p class="lead text-light">
+                                <strong>Time To Teach will have simple pricing</strong>
+                            </p>
+
+                            <ul class="list-unstyled">
+                                <li><img class="check-icon" src="@routes.Assets.versioned("/icons/octicons_6_0_1/lib/svg/check.svg")" alt="Check">
+                                    It will be charged monthly ... <strong>not</strong> annually</li>
+                                <li><img class="check-icon" src="@routes.Assets.versioned("/icons/octicons_6_0_1/lib/svg/check.svg")" alt="Check">
+                                    You will be able to cancel at any month</li>
+                            </ul>
+
+                        </div>
+
+                        <div class="col-lg-8 pricing-section-inner">
+                            <p class="lead">
+                                We know most teachers already pay for essentials like glue sticks, pencils and paper,
+                                so we will always aim to keep costs to teachers as low as possible.
+                            </p>
+                            <p>
+                                Our ultimate goal is to secure deals at Local Authority and/or School level so that teachers don’t have to pay.
+                            </p>
+                        </div>
+
+
+                        @*<div class="card-deck col-xs-12">*@
+                        @*<div class="card col-xs-12 col-md-4">*@
+                        @*<div class="card-body ">*@
+                        @*<h4 class="card-title">Free</h4>*@
+                        @*<hr align="center" width="50%">*@
+                        @*<h6 class="card-subtitle">No cost forever and ever!</h6>*@
+
+                        @*<p class="card-text">*@
+                        @*<span class="display-4">£0</span>/month*@
+                        @*</p>*@
+
+                        @*<p>Access to the community and many resources. Ideal for trying out.</p>*@
+
+                        @*<div class="text-left">*@
+                        @*<ul class="list-unstyled">*@
+                        @*<li><img class="check-icon" src="@routes.Assets.versioned("/icons/octicons_6_0_1/lib/svg/check.svg")" alt="Check">*@
+                        @*Some cool feature one</li>*@
+                        @*<li><img class="check-icon" src="@routes.Assets.versioned("/icons/octicons_6_0_1/lib/svg/check.svg")" alt="Check">*@
+                        @*Another thing that is great</li>*@
+                        @*<li><img class="check-icon" src="@routes.Assets.versioned("/icons/octicons_6_0_1/lib/svg/check.svg")" alt="Check">*@
+                        @*Don't forget this too</li>*@
+                        @*<li><img class="check-icon" src="@routes.Assets.versioned("/icons/octicons_6_0_1/lib/svg/check.svg")" alt="Check">*@
+                        @*Finally this comes free as well</li>*@
+                        @*</ul>*@
+                        @*</div>*@
+                        @*</div>*@
+
+                        @*<button type="button" class="btn btn-outline-success pricing-btn" data-toggle="modal" data-target="#myModal">*@
+                        @*Sign Up*@
+                        @*</button>*@
+                        @*</div>*@
+
+                        @*<div class="card col-xs-12 col-md-4">*@
+                        @*<div class="card-body">*@
+                        @*<h4 class="card-title">Standard</h4>*@
+                        @*<hr align="center" width="50%">*@
+                        @*<h6 class="card-subtitle">Easy planning and management of lessons.</h6>*@
+
+                        @*<p class="card-text">*@
+                        @*<span class="display-4">£3</span>/month*@
+                        @*</p>*@
+
+                        @*<p>A big step forward to efficiency for busy teachers.</p>*@
+
+                        @*<div class="text-left">*@
+                        @*<ul class="list-unstyled">*@
+                        @*<li><img class="check-icon" src="@routes.Assets.versioned("/icons/octicons_6_0_1/lib/svg/check.svg")" alt="Check">*@
+                        @*Some cool feature one</li>*@
+                        @*<li><img class="check-icon" src="@routes.Assets.versioned("/icons/octicons_6_0_1/lib/svg/check.svg")" alt="Check">*@
+                        @*Another thing that is great</li>*@
+                        @*<li><img class="check-icon" src="@routes.Assets.versioned("/icons/octicons_6_0_1/lib/svg/check.svg")" alt="Check">*@
+                        @*Don't forget this too</li>*@
+                        @*<li><img class="check-icon" src="@routes.Assets.versioned("/icons/octicons_6_0_1/lib/svg/check.svg")" alt="Check">*@
+                        @*Finally this comes free as well</li>*@
+                        @*</ul>*@
+                        @*</div>*@
+                        @*</div>*@
+
+                        @*<button type="button" class="btn btn-outline-success align-bottom pricing-btn" data-toggle="modal" data-target="#myModal">*@
+                        @*Sign Up*@
+                        @*</button>*@
+
+                        @*</div>*@
+
+                        @*<div class="card col-xs-12 col-md-4">*@
+                        @*<div class="card-body">*@
+                        @*<h4 class="card-title">Premium</h4>*@
+                        @*<hr align="center" width="50%">*@
+                        @*<h6 class="card-subtitle">Full integration with your country's curriculum.</h6>*@
+                        @*<p class="card-text">*@
+                        @*<span class="display-4">£6</span>/month*@
+                        @*</p>*@
+
+                        @*<p>Currently only available in Scotland <img src="@routes.Assets.versioned("icons/flags/scotlandFlag.png")" alt="Scotland Flag" height="16px"></p>*@
+
+                        @*<div class="text-left">*@
+                        @*<ul class="list-unstyled">*@
+                        @*<li><img class="check-icon" src="@routes.Assets.versioned("/icons/octicons_6_0_1/lib/svg/check.svg")" alt="Check">*@
+                        @*Some cool feature one</li>*@
+                        @*<li><img class="check-icon" src="@routes.Assets.versioned("/icons/octicons_6_0_1/lib/svg/check.svg")" alt="Check">*@
+                        @*Another thing that is great</li>*@
+                        @*<li><img class="check-icon" src="@routes.Assets.versioned("/icons/octicons_6_0_1/lib/svg/check.svg")" alt="Check">*@
+                        @*Don't forget this too</li>*@
+                        @*<li><img class="check-icon" src="@routes.Assets.versioned("/icons/octicons_6_0_1/lib/svg/check.svg")" alt="Check">*@
+                        @*Finally this comes free as well</li>*@
+                        @*</ul>*@
+                        @*</div>*@
+                        @*</div>*@
+
+                        @*<button type="button" class="btn btn-outline-success pricing-btn" data-toggle="modal" data-target="#myModal">*@
+                        @*Sign Up*@
+                        @*</button>*@
+                        @*</div>*@
+                        @*</div>*@
+
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
 
         <footer id="main-footer">
             <div class="container">

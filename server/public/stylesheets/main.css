@@ -20,7 +20,21 @@
 .about-us-section {
     margin-top: 5rem;
 }
+#learn-more{
+    padding-top: 2rem;
+    padding-bottom: 7rem;
+}
+.learn-more-question-header-div{
+    padding-top: 2rem;
+    padding-bottom: 4rem;
+}
+.learn-more-question-header{
+    padding-top: 1rem;
 
+}
+.pricing-section-inner {
+    margin-top: 3rem;
+}
 .about-us-section-inner {
     margin-top: 2rem;
 }
@@ -34,9 +48,10 @@
 
 .panel-footer {
     margin-top: 10rem;
+    padding-top: 1rem;
     z-index: 1000;
-    width: 3.8rem;
-    height: 8.6rem;
+    width: 4.5rem;
+    height: 5rem;
 
     display:block;
     position: fixed;
@@ -281,6 +296,26 @@ img {
     background: #f0f0f0;
 }
 
+#our-mission{
+    padding-top: 15rem;
+    height: 100%;
+}
+
+.mission-quote {
+    padding-top: 1.5rem;
+}
+
+.why-are-we-doing-this-block{
+    margin-top: 2rem;
+}
+
+.why-are-we-doing-this-header{
+    margin-top: 3rem;
+}
+
+#the-evidence-div{
+    margin-bottom: 10rem;
+}
 #pricing {
     height: 100%;
     background-image: url('/assets/images/priceBackground.jpeg');
