@@ -9,6 +9,11 @@
     src: url('/assets/fonts/simplifica.ttf') format('truetype');
 }
 
+@font-face {
+    font-family: 'dkCrayonCrumble';
+    src: url('/assets/fonts/dkCrayonCrumble.ttf') format('truetype');
+}
+
 #mission-statement {
 
 }
@@ -191,6 +196,10 @@ img {
     font-family: 'simplifica', sans-serif;
 }
 
+.chalk-writing {
+    font-family: 'dkCrayonCrumble', sans-serif;
+}
+
 #stage-caption {
     font-size: 1.4rem;
     font-weight: 200;
@@ -314,7 +323,12 @@ img {
     /*opacity: 0.5;*/
 }
 .mission-quote {
+    /*font-size: x-large;*/
     padding-top: 1.5rem;
+}
+
+.mission-quote-header {
+    font-size: xx-large;
 }
 
 .why-are-we-doing-this-block{
