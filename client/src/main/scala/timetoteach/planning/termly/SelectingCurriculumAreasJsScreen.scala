@@ -20,7 +20,7 @@ object SelectingCurriculumAreasJsScreen
     if (alert != null) {
       dom.window.setTimeout(() => {
         alert.style.display = "block"
-      }, 1200)
+      }, 600)
     }
   }
 

@@ -9,6 +9,22 @@
     src: url('/assets/fonts/simplifica.ttf') format('truetype');
 }
 
+#mission-statement {
+
+}
+
+.yvonnes-story{
+    font-size: xx-small;
+}
+
+.about-us-section {
+    margin-top: 5rem;
+}
+
+.about-us-section-inner {
+    margin-top: 2rem;
+}
+
 .side-button {
     word-wrap: break-word;
     word-break: normal;
@@ -106,6 +122,14 @@ img {
 
 .blockquote {
     font-size: 1.6rem;
+    color: #333;
+    border: none;
+    padding: 0;
+}
+
+.small-blockquote {
+    /*font-size: 1.3rem;*/
+    /*width: 90%;*/
     color: #333;
     border: none;
     padding: 0;

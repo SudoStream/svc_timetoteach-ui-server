@@ -13,18 +13,18 @@
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("icons/ttt_owl.png")">
             <!-- Hotjar Tracking Code for www.dev.timetoteach.zone -->
         <script>
-    (function (h, o, t, j, a, r) {
-        h.hj = h.hj || function () {
-            (h.hj.q = h.hj.q || []).push(arguments)
-        };
-        h._hjSettings = {hjid: 801472, hjsv: 6};
-        a = o.getElementsByTagName('head')[0];
-        r = o.createElement('script');
-        r.async = 1;
-        r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv;
-        a.appendChild(r);
-    })(window, document, 'https://static.hotjar.com/c/hotjar-', '.js?sv=');
-</script>
+                (function (h, o, t, j, a, r) {
+                    h.hj = h.hj || function () {
+                        (h.hj.q = h.hj.q || []).push(arguments)
+                    };
+                    h._hjSettings = {hjid: 801472, hjsv: 6};
+                    a = o.getElementsByTagName('head')[0];
+                    r = o.createElement('script');
+                    r.async = 1;
+                    r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv;
+                    a.appendChild(r);
+                })(window, document, 'https://static.hotjar.com/c/hotjar-', '.js?sv=');
+        </script>
     </head>
     <body>
 
@@ -520,15 +520,25 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="about-text about-us">
-                                <h3>Hello!</h3>
+                                <h3 class="display-4 text-dark text-center">Hello!</h3>
+
+                                <div class="card about-us-section">
+                                    <div class="card-header text-center">
+                                        <h4>Our Mission</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <blockquote class="blockquote mb-0 text-center text-info">
+                                            <p>Provide teachers in Scotland with cutting edge software to considerably reduce the
+                                                time they spend planning, allowing them more ‘Time to Teach’.</p>
+                                        </blockquote>
+                                    </div>
+                                </div>
+
+                                <h4 class="about-us-section">Who are we?</h4>
+
                                 <p class="lead">
                                     We are a husband & wife team looking to solve the very important problem of excessive
                                     planning in primary school teaching.
-                                </p>
-                                <p>
-                                    We're really excited to be working towards a more productive & efficient workflow for
-                                    teachers. Teachers deserve the best tools to help them in their jobs and now they will
-                                    have a world class digital solution to do so.
                                 </p>
                             </div>
                         </div>
@@ -553,18 +563,104 @@
                             </div>
                         </div>
                     </div>
+                </div>
+                <div id="follow-us" class="row text-center">
+                    <div class="col-md-12">
+                        <a href="https://twitter.com/timetoteachzone?ref_src=twsrc%5Etfw"
+                        class="twitter-follow-button" data-size="large" data-show-count="false">
+                            Follow @@timetoteachzone</a>
+                        <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                        @*<a href="" class="btn btn-sm btn-outline-secondary">facebook</a>*@
+                        @*<a href="" class="btn btn-sm btn-outline-secondary">youtube</a>*@
+                    </div>
+                </div>
 
-                    <div id="follow-us" class="row text-center">
-                        <div class="col-md-12">
-                            <a href="https://twitter.com/timetoteachzone?ref_src=twsrc%5Etfw"
-                            class="twitter-follow-button" data-size="large" data-show-count="false">
-                                Follow @@timetoteachzone</a>
-                            <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-                            @*<a href="" class="btn btn-sm btn-outline-secondary">facebook</a>*@
-                            @*<a href="" class="btn btn-sm btn-outline-secondary">youtube</a>*@
+            </div>
+        </section>
+
+        <section class="feature-alt about-us-section">
+            <div class="container">
+                <div class="row">
+                    <div class="about-us-section-inner">
+                        <h4 >Why are we doing this?</h4>
+                        <div class="row">
+                            <div class="col-1"></div>
+                            <div class="col-10">
+                                <h6 class="about-us-section-inner">Yvonne's Story</h6>
+                                <blockquote class="small-blockquote text-muted">
+                                            &ldquo;As an experienced primary teacher with a young family of my own, I found juggling teaching and
+                                        family life very difficult.
+                                    <p>My husband, who worked as a senior software engineer for a large
+                                        bank, couldn’t believe the things I would spend my evenings and weekends doing. In my 10 years
+                                        of teaching I only taught at the same stage 2 years running so I was constantly learning a new
+                                        stage and “re-inventing the wheel”.</p>
+                                    <p>When I moved to a new local authority with different forms,
+                                        plans and ways of working I struggled to keep up with the changing demands. This was when we
+                                        came up with the idea of Time to Teach.</p>
+
+                                    Andy knew that it was entirely feasible to create
+                                    software which would automate planning for teachers, however we knew it was a big project.
+                                    He has now been building the software since August 2017 and we are on schedule to have it ready by August 2018.&ldquo;
+                                </blockquote>
+
+                            </div>
+                            <div class="col-1"></div>
+                        </div>
+
+
+                        <div class="text-dark about-us-section-inner">
+                            <p>
+                                Help us on our journey by proving that this is a tool which teachers in
+                                Scotland deserve to have. We know most teachers already pay for essentials like glue
+                                sticks, pencils and paper, so we will always aim to keep costs to teachers as low as
+                                possible. Our ultimate goal is to secure deals at Local Authorities or school level so
+                                that teachers don’t have to pay.
+                            </p>
+
+                            <p>
+                                Teachers are professionals, and they deserve to be given the best tools to allow them to
+                                do their job to the best of their abilities.  Our tool will give teachers more Time to &ldquo;Teach&ldquo;
+                            </p>
                         </div>
                     </div>
 
+                </div>
+            </div>
+        </section>
+
+        <section >
+            <div class="container">
+                <div class="row">
+                    <div class="about-us-section-inner">
+                        <h4 >The Evidence</h4>
+
+                        <h5 class="display-6 about-us-section-inner">
+                            We surveyed 680 current primary teachers in Scotland. They confirmed that there is a
+                            real need for something to be done to reduce the workload of teachers. Here are just
+                            some of our findings:
+                        </h5>
+                    </div>
+                </div>
+                <div class="row align-items-center about-us-section-inner">
+                    <div class="col-lg-3 ml-auto ">
+                        <h6>Excessive planning?</h6>
+                        <h5>Sure appears so!</h5>
+                        <p class="lead">
+                           A staggering <strong>97%</strong> agreed.
+                        </p>
+                    </div>
+                    <div class="col-lg-9 d-none d-md-block">
+                        <img src="@routes.Assets.versioned("images/questionExcessivePlanning.png")" alt="">
+                    </div>
+                </div>
+                <div class="row align-items-center about-us-section-inner">
+                    <div class="col-lg-2 ml-auto ">
+                        <h6>Where are the time sinks?</h6>
+                        <h5>Planning & resources!</h5>
+                    </div>
+                    <div class="col-lg-10 d-none d-md-block">
+                        <img src="@routes.Assets.versioned("images/questionTimeConsuming.png")" alt="">
+                    </div>
                 </div>
             </div>
         </section>
