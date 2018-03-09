@@ -86,15 +86,15 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
     logger.debug(s"TTT User Id = ${classTimetableFormBound.tttUserId}")
 
     val wwwClassTimetable = convertJsonClassTimetableToWwwClassTimetable(PlanningHelper.decodeAnyNonFriendlyCharacters(classTimetableFormBound.classTimetable))
-    classTimetableWriter.upsertClassTimetables(
+    val res = classTimetableWriter.upsertClassTimetables(
       TimeToTeachUserId(classTimetableFormBound.tttUserId),
       WwwClassId(classTimetableFormBound.classId),
       wwwClassTimetable
     )
 
-    Future {
-      Ok("Saved class timetable!")
-    }
+    for {
+      done <- res
+    } yield Ok("Saved class timetable!")
   }
 
 

@@ -34,7 +34,7 @@ object ClassHomeJsScreen
 
       dom.window.setTimeout(() => {
         $("[data-toggle=\"popover\"]").popover("hide")
-      }, 5000)
+      }, 8000)
 
     })
 

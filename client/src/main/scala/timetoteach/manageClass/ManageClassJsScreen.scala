@@ -30,23 +30,27 @@ object ManageClassJsScreen
     addNewGroupButtons()
     addNewGroupSaveButton()
     saveOnLostFocus()
-//    popovers()
+    popovers()
   }
 
   def popovers(): Unit =
   {
-    val $ = js.Dynamic.global.$
+    val groups = dom.document.getElementsByClassName("manage-new-group-row")
+    val groupsCreated = groups.length
+    global.console.log(s"Groups created == ${groupsCreated}")
+    if (groupsCreated == 1) {
+      val $ = js.Dynamic.global.$
+      $(dom.document).ready(() => {
+        dom.window.setTimeout(() => {
+          $("[data-toggle=\"popover\"]").popover("show")
+        }, 1000)
 
-    $(dom.document).ready(() => {
-      dom.window.setTimeout(() => {
-        $("[data-toggle=\"popover\"]").popover("show")
-      }, 1000)
+        dom.window.setTimeout(() => {
+          $("[data-toggle=\"popover\"]").popover("hide")
+        }, 20000)
 
-      dom.window.setTimeout(() => {
-        $("[data-toggle=\"popover\"]").popover("hide")
-      }, 5000)
-
-    })
+      })
+    }
 
   }
 
@@ -241,7 +245,6 @@ object ManageClassJsScreen
     }
   }
 
-
   def saveOnLostFocus(): Unit =
   {
     val editableInputElems = dom.document.getElementsByClassName("editable-input-button")
@@ -389,7 +392,9 @@ object ManageClassJsScreen
     val classDetailsPickled = write[ClassDetails](newClassDetails)
     println(s"Edited Class Details Pickled: ###$classDetailsPickled###")
     saveEditedClass(classDetailsPickled)
+    popovers()
   }
+
   def saveEditedClass(classDetailsPickled: String): Any =
   {
     import scala.concurrent.ExecutionContext.Implicits.global

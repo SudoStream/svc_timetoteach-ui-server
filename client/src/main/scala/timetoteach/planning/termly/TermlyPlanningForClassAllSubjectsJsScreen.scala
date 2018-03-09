@@ -12,9 +12,10 @@ object TermlyPlanningForClassAllSubjectsJsScreen
   {
     global.console.log("Loading Termly Planning For Class All Subjects Javascript")
     downloadPdf()
+    popovers()
   }
 
-  def downloadPdf(): Unit =
+  private def downloadPdf(): Unit =
   {
     val downloadPdfButton = dom.document.getElementById("download-termly-plan-pdf").asInstanceOf[HTMLButtonElement]
     downloadPdfButton.addEventListener("click", (e: dom.Event) => {
@@ -22,4 +23,22 @@ object TermlyPlanningForClassAllSubjectsJsScreen
       $("#generating-pdf").modal("show", "backdrop: static", "keyboard : false")
     })
   }
+
+  private def popovers(): Unit =
+  {
+    val $ = js.Dynamic.global.$
+
+    $(dom.document).ready(() => {
+      dom.window.setTimeout(() => {
+        $("[data-toggle=\"popover\"]").popover("show")
+      }, 1000)
+
+      dom.window.setTimeout(() => {
+        $("[data-toggle=\"popover\"]").popover("hide")
+      }, 10000)
+
+    })
+
+  }
+
 }

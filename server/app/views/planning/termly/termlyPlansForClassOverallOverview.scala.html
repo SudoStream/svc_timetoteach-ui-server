@@ -45,6 +45,9 @@
                     </div>
                     <div class="col-3">
                         <a id="download-termly-plan-pdf" class="btn btn-sm btn-outline-danger btn-block bg-light" role="button"
+                        tabindex="0" data-toggle="popover" data-trigger="focus" data-placement="bottom"
+                        title="Create A PDF Of Your Termly Plan"
+                        data-content="Once you have selected all your Es & Os / Benchmarks, then click this button to generate a pdf version of your plan."
                         href="@controllers.planning.termly.routes.DownloadPdfController.downloadClassPdf(classDetails.id.id)">
                             Download Plan PDF</a>
                     </div>
@@ -187,6 +190,14 @@
 
     </div>
 
+    <script>
+            $(function () {
+                $('[data-toggle="tooltip"]').tooltip();
+            });
+            $(function () {
+                $('[data-toggle="popover"]').popover();
+            });
+    </script>
 
     @scalajs.html.scripts("client", routes.Assets.versioned(_).toString, name => getClass.getResource(s"/public/$name") != null)
 }

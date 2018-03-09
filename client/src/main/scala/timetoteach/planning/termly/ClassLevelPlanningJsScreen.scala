@@ -37,7 +37,19 @@ object ClassLevelPlanningJsScreen
     curriculumLevelFilterButton("Third")
     curriculumLevelFilterButton("Fourth")
     showAlertIfAllFilterButtonsAreOff()
+    popovers()
   }
+
+  private def popovers(): Unit =
+  {
+    val alert = dom.document.getElementById("es-and-os-alert").asInstanceOf[HTMLDivElement]
+    if (alert != null) {
+      dom.window.setTimeout(() => {
+        alert.style.display = "block"
+      }, 1200)
+    }
+  }
+
 
   def showAlertIfAllFilterButtonsAreOff(): Unit =
   {

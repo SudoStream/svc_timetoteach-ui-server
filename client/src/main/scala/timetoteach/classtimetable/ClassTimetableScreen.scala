@@ -683,6 +683,9 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
     saveClassTimetableButton.addEventListener("click", (e: dom.Event) => {
       global.console.log(s"Saving the class timetable... ${classTimetable.toString}")
 
+      val $ = js.Dynamic.global.$
+      $("#doing-stuff").modal("show", "backdrop: static", "keyboard : false")
+
       import dom.ext.Ajax
 
       import scala.concurrent.ExecutionContext.Implicits.global
@@ -702,10 +705,14 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
         data = theData
       ).onComplete {
         case Success(xhr) =>
+          val $ = js.Dynamic.global.$
+          $("#doing-stuff").modal("hide")
           val hello = xhr.responseText
           println(s"hello === $hello")
           dom.window.location.href = s"/classtimetable/$theClassTimetableId";
         case Failure(ex) =>
+          val $ = js.Dynamic.global.$
+          $("#doing-stuff").modal("hide")
           dom.window.alert("Something went wrong with saving class timetable. Specificically : -" +
             s"\n\n${ex.toString}")
       }

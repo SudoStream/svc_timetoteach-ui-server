@@ -67,6 +67,14 @@
 
                 <h5 class="termly-plans-overview-section-header text-center">
                     Select the Es & Os and/or Benchmarks to cover this term</h5>
+
+                <div id="es-and-os-alert" class="alert alert-danger alert-dismissible fade show text-center" role="alert" >
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    Remember to hit save below after selecting your Es & Os and Benchmarks
+                </div>
+
             </div>
 
             @for((esOsAndBenchmarks, outerIndex) <- esOsAndBenchmarksList.sortBy(elem => elem.curriculumLevel.order).zipWithIndex) {

@@ -74,7 +74,7 @@
                             </li>
                             <li class="nav-item nav-login-button-dashboard in-app-menu-medium-and-up">
                                 <a class="btn btn-sm btn-info btn-block" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlans()">
-                                    Termly Plans</a>
+                                    Termly Plans Home</a>
                             </li>
                         </div>
 
@@ -121,7 +121,9 @@
 
         @if(maybeClassId.isDefined) {
             <div class="in-app-menu-medium-and-up">
-                <nav id="dashboard-nav-2" class="navbar navbar-primary bg-secondary navbar-expand-lg ">
+                <nav id="dashboard-nav-2" class="navbar navbar-primary bg-secondary navbar-expand-lg red-tooltip"
+                data-toggle="tooltip" data-placement="bottom"
+                title="Use this navigation bar to go between managing your class, it's class timetable and the class' termly plans">
                     <div class="col-lg-2">
                         <a class="navbar-brand text-light" href="#">@title</a>
                     </div>
@@ -155,15 +157,15 @@
                             @if(maybeClassContext.get.isInstanceOf[models.timetoteach.ui.CLASS_TERMLY_PLANS.type]) {
                                 <a class="btn btn-warning btn-sm class-level-button" role="button"
                                 href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(maybeClassId.get)">
-                                    Termly Plans</a>
+                                    @title.replace("Class","").trim Termly Plans</a>
                             } else if(maybeClassContext.get.isInstanceOf[models.timetoteach.ui.CLASS_TERMLY_PLANS_LOWER.type]) {
                             <a class="btn btn-outline-warning btn-sm class-level-button" role="button"
                             href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(maybeClassId.get)">
-                                Termly Plans</a>
+                                @title.replace("Class","").trim Termly Plans</a>
                             } else {
                             <a class="btn btn-light text-dark btn-sm class-level-button" role="button"
                             href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(maybeClassId.get)">
-                                Termly Plans</a>
+                                @title.replace("Class","").trim Termly Plans</a>
                             }
                         </li>
                     } else {
@@ -182,7 +184,7 @@
                         <li class="nav-item">
                             <a class="btn btn-light text-dark btn-sm class-level-button" role="button"
                             href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(maybeClassId.get)">
-                                Termly Plans</a>
+                                @title.replace("Class","").trim Termly Plans</a>
                         </li>
                     }
                     </ul>
@@ -191,7 +193,9 @@
 
 
                 @if(maybeCurrentTermlyCurriculumSelection.isDefined && maybeCurrentTermlyCurriculumSelection.get._1.planningAreas.nonEmpty) {
-                    <nav id="dashboard-nav-3" class="navbar navbar-primary bg-dark navbar-expand-lg">
+                    <nav id="dashboard-nav-3" class="navbar navbar-primary bg-dark navbar-expand-lg"
+                    data-toggle="tooltip" data-placement="bottom"
+                    title="Select different curriculum areas to plan">
                         <div class="col-md-1">
                             <a class="navbar-brand text-light" href="#">Curriculum Areas</a>
                         </div>

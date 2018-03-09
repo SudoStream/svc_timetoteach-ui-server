@@ -72,7 +72,12 @@
                         <div id="mathematics-groups-section">
                         @for(group <- classDetails.groups.sortBy(group => group.groupLevel)) {
                             @if(group.groupType.value.toLowerCase == "mathematics") {
-                                <div class="manage-new-group-row">
+                                <div class="manage-new-group-row"
+                                tabindex="0" data-toggle="popover" data-trigger="focus" data-placement="bottom" data-html="true"
+                                title="New group created!" data-content="After a group has been created, you can still
+                                edit the <strong class='text-primary'>group name</strong> and
+                                <strong class='text-primary'>group description</strong> and it will auto save.
+                                If you have selected an incorrect CfE level then at the moment just delete the group and re-create a new one.">
                                     <div class="form-row manage-class-group-row" data-group-id="@group.groupId.id" data-group-type="mathematics">
 
                                         <div class="row in-app-menu-small-devices in-app-menu-small-devices-row">
@@ -124,7 +129,9 @@
                                             </div>
                                         </div>
                                         <div class="col-lg-1 in-app-menu-medium-and-up">
-                                            <button type="button" class="close delete-this-class-group" aria-label="Close">
+                                            <button type="button" class="close delete-this-class-group" aria-label="Close"
+                                            tabindex="0" data-toggle="popover" data-trigger="focus" data-placement="top"
+                                            title="Delete The Group" data-content="Click here to delete the group">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
@@ -135,9 +142,7 @@
                         }
                         </div>
                         <div>
-                            <button id="add-new-maths-groups-button" type="button" class="btn btn-sm btn-success add-new-class-button"
-                                tabindex="0" data-toggle="popover" data-trigger="focus" data-placement="right"
-                                title="Create A New Maths Group" data-content="Just click here">
+                            <button id="add-new-maths-groups-button" type="button" class="btn btn-success add-new-class-button">
                                 Add New Maths Group</button>
                         </div>
                     </div>
@@ -158,7 +163,10 @@
                         <div id="reading-groups-section">
                         @for(group <- classDetails.groups.sortBy(group => group.groupLevel)) {
                             @if(group.groupType.value.toLowerCase == "reading") {
-                                <div class="manage-new-group-row">
+                                <div class="manage-new-group-row"
+                                tabindex="0" data-toggle="popover" data-trigger="focus" data-placement="bottom" data-html="true"
+                                title="New group created!" data-content="After a group has been created, you can still
+                                edit the <strong class='text-primary'>group name</strong> and <strong class='text-primary'>group description</strong> and it will auto save. If you have selected an incorrect CfE level then at the moment just delete the group and re-create a new one.">
                                     <div class="form-row manage-class-group-row" data-group-id="@group.groupId.id" data-group-type="reading">
 
                                         <div class="row in-app-menu-small-devices in-app-menu-small-devices-row">
@@ -206,13 +214,15 @@
                                         <div class="row in-app-menu-small-devices in-app-menu-small-devices-row">
                                             <br>
                                             <div class="col-sm-6 ">
-                                                <button id="manage-class-edit" type="button" class="btn btn-sm btn-info align-self-center mx-auto the-group-plans-button" disabled="true">
+                                                <button id="manage-class-edit" type="button" class="btn btn-info align-self-center mx-auto the-group-plans-button" disabled="true">
                                                     Group Plans
                                                 </button>
                                             </div>
                                         </div>
                                         <div class="col-lg-1 in-app-menu-medium-and-up">
-                                            <button type="button" class="close  delete-this-class-group" aria-label="Close">
+                                            <button type="button" class="close  delete-this-class-group" aria-label="Close"
+                                            tabindex="0" data-toggle="popover" data-trigger="focus" data-placement="top"
+                                            title="Delete The Group" data-content="Click here to delete the group">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
@@ -223,9 +233,7 @@
                         }
                         </div>
                         <div>
-                            <button id="add-new-reading-groups-button" type="button" class="btn btn-sm btn-success add-new-class-button"
-                            tabindex="0" data-toggle="popover" data-trigger="focus" data-placement="top"
-                            title="... a new Reading group" data-content="Just click here">
+                            <button id="add-new-reading-groups-button" type="button" class="btn btn-success add-new-class-button">
                                 Add New Reading Group</button>
                         </div>
                     </div>
@@ -280,7 +288,12 @@
                         <div id="writing-groups-section">
                         @for(group <- classDetails.groups.sortBy(group => group.groupLevel)) {
                             @if(group.groupType.value.toLowerCase == "writing") {
-                                <div class="manage-new-group-row">
+                                <div class="manage-new-group-row"
+                                tabindex="0" data-toggle="popover" data-trigger="focus" data-placement="bottom" data-html="true"
+                                title="New group created!" data-content="After a group has been created, you can still
+                                edit the <strong class='text-primary'>group name</strong> and
+                                <strong class='text-primary'>group description</strong> and it will auto save. If you have
+                                selected an incorrect CfE level then at the moment just delete the group and re-create a new one.">
                                     <div class="form-row manage-class-group-row" data-group-id="@group.groupId.id" data-group-type="writing">
 
                                         <div class="row in-app-menu-small-devices in-app-menu-small-devices-row">
@@ -336,7 +349,9 @@
                                             </div>
                                         </div>
                                         <div class="col-lg-1 in-app-menu-medium-and-up">
-                                            <button type="button" class="close  delete-this-class-group" aria-label="Close">
+                                            <button type="button" class="close  delete-this-class-group" aria-label="Close"
+                                            tabindex="0" data-toggle="popover" data-trigger="focus" data-placement="top"
+                                            title="Delete The Group" data-content="Click here to delete the group">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
@@ -346,9 +361,7 @@
                         }
                         </div>
                         <div>
-                            <button id="add-new-writing-groups-button" type="button" class="btn btn-sm btn-success add-new-class-button"
-                            tabindex="0" data-toggle="popover" data-trigger="focus" data-placement="right"
-                            title="and a new Writing Group" data-content="Just here">
+                            <button id="add-new-writing-groups-button" type="button" class="btn btn-success add-new-class-button">
                                 Add New Writing Group</button>
                         </div>
                     </div>
@@ -369,7 +382,13 @@
                         <div id="spelling-groups-section">
                         @for(group <- classDetails.groups) {
                             @if(group.groupType.value.toLowerCase == "spelling") {
-                                <div class="manage-new-group-row">
+                                <div class="manage-new-group-row"
+                                tabindex="0" data-toggle="popover" data-trigger="focus" data-placement="bottom" data-html="true"
+                                title="New group created!" data-content="After a group has been created, you can still
+                                edit the <strong class='text-primary'>group name</strong> and
+                                <strong class='text-primary'>group description</strong> and it will auto save.
+                                If you have selected an incorrect CfE level then at the moment just delete the
+                                group and re-create a new one.">
                                     <div class="form-row manage-class-group-row" data-group-id="@group.groupId.id" data-group-type="spelling">
 
                                         <div class="row in-app-menu-small-devices in-app-menu-small-devices-row">
@@ -425,7 +444,9 @@
                                             </div>
                                         </div>
                                         <div class="col-lg-1 in-app-menu-medium-and-up">
-                                            <button type="button" class="close delete-this-class-group" aria-label="Close">
+                                            <button type="button" class="close delete-this-class-group" aria-label="Close"
+                                            tabindex="0" data-toggle="popover" data-trigger="focus" data-placement="top"
+                                            title="Delete The Group" data-content="Click here to delete the group">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
@@ -436,7 +457,7 @@
                         }
                         </div>
                         <div>
-                            <button id="add-new-spelling-groups-button" type="button" class="btn btn-sm btn-success add-new-class-button">
+                            <button id="add-new-spelling-groups-button" type="button" class="btn btn-success add-new-class-button">
                                 Add New Spelling Group</button>
                         </div>
                     </div>
