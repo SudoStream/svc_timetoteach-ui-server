@@ -157,15 +157,15 @@
                             @if(maybeClassContext.get.isInstanceOf[models.timetoteach.ui.CLASS_TERMLY_PLANS.type]) {
                                 <a class="btn btn-warning btn-sm class-level-button" role="button"
                                 href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(maybeClassId.get)">
-                                    @title.replace("Class","").trim Termly Plans</a>
+                                    Termly Plans Overview</a>
                             } else if(maybeClassContext.get.isInstanceOf[models.timetoteach.ui.CLASS_TERMLY_PLANS_LOWER.type]) {
                             <a class="btn btn-outline-warning btn-sm class-level-button" role="button"
                             href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(maybeClassId.get)">
-                                @title.replace("Class","").trim Termly Plans</a>
+                                Termly Plans Overview</a>
                             } else {
                             <a class="btn btn-light text-dark btn-sm class-level-button" role="button"
                             href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(maybeClassId.get)">
-                                @title.replace("Class","").trim Termly Plans</a>
+                                Termly Plans Overview</a>
                             }
                         </li>
                     } else {
@@ -184,7 +184,7 @@
                         <li class="nav-item">
                             <a class="btn btn-light text-dark btn-sm class-level-button" role="button"
                             href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(maybeClassId.get)">
-                                @title.replace("Class","").trim Termly Plans</a>
+                                Termly Plans Overview</a>
                         </li>
                     }
                     </ul>

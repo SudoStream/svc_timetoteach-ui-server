@@ -9,6 +9,7 @@ import shared.util.PlanningHelper
 import upickle.default.write
 
 import scala.collection.mutable
+import scala.scalajs.js
 import scala.scalajs.js.Dynamic.global
 import scala.util.{Failure, Success}
 
@@ -38,7 +39,7 @@ object ClassGroupPlanningJsScreen
     if (alert != null) {
       dom.window.setTimeout(() => {
         alert.style.display = "block"
-      }, 1200)
+      }, 10)
     }
   }
 
@@ -92,6 +93,9 @@ object ClassGroupPlanningJsScreen
   {
     val saveButton = dom.document.getElementById("save-termly-groups-button").asInstanceOf[HTMLButtonElement]
     saveButton.addEventListener("click", (e: dom.Event) => {
+      val $ = js.Dynamic.global.$
+      $("#doing-stuff").modal("show", "backdrop: static", "keyboard : false")
+
       saveButton.disabled = true
 
       global.console.log("Selected:\n" +
@@ -139,6 +143,9 @@ object ClassGroupPlanningJsScreen
           dom.window.alert("Something went wrong with saving group termly plans. Specifically : -" +
             s"\n\n${ex.toString}")
       }
+
+
+
 
 
     })

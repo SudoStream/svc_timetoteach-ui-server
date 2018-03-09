@@ -23,12 +23,15 @@ object ManageClassJsScreen
 
   var groupTypeCurrentlyAdding: Option[String] = None
 
+  var editBuffer = ""
+
   def loadJavascript(): Unit =
   {
     global.console.log("Adding js for Manage Class Screen")
     addDeleteGroupBehaviour()
     addNewGroupButtons()
     addNewGroupSaveButton()
+    saveBufferOnFocus()
     saveOnLostFocus()
     popovers()
   }
@@ -47,6 +50,7 @@ object ManageClassJsScreen
 
         dom.window.setTimeout(() => {
           $("[data-toggle=\"popover\"]").popover("hide")
+          $("[data-toggle=\"popover\"]").popover("dispose")
         }, 20000)
 
       })
@@ -245,6 +249,22 @@ object ManageClassJsScreen
     }
   }
 
+  def saveBufferOnFocus(): Unit =
+  {
+    val editableInputElems = dom.document.getElementsByClassName("editable-input-button")
+    val nodeListSize = editableInputElems.length
+    var index = 0
+    while (index < nodeListSize) {
+      global.console.log("Adding Focus out behaviour")
+      val editableInputElement = editableInputElems(index).asInstanceOf[HTMLInputElement]
+      editableInputElement.addEventListener("focusin", (e: dom.Event) => {
+        editBuffer = editableInputElement.value
+      })
+      index = index + 1
+    }
+
+  }
+
   def saveOnLostFocus(): Unit =
   {
     val editableInputElems = dom.document.getElementsByClassName("editable-input-button")
@@ -254,8 +274,10 @@ object ManageClassJsScreen
       global.console.log("Adding Focus out behaviour")
       val editableInputElement = editableInputElems(index).asInstanceOf[HTMLInputElement]
       editableInputElement.addEventListener("focusout", (e: dom.Event) => {
-        global.console.log("Focus out!")
-        doSave()
+        if (editBuffer != editableInputElement.value) {
+          doSave()
+        }
+        editBuffer = ""
       })
       index = index + 1
     }
@@ -423,6 +445,8 @@ object ManageClassJsScreen
           dom.window.location.href = s"/manageclass/$classId"
         }, 10)
       case Failure(ex) =>
+        val $ = js.Dynamic.global.$
+        $("#doing-stuff").modal("hide")
         dom.window.alert("Something went wrong with creating new class. Specifically : -" +
           s"\n\n${ex.toString}")
     }
