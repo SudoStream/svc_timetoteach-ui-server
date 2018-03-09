@@ -204,6 +204,14 @@ img {
     font-size: small;
 }
 
+#feature-deck {
+}
+.feature-content-deck {
+    display: flex;
+    padding-top: 5rem;
+    padding-bottom: 15rem;
+}
+
 .feature-content {
     display: flex;
     padding: 8rem 0;
@@ -260,6 +268,7 @@ img {
 }
 
 .feature-dark {
+    padding-top: 8rem;
     background: #262F36;
     color: white;
 }
