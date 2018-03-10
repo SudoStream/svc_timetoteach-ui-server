@@ -103,6 +103,15 @@
                                     <div id="schoolsearch">
                                         <div class="form-group">
                                             <label for="First Name">Search for your school and select it.</label>
+                                            <div class="alert alert-info alert-dismissible fade show" role="alert">
+                                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                                <p class="lead">
+                                                    For this beta test, you can select any school - this is just to give you an idea of a potential flow -
+                                                    i.e. No data, school included, will carry over onto the full release.
+                                                </p>
+                                           </div>
                                             <input type="text" class="form-control" id="schoolSearchInput" onkeyup="searchSchools()" name="search" placeholder="School Name" required>
                                         </div>
                                         <table id="schoolTable" class="table table-hover d-none">
