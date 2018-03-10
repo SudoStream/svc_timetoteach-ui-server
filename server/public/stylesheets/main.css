@@ -18,28 +18,37 @@
 
 }
 
-.yvonnes-story{
+.yvonnes-story {
     font-size: xx-small;
+}
+
+#the-evidence-section {
+    display: none;
 }
 
 .about-us-section {
     margin-top: 5rem;
 }
-#learn-more{
+
+#learn-more {
     padding-top: 2rem;
     padding-bottom: 7rem;
 }
-.learn-more-question-header-div{
+
+.learn-more-question-header-div {
     padding-top: 2rem;
     padding-bottom: 4rem;
 }
-.learn-more-question-header{
+
+.learn-more-question-header {
     padding-top: 1rem;
 
 }
+
 .pricing-section-inner {
     margin-top: 3rem;
 }
+
 .about-us-section-inner {
     margin-top: 2rem;
 }
@@ -58,7 +67,7 @@
     width: 4.5rem;
     height: 5rem;
 
-    display:block;
+    display: block;
     position: fixed;
     align-self: center;
 }
@@ -134,7 +143,7 @@ img {
     margin-top: 0;
 }
 
-.facebook-group-join-dashboard{
+.facebook-group-join-dashboard {
     margin-top: 3rem;
 }
 
@@ -234,6 +243,7 @@ img {
 
 #feature-deck {
 }
+
 .feature-content-deck {
     display: flex;
     padding-top: 5rem;
@@ -309,18 +319,20 @@ img {
     background: #f0f0f0;
 }
 
-#our-mission{
+#our-mission {
     padding-top: 10rem;
     padding-bottom: 10rem;
     background-color: #2a6495;
 }
 
-.our-mission-quote{
+.our-mission-quote {
     margin-top: 5rem;
 }
+
 .our-mission-card {
     /*opacity: 0.5;*/
 }
+
 .mission-quote {
     /*font-size: x-large;*/
     padding-top: 1.5rem;
@@ -330,17 +342,18 @@ img {
     font-size: xx-large;
 }
 
-.why-are-we-doing-this-block{
+.why-are-we-doing-this-block {
     margin-top: 2rem;
 }
 
-.why-are-we-doing-this-header{
+.why-are-we-doing-this-header {
     margin-top: 3rem;
 }
 
-#the-evidence-div{
+#the-evidence-div {
     margin-bottom: 10rem;
 }
+
 #pricing {
 
 }
@@ -472,6 +485,7 @@ img {
 #dashboard-nav {
     padding-top: 1rem;
 }
+
 #app-main-screen-title {
     /*float: right;*/
     /*margin-left: 2rem;*/
@@ -695,6 +709,9 @@ img {
 }
 
 @media screen and ( min-width: 991px) {
+    #the-evidence-section {
+        display: block;
+    }
 
     #home {
         background: url('/assets/images/stage.jpeg') center center no-repeat;
@@ -724,7 +741,6 @@ img {
     #facebook-group-button {
         font-size: medium;
     }
-
 
     .about-us-img {
         margin-right: 1rem;
@@ -823,7 +839,7 @@ img {
         width: 80%;
     }
 
-    #our-mission{
+    #our-mission {
         padding-top: 12rem;
         padding-bottom: 1rem;
         height: 100%;
