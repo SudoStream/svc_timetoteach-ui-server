@@ -134,6 +134,10 @@ img {
     margin-top: 0;
 }
 
+.facebook-group-join-dashboard{
+    margin-top: 3rem;
+}
+
 .nav-login-button {
     margin-left: 0;
     margin-right: 0;
@@ -306,14 +310,9 @@ img {
 }
 
 #our-mission{
-    padding-top: 12rem;
-    padding-bottom: 1rem;
-    height: 100%;
-    background-image: url('/assets/images/mission-bk.jpg');
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-    background-color: ghostwhite;
-
+    padding-top: 10rem;
+    padding-bottom: 10rem;
+    background-color: #2a6495;
 }
 
 .our-mission-quote{
@@ -343,16 +342,10 @@ img {
     margin-bottom: 10rem;
 }
 #pricing {
-    height: 100%;
-    background-image: url('/assets/images/priceBackground.jpeg');
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-    background-color: ghostwhite;
+
 }
 
 #congratsSection {
-    background: url('/assets/images/congrats.jpeg') center center no-repeat;
-    background-size: cover;
     min-height: 100%;
     display: flex;
     width: 100%;
@@ -360,9 +353,6 @@ img {
 
 #appBackground {
     margin-top: 3rem;
-    background-image: url('/assets/images/appBackgroundAltJustWhite.jpeg');
-    background-repeat: repeat-y;
-    background-size: 100% 100%;
     min-height: 100%;
     width: 100%;
 }
@@ -804,6 +794,14 @@ img {
         /*white-space: nowrap;*/
     }
 
+    #pricing {
+        height: 100%;
+        background-image: url('/assets/images/priceBackground.jpeg');
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+        background-color: ghostwhite;
+    }
+
 }
 
 @media screen and ( min-width: 1400px) {
@@ -823,6 +821,41 @@ img {
         margin-bottom: 1rem;
         min-width: 12rem;
         width: 80%;
+    }
+
+    #our-mission{
+        padding-top: 12rem;
+        padding-bottom: 1rem;
+        height: 100%;
+        background-image: url('/assets/images/mission-bk.jpg');
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+        background-color: ghostwhite;
+    }
+
+    #pricing {
+        height: 100%;
+        background-image: url('/assets/images/priceBackground.jpeg');
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+        background-color: ghostwhite;
+    }
+
+    #congratsSection {
+        background: url('/assets/images/congrats.jpeg') center center no-repeat;
+        background-size: cover;
+        min-height: 100%;
+        display: flex;
+        width: 100%;
+    }
+
+    #appBackground {
+        margin-top: 3rem;
+        background-image: url('/assets/images/appBackgroundAltJustWhite.jpeg');
+        background-repeat: repeat-y;
+        background-size: 100% 100%;
+        min-height: 100%;
+        width: 100%;
     }
 
 }

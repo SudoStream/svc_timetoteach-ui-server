@@ -76,9 +76,9 @@
                         <a class="btn btn-outline-primary" href="@routes.UserSignupController.signupStep1()">Sign Up</a>
                     </li>
                     <li class="nav-item nav-login-button">
-                        <a class="btn btn-outline-primary" href="https://www.facebook.com/groups/305966139892476/">
+                        <a class="btn btn-primary" href="https://www.facebook.com/groups/305966139892476/">
                             <img src="@routes.Assets.versioned("icons/FB-f-Logo__blue_29.png")" alt="logo" height="19">
-                            Facebook Group</a>
+                            Join Our Facebook Group</a>
                     </li>
                 </ul>
             </div>
@@ -105,13 +105,15 @@
                 <p>Designed specifically for the Scottish Curriculum for Excellence</p>
                 <br>
                 <p>
-                    <a href="#learn-more" class="btn btn-lg btn-success">Learn More</a>
-                    <a href="@routes.UserSignupController.signupStep1()" class="btn btn-lg btn-primary">Sign Up</a>
+                    <a href="https://www.surveymonkey.co.uk/r/R6PJ353" class="btn btn-lg btn-danger ">2 Minute Survey</a>
                 </p>
-                <a id="facebook-group-button" class="btn btn-primary btn-lg" href="https://www.facebook.com/groups/305966139892476/">
-                    <img class="facebook-group-icon" src="@routes.Assets.versioned("icons/FB-f-Logo__white_29.png")" alt="logo" height="22">
-                    Join Our Facebook Group
-                </a>
+                <p>
+                    <a href="@routes.UserSignupController.signupStep1()" class="btn btn-lg btn-success">Sign Up</a>
+                </p>
+                @*<a id="facebook-group-button" class="btn btn-primary btn-lg" href="https://www.facebook.com/groups/305966139892476/">*@
+                    @*<img class="facebook-group-icon" src="@routes.Assets.versioned("icons/FB-f-Logo__white_29.png")" alt="logo" height="22">*@
+                    @*Join Our Facebook Group*@
+                @*</a>*@
 
             </div>
         </div>
@@ -147,7 +149,8 @@
                     <h1 class="mission-quote text-light chalk-writing">
                         To provide teachers in Scotland with cutting edge software to considerably reduce the
                         time they spend planning ... </h1>
-                    <h1 class="mission-quote text-light chalk-writing">... allowing them more ‘<strong >Time to Teach</strong>’.</h1>
+                    <h1 class="mission-quote text-light chalk-writing">... allowing them more ‘<strong >Time to Teach</strong>
+                        ’.</h1>
                 </blockquote>
             </div>
         </section>
@@ -156,8 +159,9 @@
         <section id="feature-deck" class="feature-dark">
             <div class="container">
                 <div class="row">
-                    <div class="col-12">
-                        <h2>The Problem & Our Solution</h2>
+                    <div class="col-lg-12">
+                        <h2>The Problem</h2>
+                        <h3 > and Our Solution</h3>
                     </div>
                 </div>
 
@@ -664,7 +668,7 @@
                     <div class="">
                         <div class="col-lg-6">
                             <h1 class="display-4">Pricing</h1>
-                            <p class="lead text-light">
+                            <p class="lead ">
                                 <strong>Time To Teach will have simple pricing</strong>
                             </p>
 
