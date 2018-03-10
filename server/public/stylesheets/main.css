@@ -687,6 +687,14 @@ img {
     display: none;
 }
 
+#what-our-product-will-contain {
+    margin-top: 4rem;
+}
+
+.what-our-product-will-contain-grouping {
+    margin-top: 2rem;
+}
+
 #class-timetable-clear-cancel-save-buttons {
     display: none;
 }
@@ -711,6 +719,10 @@ img {
 @media screen and ( min-width: 991px) {
     #the-evidence-section {
         display: block;
+    }
+
+    #what-our-product-will-contain {
+        padding-left: 4rem;
     }
 
     #home {
