@@ -14,6 +14,9 @@
     src: url('/assets/fonts/dkCrayonCrumble.ttf') format('truetype');
 }
 
+.smiley-face{
+    margin-top: 5rem;
+}
 #mission-statement {
 
 }
@@ -855,7 +858,7 @@ img {
         padding-top: 12rem;
         padding-bottom: 1rem;
         height: 100%;
-        background-image: url('/assets/images/mission-bk.jpg');
+        background-image: url('/assets/images/mission-background.jpg');
         background-repeat: no-repeat;
         background-size: 100% 100%;
         background-color: ghostwhite;
