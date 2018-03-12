@@ -260,7 +260,7 @@ object AddNewClassJsScreen {
     }
   }
 
-  def saveNewClass(classDetailsPickled: String): Any = {
+  def saveNewClass(classDetailsPickled: String, classId: ClassId): Any = {
     import scala.concurrent.ExecutionContext.Implicits.global
 
     val theUrl = "/savenewclass"
@@ -281,12 +281,15 @@ object AddNewClassJsScreen {
         println(s"response = '$responseText'")
         dom.window.setTimeout(() => {
           println(s"lets goto classes")
-          dom.window.location.href = "/classes"
+          dom.window.location.href = s"/gotoclass/${classId.id}"
         }, 10)
-        println(s"Can you see this?")
       case Failure(ex) =>
         dom.window.alert("Something went wrong with creating new class. Specifically : -" +
           s"\n\n${ex.toString}")
+        dom.window.setTimeout(() => {
+          println(s"lets goto classes")
+          dom.window.location.href = "/classes"
+        }, 10)
     }
 
   }
@@ -350,7 +353,7 @@ object AddNewClassJsScreen {
 
               val classDetailsPickled = write[ClassDetails](classDetails)
               println(s"Class Details Pickled: ###$classDetailsPickled###")
-              saveNewClass(classDetailsPickled)
+              saveNewClass(classDetailsPickled, classDetails.id)
             case None =>
               println("ERROR: Problem getting class details")
           }

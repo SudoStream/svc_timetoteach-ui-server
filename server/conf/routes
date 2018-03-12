@@ -41,7 +41,7 @@ GET           /termlyplanningdownloadclassplan/:classId                         
 
 GET           /classes                                                                              controllers.planning.classtimetable.ClassTimetableController.classesHome
 GET           /addnewclass                                                                          controllers.planning.classtimetable.ClassTimetableController.addNewClass
-GET           /gotoclass/:classId                                                                            controllers.planning.classtimetable.ClassTimetableController.gotoClass(classId)
+GET           /gotoclass/:classId                                                                   controllers.planning.classtimetable.ClassTimetableController.gotoClass(classId)
 GET           /manageclass/:classId                                                                 controllers.planning.classtimetable.ClassTimetableController.manageClass(classId)
 GET           /classtimetable/:classId                                                              controllers.planning.classtimetable.ClassTimetableController.classTimetable(classId)
 POST          /savenewclass                                                                         controllers.planning.classtimetable.ClassTimetableController.saveNewClass
