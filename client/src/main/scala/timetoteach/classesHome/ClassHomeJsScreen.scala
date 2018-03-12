@@ -81,7 +81,7 @@ object ClassHomeJsScreen
       deleteTeacherClassButton.addEventListener("click", (e: dom.Event) => {
         val classId = deleteTeacherClassButton.getAttribute("data-class-id")
         println(s"goto class ... $classId")
-        dom.window.location.href = s"/manageclass/$classId"
+        dom.window.location.href = s"/gotoclass/$classId"
       })
       index = index + 1
     }

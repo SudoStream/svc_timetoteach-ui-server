@@ -219,6 +219,59 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
     }.flatMap(res => res)
   }
 
+  def gotoClass(classId: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest =>
+    val (userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: String) = extractCommonHeaders(authRequest)
+    val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
+    val futureUserPrefs = userReader.getUserPreferences(TimeToTeachUserId(tttUserId))
+
+    {
+      for {
+        classes <- eventualClasses
+        classDetailsList = classes.filter(theClass => theClass.id.id == classId)
+        maybeClassDetails = classDetailsList.headOption
+        if maybeClassDetails.isDefined
+        classDetails = maybeClassDetails.get
+
+        userPrefs <- futureUserPrefs
+
+        route = if (classDetails.groups.isEmpty) {
+          Future {
+            Redirect(controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(classDetails.id.id))
+          }
+        } else {
+          val schoolDayTimes = userPrefs match {
+            case Some(userPrefs) =>
+              val schoolTimes = userPrefs.allSchoolTimes.head
+              logger.debug(s"classTimetable() : schoolTimes : ${schoolTimes.toString}")
+              SchoolDayTimes(
+                schoolDayStarts = LocalTimeUtil.convertStringTimeToLocalTime(schoolTimes.schoolStartTime).getOrElse(
+                  defaultSchoolDayTimes.schoolDayStarts),
+                morningBreakStarts = LocalTimeUtil.convertStringTimeToLocalTime(schoolTimes.morningBreakStartTime).getOrElse(
+                  defaultSchoolDayTimes.morningBreakStarts),
+                morningBreakEnds = LocalTimeUtil.convertStringTimeToLocalTime(schoolTimes.morningBreakEndTime).getOrElse(
+                  defaultSchoolDayTimes.morningBreakEnds),
+                lunchStarts = LocalTimeUtil.convertStringTimeToLocalTime(schoolTimes.lunchStartTime).getOrElse(
+                  defaultSchoolDayTimes.lunchStarts),
+                lunchEnds = LocalTimeUtil.convertStringTimeToLocalTime(schoolTimes.lunchEndTime).getOrElse(
+                  defaultSchoolDayTimes.lunchEnds),
+                schoolDayEnds = LocalTimeUtil.convertStringTimeToLocalTime(schoolTimes.schoolEndTime).getOrElse(
+                  defaultSchoolDayTimes.schoolDayEnds)
+              )
+            case None => defaultSchoolDayTimes
+          }
+
+          val wwwClassTimetableFuture = classTimetableReaderProxy.
+            readClassTimetable(TimeToTeachUserId(tttUserId), WwwClassId(classDetails.id.id))
+
+          for {
+            maybeWwwClassTimetable <- wwwClassTimetableFuture
+          } yield Redirect(controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(classDetails.id.id))
+        }
+      } yield route
+    }.flatMap(res => res)
+  }
+
+
   def manageClass(classId: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest =>
     val (userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: String) = extractCommonHeaders(authRequest)
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))

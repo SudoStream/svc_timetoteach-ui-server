@@ -1,13 +1,15 @@
 package controllers
 
 import java.time.LocalTime
-import javax.inject.Inject
+import java.time.LocalTime
 
+import javax.inject.Inject
 import be.objectify.deadbolt.scala.cache.HandlerCache
 import be.objectify.deadbolt.scala.{ActionBuilders, DeadboltActions}
 import com.typesafe.config.ConfigFactory
 import controllers.serviceproxies._
-import io.sudostream.timetoteach.messages.systemwide.model.User
+import io.sudostream.timetoteach.messages.systemwide.model.{User, UserPreferences}
+import models.timetoteach.classtimetable.SchoolDayTimes
 import models.timetoteach.{CookieNames, InitialUserPreferences, TimeToTeachUserId}
 import play.api.Logger
 import play.api.data.Form
@@ -15,6 +17,8 @@ import play.api.data.Forms.{mapping, _}
 import play.api.mvc._
 import security.MyDeadboltHandler
 import shared.SharedMessages
+import shared.model.classtimetable.WwwClassId
+import shared.util.LocalTimeUtil
 import utils.TemplateUtils.getCookieStringFromRequest
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -24,9 +28,21 @@ import scala.concurrent.{Await, Future}
 class Application @Inject()(userReader: UserReaderServiceProxyImpl,
                             userWriter: UserWriterServiceProxyImpl,
                             schoolsProxy: SchoolReaderServiceProxyImpl,
+                            classTimetableReaderProxy: ClassTimetableReaderServiceProxyImpl,
+                            schoolsReader: SchoolReaderServiceProxyImpl,
                             deadbolt: DeadboltActions,
                             handlers: HandlerCache,
-                            actionBuilder: ActionBuilders) extends Controller {
+                            actionBuilder: ActionBuilders) extends Controller
+{
+
+  private val defaultSchoolDayTimes = SchoolDayTimes(
+    schoolDayStarts = LocalTime.of(9, 0),
+    morningBreakStarts = LocalTime.of(10, 30),
+    morningBreakEnds = LocalTime.of(10, 45),
+    lunchStarts = LocalTime.of(12, 0),
+    lunchEnds = LocalTime.of(13, 0),
+    schoolDayEnds = LocalTime.of(15, 0)
+  )
 
 
   val initialUserPreferencesForm = Form(
@@ -94,50 +110,77 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl,
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
     val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
+    val timeToTeachUserId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO TTT USER ID")
 
-    println(s"userFirstName =' ${userFirstName.getOrElse("OH DEAR NOT DEFINED")}")
-    println(s"userPictureUri =' ${userPictureUri.getOrElse("OH DEAR NOT DEFINED")}")
+    val futureMaybeUser = userReader.getUserDetails(TimeToTeachUserId(timeToTeachUserId))
+    val futureClassesAssociatedWithTeacher = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(
+      TimeToTeachUserId(timeToTeachUserId))
+    val futureUserPrefs = userReader.getUserPreferences(TimeToTeachUserId(timeToTeachUserId))
 
-    val timeToTeachUserId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest)
-    println(s"timetoteachId = '${timeToTeachUserId}'")
-    timeToTeachUserId match {
-      case Some(userId) =>
-        val userInfoFuture = userReader.getUserDetails(TimeToTeachUserId(userId))
+    val finalRoute = for {
+      maybeUser <- futureMaybeUser
+      if maybeUser.isDefined
+      userInfo = maybeUser.get
+      classesAssociatedWithTeacher <- futureClassesAssociatedWithTeacher
+      userPrefs <- futureUserPrefs
 
-        userInfoFuture map {
-          case Some(userInfo) =>
-            if (userInfo.userPreferences.isDefined) {
-
-              println("Initial user preferences already defined.")
-              Ok(views.html.timetoteachDashboard(new MyDeadboltHandler(userReader),
-                SharedMessages.httpMainTitle,
-                userPictureUri,
-                userFirstName,
-                userFamilyName,
-                generalDevelopmentToggle)(authRequest))
-
-            } else {
-              // TODO: Redirect
-
-              println("Initial user preferences not yet defined. Lets grab them now")
-              Ok(views.html.askInitialPreferences(new MyDeadboltHandler(userReader),
-                userPictureUri,
-                userFirstName,
-                userFamilyName,
-                userInfo,
-                postInitialUserPreferencesUrl
-              )(authRequest))
+      route = if (userInfo.userPreferences.isDefined) {
+        logger.debug(s"???? classesAssociatedWithTeacher = ${classesAssociatedWithTeacher.size}")
+        if (classesAssociatedWithTeacher.size == 1) {
+          val theOneClass = classesAssociatedWithTeacher.head
+          if (theOneClass.groups.isEmpty) {
+            Future{
+              Redirect(controllers.planning.classtimetable.routes.ClassTimetableController.gotoClass(theOneClass.id.id))
+            }
+          } else {
+            val schoolDayTimes = userPrefs match {
+              case Some(userPrefs) =>
+                val schoolTimes = userPrefs.allSchoolTimes.head
+                logger.debug(s"classTimetable() : schoolTimes : ${schoolTimes.toString}")
+                SchoolDayTimes(
+                  schoolDayStarts = LocalTimeUtil.convertStringTimeToLocalTime(schoolTimes.schoolStartTime).getOrElse(
+                    defaultSchoolDayTimes.schoolDayStarts),
+                  morningBreakStarts = LocalTimeUtil.convertStringTimeToLocalTime(schoolTimes.morningBreakStartTime).getOrElse(
+                    defaultSchoolDayTimes.morningBreakStarts),
+                  morningBreakEnds = LocalTimeUtil.convertStringTimeToLocalTime(schoolTimes.morningBreakEndTime).getOrElse(
+                    defaultSchoolDayTimes.morningBreakEnds),
+                  lunchStarts = LocalTimeUtil.convertStringTimeToLocalTime(schoolTimes.lunchStartTime).getOrElse(
+                    defaultSchoolDayTimes.lunchStarts),
+                  lunchEnds = LocalTimeUtil.convertStringTimeToLocalTime(schoolTimes.lunchEndTime).getOrElse(
+                    defaultSchoolDayTimes.lunchEnds),
+                  schoolDayEnds = LocalTimeUtil.convertStringTimeToLocalTime(schoolTimes.schoolEndTime).getOrElse(
+                    defaultSchoolDayTimes.schoolDayEnds)
+                )
+              case None => defaultSchoolDayTimes
             }
 
-          case None =>
-            NotFound(s"Tim To Teach User Id not found: ${timeToTeachUserId.toString}")
+            val wwwClassTimetableFuture = classTimetableReaderProxy.
+              readClassTimetable(TimeToTeachUserId(timeToTeachUserId), WwwClassId(theOneClass.id.id))
+
+            for {
+              maybeWwwClassTimetable <- wwwClassTimetableFuture
+            } yield Redirect(controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(theOneClass.id.id))
+          }
+        } else {
+          val userSchoolsWrappers = userInfo.schools
+          val userSchoolIds = userSchoolsWrappers.map(theSchoolWrapper => theSchoolWrapper.school.id)
+          val allSchools = schoolsReader.getAllSchools().getOrElse(Nil)
+
+
+          Future{
+            Redirect(controllers.planning.classtimetable.routes.ClassTimetableController.classesHome())
+          }
+        }
+      } else {
+
+        Future{
+          Redirect(routes.Application.askInitialPreferences())
         }
 
-      case None =>
-        Future {
-          NotFound(s"Tim To Teach User Id not found: ${timeToTeachUserId.toString}")
-        }
-    }
+      }
+    } yield route
+
+    finalRoute.flatMap(res => res)
   }
 
   def askInitialPreferences = deadbolt.SubjectPresent()() { authRequest =>
