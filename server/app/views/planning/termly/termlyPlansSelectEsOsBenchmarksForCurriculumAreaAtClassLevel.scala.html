@@ -61,9 +61,13 @@
             }
             </div>
 
+            <div class="termly-plans-overview-section-subheader">
+                <h1 class="text-center group-curriculum-area-header text-primary">
+                @curriculumArea.niceSpecificValueIfPresent().getOrElse(curriculumArea.niceValue())</h1>
+            </div>
 
             <div class="termly-plans-overview-section">
-                <h5 class="termly-plans-overview-section-header text-center">
+                <h5 class="termly-plans-overview-section-subheader text-center text-dark">
                     Select the curriculum levels you wish to plan for</h5>
                 <div class="row curriculumLevelEarlyFilterSection">
                     <div class="col">

@@ -1,6 +1,6 @@
 #termly-plans-overview-of-all-classes-section {
     padding: 0.5rem;
-    margin-top: 4rem;
+    margin-top: 2.5rem;
     margin-bottom: 2rem;
     /*background-color: #f6f6ff;*/
     background: rgba(250, 250, 250, 0.45);
@@ -24,6 +24,12 @@
     margin-bottom: 0.6rem;
 }
 
+.termly-plans-summary {
+    margin-top: 1rem;
+    margin-bottom: 0.6rem;
+}
+
+
 .termly-plans-overview-datum {
     margin-bottom: 1.2rem;
 }
@@ -32,6 +38,10 @@
 }
 
 .termly-plans-overview-section-header {
+    margin-top: 0.75rem;
+}
+
+.termly-plans-overview-section-subheader {
     margin-top: 2rem;
 }
 
@@ -189,7 +199,7 @@
 }
 
 .curriculumLevelEarlyFilterSection {
-    margin-top: 2rem;
+    margin-top: 0.75rem;
     margin-bottom: 3.5rem;
 }
 
@@ -253,7 +263,7 @@ input#classLevelInputCurriculumArea {
 }
 
 .group-curriculum-area-header {
-    margin-top: 2rem;
+    margin-top: 1rem;
     margin-bottom: 1rem;
 }
 
