@@ -70,7 +70,7 @@
                             </li>
                             <li class="nav-item nav-login-button-dashboard in-app-menu-medium-and-up">
                                 <a class="btn btn-sm btn-info btn-block" role="button" href="@controllers.planning.classtimetable.routes.ClassTimetableController.classesHome()">
-                                    Classes Home</a>
+                                    My Classes</a>
                             </li>
                             <li class="nav-item nav-login-button-dashboard in-app-menu-medium-and-up">
                                 <a class="btn btn-sm btn-info btn-block" role="button" href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlans()">
@@ -121,9 +121,7 @@
 
         @if(maybeClassId.isDefined) {
             <div class="in-app-menu-medium-and-up">
-                <nav id="dashboard-nav-2" class="navbar navbar-primary bg-secondary navbar-expand-lg red-tooltip"
-                data-toggle="tooltip" data-placement="bottom"
-                title="Use this navigation bar to go between managing your class, it's class timetable and the class' termly plans">
+                <nav id="dashboard-nav-2" class="navbar navbar-primary bg-secondary navbar-expand-lg red-tooltip">
                     <div class="col-lg-2">
                         <a class="navbar-brand text-light" href="#">@title</a>
                     </div>
@@ -193,9 +191,7 @@
 
 
                 @if(maybeCurrentTermlyCurriculumSelection.isDefined && maybeCurrentTermlyCurriculumSelection.get._1.planningAreas.nonEmpty) {
-                    <nav id="dashboard-nav-3" class="navbar navbar-primary bg-dark navbar-expand-lg"
-                    data-toggle="tooltip" data-placement="bottom"
-                    title="Select different curriculum areas to plan">
+                    <nav id="dashboard-nav-3" class="navbar navbar-primary bg-dark navbar-expand-lg">
                         <div class="col-md-1">
                             <a class="navbar-brand text-light" href="#">Curriculum Areas</a>
                         </div>
@@ -261,11 +257,6 @@
                 </div>
 
             </div>
-
-
-            <a id="survey" class="panel-footer btn btn-danger btn-sm" href="https://www.surveymonkey.co.uk/r/R6PJ353">
-                <div class="side-button"><strong>Quick Survey</strong></div>
-            </a>
 
             @content
 

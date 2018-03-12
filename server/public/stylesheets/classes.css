@@ -1,12 +1,12 @@
 
 .noClassesMsg {
     margin-left: 0;
-    margin-top: 7rem;
+    margin-top: 1rem;
 }
 
 #addNewClassBtn {
     /*margin-left: 1rem;*/
-    margin-top: 1rem;
+    margin-top: 5rem;
     /*margin-bottom: 1.5rem;*/
 }
 
@@ -67,9 +67,6 @@
     /*margin: 0.25rem;*/
 }
 
-.teachers-classes-goto-btn {
-    /*float: left;*/
-}
 
 .teachers-classes-delete-btn {
     float: right;

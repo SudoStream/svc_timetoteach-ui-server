@@ -2,7 +2,7 @@ package timetoteach.classesHome
 
 import org.scalajs.dom
 import org.scalajs.dom.html.Div
-import org.scalajs.dom.raw.HTMLButtonElement
+import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement, HTMLTableDataCellElement, HTMLTableHeaderCellElement}
 
 import scala.scalajs.js
 import scala.util.{Failure, Success}
@@ -15,7 +15,8 @@ object ClassHomeJsScreen
   def loadJavascript(): Unit =
   {
     deleteClassBehaviour()
-    goToClassBehaviour()
+    goToClassBehaviour("teachers-classes-goto-th")
+    goToClassBehaviour("teachers-classes-goto-td")
     popovers()
   }
 
@@ -66,22 +67,26 @@ object ClassHomeJsScreen
     }
   }
 
-  def goToClassBehaviour(): Unit =
+  def goToClassBehaviour(elementClass: String): Unit =
   {
-    val gotoClassButtons = dom.document.getElementsByClassName("teachers-classes-goto-btn")
+    val gotoClassButtons = dom.document.getElementsByClassName(elementClass)
     val nodeListSize = gotoClassButtons.length
     var index = 0
     while (index < nodeListSize) {
-      val deleteTeacherClassButton = gotoClassButtons(index).asInstanceOf[HTMLButtonElement]
+      val deleteTeacherClassButton = if (elementClass == "teachers-classes-goto-th") {
+        gotoClassButtons(index).asInstanceOf[HTMLTableHeaderCellElement]
+      } else {
+        gotoClassButtons(index).asInstanceOf[HTMLTableDataCellElement]
+      }
       deleteTeacherClassButton.addEventListener("click", (e: dom.Event) => {
         val classId = deleteTeacherClassButton.getAttribute("data-class-id")
         println(s"goto class ... $classId")
-        dom.window.location.href = s"/manageclass/$classId";
+        dom.window.location.href = s"/manageclass/$classId"
       })
       index = index + 1
     }
-
   }
+
 
   def addYesDeleteTheClassBehaviour(): Unit =
   {
