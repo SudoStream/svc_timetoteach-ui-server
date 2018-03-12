@@ -34,42 +34,29 @@
 
         <div class="termly-plans-overview-section text-center">
             <h4 class="termly-plans-overview-section-header">Termly Plans</h4>
-
             <div id="termly-plans-overview-of-all-classes-section">
 
-                <div id="reselect-and-download-pdf-section" class="d-flex justify-content-around">
-                    <div class="col-3">
-                        <a id="termly-plans-edit" role="button" class="btn btn-primary btn-sm btn-block"
-                        href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansSelectOverallCurriculumAreasForTheTerm(classDetails.id.id)">
-                            Re-Select Curriculum Areas</a>
-                    </div>
-                    <div class="col-3">
-                        <a id="download-termly-plan-pdf" class="btn btn-sm btn-danger btn-block" role="button"
-                        href="@controllers.planning.termly.routes.DownloadPdfController.downloadClassPdf(classDetails.id.id)">
-                            Create Termly Plan PDF</a>
-                    </div>
-                </div>
+                <h6 class="termly-plans-overview-section-header">Current Status</h6>
 
                 <div class="in-app-menu-medium-and-up">
-                    <div class="termly-plans-overview-headers">
-                        <div class="row">
-                            <div class="col-lg-3"><small class="text-muted">Curriculum Area</small></div>
+                    <div class="termly-plans-overview-headers ">
+                        <div class="row d-flex justify-content-center">
+                            <div class="col-lg-3 text-right"><small class="text-muted">Curriculum Area</small></div>
                             <div class="col-lg-1"></div>
                             <div class="col-lg-4"><small class="text-muted">Plan Progress</small></div>
-                            <div class="col-lg-4"></div>
                         </div>
                     </div>
                 </div>
 
                 @for((curriculumAreaToPlan, index) <- currentTermlyCurriculumSelection.planningAreasWrapped.sortBy(area => area.niceSpecificValueIfPresent().getOrElse(area.niceValue())).zipWithIndex) {
                     <div class="termly-plans-overview-section-div">
-                        <div class="row termly-plans-overview-section-row">
-                            <div class="col-xs-3 col-lg-3">
+                        <div class="row termly-plans-overview-section-row d-flex justify-content-center">
+                            <div class="col-lg-3 text-right">
 
                                 @curriculumAreaToPlan.niceSpecificValueIfPresent().getOrElse(curriculumAreaToPlan.niceValue())
 
                             </div>
-                            <div class="col-xs-3 col-lg-1"></div>
+                            <div class="col-lg-1"></div>
                             @{
                                 if(maybeCurriculumPlanProgress.getOrElse(CurriculumPlanProgressForClass(Map())).curriculumProgressMap.isDefinedAt(curriculumAreaToPlan)) {
                                     defining({
@@ -89,7 +76,7 @@
                                         }
                                     }
                                 } else {
-                                        <div class="col-xs-3 col-lg-4">
+                                        <div class="col-lg-4">
                                         <div class="progress">
                                         <div class="progress-bar progress-bar-striped" role="progressbar" style="width: 0" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                                         <span><strong>0%</strong></span>
@@ -97,7 +84,6 @@
                                         </div>
                                 }
                             }
-                            <div class="col-xs-6 col-lg-4"></div>
                         </div>
 
                         <div class="termly-plans-collapse-container">
@@ -171,6 +157,19 @@
                 }
             </div>
 
+        </div>
+
+        <div id="reselect-and-download-pdf-section" class="d-flex justify-content-around">
+            <div class="col-3">
+                <a id="termly-plans-edit" role="button" class="btn btn-primary btn-sm btn-block"
+                href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansSelectOverallCurriculumAreasForTheTerm(classDetails.id.id)">
+                    Re-Select Curriculum Areas</a>
+            </div>
+            <div class="col-3">
+                <a id="download-termly-plan-pdf" class="btn btn-sm btn-danger btn-block" role="button"
+                href="@controllers.planning.termly.routes.DownloadPdfController.downloadClassPdf(classDetails.id.id)">
+                    Create Termly Plan PDF</a>
+            </div>
         </div>
 
         <div class="modal" id="generating-pdf" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
