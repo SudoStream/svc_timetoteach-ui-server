@@ -56,6 +56,7 @@ class TermlyPlansController @Inject()(
     for {
       classes <- eventualClasses
 
+      //hello
       futureMaybeCurriculumPlanProgress = planningReaderService.curriculumPlanProgressForClasses(
         TimeToTeachUserId(tttUserId),
         classes,
@@ -157,6 +158,12 @@ class TermlyPlansController @Inject()(
         classDetails,
         maybeCurrentTermlyCurriculumSelection
       )
+      futureMaybeOverallCurriculumPlanProgress = planningReaderService.curriculumPlanProgressForClasses(
+        TimeToTeachUserId(tttUserId),
+        classes,
+        termService.currentSchoolTerm()
+      )
+      maybeOverallCurriculumPlanProgress <- futureMaybeOverallCurriculumPlanProgress
 
       maybeCurriculumPlanProgress <- futureMaybeCurriculumPlanProgress
 
@@ -169,7 +176,8 @@ class TermlyPlansController @Inject()(
             TimeToTeachUserId(tttUserId),
             classDetails,
             currentTermlyCurriculumSelection,
-            maybeCurriculumPlanProgress
+            maybeCurriculumPlanProgress,
+            maybeOverallCurriculumPlanProgress
           ))
         case None =>
           Redirect(routes.TermlyPlansController.termlyPlansSelectOverallCurriculumAreasForTheTerm(classId))
@@ -209,8 +217,16 @@ class TermlyPlansController @Inject()(
         classDetails,
         maybeCurrentTermlyCurriculumSelection
       )
-      maybeCurriculumPlanProgress <- futureMaybeCurriculumPlanProgress
 
+
+      futureMaybeOverallCurriculumPlanProgress = planningReaderService.curriculumPlanProgressForClasses(
+        TimeToTeachUserId(tttUserId),
+        classes,
+        termService.currentSchoolTerm()
+      )
+
+      maybeOverallCurriculumPlanProgress <- futureMaybeOverallCurriculumPlanProgress
+      maybeCurriculumPlanProgress <- futureMaybeCurriculumPlanProgress
     } yield {
       Ok(views.html.planning.termly.termlyPlansSelectEsOsBenchmarksForCurriculumAreaAtClassLevel(new MyDeadboltHandler(userReader),
         userPictureUri,
@@ -221,7 +237,8 @@ class TermlyPlansController @Inject()(
         curriculumArea,
         maybeRelevantEsAndOs.get,
         maybeCurrentTermlyCurriculumSelection.get,
-        maybeCurriculumPlanProgress
+        maybeCurriculumPlanProgress,
+        maybeOverallCurriculumPlanProgress
       ))
     }
   }
@@ -260,6 +277,14 @@ class TermlyPlansController @Inject()(
         classDetails,
         maybeCurrentTermlyCurriculumSelection
       )
+
+      futureMaybeOverallCurriculumPlanProgress = planningReaderService.curriculumPlanProgressForClasses(
+        TimeToTeachUserId(tttUserId),
+        classes,
+        termService.currentSchoolTerm()
+      )
+
+      maybeOverallCurriculumPlanProgress <- futureMaybeOverallCurriculumPlanProgress
       maybeCurriculumPlanProgress <- futureMaybeCurriculumPlanProgress
     } yield {
       Ok(views.html.planning.termly.termlyPlansSelectEsOsBenchmarksForCurriculumAreaAtGroupLevel(new MyDeadboltHandler(userReader),
@@ -273,7 +298,8 @@ class TermlyPlansController @Inject()(
         relevantEsAndOs,
         maybeCurrentTermlyCurriculumSelection.get,
         curriculumArea,
-        maybeCurriculumPlanProgress
+        maybeCurriculumPlanProgress,
+        maybeOverallCurriculumPlanProgress
       ))
     }
   }
@@ -354,6 +380,14 @@ class TermlyPlansController @Inject()(
         classDetails,
         maybeCurrentTermlyCurriculumSelection
       )
+
+      futureMaybeOverallCurriculumPlanProgress = planningReaderService.curriculumPlanProgressForClasses(
+        TimeToTeachUserId(tttUserId),
+        classes,
+        termService.currentSchoolTerm()
+      )
+
+      maybeOverallCurriculumPlanProgress <- futureMaybeOverallCurriculumPlanProgress
       maybeCurriculumPlanProgress <- futureMaybeCurriculumPlanProgress
 
       route = maybeCurriculumAreaTermlyPlanForGroup match {
@@ -368,7 +402,8 @@ class TermlyPlansController @Inject()(
             maybeCurriculumAreaTermlyPlanForGroup.get,
             esAndOsCodeToDetailMap,
             maybeCurrentTermlyCurriculumSelection.get,
-            maybeCurriculumPlanProgress
+            maybeCurriculumPlanProgress,
+            maybeOverallCurriculumPlanProgress
           ))
         case None =>
           Redirect(routes.TermlyPlansController.termlyPlansClassLevel_SelectEsOsBenchmarksForCurriculumArea(classId, curriculumArea))
@@ -430,6 +465,15 @@ class TermlyPlansController @Inject()(
         classDetails,
         maybeCurrentTermlyCurriculumSelection
       )
+
+
+      futureMaybeOverallCurriculumPlanProgress = planningReaderService.curriculumPlanProgressForClasses(
+        TimeToTeachUserId(tttUserId),
+        classes,
+        termService.currentSchoolTerm()
+      )
+
+      maybeOverallCurriculumPlanProgress <- futureMaybeOverallCurriculumPlanProgress
       maybeCurriculumPlanProgress <- futureMaybeCurriculumPlanProgress
 
       route = maybeCurriculumAreaTermlyPlanForGroup match {
@@ -445,7 +489,8 @@ class TermlyPlansController @Inject()(
             maybeCurriculumAreaTermlyPlanForGroup.get,
             esAndOsCodeToDetailMap,
             maybeCurrentTermlyCurriculumSelection.get,
-            maybeCurriculumPlanProgress
+            maybeCurriculumPlanProgress,
+            maybeOverallCurriculumPlanProgress
           ))
         case None =>
           Redirect(routes.TermlyPlansController.termlyPlansGroupLevel_SelectEsOsBenchmarksForCurriculumArea(classId, curriculumArea, groupId))
