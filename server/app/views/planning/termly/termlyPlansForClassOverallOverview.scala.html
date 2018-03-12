@@ -34,7 +34,7 @@
     <div class="container">
 
         <div class="termly-plans-overview-section text-center">
-            <h6 class="termly-plans-overview-section-header">Current Overall Status</h6>
+            <h6 class="termly-plans-overview-section-header">% Termly Plan Complete</h6>
             <div class="progress">
             @{
                 if(classIdToOverallProgress.isDefinedAt(classDetails.id)) {
@@ -53,8 +53,6 @@
                 }
             }
             </div>
-
-            <h4 class="termly-plans-overview-section-header">Termly Plans</h4>
 
 
             <div id="termly-plans-overview-of-all-classes-section">
@@ -78,7 +76,7 @@
                     <div class="termly-plans-overview-section-div">
                         <div class="row termly-plans-overview-section-row d-flex justify-content-center">
                             <div class="col-lg-1"></div>
-                            <div class="col-lg-3 text-right">
+                            <div class="col-lg-3 text-right text-dark">
 
                                 @curriculumAreaToPlan.niceSpecificValueIfPresent().getOrElse(curriculumAreaToPlan.niceValue())
 
