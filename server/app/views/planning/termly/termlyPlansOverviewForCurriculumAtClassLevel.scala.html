@@ -64,7 +64,15 @@
 
         <div class="termly-plans-overview-section-subheader">
             <h1 class="text-center group-curriculum-area-header text-primary">
-            @curriculumArea.niceSpecificValueIfPresent().getOrElse(curriculumArea.niceValue())</h1>
+            @curriculumArea.niceSpecificValueIfPresent().getOrElse(curriculumArea.niceValue())
+
+                <span class="d-flex ml-auto">
+                    <a id="termly-plans-edit" role="button" class="btn btn-sm btn-outline-primary bg-light"
+                    href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansClassLevel_SelectEsOsBenchmarksForCurriculumArea(classDetails.id.id, curriculumArea.value.toString)">
+                        Re-Select Es&Os/Benchmarks</a>
+                </span>
+
+            </h1>
         </div>
 
         <div>
@@ -116,13 +124,6 @@
 
         </div>
 
-        <div id="reselect-and-download-pdf-section" class="d-flex justify-content-around">
-            <div class="col-3">
-                <a id="termly-plans-edit" role="button" class="btn btn-outline-primary bg-light"
-                href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansClassLevel_SelectEsOsBenchmarksForCurriculumArea(classDetails.id.id, curriculumArea.value.toString)">
-                    Re-Select Es&Os/Benchmarks</a>
-            </div>
-        </div>
 
 
     </div>
