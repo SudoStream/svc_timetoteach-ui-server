@@ -33,7 +33,7 @@
     font-weight: bold;
 }
 
-.subject-rme {
+.subject-topic {
     background-color: rgba(255, 238, 116, 0.45);
     color: black;
     font-weight: bold;
@@ -52,7 +52,7 @@
 }
 
 
-.subject-topic {
+.subject-rme {
     background-color: rgba(99, 5, 205, 0.55);
     color: black;
     font-weight: bold;
