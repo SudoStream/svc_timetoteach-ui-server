@@ -4,7 +4,7 @@
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails, currentTermlyCurriculumSelection: TermlyCurriculumSelection, maybeCurriculumPlanProgress: Option[CurriculumPlanProgressForClass])
 
 @timetoteachAppMain(handler, s"Class ${classDetails.className.name}",
-    userPictureUri, userFirstName, userFamilyName, Some(classDetails.id.id), Some(CLASS_TERMLY_PLANS), Some(currentTermlyCurriculumSelection,"NONE")) {
+    userPictureUri, userFirstName, userFamilyName, Some(classDetails.id.id), Some(CLASS_TERMLY_PLANS), Some(currentTermlyCurriculumSelection,"NONE"), maybeCurriculumPlanProgress) {
     <div class="in-app-menu-small-devices">
         <li class="nav-item nav-login-button">
             <a class="btn btn-outline-primary btn-block" role="button" href="@routes.Application.timeToTeachApp()">
@@ -39,14 +39,14 @@
 
                 <div id="reselect-and-download-pdf-section" class="d-flex justify-content-around">
                     <div class="col-3">
-                        <a id="termly-plans-edit" role="button" class="btn btn-outline-primary btn-sm btn-block bg-light"
+                        <a id="termly-plans-edit" role="button" class="btn btn-primary btn-sm btn-block"
                         href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansSelectOverallCurriculumAreasForTheTerm(classDetails.id.id)">
                             Re-Select Curriculum Areas</a>
                     </div>
                     <div class="col-3">
                         <a id="download-termly-plan-pdf" class="btn btn-sm btn-danger btn-block" role="button"
                         href="@controllers.planning.termly.routes.DownloadPdfController.downloadClassPdf(classDetails.id.id)">
-                            Create Plan PDF</a>
+                            Create Termly Plan PDF</a>
                     </div>
                 </div>
 
@@ -65,10 +65,9 @@
                     <div class="termly-plans-overview-section-div">
                         <div class="row termly-plans-overview-section-row">
                             <div class="col-xs-3 col-lg-3">
-                                <a class="btn btn-sm btn-primary btn-block" data-toggle="collapse"
-                                href="#collapseClassGroup-@index" role="button" aria-expanded="false" aria-controls="collapseClassGroup-@index">
+
                                 @curriculumAreaToPlan.niceSpecificValueIfPresent().getOrElse(curriculumAreaToPlan.niceValue())
-                                </a>
+
                             </div>
                             <div class="col-xs-3 col-lg-1"></div>
                             @{

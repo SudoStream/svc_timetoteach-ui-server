@@ -273,3 +273,17 @@ input#classLevelInputCurriculumArea {
 #es-and-os-alert {
     display: none;
 }
+
+.termly-plan-done-check-green  {
+    color: lawngreen;
+}
+
+.termly-plan-done-check-black  {
+    color: black;
+}
+.pad-the-tab {
+    padding-right: 0.5rem;
+}
+.letstest {
+    color: orangered;
+}

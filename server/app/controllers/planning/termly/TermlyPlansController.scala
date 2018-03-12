@@ -12,7 +12,6 @@ import duplicate.model.{ClassDetails, TermlyPlansToSave}
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
 import javax.inject.{Inject, Singleton}
 import models.timetoteach.planning.{TermlyCurriculumSelection, _}
-import models.timetoteach.term.SchoolTerm
 import models.timetoteach.{ClassId, CookieNames, TimeToTeachUserId}
 import play.api.Logger
 import play.api.data.Form
@@ -21,7 +20,6 @@ import play.api.mvc._
 import security.MyDeadboltHandler
 import shared.util.PlanningHelper
 import utils.TemplateUtils.getCookieStringFromRequest
-import views.html.planning.termly.termlyPlansOverviewForCurriculumAtGroupLevel
 
 import scala.annotation.tailrec
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -205,6 +203,14 @@ class TermlyPlansController @Inject()(
       if maybeRelevantEsAndOs.isDefined
       maybeCurrentTermlyCurriculumSelection: Option[TermlyCurriculumSelection] <- eventualMaybeCurrentTermlyCurriculumSelection
       if maybeCurrentTermlyCurriculumSelection.isDefined
+
+      futureMaybeCurriculumPlanProgress = planningReaderService.curriculumPlanProgress(
+        TimeToTeachUserId(tttUserId),
+        classDetails,
+        maybeCurrentTermlyCurriculumSelection
+      )
+      maybeCurriculumPlanProgress <- futureMaybeCurriculumPlanProgress
+
     } yield {
       Ok(views.html.planning.termly.termlyPlansSelectEsOsBenchmarksForCurriculumAreaAtClassLevel(new MyDeadboltHandler(userReader),
         userPictureUri,
@@ -214,7 +220,8 @@ class TermlyPlansController @Inject()(
         classDetails,
         curriculumArea,
         maybeRelevantEsAndOs.get,
-        maybeCurrentTermlyCurriculumSelection.get
+        maybeCurrentTermlyCurriculumSelection.get,
+        maybeCurriculumPlanProgress
       ))
     }
   }
@@ -247,6 +254,13 @@ class TermlyPlansController @Inject()(
       )
       maybeCurrentTermlyCurriculumSelection: Option[TermlyCurriculumSelection] <- eventualMaybeCurrentTermlyCurriculumSelection
       if maybeCurrentTermlyCurriculumSelection.isDefined
+
+      futureMaybeCurriculumPlanProgress = planningReaderService.curriculumPlanProgress(
+        TimeToTeachUserId(tttUserId),
+        classDetails,
+        maybeCurrentTermlyCurriculumSelection
+      )
+      maybeCurriculumPlanProgress <- futureMaybeCurriculumPlanProgress
     } yield {
       Ok(views.html.planning.termly.termlyPlansSelectEsOsBenchmarksForCurriculumAreaAtGroupLevel(new MyDeadboltHandler(userReader),
         userPictureUri,
@@ -258,7 +272,8 @@ class TermlyPlansController @Inject()(
         curriculumArea,
         relevantEsAndOs,
         maybeCurrentTermlyCurriculumSelection.get,
-        curriculumArea
+        curriculumArea,
+        maybeCurriculumPlanProgress
       ))
     }
   }
@@ -333,6 +348,14 @@ class TermlyPlansController @Inject()(
       if maybeCurrentTermlyCurriculumSelection.isDefined
 
       maybeCurriculumAreaTermlyPlanForGroup <- futureMaybeCurriculumAreaTermlyPlanForClassLevel
+
+      futureMaybeCurriculumPlanProgress = planningReaderService.curriculumPlanProgress(
+        TimeToTeachUserId(tttUserId),
+        classDetails,
+        maybeCurrentTermlyCurriculumSelection
+      )
+      maybeCurriculumPlanProgress <- futureMaybeCurriculumPlanProgress
+
       route = maybeCurriculumAreaTermlyPlanForGroup match {
         case Some(curriculumAreaTermlyPlan: CurriculumAreaTermlyPlan) =>
           Ok(views.html.planning.termly.termlyPlansOverviewForCurriculumAtClassLevel(new MyDeadboltHandler(userReader),
@@ -344,7 +367,8 @@ class TermlyPlansController @Inject()(
             curriculumArea,
             maybeCurriculumAreaTermlyPlanForGroup.get,
             esAndOsCodeToDetailMap,
-            maybeCurrentTermlyCurriculumSelection.get
+            maybeCurrentTermlyCurriculumSelection.get,
+            maybeCurriculumPlanProgress
           ))
         case None =>
           Redirect(routes.TermlyPlansController.termlyPlansClassLevel_SelectEsOsBenchmarksForCurriculumArea(classId, curriculumArea))
@@ -400,6 +424,14 @@ class TermlyPlansController @Inject()(
       if maybeCurrentTermlyCurriculumSelection.isDefined
 
       maybeCurriculumAreaTermlyPlanForGroup <- futureMaybeCurriculumAreaTermlyPlanForGroup
+
+      futureMaybeCurriculumPlanProgress = planningReaderService.curriculumPlanProgress(
+        TimeToTeachUserId(tttUserId),
+        classDetails,
+        maybeCurrentTermlyCurriculumSelection
+      )
+      maybeCurriculumPlanProgress <- futureMaybeCurriculumPlanProgress
+
       route = maybeCurriculumAreaTermlyPlanForGroup match {
         case Some(curriculumAreaTermlyPlan: CurriculumAreaTermlyPlan) =>
           Ok(views.html.planning.termly.termlyPlansOverviewForCurriculumAtGroupLevel(new MyDeadboltHandler(userReader),
@@ -412,7 +444,8 @@ class TermlyPlansController @Inject()(
             curriculumArea,
             maybeCurriculumAreaTermlyPlanForGroup.get,
             esAndOsCodeToDetailMap,
-            maybeCurrentTermlyCurriculumSelection.get
+            maybeCurrentTermlyCurriculumSelection.get,
+            maybeCurriculumPlanProgress
           ))
         case None =>
           Redirect(routes.TermlyPlansController.termlyPlansGroupLevel_SelectEsOsBenchmarksForCurriculumArea(classId, curriculumArea, groupId))

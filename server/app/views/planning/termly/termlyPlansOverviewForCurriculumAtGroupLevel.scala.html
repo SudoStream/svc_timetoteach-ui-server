@@ -2,10 +2,11 @@
 @import models.timetoteach.planning.{CurriculumAreaTermlyPlan, ScottishCurriculumPlanningAreaWrapper, TermlyCurriculumSelection}
 @import models.timetoteach.ui.CLASS_TERMLY_PLANS_LOWER
 @import curriculum.scotland.EsOsAndBenchmarksBuilderImpl
-@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails, groupDetails: duplicate.model.Group, curriculumArea: String, subjectTermlyPlan: CurriculumAreaTermlyPlan, esAndOsCodeToDetailMap: Map[String, duplicate.model.esandos.EandO], currentTermlyCurriculumSelection: TermlyCurriculumSelection)
+@import models.timetoteach.planning.CurriculumPlanProgressForClass
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails, groupDetails: duplicate.model.Group, curriculumArea: String, subjectTermlyPlan: CurriculumAreaTermlyPlan, esAndOsCodeToDetailMap: Map[String, duplicate.model.esandos.EandO], currentTermlyCurriculumSelection: TermlyCurriculumSelection, maybeCurriculumPlanProgress: Option[CurriculumPlanProgressForClass])
 
 @timetoteachAppMain(handler, s"Class ${classDetails.className.name}",
-    userPictureUri, userFirstName, userFamilyName, Some(classDetails.id.id), Some(CLASS_TERMLY_PLANS_LOWER), Some(currentTermlyCurriculumSelection, subjectTermlyPlan.planningArea.toString)) {
+    userPictureUri, userFirstName, userFamilyName, Some(classDetails.id.id), Some(CLASS_TERMLY_PLANS_LOWER), Some(currentTermlyCurriculumSelection, subjectTermlyPlan.planningArea.toString), maybeCurriculumPlanProgress) {
     <div class="in-app-menu-small-devices">
         <li class="nav-item nav-login-button">
             <a class="btn btn-outline-primary btn-block" role="button" href="@routes.Application.timeToTeachApp()">
@@ -48,17 +49,36 @@
                 @if(group.groupType.value.toLowerCase == ScottishCurriculumPlanningAreaWrapper(subjectTermlyPlan.planningArea).niceSpecificValueIfPresent().getOrElse(ScottishCurriculumPlanningAreaWrapper(subjectTermlyPlan.planningArea).niceValue()).toLowerCase) {
                     @if(group.groupId.id == groupDetails.groupId.id) {
                         <li class="nav-item">
-                            <a class="nav-link active" id="tab_@group.groupId.id"
+                            <a class="nav-link active " id="tab_@group.groupId.id"
                             href="@controllers.planning.termly.routes.TermlyPlansController.termlyOverviewForCurriculumAreaAtGroupLevel(classDetails.id.id, subjectTermlyPlan.planningArea.toString, group.groupId.id)"
                             role="tab" aria-controls="tab_@group.groupId.id" aria-selected="true">
-                                @group.groupName.name <div class="text-muted group-level-subscript">@group.groupLevel.value.replace("Level", " Level")</div></a>
+                                <span class="pad-the-tab">@group.groupName.name</span>
+                                <span class="termly-plan-done-check-black ">
+                                @if(maybeCurriculumPlanProgress.isDefined && maybeCurriculumPlanProgress.get.curriculumProgressMap.isDefinedAt(ScottishCurriculumPlanningAreaWrapper(subjectTermlyPlan.planningArea)) && maybeCurriculumPlanProgress.get.curriculumProgressMap(ScottishCurriculumPlanningAreaWrapper(subjectTermlyPlan.planningArea))._2.isDefinedAt(group) &&  maybeCurriculumPlanProgress.get.curriculumProgressMap(ScottishCurriculumPlanningAreaWrapper(subjectTermlyPlan.planningArea))._2(group).percentValue == 100 ) {
+                                    <svg version="1.1" width="16" height="16" viewBox="0 0 12 16" class="octicon octicon-check float-right" aria-hidden="true">
+                                        <use xlink:href="#check" /></svg>
+                                }else {
+                                    <div></div>
+                                }
+                                </span>
+
+                                <div class="text-muted group-level-subscript">@group.groupLevel.value.replace("Level", " Level")</div></a>
                         </li>
                     } else {
                         <li class="nav-item">
                             <a class="nav-link" id="tab_@group.groupId.id"
                             href="@controllers.planning.termly.routes.TermlyPlansController.termlyOverviewForCurriculumAreaAtGroupLevel(classDetails.id.id, subjectTermlyPlan.planningArea.toString, group.groupId.id)"
                             role="tab" aria-controls="tab_@group.groupId.id" aria-selected="false">
-                                @group.groupName.name <div class="text-muted group-level-subscript">@group.groupLevel.value.replace("Level", " Level")</div></a>
+                                <span class="pad-the-tab">@group.groupName.name</span>
+                                <span class="termly-plan-done-check-black termly-plan-done-check-black-small-left-margin">
+                                @if(maybeCurriculumPlanProgress.isDefined && maybeCurriculumPlanProgress.get.curriculumProgressMap.isDefinedAt(ScottishCurriculumPlanningAreaWrapper(subjectTermlyPlan.planningArea)) && maybeCurriculumPlanProgress.get.curriculumProgressMap(ScottishCurriculumPlanningAreaWrapper(subjectTermlyPlan.planningArea))._2.isDefinedAt(group) &&  maybeCurriculumPlanProgress.get.curriculumProgressMap(ScottishCurriculumPlanningAreaWrapper(subjectTermlyPlan.planningArea))._2(group).percentValue == 100 ) {
+                                    <svg version="1.1" width="16" height="16" viewBox="0 0 12 16" class="octicon octicon-check float-right" aria-hidden="true">
+                                        <use xlink:href="#check" /></svg>
+                                }else {
+                                    <div></div>
+                                }
+                                </span>
+                                <div class="text-muted group-level-subscript">@group.groupLevel.value.replace("Level", " Level")</div></a>
                         </li>
                     }
                 }

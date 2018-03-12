@@ -3,7 +3,7 @@
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails)
 
 @timetoteachAppMain(handler, s"Class ${classDetails.className.name}",
-    userPictureUri, userFirstName, userFamilyName, Some(classDetails.id.id), Some(CLASS_SETUP), None) {
+    userPictureUri, userFirstName, userFamilyName, Some(classDetails.id.id), Some(CLASS_SETUP), None, None) {
 
     <div class="in-app-menu-small-devices">
         <li class="nav-item nav-login-button">
@@ -124,9 +124,7 @@
                                             </div>
                                         </div>
                                         <div class="col-lg-1 in-app-menu-medium-and-up">
-                                            <button type="button" class="close delete-this-class-group" aria-label="Close"
-                                            tabindex="0" data-toggle="popover" data-trigger="focus" data-placement="top"
-                                            title="Delete The Group" data-content="Click here to delete the group">
+                                            <button type="button" class="close delete-this-class-group" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
@@ -212,9 +210,7 @@
                                             </div>
                                         </div>
                                         <div class="col-lg-1 in-app-menu-medium-and-up">
-                                            <button type="button" class="close  delete-this-class-group" aria-label="Close"
-                                            tabindex="0" data-toggle="popover" data-trigger="focus" data-placement="top"
-                                            title="Delete The Group" data-content="Click here to delete the group">
+                                            <button type="button" class="close  delete-this-class-group" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
@@ -336,9 +332,7 @@
                                             </div>
                                         </div>
                                         <div class="col-lg-1 in-app-menu-medium-and-up">
-                                            <button type="button" class="close  delete-this-class-group" aria-label="Close"
-                                            tabindex="0" data-toggle="popover" data-trigger="focus" data-placement="top"
-                                            title="Delete The Group" data-content="Click here to delete the group">
+                                            <button type="button" class="close  delete-this-class-group" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
@@ -425,9 +419,7 @@
                                             </div>
                                         </div>
                                         <div class="col-lg-1 in-app-menu-medium-and-up">
-                                            <button type="button" class="close delete-this-class-group" aria-label="Close"
-                                            tabindex="0" data-toggle="popover" data-trigger="focus" data-placement="top"
-                                            title="Delete The Group" data-content="Click here to delete the group">
+                                            <button type="button" class="close delete-this-class-group" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>

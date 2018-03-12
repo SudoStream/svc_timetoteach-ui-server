@@ -3,10 +3,11 @@
 @import curriculum.scotland.EsOsAndBenchmarksBuilderImpl.NO_SUBSECTION_NAME
 @import models.timetoteach.ui.CLASS_TERMLY_PLANS_LOWER
 @import models.timetoteach.planning.TermlyCurriculumSelection
-@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails, curriculumArea: ScottishCurriculumPlanningAreaWrapper, esOsAndBenchmarksList: List[duplicate.model.esandos.EsAndOsPlusBenchmarksForCurriculumAreaAndLevel], currentTermlyCurriculumSelection: TermlyCurriculumSelection)
+@import models.timetoteach.planning.CurriculumPlanProgressForClass
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails, curriculumArea: ScottishCurriculumPlanningAreaWrapper, esOsAndBenchmarksList: List[duplicate.model.esandos.EsAndOsPlusBenchmarksForCurriculumAreaAndLevel], currentTermlyCurriculumSelection: TermlyCurriculumSelection, maybeCurriculumPlanProgress: Option[CurriculumPlanProgressForClass])
 
     @timetoteachAppMain(handler, s"Class ${classDetails.className.name}",
-        userPictureUri, userFirstName, userFamilyName, Some(classDetails.id.id), Some(CLASS_TERMLY_PLANS_LOWER), Some(currentTermlyCurriculumSelection, curriculumArea.value.toString)) {
+        userPictureUri, userFirstName, userFamilyName, Some(classDetails.id.id), Some(CLASS_TERMLY_PLANS_LOWER), Some(currentTermlyCurriculumSelection, curriculumArea.value.toString), maybeCurriculumPlanProgress) {
         <div class="in-app-menu-small-devices">
             <li class="nav-item nav-login-button">
                 <a class="btn btn-outline-primary btn-block" role="button" href="@routes.Application.timeToTeachApp()">
