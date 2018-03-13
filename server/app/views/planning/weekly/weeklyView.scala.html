@@ -1,0 +1,16 @@
+@import duplicate.model.ClassDetails
+@import models.timetoteach.ui._
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler,
+        userPictureUri: Option[String],
+        userFirstName: Option[String],
+        userFamilyName: Option[String],
+        classDetails: ClassDetails)
+
+@_templateWeeklyPlanning(handler, userPictureUri, userFirstName, userFamilyName, classDetails, CLASS_WEEKLY_PLANS, Some(WEEKLY_VIEW)) {
+
+    <div class="text-center">
+        <h2>Weekly View</h2>
+
+    </div>
+
+}

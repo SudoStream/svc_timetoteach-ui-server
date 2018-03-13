@@ -1,7 +1,7 @@
 @import models.timetoteach.planning.TermlyCurriculumSelection
 @import models.timetoteach.planning.ScottishCurriculumPlanningAreaWrapper
 @import models.timetoteach.planning.CurriculumPlanProgressForClass
-@(handler: be.objectify.deadbolt.scala.DeadboltHandler, title: String, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], maybeClassId: Option[String], maybeClassContext: Option[models.timetoteach.ui.ClassIdContext], maybeCurrentTermlyCurriculumSelection: Option[(TermlyCurriculumSelection, String)], maybePlanProgress: Option[CurriculumPlanProgressForClass])(appNavMenuListItems: Html)(extra2ndLevelNavItems: Html)(content: Html)
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, title: String, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], maybeClassId: Option[String], maybeClassContext: Option[models.timetoteach.ui.ClassIdContext], maybeCurrentTermlyCurriculumSelection: Option[(TermlyCurriculumSelection, String)], maybePlanProgress: Option[CurriculumPlanProgressForClass])(appNavMenuListItems: Html)(extra3rdLevelNavItems: Html)(content: Html)
 <!DOCTYPE html>
 <html>
     <head>
@@ -152,19 +152,32 @@
                                 @if(maybeClassContext.get.isInstanceOf[models.timetoteach.ui.CLASS_TERMLY_PLANS.type]) {
                                     <a class="btn btn-warning btn-sm class-level-button" role="button"
                                     href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(maybeClassId.get)">
-                                        Termly Plans Overview</a>
+                                        Termly Plans</a>
                                 } else if(maybeClassContext.get.isInstanceOf[models.timetoteach.ui.CLASS_TERMLY_PLANS_LOWER.type]) {
                                 <a class="btn btn-outline-warning btn-sm class-level-button" role="button"
                                 href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(maybeClassId.get)">
-                                    Termly Plans Overview</a>
+                                    Termly Plans</a>
                                 } else {
                                 <a class="btn btn-light text-dark btn-sm class-level-button" role="button"
                                 href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(maybeClassId.get)">
-                                    Termly Plans Overview</a>
+                                    Termly Plans</a>
                                 }
                             </li>
 
-                            @extra2ndLevelNavItems
+                            @if(maybeClassContext.get.isInstanceOf[models.timetoteach.ui.CLASS_WEEKLY_PLANS.type]) {
+                                <li class="nav-item">
+                                    <a class="btn btn-outline-warning btn-sm class-level-button" role="button"
+                                    href="@controllers.planning.weekly.routes.WeeklyPlanningController.weeklyPlanning(maybeClassId.get)">
+                                        Weekly Plans</a>
+                                </li>
+                            } else {
+                                <li class="nav-item">
+                                    <a class="btn btn-light text-dark btn-sm class-level-button" role="button"
+                                    href="@controllers.planning.weekly.routes.WeeklyPlanningController.weeklyPlanning(maybeClassId.get)">
+                                        Weekly Plans</a>
+                                </li>
+                            }
+
                         } else {
                             <li class="nav-item ">
                                 <a class="btn btn-light text-dark btn-sm class-level-button" role="button"
@@ -181,13 +194,16 @@
                             <li class="nav-item">
                                 <a class="btn btn-light text-dark btn-sm class-level-button" role="button"
                                 href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(maybeClassId.get)">
-                                    Termly Plans Overview</a>
+                                    Termly Plans</a>
                             </li>
                         }
                         </ul>
                         <div class="col-lg-2"></div>
                     </nav>
 
+                    @if(extra3rdLevelNavItems.toString().trim != "<li></li>") {
+                        @extra3rdLevelNavItems
+                    }
 
                     @if(maybeCurrentTermlyCurriculumSelection.isDefined && maybeCurrentTermlyCurriculumSelection.get._1.planningAreas.nonEmpty) {
                         <nav id="dashboard-nav-3" class="navbar navbar-primary bg-dark navbar-expand-lg">
