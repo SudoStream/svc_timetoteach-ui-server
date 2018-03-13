@@ -38,7 +38,6 @@ GET           /termlyoverviewforcurriculumareaandgroupwithnogroupid/:classId/:cu
 GET           /termlyoverviewforcurriculumareaatclasslevel/:classId/:curriculumArea                 controllers.planning.termly.TermlyPlansController.termlyOverviewForCurriculumAreaAtClassLevel(classId,curriculumArea)
 GET           /termlyplanningdownloadclassplan/:classId                                             controllers.planning.termly.DownloadPdfController.downloadClassPdf(classId)
 
-GET           /weeklyplanning/:classId                                                              controllers.planning.weekly.WeeklyPlanningController.weeklyPlanning(classId)
 GET           /weeklyViewOfWeeklyPlanning/:classId                                                  controllers.planning.weekly.WeeklyPlanningController.weeklyViewOfWeeklyPlanning(classId)
 
 GET           /classes                                                                              controllers.planning.classtimetable.ClassTimetableController.classesHome
