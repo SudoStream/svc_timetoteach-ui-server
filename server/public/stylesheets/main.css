@@ -14,6 +14,10 @@
     src: url('/assets/fonts/dkCrayonCrumble.ttf') format('truetype');
 }
 
+.this-is-a-test-site-alert {
+    padding-top: 5rem;
+}
+
 .wee-margin-top{
     margin-top: 3rem;
 }
@@ -258,7 +262,8 @@ img {
 
 .feature-content {
     display: flex;
-    padding: 8rem 0;
+    padding-top: 5rem;
+    padding-bottom: 10rem;
     overflow: hidden;
 }
 
