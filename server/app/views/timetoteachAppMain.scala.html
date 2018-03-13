@@ -64,12 +64,11 @@
                     <ul class="navbar-nav mx-auto">
                         <div class="row align-items-center">
 
-                            @appNavMenuListItems
-
-                            <li class="nav-item nav-login-button-dashboard in-app-menu-medium-and-up">
-                                <a class="btn btn-sm btn-info btn-block" role="button" href="@controllers.planning.classtimetable.routes.ClassTimetableController.classesHome()">
-                                    My Classes</a>
-                            </li>
+                            <div class="in-app-menu-small-devices">
+                                <li class="nav-item nav-login-button">
+                                    <a class="btn btn-outline-primary btn-block" role="button" href="/">Home</a>
+                                </li>
+                            </div>
                         </div>
 
                     </ul>
@@ -274,9 +273,9 @@
             <div id="mainAppTopMargin"></div>
 
             <div class="container">
-                <div class="in-app-menu-small-devices alert alert-info alert-dismissible fade show " role="alert" >
+                <div class="in-app-menu-small-devices alert alert-info alert-dismissible fade show this-is-a-for-larger-screens-alert " role="alert" >
                     <div >
-                        <p>
+                        <p >
                             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -284,13 +283,23 @@
                             This app is aimed for larger screens presently to test the flow. The current mobile version
                             is inconsistent and lacks certain functionality, but will be improved going forward.
                         </p>
+                        <p>
+                            In the meantime please use the full screen to test the app.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="in-app-menu-small-devices">
+                    <div class="d-flex justify-content-center">
+                        <a href="/" class="btn btn-lg btn-outline-primary">Back Home</a>
                     </div>
                 </div>
 
             </div>
 
-            @content
-
+            <div class="in-app-menu-medium-and-up">
+              @content
+            </div>
         </div>
 
 
