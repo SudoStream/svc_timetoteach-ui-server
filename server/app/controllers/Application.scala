@@ -209,16 +209,6 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl,
     }
   }
 
-
-  def weeklyPlanning = deadbolt.SubjectPresent()() { authRequest =>
-    val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
-    val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
-
-    Future {
-      Ok(views.html.weeklyplanning(new MyDeadboltHandler(userReader), SharedMessages.httpMainTitle, userPictureUri, userFirstName, showFrontPageSections)(authRequest))
-    }
-  }
-
   def initialPreferencesCreated: Action[AnyContent] = deadbolt.SubjectPresent()() { implicit request =>
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, request)
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, request)

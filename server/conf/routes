@@ -24,7 +24,6 @@ GET           /signedupcongrats                                                 
 GET           /app                                                                                  controllers.Application.timeToTeachApp
 GET           /initialUserPreferences                                                               controllers.Application.askInitialPreferences
 POST          /initialPreferencesCreated                                                            controllers.Application.initialPreferencesCreated
-GET           /weeklyplanning                                                                       controllers.Application.weeklyPlanning
 
 GET           /termlyplanning                                                                       controllers.planning.termly.TermlyPlansController.termlyPlans
 GET           /termlyplanningselectcurriculumareas/:classId                                         controllers.planning.termly.TermlyPlansController.termlyPlansSelectOverallCurriculumAreasForTheTerm(classId)
@@ -38,6 +37,8 @@ GET           /termlyoverviewforcurriculumareaandgroup/:classId/:curriculumArea/
 GET           /termlyoverviewforcurriculumareaandgroupwithnogroupid/:classId/:curriculumArea        controllers.planning.termly.TermlyPlansController.termlyOverviewForCurriculumAreaAtGroupLevelWithNoGroupId(classId, curriculumArea)
 GET           /termlyoverviewforcurriculumareaatclasslevel/:classId/:curriculumArea                 controllers.planning.termly.TermlyPlansController.termlyOverviewForCurriculumAreaAtClassLevel(classId,curriculumArea)
 GET           /termlyplanningdownloadclassplan/:classId                                             controllers.planning.termly.DownloadPdfController.downloadClassPdf(classId)
+
+GET           /weeklyplanning                                                                       controllers.planning.weekly.WeeklyPlanningController.weeklyPlanning
 
 GET           /classes                                                                              controllers.planning.classtimetable.ClassTimetableController.classesHome
 GET           /addnewclass                                                                          controllers.planning.classtimetable.ClassTimetableController.addNewClass

@@ -10,7 +10,7 @@ name := "timetoteach"
 val scalaV = "2.11.11"
 
 ///////////////////////////////////////////
-val WWW_TIMETOTEACH_VERSION = "0.0.1-358"
+val WWW_TIMETOTEACH_VERSION = "0.0.1-359"
 ///////////////////////////////////////////
 
 lazy val timetoteach_ui_server = (project in file("server")).settings(

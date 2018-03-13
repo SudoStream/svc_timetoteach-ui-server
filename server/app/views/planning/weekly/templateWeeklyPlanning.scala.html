@@ -1,0 +1,16 @@
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler,
+        message: String,
+        userPictureUri: Option[String],
+        userFirstName: Option[String],
+        userFamilyName: Option[String]
+)(weeklyPlanningContent: Html)
+
+@timetoteachAppMain(handler, "Weekly Planning", userPictureUri, userFirstName, userFamilyName, None, None, None, None) {
+    <div></div>
+} {
+
+    <div class="container weekly-planning-top-margin">
+        @weeklyPlanningContent
+    </div>
+
+}
