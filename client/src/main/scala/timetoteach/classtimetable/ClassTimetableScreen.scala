@@ -720,26 +720,6 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator with Class
 
   }
 
-  def toggleTheSubjectsAside(): Unit = {
-    val subjectAsideToggle =
-      dom.document.getElementById("class-timetable-subject-aside-toggle-button").asInstanceOf[HTMLButtonElement]
-
-    subjectAsideToggle.addEventListener("click", (e: dom.Event) => {
-      val subjectAside = dom.document.getElementById("class-timetable-subject-aside").asInstanceOf[HTMLButtonElement]
-      subjectAside.style.display = "none"
-
-      val showSubjectsDiv = dom.document.getElementById("show-subjects-button-div").asInstanceOf[HTMLDivElement]
-      showSubjectsDiv.style.display = "block"
-      showSubjectsDiv.addEventListener("click", (e: dom.Event) => {
-        val subjectAside = dom.document.getElementById("class-timetable-subject-aside").asInstanceOf[HTMLButtonElement]
-        subjectAside.style.display = "block"
-        showSubjectsDiv.style.display = "none"
-      })
-
-    })
-  }
-
-
   def loadClassTimetableJavascript(): Unit = {
     calculateDurationFromNewEndTime()
     calculateEndTimeFromNewStartTime()
@@ -750,7 +730,6 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator with Class
     addListenerToAllSubjectButtons()
     modalButtonsBehaviour()
     saveCancelClearBehaviour()
-    toggleTheSubjectsAside()
     submitLessonDuration()
   }
 
