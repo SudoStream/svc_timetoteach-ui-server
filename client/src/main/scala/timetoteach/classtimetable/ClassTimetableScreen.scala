@@ -13,7 +13,7 @@ import scala.scalajs.js
 import scala.scalajs.js.Dynamic.global
 import scala.util.{Failure, Success}
 
-object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
+object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator with ClassTimetableCommon {
 
   val saveClassTimetableAsJson = dom.window.localStorage.getItem("wwwClassTimetableAsJson")
 
@@ -752,14 +752,6 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator {
     saveCancelClearBehaviour()
     toggleTheSubjectsAside()
     submitLessonDuration()
-  }
-
-  def renderClassTimetable(): Unit = {
-    val theDaysSubjectsAsHtml = generateHtmlForClassTimetable(classTimetable)
-    val allTheDaysDiv = dom.document.getElementById("all-the-days-rows").asInstanceOf[HTMLDivElement]
-    allTheDaysDiv.innerHTML = theDaysSubjectsAsHtml
-    launchAddSubjectToEmptySessionModalEventListeners()
-    addEventListenerForSubjectButtonsAddedToTimetable()
   }
 
 }

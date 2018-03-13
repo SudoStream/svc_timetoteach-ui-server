@@ -210,15 +210,10 @@
 
             <div class="row row-for-mobile"><br></div>
 
-            <div id="class-timetable-clear-cancel-save-buttons" class="clear-cancel-save-buttons">
-                <button id="clear-subjects-from-class-timetable-button" type="button" class="btn btn-lg btn-secondary">
-                    Clear</button>
-                <button id="cancel-class-timetable-button" type="button" class="btn btn-lg btn-secondary">
-                    <a href="/app">Cancel</a>
-                </button>
-                <button id="save-class-timetable-button" type="button" class="btn btn-lg btn-primary">Save</button>
-            </div>
         </div>
 
     </section>
+
+
+    @scalajs.html.scripts("client", routes.Assets.versioned(_).toString, name => getClass.getResource(s"/public/$name") != null)
 }

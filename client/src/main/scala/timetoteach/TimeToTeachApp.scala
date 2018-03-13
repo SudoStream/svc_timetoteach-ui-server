@@ -7,9 +7,11 @@ import timetoteach.classtimetable.ClassTimetableScreen
 import timetoteach.dashboard.DashboardJsScreen
 import timetoteach.manageClass.ManageClassJsScreen
 import timetoteach.planning.termly.{ClassGroupPlanningJsScreen, ClassLevelPlanningJsScreen, SelectingCurriculumAreasJsScreen, TermlyPlanningForClassAllSubjectsJsScreen}
+import timetoteach.planning.weekly.WeeklyPlanningJsScreen
 import timetoteach.signup.SignupJs
 
 import scala.scalajs.js
+import scala.scalajs.js.Dynamic.global
 
 object TimeToTeachApp extends js.JSApp
 {
@@ -49,6 +51,10 @@ object TimeToTeachApp extends js.JSApp
     }
     if (dom.document.location.toString.contains("termlyplanningselectcurriculumareas")) {
       SelectingCurriculumAreasJsScreen.loadJavascript()
+    }
+    global.console.log(s"j =>  ${dom.document.location.toString}")
+    if (dom.document.location.toString.contains("weeklyViewOfWeeklyPlanning")) {
+      WeeklyPlanningJsScreen.loadJavascript()
     }
 
   }
