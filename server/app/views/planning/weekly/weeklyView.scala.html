@@ -24,6 +24,11 @@
 ).replaceAll("  ", " ").replace("Session", "")
 }
 
+@calculateColumnBootstrapWidth(numberOfLessonsInSession: Int) = {
+@{s"""col-${(12 / numberOfLessonsInSession).toString.trim}"""}
+}
+
+
 @_templateWeeklyPlanning(handler, userPictureUri, userFirstName, userFamilyName, classDetails, CLASS_WEEKLY_PLANS, Some(WEEKLY_VIEW)) {
 
     <section id="class-timetable-section">
@@ -64,9 +69,9 @@
                 @for(dayOfTheWeek <- List("MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY")) {
                     <tr>
                         <td class="align-middle text-center">
-                            <h6>
+                            <div class="weekly-plan-dayoftheweek">
                             @dayOfTheWeek.toLowerCase.capitalize
-                            </h6>
+                            </div>
                         </td>
                         <th scope="col" class=""><div class="col"></div></th>
                         @for((session, sessionIndex) <- classTimetable.allSessionsOfTheWeek.sortBy(sesh => (sesh.sessionOfTheDay.dayOfTheWeek.ordinal(), sesh.sessionOfTheDay.startTime.timeIso8601)).map(wrapper => wrapper.sessionOfTheDay).zipWithIndex) {
@@ -74,45 +79,48 @@
                                 <td>
                                     <div class="row">
                                     @for(subject <- session.subjects) {
-                                        <div class="col weekly-plan-subject" >
-                                            <div class="rounded fancy-shadow weekly-plan-subject-@subject.subjectDetail.subjectName.toString.toLowerCase.replace("_", "-")">
-                                                <div class="text-center weekly-plan-subject-name "><u>@{
-                                                    val subjectName = subject.subjectDetail.subjectName.toString.toLowerCase.split("_").toList.map(word => word.capitalize).mkString(" ")
-                                                    if(subjectName == "Other") {
-                                                        subject.subjectDetail.additionalInfo.value
-                                                    } else {
-                                                        subjectName
-                                                    }
-                                                }
-                                                </u>
-                                                </div>
-
-                                                <div class="text-center weekly-plan-subject-additional-info text-dark">
-                                                    <small>
-                                                    @{
+                                        <div class="@{
+                                            calculateColumnBootstrapWidth(session.subjects.size)
+                                        }" >
+                                            <div class="weekly-plan-subject">
+                                                <div class="rounded weekly-plan-subject-extent weekly-plan-subject-@subject.subjectDetail.subjectName.toString.toLowerCase.replace("_", "-")">
+                                                    <div class="text-center weekly-plan-subject-name "><u>@{
                                                         val subjectName = subject.subjectDetail.subjectName.toString.toLowerCase.split("_").toList.map(word => word.capitalize).mkString(" ")
-                                                        if(subjectName != "Other") {
+                                                        if(subjectName == "Other") {
                                                             subject.subjectDetail.additionalInfo.value
+                                                        } else {
+                                                            subjectName
                                                         }
                                                     }
-                                                    </small>
-                                                </div>
+                                                    </u>
+                                                    </div>
 
-                                                <div class="weekly-plan-subject-es-and-os">
-                                                    <p class="lead">
+                                                    <div class="text-center weekly-plan-subject-additional-info text-dark">
+                                                        <small>
+                                                        @{
+                                                            val subjectName = subject.subjectDetail.subjectName.toString.toLowerCase.split("_").toList.map(word => word.capitalize).mkString(" ")
+                                                            if(subjectName != "Other") {
+                                                                subject.subjectDetail.additionalInfo.value
+                                                            }
+                                                        }
+                                                        </small>
+                                                    </div>
+
+                                                    <div class="weekly-plan-subject-es-and-os">
+                                                        <div class="weekly-plan-subject-es-and-os-header text-center">
                                                         Es & Os
-                                                    </p>
-                                                    <p>EO123 - The quick brown fox jumps over the lazy dog</p>
-                                                </div>
+                                                        </div>
+                                                        <div class="single-eo-or-benchmark"><strong>EO123</strong> - The quick brown fox jumps over the lazy dog</div>
+                                                    </div>
 
-                                                <div class="weekly-plan-subject-benchmarks">
-                                                    <p class="lead">
+                                                    <div class="weekly-plan-subject-benchmarks">
+                                                        <div class="weekly-plan-subject-benchmarks-header text-center">
                                                         Benchmarks
-                                                    </p>
-                                                    <p>Some benchmark one</p>
-                                                    <p>Some benchmark two</p>
+                                                        </div>
+                                                        <div class="single-eo-or-benchmark">Some benchmark one</div>
+                                                        <div class="single-eo-or-benchmark">Some benchmark two</div>
+                                                    </div>
                                                 </div>
-
                                             </div>
                                         </div>
                                     }
@@ -120,7 +128,9 @@
                                 @if((sessionIndex + 1) > (classTimetable.allSessionsOfTheWeek.count(sesh => sesh.sessionOfTheDay.dayOfTheWeek.toString == dayOfTheWeek) % 3) &&
                                         (((sessionIndex % classTimetable.allSessionsOfTheWeek.count(sesh => sesh.sessionOfTheDay.dayOfTheWeek.toString == dayOfTheWeek)) + 1) <
                                                 classTimetable.allSessionsOfTheWeek.filter(sesh => sesh.sessionOfTheDay.dayOfTheWeek.toString == dayOfTheWeek).count(sesh => sesh.sessionOfTheDay.dayOfTheWeek.toString == dayOfTheWeek))) {
-                                    <td class=""><div class="col"></div></td>
+                                    <div class="something">
+                                        <td class="weekly-plan-spacing-column"><div class="col"></div></td>
+                                    </div>
                                 }
                             }
                         }

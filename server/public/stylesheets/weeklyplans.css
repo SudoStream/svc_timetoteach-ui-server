@@ -21,32 +21,108 @@
 .weekly-plan-subject {
     /*border: 1px solid #e3e3e3;*/
     padding: 0.75rem;
-    height: fit-content;
 }
 
-.weekly-plan-subject-additional-info {
-    font-size: smaller;
-    padding-bottom: 1.5rem;
-}
-
-.weekly-plan-subject-es-and-os {
-    padding: 0.5rem 0.1rem 1rem 0.5rem;
-    font-size: x-small;
-}
-
-.weekly-plan-subject-benchmarks {
-    font-size: x-small;
-    padding: 0.5rem 0.1rem 1rem 0.5rem;
+.weekly-plan-subject-extent {
+    padding-bottom: 2rem;
 }
 
 .weekly-plan-subject-name {
-    font-size: larger;
+    font-size: 0.9rem;
     font-weight: bold;
     padding-top: 1rem;
-    /*color: black;*/
+    color: black;
 }
 
+.weekly-plan-subject-additional-info {
+    font-size: 0.8rem;
+    padding-bottom: 1rem;
+    font-weight: bold;
+}
 
-.fancy-shadow{
+.weekly-plan-subject-es-and-os-header {
+    font-weight: bold;
+    margin-top: 1rem;
+    color: rgba(15, 15, 15, 0.82);
+    font-size: 0.9rem;
+}
+
+.weekly-plan-subject-benchmarks-header {
+    font-weight: bold;
+    margin-top: 1rem;
+    color: rgba(15, 15, 15, 0.82);
+    font-size: 0.9rem;
+}
+
+.weekly-plan-subject-es-and-os {
+    color: rgba(15, 15, 15, 0.82);
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    font-size: 0.7rem;
+}
+
+.weekly-plan-subject-benchmarks {
+    color: rgba(15, 15, 15, 0.82);
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    font-size: 0.7rem;
+}
+
+.weekly-plan-spacing-column {
+    background-color: #f0f0f0
+}
+
+.single-eo-or-benchmark {
+    margin-top: 0.6rem;
+}
+
+.weekly-plan-dayoftheweek {
+
+}
+
+@media (max-width: 1400px) {
+    .weekly-plan-dayoftheweek {
+        font-size: 0.9rem;
+    }
+
+    .weekly-plan-subject-name {
+        font-size: 0.8rem;
+    }
+
+    .weekly-plan-subject-additional-info {
+        font-size: 0.7rem;
+    }
+
+    .weekly-plan-subject-es-and-os-header {
+        font-size: 0.8rem;
+    }
+
+    .weekly-plan-subject-benchmarks-header {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 990px) {
+    .weekly-plan-dayoftheweek {
+        word-wrap: break-word;
+    }
+
+    .weekly-plan-subject-name {
+        word-wrap: break-word;
+    }
+
+    .weekly-plan-subject-additional-info {
+        word-wrap: break-word;
+    }
+
+    .weekly-plan-subject-es-and-os-header {
+        word-wrap: break-word;
+    }
+
+    .weekly-plan-subject-benchmarks-header {
+        white-space: normal;
+        word-wrap: break-word;
+    }
+
 
 }
