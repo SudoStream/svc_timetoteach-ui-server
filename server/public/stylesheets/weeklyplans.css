@@ -30,24 +30,20 @@
 }
 
 .weekly-plan-subject-es-and-os {
-    padding-left: 2rem;
-    padding-top: 0.5rem;
-    padding-bottom: 1rem;
+    padding: 0.5rem 0.1rem 1rem 0.5rem;
     font-size: x-small;
 }
 
 .weekly-plan-subject-benchmarks {
-    padding-left: 2rem;
-    padding-top: 0.5rem;
     font-size: x-small;
-    padding-bottom: 1rem;
+    padding: 0.5rem 0.1rem 1rem 0.5rem;
 }
 
 .weekly-plan-subject-name {
     font-size: larger;
     font-weight: bold;
     padding-top: 1rem;
-    color: black;
+    /*color: black;*/
 }
 
 

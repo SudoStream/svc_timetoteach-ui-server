@@ -51,9 +51,9 @@
 }
 
 .weekly-plan-subject-rme {
-    background-color: rgba(99, 5, 205, 1);
-    color: white;
-    box-shadow: 4px 4px rgba(85, 5, 175, 1);
+    background-color: rgba(99, 5, 205, 0.3);
+    color: midnightblue;
+    box-shadow: 4px 4px rgba(85, 5, 175, 0.4);
 }
 
 .weekly-plan-subject-maths, .weekly-plan-subject-numeracy {
@@ -63,15 +63,15 @@
 }
 
 .weekly-plan-subject-science, .weekly-plan-subject-ict {
-    background-color: rgba(57, 157, 250, 0.85);
+    background-color: rgba(57, 157, 250, 0.6);
     color: midnightblue;
-    box-shadow: 4px 4px rgba(57, 157, 250, 1);
+    box-shadow: 4px 4px rgba(57, 157, 250, 0.72);
 }
 
 .weekly-plan-subject-geography, .weekly-plan-subject-history, .weekly-plan-subject-modern-languages {
-    background-color: rgba(237, 72, 167, 0.85);
+    background-color: rgba(237, 72, 167, 0.5);
     color: midnightblue;
-    box-shadow: 4px 4px rgba(237, 72, 167, 1);
+    box-shadow: 4px 4px rgba(237, 72, 167, 0.6);
 }
 
 /* ================= */
