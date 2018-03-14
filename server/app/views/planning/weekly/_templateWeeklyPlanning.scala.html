@@ -8,24 +8,32 @@
         maybeClassSubContext: Option[models.timetoteach.ui.ClassIdSubContext]
 )(weeklyPlanningContent: Html)
 
-@timetoteachAppMain(handler, s"Class ${classDetails.className.name}", userPictureUri, userFirstName, userFamilyName, Some(classDetails.id.id), Some(classContext), None, None) {
-    <li></li>
-} {
+    @timetoteachAppMain(handler, s"Class ${classDetails.className.name}", userPictureUri, userFirstName, userFamilyName, Some(classDetails.id.id), Some(classContext), None, None) {
+        <li></li>
+    } {
 
-    <nav id="dashboard-nav-weekly-planning" class="navbar navbar-primary bg-dark navbar-expand-lg">
-        <div class="col-md-1">
-            <a class="navbar-brand text-light" href="#">Weekly Planning</a>
-        </div>
-        <div class="col-md-10 d-flex justify-content-center">
-            <ul class="navbar-nav mx-auto">
-            @if(maybeClassSubContext.isDefined) {
-                @if(maybeClassSubContext.get.isInstanceOf[models.timetoteach.ui.WEEKLY_VIEW.type]) {
-                    <li class="nav-item">
-                        <a role="button" class="btn btn-warning btn-sm btn-block curriculum-area-button"
-                        href="#">
-                            Weekly View
-                        </a>
-                    </li>
+        <nav id="dashboard-nav-weekly-planning" class="navbar navbar-primary bg-dark navbar-expand-lg">
+            <div class="col-md-1">
+                <a class="navbar-brand text-light" href="#">Weekly Planning</a>
+            </div>
+            <div class="col-md-10 d-flex justify-content-center">
+                <ul class="navbar-nav mx-auto">
+                @if(maybeClassSubContext.isDefined) {
+                    @if(maybeClassSubContext.get.isInstanceOf[models.timetoteach.ui.WEEKLY_VIEW.type]) {
+                        <li class="nav-item">
+                            <a role="button" class="btn btn-warning btn-sm btn-block curriculum-area-button"
+                            href="#">
+                                Weekly View
+                            </a>
+                        </li>
+                    } else {
+                        <li class="nav-item">
+                            <a class="btn btn-light text-dark btn-sm class-level-button" role="button" href="#">
+                                Weekly View
+                            </a>
+                        </li>
+                    }
+
                 } else {
                     <li class="nav-item">
                         <a class="btn btn-light text-dark btn-sm class-level-button" role="button" href="#">
@@ -33,23 +41,22 @@
                         </a>
                     </li>
                 }
+                </ul>
+            </div>
+            <div class="col-md-1"></div>
+        </nav>
 
-            } else {
-                <li class="nav-item">
-                    <a class="btn btn-light text-dark btn-sm class-level-button" role="button" href="#">
-                        Weekly View
-                    </a>
-                </li>
-            }
-            </ul>
+    } {
+        <div class="container">
+            <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <p>Note: The weekly planning is under development - i.e. it will be changing rapidly</p>
+            </div>
         </div>
-        <div class="col-md-1"></div>
-    </nav>
+        <div class="container-fluid weekly-planning-top-margin">
+        @weeklyPlanningContent
+        </div>
 
-} {
-
-    <div class="container weekly-planning-top-margin">
-    @weeklyPlanningContent
-    </div>
-
-}
+    }

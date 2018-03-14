@@ -1,216 +1,66 @@
 @import duplicate.model.ClassDetails
-@import models.timetoteach.ui._
+@import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.ClassTimetable
 @import models.timetoteach.classtimetable.SchoolDayTimes
-@import shared.model.classtimetable.{WWWClassTimetable, _}
+@import models.timetoteach.ui._
+@import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.sessions.SessionBoundaryType
+@import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.sessions.SessionName
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler,
         userPictureUri: Option[String],
         userFirstName: Option[String],
         userFamilyName: Option[String],
         classDetails: ClassDetails,
         schoolDayTimes: SchoolDayTimes,
-        wwwClassTimetable: WWWClassTimetable
+        classTimetable: ClassTimetable
 )
+
+@splitCamel(s: String) = {
+    @s.replaceAll(
+      String.format("%s|%s|%s",
+         "(?<=[A-Z])(?=[A-Z][a-z])",
+         "(?<=[^A-Z])(?=[A-Z])",
+         "(?<=[A-Za-z])(?=[^A-Za-z])"
+      ),
+      " "
+   ).replaceAll("  ", " ").replace("Session", "")
+}
 
 @_templateWeeklyPlanning(handler, userPictureUri, userFirstName, userFamilyName, classDetails, CLASS_WEEKLY_PLANS, Some(WEEKLY_VIEW)) {
 
     <section id="class-timetable-section">
-        <div class="container">
-            <div id="class-timetable-school-times" class="row headline-row text-primary">
-                <div class="col-sm-1"></div>
-                <div class="col-sm-3 timetable-header">Early Morning</div>
-                <div class="col-sm-1 small-column text-center">Break</div>
-                <div class="col-sm-3 timetable-header">Late Morning</div>
-                <div class="col-sm-1 small-column text-center">Lunch</div>
-                <div class="col-sm-3 order timetable-header">Afternoon</div>
+
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered table-dark">
+                    <caption>Weekly Timetable</caption>
+
+                    <thead >
+                        <tr>
+                            <th scope="col" class="align-top text-center">Day</th>
+                            @for((schoolTimeBoundary, index) <- classTimetable.schoolTimes.schoolSessionBoundaries.sortBy(time => time.sessionBoundary.boundaryStartTime.timeIso8601).zipWithIndex) {
+                                @if(schoolTimeBoundary.sessionBoundary.boundaryType == SessionBoundaryType.START_OF_TEACHING_SESSION) {
+                                    <th scope="col" >
+                                        <div class="text-center">@splitCamel(schoolTimeBoundary.sessionBoundary.sessionName.getOrElse(SessionName("")).value)</div>
+                                        <div class="row">
+                                            <div class="col-auto mr-auto">
+                                                <small class="weekly-planning-lesson-start-time">@schoolTimeBoundary.sessionBoundary.boundaryStartTime.timeIso8601</small>
+                                            </div>
+
+                                            <div class="col-auto ml-auto">
+                                                <small class="weekly-planning-lesson-end-time">
+                                                @{
+                                                    classTimetable.schoolTimes.schoolSessionBoundaries.sortBy(time => time.sessionBoundary.boundaryStartTime.timeIso8601).toList(index + 1).sessionBoundary.boundaryStartTime.timeIso8601
+                                                }
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </th>
+                                }
+                            }
+                        </tr>
+                    </thead>
+
+                </table>
             </div>
 
-            <div id="class-timetable-session-names" class="row timetable-time-row">
-                <div class="col-sm-1"></div>
-                <div class="col-sm-3">
-                    <div class="row">
-                        <div id="timetable-time-school-starts" class="col-sm-1 timetable-time">
-                        @wwwClassTimetable.schoolDayTimes.getOrElse(SchoolDayStarts(), "09:00")
-                        </div>
-                        <div class="col-sm-11"></div>
-                    </div>
-                </div>
-                <div class="col-sm-1">
-                    <div class="row">
-                        <div id="timetable-time-morning-break-starts" class="col-sm-1 timetable-time">
-                        @wwwClassTimetable.schoolDayTimes.getOrElse(MorningBreakStarts(), "10:30")
-                        </div>
-                        <div class="col-sm-11"></div>
-                    </div>
-                </div>
-                <div class="col-sm-3">
-                    <div class="row">
-                        <div id="timetable-time-morning-break-ends" class="col-sm-1 timetable-time">
-                            @wwwClassTimetable.schoolDayTimes.getOrElse(MorningBreakEnds(), "10:30")
-                        </div>
-                        <div class="col-sm-11"></div>
-                    </div>
-                </div>
-                <div class="col-sm-1">
-                    <div class="row">
-                        <div id="timetable-time-lunch-starts" class="col-sm-1 timetable-time">
-                        @wwwClassTimetable.schoolDayTimes.getOrElse(LunchStarts(), "10:30")
-                        </div>
-                        <div class="col-sm-11"></div>
-                    </div>
-                </div>
-                <div class="col-sm-3">
-                    <div class="row">
-                        <div id="timetable-time-lunch-ends" class="col-sm-1 timetable-time">
-                        @wwwClassTimetable.schoolDayTimes.getOrElse(LunchEnds(), "10:30")
-                        </div>
-                        <div class="col-sm-10"></div>
-                        <div id="timetable-time-school-ends" class="col-sm-1 timetable-time">
-                        @wwwClassTimetable.schoolDayTimes.getOrElse(SchoolDayEnds(), "10:30")
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row row-for-mobile"><br></div>
-
-            <div id="all-the-days-rows">
-                <div class="row dayoftheweek-row align-items-center">
-                    <div class="col-lg-1 text-secondary timetable-dayofweek-header align-self-center" >Monday</div>
-                    <div class="col-lg-3 ">
-                        <div class="row">
-                            <button disabled="true" class="col-12 rounded subject subject-empty"
-                            data-timetable-session="early-morning-session" data-day-of-the-week="Monday">Empty</button>
-                        </div>
-                    </div>
-                    <div class="col-lg-1 small-column "></div>
-                    <div class="col-lg-3">
-                        <div class="row">
-                            <button disabled="true" class="col-12 rounded subject subject-empty"
-                            data-timetable-session="late-morning-session" data-day-of-the-week="Monday">Empty</button>
-                        </div>
-                    </div>
-                    <div class="col-lg-1 small-column"></div>
-
-                    <div class="col-lg-3">
-                        <div class="row">
-                            <button disabled="true" class="col-12 rounded subject subject-empty"
-                            data-timetable-session="afternoon-session" data-day-of-the-week="Monday">Empty</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row row-for-mobile"><br></div>
-
-                <div class="row dayoftheweek-row align-items-center">
-                    <div class="col-lg-1 text-secondary timetable-dayofweek-header align-self-center" >Tuesday</div>
-                    <div class="col-lg-3 ">
-                        <div class="row">
-                            <button disabled="true" class="col-12 rounded subject subject-empty"
-                            data-timetable-session="early-morning-session" data-day-of-the-week="Tuesday">Empty</button>
-                        </div>
-                    </div>
-                    <div class="col-lg-1 small-column "></div>
-                    <div class="col-lg-3">
-                        <div class="row">
-                            <button disabled="true" class="col-12 rounded subject subject-empty"
-                            data-timetable-session="late-morning-session" data-day-of-the-week="Tuesday">Empty</button>
-                        </div>
-                    </div>
-                    <div class="col-lg-1 small-column"></div>
-
-                    <div class="col-lg-3">
-                        <div class="row">
-                            <button disabled="true" class="col-12 rounded subject subject-empty"
-                            data-timetable-session="afternoon-session" data-day-of-the-week="Tuesday">Empty</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row row-for-mobile"><br></div>
-
-                <div class="row dayoftheweek-row align-items-center">
-                    <div class="col-lg-1 text-secondary timetable-dayofweek-header align-self-center" >Wednesday</div>
-                    <div class="col-lg-3 ">
-                        <div class="row">
-                            <button disabled="true" class="col-12 rounded subject subject-empty"
-                            data-timetable-session="early-morning-session" data-day-of-the-week="Wednesday">Empty</button>
-                        </div>
-                    </div>
-                    <div class="col-lg-1 small-column "></div>
-                    <div class="col-lg-3">
-                        <div class="row">
-                            <button disabled="true" class="col-12 rounded subject subject-empty"
-                            data-timetable-session="late-morning-session" data-day-of-the-week="Wednesday">Empty</button>
-                        </div>
-                    </div>
-                    <div class="col-lg-1 small-column"></div>
-
-                    <div class="col-lg-3">
-                        <div class="row">
-                            <button disabled="true" class="col-12 rounded subject subject-empty"
-                            data-timetable-session="afternoon-session" data-day-of-the-week="Wednesday">Empty</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row row-for-mobile"><br></div>
-
-                <div class="row dayoftheweek-row align-items-center">
-                    <div class="col-lg-1 text-secondary timetable-dayofweek-header align-self-center" >Thursday</div>
-                    <div class="col-lg-3 ">
-                        <div class="row">
-                            <button disabled="true" class="col-12 rounded subject subject-empty"
-                            data-timetable-session="early-morning-session" data-day-of-the-week="Thursday">Empty</button>
-                        </div>
-                    </div>
-                    <div class="col-lg-1 small-column "></div>
-                    <div class="col-lg-3">
-                        <div class="row">
-                            <button disabled="true" class="col-12 rounded subject subject-empty"
-                            data-timetable-session="late-morning-session" data-day-of-the-week="Thursday">Empty</button>
-                        </div>
-                    </div>
-                    <div class="col-lg-1 small-column"></div>
-
-                    <div class="col-lg-3">
-                        <div class="row">
-                            <button disabled="true" class="col-12 rounded subject subject-empty"
-                            data-timetable-session="afternoon-session" data-day-of-the-week="Thursday">Empty</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row row-for-mobile"><br></div>
-
-                <div class="row dayoftheweek-row align-items-center">
-                    <div class="col-lg-1 text-secondary timetable-dayofweek-header align-self-center" >Friday</div>
-                    <div class="col-lg-3 ">
-                        <div class="row">
-                            <button disabled="true" class="col-12 rounded subject subject-empty"
-                            data-timetable-session="early-morning-session" data-day-of-the-week="Friday">Empty</button>
-                        </div>
-                    </div>
-                    <div class="col-lg-1 small-column "></div>
-                    <div class="col-lg-3">
-                        <div class="row">
-                            <button disabled="true" class="col-12 rounded subject subject-empty"
-                            data-timetable-session="late-morning-session" data-day-of-the-week="Friday">Empty</button>
-                        </div>
-                    </div>
-                    <div class="col-lg-1 small-column"></div>
-
-                    <div class="col-lg-3">
-                        <div class="row">
-                            <button disabled="true" class="col-12 rounded subject subject-empty"
-                            data-timetable-session="afternoon-session" data-day-of-the-week="Friday">Empty</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row row-for-mobile"><br></div>
-
-        </div>
 
     </section>
 

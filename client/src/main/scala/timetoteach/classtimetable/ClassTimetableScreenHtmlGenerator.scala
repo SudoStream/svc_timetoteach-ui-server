@@ -16,9 +16,9 @@ trait ClassTimetableScreenHtmlGenerator {
   def getRemoveBehaviourTuple: Option[(WwwSubjectDetail, WwwSessionOfTheWeek)] = removeBehaviourTuple
   def setRemoveBehaviourTupleToNone(): Unit = removeBehaviourTuple = None
 
-  def getClassTimetable: WWWClassTimetable
+  private[classtimetable] def getClassTimetable: WWWClassTimetable
 
-  def generateSubjectButtons(breakdown: WwwSessionBreakdown): List[JsDom.TypedTag[Button]] = {
+  private[classtimetable] def generateSubjectButtons(breakdown: WwwSessionBreakdown): List[JsDom.TypedTag[Button]] = {
     val buttons = breakdown.subjectsWithTimeFractionInTwelves.map {
       entry =>
         val subjectCode = entry._1.subject.value
@@ -55,7 +55,7 @@ trait ClassTimetableScreenHtmlGenerator {
     buttons
   }
 
-  def generateHtmlForClassTimetable(classTimetable: WWWClassTimetable): String = {
+  private[classtimetable] def generateHtmlForClassTimetable(classTimetable: WWWClassTimetable): String = {
     val sortedDays = classTimetable.allSessionsOfTheWeekInOrderByDay.keys.toList.sortBy(day => day.ordinalNumber)
     val html = sortedDays.map {
       day =>
@@ -93,7 +93,7 @@ trait ClassTimetableScreenHtmlGenerator {
     html.mkString
   }
 
-  def createSubjectSummary(subjectCode: String,
+  private[classtimetable] def createSubjectSummary(subjectCode: String,
                            startTime: String,
                            endTime: String,
                            timetableSession: String,
@@ -155,7 +155,7 @@ trait ClassTimetableScreenHtmlGenerator {
   }
 
 
-  def addUpdateBehaviour(): Unit = {
+  private[classtimetable] def addUpdateBehaviour(): Unit = {
 
   }
 

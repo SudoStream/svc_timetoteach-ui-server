@@ -1,7 +1,5 @@
 package controllers.serviceproxies
 
-import javax.inject.Inject
-
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.{HttpMethods, HttpRequest, HttpResponse, Uri}
@@ -13,6 +11,8 @@ import com.typesafe.sslconfig.akka.AkkaSSLConfig
 import duplicate.model.ClassDetails
 import io.sudostream.timetoteach.kafka.serializing.systemwide.classes.ClassDetailsCollectionDeserializer
 import io.sudostream.timetoteach.kafka.serializing.systemwide.classtimetable.ClassTimetableDeserializer
+import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.ClassTimetable
+import javax.inject.Inject
 import models.timetoteach.TimeToTeachUserId
 import play.api.Logger
 import shared.model.classtimetable.{WWWClassTimetable, WwwClassId}
@@ -23,7 +23,8 @@ import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.util.{Failure, Success}
 
 @Singleton
-class ClassTimetableReaderServiceProxyImpl @Inject()(schoolReader: SchoolReaderServiceProxyImpl) {
+class ClassTimetableReaderServiceProxyImpl @Inject()(schoolReader: SchoolReaderServiceProxyImpl)
+{
 
   implicit val system: ActorSystem = ActorSystem()
   implicit val executor: ExecutionContextExecutor = system.dispatcher
@@ -39,7 +40,8 @@ class ClassTimetableReaderServiceProxyImpl @Inject()(schoolReader: SchoolReaderS
 
   val schoolsFuture = schoolReader.getAllSchoolsFuture
 
-  def readClassTimetable(userId: TimeToTeachUserId, wwwClassId: WwwClassId): Future[Option[WWWClassTimetable]] = {
+  def readAvroClassTimetable(userId: TimeToTeachUserId, wwwClassId: WwwClassId): Future[Option[ClassTimetable]] =
+  {
     logger.debug(s"readClassTimetable: ${userId.toString}:${wwwClassId.value}")
 
     val uriString =
@@ -70,42 +72,51 @@ class ClassTimetableReaderServiceProxyImpl @Inject()(schoolReader: SchoolReaderS
     }
 
     val eventualFutureWwwClassTimetable = response map { httpResponse =>
-      extractClassTimeTableFromHttpResponse(httpResponse)
+      extractAvroClassTimeTableFromHttpResponse(httpResponse)
     }
 
-    eventualFutureWwwClassTimetable.flatMap {
-      res =>
-        res
-    }
+    eventualFutureWwwClassTimetable.flatMap(res => res)
   }
 
-  def extractClassTimeTableFromHttpResponse(httpResponse: HttpResponse): Future[Option[WWWClassTimetable]] = {
+  def readClassTimetable(userId: TimeToTeachUserId, wwwClassId: WwwClassId): Future[Option[WWWClassTimetable]] =
+  {
+    val avroTimetable = readAvroClassTimetable(userId, wwwClassId)
+    convertToWwwVersion(avroTimetable)
+  }
+
+  def extractAvroClassTimeTableFromHttpResponse(httpResponse: HttpResponse): Future[Option[ClassTimetable]] =
+  {
     if (httpResponse.status.isSuccess()) {
       val smallTimeout = 3000.millis
       val dataFuture = httpResponse.entity.toStrict(smallTimeout) map {
         httpEntity =>
           httpEntity.getData()
       }
-      val futureTimetable = dataFuture map {
+
+      dataFuture map {
         databytes =>
           val bytesAsArray = databytes.toArray
           val classTimetableDeserializer = new ClassTimetableDeserializer
-          classTimetableDeserializer.deserialize("ignore", bytesAsArray)
-      }
-
-      futureTimetable map {
-        fTimetable =>
-          Some(ClassTimetableConverterToAvro.convertAvroClassTimeTableToWww(fTimetable))
+          Some(classTimetableDeserializer.deserialize("ignore", bytesAsArray))
       }
     } else {
-      logger.warn(s"Issue finding class timatable : ${httpResponse.toString()}")
+      logger.warn(s"Issue finding class timetable : ${httpResponse.toString()}")
       Future {
         None
       }
     }
   }
 
-  def extractClassesAssociatedWithTeacher(userId: TimeToTeachUserId): Future[List[ClassDetails]] = {
+  def convertToWwwVersion(futureTimetable: Future[Option[ClassTimetable]]): Future[Option[WWWClassTimetable]] =
+  {
+    futureTimetable map {
+      case Some(timetable) => Some(ClassTimetableConverterToAvro.convertAvroClassTimeTableToWww(timetable))
+      case None => None
+    }
+  }
+
+  def extractClassesAssociatedWithTeacher(userId: TimeToTeachUserId): Future[List[ClassDetails]] =
+  {
     logger.debug(s"extractClassesAssociatedWithTeacher: ${userId.toString}")
 
     val uriString =
@@ -145,7 +156,8 @@ class ClassTimetableReaderServiceProxyImpl @Inject()(schoolReader: SchoolReaderS
     }
   }
 
-  def extractClassesFromHttpResponse(httpResponse: HttpResponse): Future[List[ClassDetails]] = {
+  def extractClassesFromHttpResponse(httpResponse: HttpResponse): Future[List[ClassDetails]] =
+  {
     if (httpResponse.status.isSuccess()) {
       val smallTimeout = 3000.millis
       val dataFuture = httpResponse.entity.toStrict(smallTimeout) map {

@@ -1,3 +1,19 @@
 .weekly-planning-top-margin {
     margin-top: 1.5rem;
 }
+
+.weekly-planning-lesson-start-time {
+    font-size: xx-small;
+    line-height: 5px;
+    color: black;
+    padding: 2px;
+    text-shadow: 0 0;
+}
+
+.weekly-planning-lesson-end-time {
+    font-size: xx-small;
+    line-height: 5px;
+    color: black;
+    padding: 2px;
+    text-shadow: 0 0;
+}

@@ -76,11 +76,11 @@ class WeeklyPlanningController @Inject()(
       maybeClassDetails: Option[ClassDetails] = classDetailsList.headOption
       if maybeClassDetails.isDefined
       classDetails = maybeClassDetails.get
-      wwwClassTimetableFuture = classTimetableReaderProxy.
-        readClassTimetable(TimeToTeachUserId(tttUserId), WwwClassId(classDetails.id.id))
+      avroClassTimetableFuture = classTimetableReaderProxy.
+        readAvroClassTimetable(TimeToTeachUserId(tttUserId), WwwClassId(classDetails.id.id))
       schoolDayTimes <- futureSchoolDayTimes
-      maybeWwwClassTimetable <- wwwClassTimetableFuture
-      if maybeWwwClassTimetable.isDefined
+      maybeAvroClassTimetable <- avroClassTimetableFuture
+      if maybeAvroClassTimetable.isDefined
     } yield Ok(views.html.planning.weekly.weeklyView(
       new MyDeadboltHandler(userReader),
       userPictureUri,
@@ -88,7 +88,7 @@ class WeeklyPlanningController @Inject()(
       userFamilyName,
       classDetails,
       schoolDayTimes,
-      maybeWwwClassTimetable.get
+      maybeAvroClassTimetable.get
     ))
 
   }
