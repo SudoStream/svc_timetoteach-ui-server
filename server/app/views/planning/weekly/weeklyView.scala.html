@@ -84,15 +84,26 @@
                                         }" >
                                             <div class="weekly-plan-subject">
                                                 <div class="rounded weekly-plan-subject-extent weekly-plan-subject-@subject.subjectDetail.subjectName.toString.toLowerCase.replace("_", "-")">
-                                                    <div class="text-center weekly-plan-subject-name "><u>@{
-                                                        val subjectName = subject.subjectDetail.subjectName.toString.toLowerCase.split("_").toList.map(word => word.capitalize).mkString(" ")
-                                                        if(subjectName == "Other") {
-                                                            subject.subjectDetail.additionalInfo.value
-                                                        } else {
-                                                            subjectName
+
+                                                    <div class="d-flex justify-content-between">
+                                                        <div>
+                                                            <small class="weekly-planning-lesson-time-subject">@subject.subjectDetail.startTime.timeIso8601</small>
+                                                        </div>
+                                                        <div>
+                                                            <small class="weekly-planning-lesson-time-subject">@subject.subjectDetail.endTime.timeIso8601</small>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="text-center weekly-plan-subject-name ">
+                                                        <u>@{
+                                                            val subjectName = subject.subjectDetail.subjectName.toString.toLowerCase.split("_").toList.map(word => word.capitalize).mkString(" ")
+                                                            if(subjectName == "Other") {
+                                                                subject.subjectDetail.additionalInfo.value
+                                                            } else {
+                                                                subjectName
+                                                            }
                                                         }
-                                                    }
-                                                    </u>
+                                                        </u>
                                                     </div>
 
                                                     <div class="text-center weekly-plan-subject-additional-info text-dark">
@@ -110,7 +121,8 @@
                                                         <div class="weekly-plan-subject-es-and-os-header text-center">
                                                         Es & Os
                                                         </div>
-                                                        <div class="single-eo-or-benchmark"><strong>EO123</strong> - The quick brown fox jumps over the lazy dog</div>
+                                                        <div class="single-eo-or-benchmark"><strong>EO123</strong>
+                                                            - The quick brown fox jumps over the lazy dog</div>
                                                     </div>
 
                                                     <div class="weekly-plan-subject-benchmarks">
