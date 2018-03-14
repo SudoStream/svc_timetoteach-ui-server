@@ -53,10 +53,15 @@
                                             </div>
                                         </div>
                                     </th>
+                                    @if((index + 2 ) < classTimetable.schoolTimes.schoolSessionBoundaries.size) {
+                                        <th scope="col" class="bg-light"></th>
+                                    }
                                 }
                             }
                         </tr>
                     </thead>
+
+
 
                 </table>
             </div>
