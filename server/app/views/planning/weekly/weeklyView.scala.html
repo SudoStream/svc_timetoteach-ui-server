@@ -14,58 +14,82 @@
 )
 
 @splitCamel(s: String) = {
-    @s.replaceAll(
-      String.format("%s|%s|%s",
-         "(?<=[A-Z])(?=[A-Z][a-z])",
-         "(?<=[^A-Z])(?=[A-Z])",
-         "(?<=[A-Za-z])(?=[^A-Za-z])"
-      ),
-      " "
-   ).replaceAll("  ", " ").replace("Session", "")
+@s.replaceAll(
+    String.format("%s|%s|%s",
+        "(?<=[A-Z])(?=[A-Z][a-z])",
+        "(?<=[^A-Z])(?=[A-Z])",
+        "(?<=[A-Za-z])(?=[^A-Za-z])"
+    ),
+    " "
+).replaceAll("  ", " ").replace("Session", "")
 }
 
 @_templateWeeklyPlanning(handler, userPictureUri, userFirstName, userFamilyName, classDetails, CLASS_WEEKLY_PLANS, Some(WEEKLY_VIEW)) {
 
     <section id="class-timetable-section">
 
-            <div class="table-responsive">
-                <table class="table table-sm table-bordered table-dark">
-                    <caption>Weekly Timetable</caption>
+        <div class="table-responsive">
+            <table class="table table-sm table-bordered table-dark">
+                <caption>Weekly Timetable</caption>
 
-                    <thead >
-                        <tr>
-                            <th scope="col" class="align-top text-center">Day</th>
-                            @for((schoolTimeBoundary, index) <- classTimetable.schoolTimes.schoolSessionBoundaries.sortBy(time => time.sessionBoundary.boundaryStartTime.timeIso8601).zipWithIndex) {
-                                @if(schoolTimeBoundary.sessionBoundary.boundaryType == SessionBoundaryType.START_OF_TEACHING_SESSION) {
-                                    <th scope="col" >
-                                        <div class="text-center">@splitCamel(schoolTimeBoundary.sessionBoundary.sessionName.getOrElse(SessionName("")).value)</div>
-                                        <div class="row">
-                                            <div class="col-auto mr-auto">
-                                                <small class="weekly-planning-lesson-start-time">@schoolTimeBoundary.sessionBoundary.boundaryStartTime.timeIso8601</small>
-                                            </div>
-
-                                            <div class="col-auto ml-auto">
-                                                <small class="weekly-planning-lesson-end-time">
-                                                @{
-                                                    classTimetable.schoolTimes.schoolSessionBoundaries.sortBy(time => time.sessionBoundary.boundaryStartTime.timeIso8601).toList(index + 1).sessionBoundary.boundaryStartTime.timeIso8601
-                                                }
-                                                </small>
-                                            </div>
+                <thead >
+                    <tr>
+                        <th scope="col" class="align-top text-center">Day</th>
+                        @for((schoolTimeBoundary, index) <- classTimetable.schoolTimes.schoolSessionBoundaries.sortBy(time => time.sessionBoundary.boundaryStartTime.timeIso8601).zipWithIndex) {
+                            @if(schoolTimeBoundary.sessionBoundary.boundaryType == SessionBoundaryType.START_OF_TEACHING_SESSION) {
+                                <th scope="col" >
+                                    <div class="text-center">@splitCamel(schoolTimeBoundary.sessionBoundary.sessionName.getOrElse(SessionName("")).value)</div>
+                                    <div class="row">
+                                        <div class="col-auto mr-auto">
+                                            <small class="weekly-planning-lesson-start-time">@schoolTimeBoundary.sessionBoundary.boundaryStartTime.timeIso8601</small>
                                         </div>
-                                    </th>
-                                    @if((index + 2 ) < classTimetable.schoolTimes.schoolSessionBoundaries.size) {
-                                        <th scope="col" class="bg-light"></th>
-                                    }
+
+                                        <div class="col-auto ml-auto">
+                                            <small class="weekly-planning-lesson-end-time">
+                                            @{
+                                                classTimetable.schoolTimes.schoolSessionBoundaries.sortBy(time => time.sessionBoundary.boundaryStartTime.timeIso8601).toList(index + 1).sessionBoundary.boundaryStartTime.timeIso8601
+                                            }
+                                            </small>
+                                        </div>
+                                    </div>
+                                </th>
+                                @if((index + 2) < classTimetable.schoolTimes.schoolSessionBoundaries.size) {
+                                    <th scope="col" class="bg-light"></th>
                                 }
                             }
-                        </tr>
-                    </thead>
+                        }
+                    </tr>
+                </thead>
 
+                <tbody>
+                @for(dayOfTheWeek <- List("MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY")) {
+                    <tr>
+                        <td>
+                        @dayOfTheWeek
+                        </td>
+                        @for((session, sessionIndex) <- classTimetable.allSessionsOfTheWeek.sortBy(sesh => (sesh.sessionOfTheDay.dayOfTheWeek.ordinal(), sesh.sessionOfTheDay.startTime.timeIso8601)).map(wrapper => wrapper.sessionOfTheDay).zipWithIndex) {
+                            @if(session.dayOfTheWeek.toString == dayOfTheWeek) {
+                                <td>
+                                    <div class="row">
+                                    @for(subject <- session.subjects) {
+                                        <div class="col">
+                                            <p>@subject.subjectDetail.subjectName</p>
+                                        </div>
+                                    }
+                                </td>
+                                @if((sessionIndex + 1) > (classTimetable.allSessionsOfTheWeek.count(sesh => sesh.sessionOfTheDay.dayOfTheWeek.toString == dayOfTheWeek) % 3) &&
+                                        (((sessionIndex  % classTimetable.allSessionsOfTheWeek.count(sesh => sesh.sessionOfTheDay.dayOfTheWeek.toString == dayOfTheWeek)) + 1) <
+                                                classTimetable.allSessionsOfTheWeek.filter(sesh => sesh.sessionOfTheDay.dayOfTheWeek.toString == dayOfTheWeek).count(sesh => sesh.sessionOfTheDay.dayOfTheWeek.toString == dayOfTheWeek))) {
+                                    <td class="bg-light"></td>
+                                }
+                            }
+                        }
+                    </tr>
+                }
+                </tbody>
 
-
-                </table>
-            </div>
-
+            </table>
+        </div>
 
     </section>
 
