@@ -17,3 +17,40 @@
     padding: 2px;
     text-shadow: 0 0;
 }
+
+.weekly-plan-subject {
+    /*border: 1px solid #e3e3e3;*/
+    padding: 0.75rem;
+    height: fit-content;
+}
+
+.weekly-plan-subject-additional-info {
+    font-size: smaller;
+    padding-bottom: 1.5rem;
+}
+
+.weekly-plan-subject-es-and-os {
+    padding-left: 2rem;
+    padding-top: 0.5rem;
+    padding-bottom: 1rem;
+    font-size: x-small;
+}
+
+.weekly-plan-subject-benchmarks {
+    padding-left: 2rem;
+    padding-top: 0.5rem;
+    font-size: x-small;
+    padding-bottom: 1rem;
+}
+
+.weekly-plan-subject-name {
+    font-size: larger;
+    font-weight: bold;
+    padding-top: 1rem;
+    color: black;
+}
+
+
+.fancy-shadow{
+
+}
