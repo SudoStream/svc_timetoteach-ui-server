@@ -37,7 +37,7 @@ object ClassLevelPlanningJsScreen
     curriculumLevelFilterButton("Second")
     curriculumLevelFilterButton("Third")
     curriculumLevelFilterButton("Fourth")
-    showAlertIfAllFilterButtonsAreOff()
+//    showAlertIfAllFilterButtonsAreOff()
     popovers()
   }
 
@@ -52,14 +52,14 @@ object ClassLevelPlanningJsScreen
   }
 
 
-  def showAlertIfAllFilterButtonsAreOff(): Unit =
-  {
-    if (allFilterButtonsAreOff()) {
-      dom.document.getElementById("alert-div").asInstanceOf[HTMLDivElement].style.display = "block"
-    } else {
-      dom.document.getElementById("alert-div").asInstanceOf[HTMLDivElement].style.display = "none"
-    }
-  }
+//  def showAlertIfAllFilterButtonsAreOff(): Unit =
+//  {
+//    if (allFilterButtonsAreOff()) {
+//      dom.document.getElementById("alert-div").asInstanceOf[HTMLDivElement].style.display = "block"
+//    } else {
+//      dom.document.getElementById("alert-div").asInstanceOf[HTMLDivElement].style.display = "none"
+//    }
+//  }
 
   private def allElementsAreOff(nodes: NodeList, tag: String): Boolean =
   {
@@ -121,13 +121,13 @@ object ClassLevelPlanningJsScreen
         levelSectionDiv.style.display = "block"
         curriculumLevelFilterButton.classList.remove("btn-outline-info")
         curriculumLevelFilterButton.classList.add("btn-warning")
-        showAlertIfAllFilterButtonsAreOff()
+//        showAlertIfAllFilterButtonsAreOff()
       } else {
         global.console.log("selecttion currently visible, make none")
         levelSectionDiv.style.display = "none"
         curriculumLevelFilterButton.classList.add("btn-outline-info")
         curriculumLevelFilterButton.classList.remove("btn-warning")
-        showAlertIfAllFilterButtonsAreOff()
+//        showAlertIfAllFilterButtonsAreOff()
       }
 
       index = index + 1

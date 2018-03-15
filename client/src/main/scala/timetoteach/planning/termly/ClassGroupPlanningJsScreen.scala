@@ -30,7 +30,7 @@ object ClassGroupPlanningJsScreen
     clickOnBenchmark()
     saveButton()
     clearButton()
-    popovers()
+//    popovers()
   }
 
   private def popovers(): Unit =

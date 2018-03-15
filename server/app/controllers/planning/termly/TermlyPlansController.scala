@@ -37,8 +37,7 @@ class TermlyPlansController @Inject()(
                                        termsPlanHelper: TermPlansHelper,
                                        termService: TermServiceProxy,
                                        pdfGeneratorWrapper: PdfGeneratorWrapper,
-                                       deadbolt: DeadboltActions) extends AbstractController(cc)
-{
+                                       deadbolt: DeadboltActions) extends AbstractController(cc) {
 
   import TermlyPlansController.buildSchoolNameToClassesMap
 
@@ -77,8 +76,7 @@ class TermlyPlansController @Inject()(
     }
   }
 
-  def createScottishCurriculumPlanningAreaWrapperList(): List[ScottishCurriculumPlanningAreaWrapper] =
-  {
+  def createScottishCurriculumPlanningAreaWrapperList(): List[ScottishCurriculumPlanningAreaWrapper] = {
     {
       for {
         planningArea <- ScottishCurriculumPlanningArea.values()
@@ -346,7 +344,6 @@ class TermlyPlansController @Inject()(
     } yield Ok("Saved termly plans!")
   }
 
-
   def termlyOverviewForCurriculumAreaAtClassLevel(classId: String, curriculumArea: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest: AuthenticatedRequest[AnyContent] =>
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
@@ -416,6 +413,7 @@ class TermlyPlansController @Inject()(
     logger.debug(s"termlyOverviewForCurriculumAreaAtGroupLevelWithNoGroupId() : $classId == $curriculumArea")
     val tttUserId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO ID")
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
+
     for {
       classes <- eventualClasses
       classDetailsList = classes.filter(theClass => theClass.id.id == classId)
@@ -423,14 +421,54 @@ class TermlyPlansController @Inject()(
       if maybeClassDetails.isDefined
       classDetails = maybeClassDetails.get
       maybeGroup = classDetails.groups.filter(elem => elem.groupType.value.toLowerCase == curriculumArea.split("__").toList.last.toLowerCase).sortBy(aGroup => aGroup.groupLevel.order).headOption
-      if maybeGroup.isDefined
-    } yield Redirect(routes.TermlyPlansController.termlyOverviewForCurriculumAreaAtGroupLevel(
-      classId,
-      curriculumArea,
-      maybeGroup.get.groupId.id
-    ))
-
+      route = maybeGroup match {
+        case Some(group) => Redirect(routes.TermlyPlansController.termlyOverviewForCurriculumAreaAtGroupLevel(
+          classId,
+          curriculumArea,
+          group.groupId.id))
+        case None => Redirect(routes.TermlyPlansController.termlyPlansOverviewNoGroupsError(
+          classId,
+          curriculumArea))
+      }
+    } yield route
   }
+
+  def termlyPlansOverviewNoGroupsError(classId: String, curriculumArea: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest: AuthenticatedRequest[AnyContent] =>
+    logger.debug(s"termlyPlansOverviewNoGroupsError() : $classId == $curriculumArea")
+    val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
+    val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
+    val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
+    val tttUserId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO ID")
+    val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
+
+    for {
+      classes <- eventualClasses
+      classDetailsList = classes.filter(theClass => theClass.id.id == classId)
+      maybeClassDetails: Option[ClassDetails] = classDetailsList.headOption
+      if maybeClassDetails.isDefined
+      classDetails = maybeClassDetails.get
+
+      futureMaybeOverallCurriculumPlanProgress = planningReaderService.curriculumPlanProgressForClasses(
+        TimeToTeachUserId(tttUserId),
+        classes,
+        termService.currentSchoolTerm()
+      )
+
+      maybeOverallCurriculumPlanProgress <- futureMaybeOverallCurriculumPlanProgress
+
+      route = Ok(views.html.planning.termly.termlyPlansOverviewNoGroupsError(
+        new MyDeadboltHandler(userReader),
+        userPictureUri,
+        userFirstName,
+        userFamilyName,
+        TimeToTeachUserId(tttUserId),
+        classDetails,
+        curriculumArea,
+        maybeOverallCurriculumPlanProgress
+      ))
+    } yield route
+  }
+
 
   def termlyOverviewForCurriculumAreaAtGroupLevel(classId: String, curriculumArea: String, groupId: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest: AuthenticatedRequest[AnyContent] =>
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
@@ -498,8 +536,7 @@ class TermlyPlansController @Inject()(
     } yield route
   }
 
-  private def findAnyCurrentTermlyPlanForCurriculumAreaAtClassLevel(classId: String, curriculumArea: String, tttUserId: String): Future[Option[CurriculumAreaTermlyPlan]] =
-  {
+  private def findAnyCurrentTermlyPlanForCurriculumAreaAtClassLevel(classId: String, curriculumArea: String, tttUserId: String): Future[Option[CurriculumAreaTermlyPlan]] = {
     CurriculumAreaConverter.convertCurriculumAreaStringToModel(curriculumArea) match {
       case Some(curriculumPlanningArea) =>
         planningReaderService.readCurriculumAreaTermlyPlanForClassLevel(
@@ -513,8 +550,7 @@ class TermlyPlansController @Inject()(
     }
   }
 
-  private def findAnyCurrentTermlyPlanForCurriculumAreaAndGroup(classId: String, curriculumArea: String, groupId: String, tttUserId: String) =
-  {
+  private def findAnyCurrentTermlyPlanForCurriculumAreaAndGroup(classId: String, curriculumArea: String, groupId: String, tttUserId: String) = {
     CurriculumAreaConverter.convertCurriculumAreaStringToModel(curriculumArea) match {
       case Some(curriculumPlanningArea) =>
         planningReaderService.readCurriculumAreaTermlyPlanForGroup(
@@ -590,14 +626,11 @@ class TermlyPlansController @Inject()(
 
 }
 
-object TermlyPlansController
-{
-  private[termly] def buildSchoolNameToClassesMap(classes: List[ClassDetails]): Map[String, List[ClassDetails]] =
-  {
+object TermlyPlansController {
+  private[termly] def buildSchoolNameToClassesMap(classes: List[ClassDetails]): Map[String, List[ClassDetails]] = {
     @tailrec
     def buildSchoolNameToClassesMapLoop(currentMap: Map[String, List[ClassDetails]],
-                                        remainingClasses: List[ClassDetails]): Map[String, List[ClassDetails]] =
-    {
+                                        remainingClasses: List[ClassDetails]): Map[String, List[ClassDetails]] = {
       if (remainingClasses.isEmpty) {
         currentMap
       } else {

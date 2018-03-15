@@ -209,10 +209,7 @@
 
                     @if(maybeCurrentTermlyCurriculumSelection.isDefined && maybeCurrentTermlyCurriculumSelection.get._1.planningAreas.nonEmpty) {
                         <nav id="dashboard-nav-3" class="navbar navbar-primary bg-dark navbar-expand-lg">
-                            <div class="col-md-1">
-                                <a class="navbar-brand text-light" href="#">Curriculum Areas</a>
-                            </div>
-                            <div class="col-md-10 d-flex justify-content-center ">
+                            <div class="col-md-12 d-flex justify-content-center ">
                                 <ul class="navbar-nav mx-auto">
                                 @for((planningArea, planningAreaIndex) <- maybeCurrentTermlyCurriculumSelection.get._1.planningAreas.map(area => ScottishCurriculumPlanningAreaWrapper(area)).zipWithIndex) {
                                     @if(planningArea.planAtGroupLevel) {
@@ -290,7 +287,6 @@
                                     </li>
                                 </ul>
                             </div>
-                            <div class="col-md-1"></div>
                         </nav>
 
                     }

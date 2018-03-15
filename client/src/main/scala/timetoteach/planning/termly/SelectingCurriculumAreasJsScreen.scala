@@ -11,7 +11,7 @@ object SelectingCurriculumAreasJsScreen
   def loadJavascript(): Unit =
   {
     global.console.log("Loading Selecting Curriculum Areas Javascript")
-    popovers()
+//    popovers()
   }
 
   private def popovers(): Unit =
