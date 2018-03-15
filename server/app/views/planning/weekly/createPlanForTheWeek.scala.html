@@ -1,0 +1,61 @@
+@import duplicate.model.ClassDetails
+@import models.timetoteach.ui._
+@import models.timetoteach.planning.pdf.CurriculumAreaTermlyPlanForPdfWrapper
+@import models.timetoteach.planning.ScottishCurriculumPlanningAreaWrapper
+@import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
+
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler,
+        userPictureUri: Option[String],
+        userFirstName: Option[String],
+        userFamilyName: Option[String],
+        classDetails: ClassDetails,
+        currentTermlyPlan: CurriculumAreaTermlyPlanForPdfWrapper
+)
+
+@_templateWeeklyPlanning(handler, userPictureUri, userFirstName, userFamilyName, classDetails, CLASS_WEEKLY_PLANS, Some(CREATE_WEEKLY_PLAN)) {
+
+    <div class="container">
+        <div class="create-weekly-plans-section">
+            <h4 class="display-5 text-center create-weekly-plans-header">Create Weekly Plan</h4>
+
+            <div class="create-weekly-plans-main-section">
+            @for(planningArea <- currentTermlyPlan.fullTermlyPlan.keys) {
+                <div class="create-weekly-plans-planning-area">
+                    <div class="create-weekly-plans-planning-area-header">@planningArea.niceValue()</div>
+                    @for(termlyPlanForArea <- currentTermlyPlan.fullTermlyPlan(planningArea).sortBy(elem => elem.orderNumber)) {
+                        @if(termlyPlanForArea.planningArea.toString.contains(ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS.toString)) {
+                            <div class="create-weekly-plans-planning-area-sub-header ">
+                            @{
+                                ScottishCurriculumPlanningAreaWrapper(termlyPlanForArea.planningArea).niceSubjectLevelValue()
+                            }
+                            </div>
+                        } else {
+                            <div class="create-weekly-plans-planning-area-sub-header ">
+                                @{
+                                    termlyPlanForArea.maybeGroup match {
+                                        case Some(group) => s"${group.groupName.name}"
+                                        case None => ""
+                                    }
+                                }
+
+                                <span class="create-weekly-plans-group-level ">
+                                @{
+                                    termlyPlanForArea.maybeGroup match {
+                                        case Some(group) => s" - ${group.groupLevel.value.replace("Level", " Level")}"
+                                        case None => ""
+                                    }
+                                }
+                                </span>
+                            </div>
+                        }
+
+                    }
+                </div>
+            }
+            </div>
+
+        </div>
+    </div>
+
+    @scalajs.html.scripts("client", routes.Assets.versioned(_).toString, name => getClass.getResource(s"/public/$name") != null)
+}

@@ -5,20 +5,16 @@ import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningAre
 
 case class ScottishCurriculumPlanningAreaWrapper(
                                                   value: ScottishCurriculumPlanningArea
-                                                )
-{
-  def isNotCompositeValue: Boolean =
-  {
+                                                ) {
+  def isNotCompositeValue: Boolean = {
     !isCompositeValue
   }
 
-  def isCompositeValue: Boolean =
-  {
+  def isCompositeValue: Boolean = {
     value.toString.contains("__")
   }
 
-  def niceValue(): String =
-  {
+  def niceValue(): String = {
     value
       .toString
       .replace("__", " : ")
@@ -32,8 +28,7 @@ case class ScottishCurriculumPlanningAreaWrapper(
       .mkString(" ")
   }
 
-  def niceHeaderValueIfPresent(): Option[String] =
-  {
+  def niceHeaderValueIfPresent(): Option[String] = {
     if (isCompositeValue) {
       niceValue().split(" : ").headOption
     } else {
@@ -41,8 +36,7 @@ case class ScottishCurriculumPlanningAreaWrapper(
     }
   }
 
-  def niceSpecificValueIfPresent(): Option[String] =
-  {
+  def niceSpecificValueIfPresent(): Option[String] = {
     if (isCompositeValue) {
       val values = niceValue().split(" : ")
       if (values.size > 1) {
@@ -55,8 +49,24 @@ case class ScottishCurriculumPlanningAreaWrapper(
     }
   }
 
-  def planAtGroupLevel: Boolean =
-  {
+  def niceSubjectLevelValue(): String = {
+    value match {
+      case ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__ART |
+           ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__DANCE |
+           ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__DRAMA |
+           ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__MUSIC |
+           ScottishCurriculumPlanningArea.HEALTH_AND_WELLBEING__PHYSICAL_EDUCATION |
+           ScottishCurriculumPlanningArea.LITERACY__READING |
+           ScottishCurriculumPlanningArea.LITERACY__WRITING =>
+
+        niceSpecificValueIfPresent().getOrElse("")
+
+      case _ =>
+        niceValue()
+    }
+  }
+
+  def planAtGroupLevel: Boolean = {
     value match {
       case ScottishCurriculumPlanningArea.LITERACY__CLASSICAL_LANGUAGES |
            ScottishCurriculumPlanningArea.LITERACY__GAELIC_LEARNERS |
@@ -70,8 +80,7 @@ case class ScottishCurriculumPlanningAreaWrapper(
     }
   }
 
-  def groupType: GroupType =
-  {
+  def groupType: GroupType = {
     value match {
       case ScottishCurriculumPlanningArea.LITERACY__CLASSICAL_LANGUAGES |
            ScottishCurriculumPlanningArea.LITERACY__GAELIC_LEARNERS |

@@ -5,6 +5,7 @@
 @import "termlyplans.css";
 @import "weeklyplans.css";
 @import "timetable-colours-weekly-plan.css";
+@import "weeklyplans-create-plan.css";
 
 @font-face {
     font-family: 'simplifica';
