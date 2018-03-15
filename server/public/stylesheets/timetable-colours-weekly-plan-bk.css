@@ -1,0 +1,79 @@
+/* ================= */
+/*   Colours - START */
+/* ================= */
+
+.weekly-plan-subject-writing, .weekly-plan-subject-spelling, .weekly-plan-subject-reading, .weekly-plan-subject-hand-writing {
+    background-color: rgba(20, 171, 20, 0.5);
+    color: midnightblue;
+    /*box-shadow: 4px 4px rgba(20, 171, 20, 0.6);*/
+}
+
+.weekly-plan-subject-empty {
+    background-color: rgba(211, 211, 211, 1);
+    color: midnightblue;
+    /*box-shadow: 4px 4px rgba(200, 200, 200, 1);*/
+}
+
+.weekly-plan-subject-topic {
+    background-color: rgba(255, 131, 46, 0.5);
+    color: midnightblue;
+    /*box-shadow: 4px 4px rgba(255, 131, 46, 0.6);*/
+}
+
+.weekly-plan-subject-teacher-covertime, .weekly-plan-subject-soft-start, .weekly-plan-subject-other, .weekly-plan-subject-golden-time {
+    background-color: rgba(171, 165, 188, 0.4);
+    color: midnightblue;
+    /*box-shadow: 4px 4px rgba(171, 165, 188, 0.5);*/
+}
+
+.weekly-plan-subject-health {
+    background-color: rgba(255, 240, 26, 1);
+    color: midnightblue;
+    /*box-shadow: 4px 4px rgba(240, 230, 26, 1);*/
+}
+
+.weekly-plan-subject-physical-education {
+    background-color: rgba(255, 238, 116, 1);
+    color: midnightblue;
+    /*box-shadow: 4px 4px rgba(240, 228, 106, 1);*/
+}
+
+.weekly-plan-subject-drama, .weekly-plan-subject-play, .weekly-plan-subject-music, .weekly-plan-subject-art {
+    background-color: rgba(203, 148, 0, 1);
+    color: midnightblue;
+    /*box-shadow: 4px 4px rgba(183, 128, 0, 1);*/
+}
+
+.weekly-plan-subject-assembly {
+    background-color: rgba(81, 93, 102, 0.5);
+    color: white;
+    /*box-shadow: 4px 4px rgba(81, 93, 102, 0.6);*/
+}
+
+.weekly-plan-subject-rme {
+    background-color: rgba(99, 5, 205, 0.3);
+    color: midnightblue;
+    /*box-shadow: 4px 4px rgba(85, 5, 175, 0.4);*/
+}
+
+.weekly-plan-subject-maths, .weekly-plan-subject-numeracy {
+    background-color: rgba(32, 211, 255, 0.65);
+    color: midnightblue;
+    /*box-shadow: 4px 4px rgba(32, 211, 255, 0.8);*/
+}
+
+.weekly-plan-subject-science, .weekly-plan-subject-ict {
+    background-color: rgba(57, 157, 250, 0.6);
+    color: midnightblue;
+    /*box-shadow: 4px 4px rgba(57, 157, 250, 0.72);*/
+}
+
+.weekly-plan-subject-geography, .weekly-plan-subject-history, .weekly-plan-subject-modern-languages {
+    background-color: rgba(237, 72, 167, 0.5);
+    color: midnightblue;
+    /*box-shadow: 4px 4px rgba(237, 72, 167, 0.6);*/
+}
+
+/* ================= */
+/*   Colours - END */
+/* ================= */

@@ -1,0 +1,22 @@
+@import duplicate.model.ClassDetails
+@import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.ClassTimetable
+@import models.timetoteach.classtimetable.SchoolDayTimes
+@import models.timetoteach.ui._
+@import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.sessions.SessionBoundaryType
+@import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.sessions.SessionName
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler,
+        userPictureUri: Option[String],
+        userFirstName: Option[String],
+        userFamilyName: Option[String],
+        classDetails: ClassDetails,
+        schoolDayTimes: SchoolDayTimes,
+        classTimetable: ClassTimetable
+)
+
+
+@_templateWeeklyPlanning(handler, userPictureUri, userFirstName, userFamilyName, classDetails, CLASS_WEEKLY_PLANS, Some(WEEKLY_VIEW)) {
+
+
+
+    @scalajs.html.scripts("client", routes.Assets.versioned(_).toString, name => getClass.getResource(s"/public/$name") != null)
+}

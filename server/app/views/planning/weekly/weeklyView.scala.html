@@ -35,7 +35,7 @@
 
         <div class="table-responsive-md">
             <table class="table table-sm table-light ">
-                <thead class="">
+                <thead class="bg-secondary text-light">
                     <tr>
                         <th scope="col" class="align-top text-center" width="100px"></th>
                         <th scope="col"><div class="col"></div></th>
@@ -62,13 +62,14 @@
                                 }
                             }
                         }
+                        <th scope="col"><div class="col"></div></th>
                     </tr>
                 </thead>
 
                 <tbody>
                 @for(dayOfTheWeek <- List("MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY")) {
                     <tr>
-                        <td class="align-middle text-center">
+                        <td class="align-middle text-center bg-secondary text-light">
                             <div class="weekly-plan-dayoftheweek">
                             @dayOfTheWeek.toLowerCase.capitalize
                             </div>
@@ -146,6 +147,9 @@
                                 }
                             }
                         }
+                        <div class="something">
+                            <td class="weekly-plan-spacing-column"><div class="col"></div></td>
+                        </div>
                     </tr>
                 }
                 </tbody>
