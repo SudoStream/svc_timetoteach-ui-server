@@ -23,7 +23,7 @@
     margin-right: 2px;
     background: white;
     padding: 2px;
-    border: 1px solid #c3c3c3;
+    border: 1px solid #d3d3d3;
     border-radius: 15%;
     font-size: xx-small;
     line-height: 5px;
@@ -38,19 +38,18 @@
 
 .weekly-plan-subject-extent {
     padding-bottom: 2rem;
-    background-color: rgba(225, 225, 230, 0.5);
+    background-color: rgba(230, 230, 230, 0.5);
 }
 
 .weekly-plan-subject-name {
     font-size: 0.9rem;
     font-weight: bold;
-    padding-top: 1rem;
+    padding-top: 0.2rem;
     color: black;
 }
 
 .weekly-plan-subject-additional-info {
-    font-size: 0.8rem;
-    padding-bottom: 1rem;
+    font-size: 1rem;
     font-weight: bold;
 }
 
@@ -58,14 +57,14 @@
     font-weight: bold;
     margin-top: 1rem;
     color: rgba(15, 15, 15, 0.82);
-    font-size: 0.9rem;
+    font-size: 0.8rem;
 }
 
 .weekly-plan-subject-benchmarks-header {
     font-weight: bold;
     margin-top: 1rem;
     color: rgba(15, 15, 15, 0.82);
-    font-size: 0.9rem;
+    font-size: 0.8rem;
 }
 
 .weekly-plan-subject-es-and-os {
@@ -87,7 +86,7 @@
 }
 
 .single-eo-or-benchmark {
-    margin-top: 0.6rem;
+    margin-top: 0.3rem;
 }
 
 .weekly-plan-dayoftheweek {

@@ -4,73 +4,73 @@
 
 .weekly-plan-subject-writing, .weekly-plan-subject-spelling, .weekly-plan-subject-reading, .weekly-plan-subject-hand-writing {
     border-top: 10px solid rgba(20, 171, 20, 0.5);
-    border-bottom: 10px solid rgba(20, 171, 20, 0.5);
+    /*border-bottom: 10px solid rgba(20, 171, 20, 0.5);*/
     color: midnightblue;
 }
 
 .weekly-plan-subject-empty {
     border-top: 10px solid rgba(211, 211, 211, 1);
-    border-bottom: 10px solid rgba(211, 211, 211, 1);
+    /*border-bottom: 10px solid rgba(211, 211, 211, 1);*/
     color: midnightblue;
 }
 
 .weekly-plan-subject-topic {
     border-top: 10px solid rgba(255, 131, 46, 0.5);
-    border-bottom: 10px solid rgba(255, 131, 46, 0.5);
+    /*border-bottom: 10px solid rgba(255, 131, 46, 0.5);*/
     color: midnightblue;
 }
 
 .weekly-plan-subject-teacher-covertime, .weekly-plan-subject-soft-start, .weekly-plan-subject-other, .weekly-plan-subject-golden-time {
     border-top: 10px solid rgba(171, 165, 188, 0.4);
-    border-bottom: 10px solid rgba(171, 165, 188, 0.4);
+    /*border-bottom: 10px solid rgba(171, 165, 188, 0.4);*/
     color: midnightblue;
 }
 
 .weekly-plan-subject-health {
     border-top: 10px solid rgba(255, 240, 26, 1);
-    border-bottom: 10px solid rgba(255, 240, 26, 1);
+    /*border-bottom: 10px solid rgba(255, 240, 26, 1);*/
     color: midnightblue;
 }
 
 .weekly-plan-subject-physical-education {
     border-top: 10px solid rgba(255, 238, 116, 1);
-    border-bottom: 10px solid rgba(255, 238, 116, 1);
+    /*border-bottom: 10px solid rgba(255, 238, 116, 1);*/
     color: midnightblue;
 }
 
 .weekly-plan-subject-drama, .weekly-plan-subject-play, .weekly-plan-subject-music, .weekly-plan-subject-art {
     border-top: 10px solid rgba(203, 148, 0, 1);
-    border-bottom: 10px solid rgba(203, 148, 0, 1);
+    /*border-bottom: 10px solid rgba(203, 148, 0, 1);*/
     color: midnightblue;
 }
 
 .weekly-plan-subject-assembly {
     border-top: 10px solid rgba(81, 93, 102, 0.5);
-    border-bottom: 10px solid rgba(81, 93, 102, 0.5);
+    /*border-bottom: 10px solid rgba(81, 93, 102, 0.5);*/
     color: white;
 }
 
 .weekly-plan-subject-rme {
     border-top: 10px solid rgba(99, 5, 205, 0.3);
-    border-bottom: 10px solid rgba(99, 5, 205, 0.3);
+    /*border-bottom: 10px solid rgba(99, 5, 205, 0.3);*/
     color: midnightblue;
 }
 
 .weekly-plan-subject-maths, .weekly-plan-subject-numeracy {
     border-top: 10px solid rgba(32, 211, 255, 0.65);
-    border-bottom: 10px solid rgba(32, 211, 255, 0.65);
+    /*border-bottom: 10px solid rgba(32, 211, 255, 0.65);*/
     color: midnightblue;
 }
 
 .weekly-plan-subject-science, .weekly-plan-subject-ict {
     border-top: 10px solid rgba(57, 157, 250, 0.6);
-    border-bottom: 10px solid rgba(57, 157, 250, 0.6);
+    /*border-bottom: 10px solid rgba(57, 157, 250, 0.6);*/
     color: midnightblue;
 }
 
 .weekly-plan-subject-geography, .weekly-plan-subject-history, .weekly-plan-subject-modern-languages {
     border-top: 10px solid rgba(237, 72, 167, 0.5);
-    border-bottom: 10px solid rgba(237, 72, 167, 0.5);
+    /*border-bottom: 10px solid rgba(237, 72, 167, 0.5);*/
     color:   midnightblue;
 }
 
