@@ -6,6 +6,10 @@ import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningAre
 case class ScottishCurriculumPlanningAreaWrapper(
                                                   value: ScottishCurriculumPlanningArea
                                                 ) {
+  val orderNumber: Int = {
+    niceSpecificValueIfPresent().getOrElse(niceValue()).charAt(0).toLower.toInt
+  }
+
   def isNotCompositeValue: Boolean = {
     !isCompositeValue
   }

@@ -115,6 +115,10 @@ h6 {
     letter-spacing: 0.1rem;
 }
 
+.ttt-container {
+    max-width: 95%;
+}
+
 .header-highlight {
     margin-top: 0.5rem;
     margin-bottom: 2rem;

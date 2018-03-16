@@ -1,5 +1,4 @@
 @import duplicate.model.ClassDetails
-@import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
 @import models.timetoteach.planning.ScottishCurriculumPlanningAreaWrapper
 @import models.timetoteach.planning.pdf.CurriculumAreaTermlyPlanForPdfWrapper
 @import models.timetoteach.ui._
@@ -26,7 +25,8 @@
 
 @_templateWeeklyPlanning(handler, userPictureUri, userFirstName, userFamilyName, classDetails, CLASS_WEEKLY_PLANS, Some(CREATE_WEEKLY_PLAN)) {
 
-    <div class="container">
+    <div class="container-fluid">
+
         <div class="create-weekly-plans-section">
             <h4 class="display-5 text-center create-weekly-plans-header">Create Weekly Plan</h4>
             <h5 class="text-center create-weekly-plans-sub-header text-info">
@@ -66,29 +66,102 @@
                         id="weekly-plans-tab-content_@planningArea.value.toString"
                         role="tabpanel" >
 
-                            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                            @for((termlyPlanForArea, indexTermlyPlanForArea) <- currentTermlyPlan.fullTermlyPlan(planningArea).sortBy(elem => elem.orderNumber).zipWithIndex) {
-                                @if(indexTermlyPlanForArea == 0 && indexPlanningArea == 0) {
-                                    <a class="nav-link active" data-toggle="pill" role="tab" aria-selected="true"
-                                    id="v-pills-tab-@termlyPlanForArea.planningArea.toString"
-                                    href="#v-pills-content-@termlyPlanForArea.planningArea.toString"
-                                    aria-controls="v-pills-content-@termlyPlanForArea.planningArea.toString">
-                                    @{
-                                        ScottishCurriculumPlanningAreaWrapper(termlyPlanForArea.planningArea).niceSubjectLevelValue()
-                                    }
-                                    </a>
-                                } else {
-                                    <a class="nav-link" data-toggle="pill" role="tab" aria-selected="false"
-                                    id="v-pills-tab-@termlyPlanForArea.planningArea.toString"
-                                    href="#v-pills-content-@termlyPlanForArea.planningArea.toString"
-                                    aria-controls="v-pills-content-@termlyPlanForArea.planningArea.toString" >
-                                    @{
-                                        ScottishCurriculumPlanningAreaWrapper(termlyPlanForArea.planningArea).niceSubjectLevelValue()
-                                    }
-                                    </a>
+                            <div class="row">
+                                <div class="col-md-3 col-lg-2">
+                                    <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                                    @for((termlyPlanForArea, indexTermlyPlanForArea) <- currentTermlyPlan.fullTermlyPlan(planningArea).sortBy(elem => elem.orderNumber).zipWithIndex) {
+                                        @if(indexTermlyPlanForArea == 0 && indexPlanningArea == 0) {
+                                            <a class="nav-link active" data-toggle="pill" role="tab" aria-selected="true"
+                                            id="v-pills-tab-@termlyPlanForArea.planningArea.toString"
+                                            href="#v-pills-content-@termlyPlanForArea.planningArea.toString"
+                                            aria-controls="v-pills-content-@termlyPlanForArea.planningArea.toString">
+                                            @{
+                                                ScottishCurriculumPlanningAreaWrapper(termlyPlanForArea.planningArea).niceSubjectLevelValue()
+                                            }
+                                            </a>
+                                        } else {
+                                            <a class="nav-link" data-toggle="pill" role="tab" aria-selected="false"
+                                            id="v-pills-tab-@termlyPlanForArea.planningArea.toString"
+                                            href="#v-pills-content-@termlyPlanForArea.planningArea.toString"
+                                            aria-controls="v-pills-content-@termlyPlanForArea.planningArea.toString" >
+                                            @{
+                                                ScottishCurriculumPlanningAreaWrapper(termlyPlanForArea.planningArea).niceSubjectLevelValue()
+                                            }
+                                            </a>
 
-                                }
-                            }
+                                        }
+                                    }
+                                    </div>
+                                </div>
+
+                                <div class="col-md-9 col-lg-10">
+                                    <div class="tab-content" id="v-pills-tabContent">
+                                    @for((termlyPlanForArea, indexTermlyPlanForArea) <- currentTermlyPlan.fullTermlyPlan(planningArea).sortBy(elem => elem.orderNumber).zipWithIndex) {
+
+                                        @if(indexTermlyPlanForArea == 0) {
+                                            @if(ScottishCurriculumPlanningAreaWrapper(termlyPlanForArea.planningArea).planAtGroupLevel) {
+                                                <div class="tab-pane fade show active" role="tabpanel"
+                                                id="v-pills-content-@termlyPlanForArea.planningArea.toString-@termlyPlanForArea.maybeGroup.get.groupName.name"
+                                                aria-labelledby="v-pills-tab-@termlyPlanForArea.planningArea.toString-@termlyPlanForArea.maybeGroup.get.groupName.name">
+                                                    in view -
+                                                    @{
+                                                        termlyPlanForArea.maybeGroup match {
+                                                            case Some(group) => s"${group.groupName.name}"
+                                                            case None => ""
+                                                        }
+                                                    }
+                                                    <br>
+                                                    <small>
+                                                    @{
+                                                        termlyPlanForArea.maybeGroup match {
+                                                            case Some(group) => s" (${group.groupLevel.value.replace("Level", " Level")})"
+                                                            case None => ""
+                                                        }
+                                                    }
+                                                    </small>
+                                                </div>
+                                            } else {
+                                                <div class="tab-pane fade show active" role="tabpanel"
+                                                id="v-pills-content-@termlyPlanForArea.planningArea.toString"
+                                                aria-labelledby="v-pills-tab-@termlyPlanForArea.planningArea.toString">
+                                                    in view - @termlyPlanForArea.planningArea.toString
+                                                </div>
+                                            }
+                                        } else {
+                                            @if(ScottishCurriculumPlanningAreaWrapper(termlyPlanForArea.planningArea).planAtGroupLevel) {
+                                                <div class="tab-pane fade" role="tabpanel"
+                                                id="v-pills-content-@termlyPlanForArea.planningArea.toString-@termlyPlanForArea.maybeGroup.get.groupName.name"
+                                                aria-labelledby="v-pills-tab-@termlyPlanForArea.planningArea.toString-@termlyPlanForArea.maybeGroup.get.groupName.name">
+                                                    not in view -
+                                                    @{
+                                                        termlyPlanForArea.maybeGroup match {
+                                                            case Some(group) => s"${group.groupName.name}"
+                                                            case None => ""
+                                                        }
+                                                    }
+                                                    <br>
+                                                    <small>
+                                                    @{
+                                                        termlyPlanForArea.maybeGroup match {
+                                                            case Some(group) => s" (${group.groupLevel.value.replace("Level", " Level")})"
+                                                            case None => ""
+                                                        }
+                                                    }
+                                                    </small>
+                                                </div>
+                                            } else {
+                                                <div class="tab-pane fade" role="tabpanel"
+                                                id="v-pills-content-@termlyPlanForArea.planningArea.toString"
+                                                aria-labelledby="v-pills-tab-@termlyPlanForArea.planningArea.toString">
+                                                    not in view - @termlyPlanForArea.planningArea.toString
+                                                </div>
+                                            }
+                                        }
+
+
+                                    }
+                                    </div>
+                                </div>
                             </div>
 
 
@@ -98,69 +171,147 @@
                         id="weekly-plans-tab-content_@planningArea.value.toString"
                         role="tabpanel" >
 
-                            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                            @for((termlyPlanForArea, indexTermlyPlanForArea) <- currentTermlyPlan.fullTermlyPlan(planningArea).sortBy(elem => elem.orderNumber).zipWithIndex) {
-                                @if(indexTermlyPlanForArea == 0 ) {
-                                    @if(ScottishCurriculumPlanningAreaWrapper(termlyPlanForArea.planningArea).planAtGroupLevel) {
-                                        <a class="nav-link active" data-toggle="pill" role="tab" aria-selected="false"
-                                        id="v-pills-tab-@termlyPlanForArea.planningArea.toString"
-                                        href="#v-pills-content-@termlyPlanForArea.planningArea.toString"
-                                        aria-controls="v-pills-content-@termlyPlanForArea.planningArea.toString">
-                                            @{
-                                                termlyPlanForArea.maybeGroup match {
-                                                    case Some(group) => s"${group.groupName.name}"
-                                                    case None => ""
+                            <div class="row">
+                                <div class="col-md-3 col-lg-2">
+                                    <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                                    @for((termlyPlanForArea, indexTermlyPlanForArea) <- currentTermlyPlan.fullTermlyPlan(planningArea).sortBy(elem => elem.orderNumber).zipWithIndex) {
+                                        @if(indexTermlyPlanForArea == 0) {
+                                            @if(ScottishCurriculumPlanningAreaWrapper(termlyPlanForArea.planningArea).planAtGroupLevel) {
+                                                <a class="nav-link active" data-toggle="pill" role="tab" aria-selected="false"
+                                                id="v-pills-tab-@termlyPlanForArea.planningArea.toString-@termlyPlanForArea.maybeGroup.get.groupName.name"
+                                                href="#v-pills-content-@termlyPlanForArea.planningArea.toString-@termlyPlanForArea.maybeGroup.get.groupName.name"
+                                                aria-controls="v-pills-content-@termlyPlanForArea.planningArea.toString-@termlyPlanForArea.maybeGroup.get.groupName.name">
+                                                    @{
+                                                        termlyPlanForArea.maybeGroup match {
+                                                            case Some(group) => s"${group.groupName.name}"
+                                                            case None => ""
+                                                        }
+                                                    }
+                                                    <br>
+                                                    <small>
+                                                    @{
+                                                        termlyPlanForArea.maybeGroup match {
+                                                            case Some(group) => s" (${group.groupLevel.value.replace("Level", " Level")})"
+                                                            case None => ""
+                                                        }
+                                                    }
+                                                    </small>
+                                                </a>
+                                            } else {
+                                                <a class="nav-link active" data-toggle="pill" role="tab" aria-selected="false"
+                                                id="v-pills-tab-@termlyPlanForArea.planningArea.toString"
+                                                href="#v-pills-content-@termlyPlanForArea.planningArea.toString"
+                                                aria-controls="v-pills-content-@termlyPlanForArea.planningArea.toString">
+                                                @{
+                                                    ScottishCurriculumPlanningAreaWrapper(termlyPlanForArea.planningArea).niceSubjectLevelValue()
                                                 }
+                                                </a>
                                             }
-                                            @{
-                                                termlyPlanForArea.maybeGroup match {
-                                                    case Some(group) => s" (${group.groupLevel.value.replace("Level", " Level")})"
-                                                    case None => ""
+                                        } else {
+                                            @if(ScottishCurriculumPlanningAreaWrapper(termlyPlanForArea.planningArea).planAtGroupLevel) {
+                                                <a class="nav-link" data-toggle="pill" role="tab" aria-selected="false"
+                                                id="v-pills-tab-@termlyPlanForArea.planningArea.toString-@termlyPlanForArea.maybeGroup.get.groupName.name"
+                                                href="#v-pills-content-@termlyPlanForArea.planningArea.toString-@termlyPlanForArea.maybeGroup.get.groupName.name"
+                                                aria-controls="v-pills-content-@termlyPlanForArea.planningArea.toString-@termlyPlanForArea.maybeGroup.get.groupName.name" >
+                                                    @{
+                                                        termlyPlanForArea.maybeGroup match {
+                                                            case Some(group) => s"${group.groupName.name}"
+                                                            case None => ""
+                                                        }
+                                                    }
+                                                    <br>
+                                                    <small>
+                                                    @{
+                                                        termlyPlanForArea.maybeGroup match {
+                                                            case Some(group) => s" (${group.groupLevel.value.replace("Level", " Level")})"
+                                                            case None => ""
+                                                        }
+                                                    }
+                                                    </small>
+                                                </a>
+                                            } else {
+                                                <a class="nav-link" data-toggle="pill" role="tab" aria-selected="false"
+                                                id="v-pills-tab-@termlyPlanForArea.planningArea.toString"
+                                                href="#v-pills-content-@termlyPlanForArea.planningArea.toString"
+                                                aria-controls="v-pills-content-@termlyPlanForArea.planningArea.toString" >
+                                                @{
+                                                    ScottishCurriculumPlanningAreaWrapper(termlyPlanForArea.planningArea).niceSubjectLevelValue()
                                                 }
+                                                </a>
                                             }
-                                        </a>
-                                    } else {
-                                        <a class="nav-link active" data-toggle="pill" role="tab" aria-selected="false"
-                                        id="v-pills-tab-@termlyPlanForArea.planningArea.toString"
-                                        href="#v-pills-content-@termlyPlanForArea.planningArea.toString"
-                                        aria-controls="v-pills-content-@termlyPlanForArea.planningArea.toString">
-                                        @{
-                                            ScottishCurriculumPlanningAreaWrapper(termlyPlanForArea.planningArea).niceSubjectLevelValue()
-                                        }
-                                        </a>
-                                    }
-                                } else {
-                                    @if(ScottishCurriculumPlanningAreaWrapper(termlyPlanForArea.planningArea).planAtGroupLevel) {
-                                        <a class="nav-link" data-toggle="pill" role="tab" aria-selected="false"
-                                        id="v-pills-tab-@termlyPlanForArea.planningArea.toString"
-                                        href="#v-pills-content-@termlyPlanForArea.planningArea.toString"
-                                        aria-controls="v-pills-content-@termlyPlanForArea.planningArea.toString" >
-                                            @{
-                                                termlyPlanForArea.maybeGroup match {
-                                                    case Some(group) => s"${group.groupName.name}"
-                                                    case None => ""
-                                                }
-                                            }
-                                            @{
-                                                termlyPlanForArea.maybeGroup match {
-                                                    case Some(group) => s" (${group.groupLevel.value.replace("Level", " Level")})"
-                                                    case None => ""
-                                                }
-                                            }
-                                        </a>
-                                    } else {
-                                        <a class="nav-link" data-toggle="pill" role="tab" aria-selected="false"
-                                        id="v-pills-tab-@termlyPlanForArea.planningArea.toString"
-                                        href="#v-pills-content-@termlyPlanForArea.planningArea.toString"
-                                        aria-controls="v-pills-content-@termlyPlanForArea.planningArea.toString" >
-                                        @{
-                                            ScottishCurriculumPlanningAreaWrapper(termlyPlanForArea.planningArea).niceSubjectLevelValue()
-                                        }
-                                        </a>
-                                    }
 
-                                }
-                            }
+                                        }
+                                    }
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-9 col-lg-10">
+                                    <div class="tab-content" id="v-pills-tabContent">
+                                    @for((termlyPlanForArea, indexTermlyPlanForArea) <- currentTermlyPlan.fullTermlyPlan(planningArea).sortBy(elem => elem.orderNumber).zipWithIndex) {
+                                        @if(indexTermlyPlanForArea == 0) {
+                                            @if(ScottishCurriculumPlanningAreaWrapper(termlyPlanForArea.planningArea).planAtGroupLevel) {
+                                                <div class="tab-pane fade show active" role="tabpanel"
+                                                id="v-pills-content-@termlyPlanForArea.planningArea.toString-@termlyPlanForArea.maybeGroup.get.groupName.name"
+                                                aria-labelledby="v-pills-tab-@termlyPlanForArea.planningArea.toString-@termlyPlanForArea.maybeGroup.get.groupName.name">
+                                                    in view -
+                                                    @{
+                                                        termlyPlanForArea.maybeGroup match {
+                                                            case Some(group) => s"${group.groupName.name}"
+                                                            case None => ""
+                                                        }
+                                                    }
+                                                    <br>
+                                                    <small>
+                                                    @{
+                                                        termlyPlanForArea.maybeGroup match {
+                                                            case Some(group) => s" (${group.groupLevel.value.replace("Level", " Level")})"
+                                                            case None => ""
+                                                        }
+                                                    }
+                                                    </small>
+                                                </div>
+                                            } else {
+                                                <div class="tab-pane fade show active" role="tabpanel"
+                                                id="v-pills-content-@termlyPlanForArea.planningArea.toString"
+                                                aria-labelledby="v-pills-tab-@termlyPlanForArea.planningArea.toString">
+                                                    in view - @termlyPlanForArea.planningArea.toString
+                                                </div>
+                                            }
+                                        } else {
+                                            @if(ScottishCurriculumPlanningAreaWrapper(termlyPlanForArea.planningArea).planAtGroupLevel) {
+                                                <div class="tab-pane fade" role="tabpanel"
+                                                id="v-pills-content-@termlyPlanForArea.planningArea.toString-@termlyPlanForArea.maybeGroup.get.groupName.name"
+                                                aria-labelledby="v-pills-tab-@termlyPlanForArea.planningArea.toString-@termlyPlanForArea.maybeGroup.get.groupName.name">
+                                                    not in view -
+                                                    @{
+                                                        termlyPlanForArea.maybeGroup match {
+                                                            case Some(group) => s"${group.groupName.name}"
+                                                            case None => ""
+                                                        }
+                                                    }
+                                                    <br>
+                                                    <small>
+                                                    @{
+                                                        termlyPlanForArea.maybeGroup match {
+                                                            case Some(group) => s" (${group.groupLevel.value.replace("Level", " Level")})"
+                                                            case None => ""
+                                                        }
+                                                    }
+                                                    </small>
+                                                </div>
+                                            } else {
+                                                <div class="tab-pane fade" role="tabpanel"
+                                                id="v-pills-content-@termlyPlanForArea.planningArea.toString"
+                                                aria-labelledby="v-pills-tab-@termlyPlanForArea.planningArea.toString">
+                                                    not in view - @termlyPlanForArea.planningArea.toString
+                                                </div>
+                                            }
+                                        }
+                                    }
+                                    </div>
+                                </div>
+
                             </div>
 
 
@@ -169,11 +320,13 @@
                 }
                 </div>
 
+
             </div>
 
         </div>
-    </div>
 
+
+    </div>
 
     @scalajs.html.scripts("client", routes.Assets.versioned(_).toString, name => getClass.getResource(s"/public/$name") != null)
 }

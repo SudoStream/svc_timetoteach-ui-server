@@ -26,6 +26,6 @@ case class CurriculumAreaTermlyPlanForPdf(
 {
   val orderNumber = maybeGroup match {
     case Some(group) => group.groupLevel.order
-    case None => 0
+    case None => ScottishCurriculumPlanningAreaWrapper(planningArea).orderNumber
   }
 }
