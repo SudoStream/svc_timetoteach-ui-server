@@ -23,6 +23,23 @@
 @{s"""${if(index == 0) "true" else "false"} """.trim}
 }
 
+
+@buildEsAndOsSection(plan: models.timetoteach.planning.pdf.CurriculumAreaTermlyPlanForPdf) = {
+    <div class="create-weekly-plans-es-os-and-benchmarks-window">
+    @for(esOsBenchmark <- plan.eAndOsWithBenchmarks) {
+        <p>@esOsBenchmark.sectionName</p>
+        <p>@esOsBenchmark.subsectionName</p>
+        @for(code <- esOsBenchmark.eAndOCodes) {
+            <p>@code</p>
+        }
+        @for(benchmark <- esOsBenchmark.benchmarks) {
+            <p>@benchmark</p>
+        }
+    }
+    </div>
+}
+
+
 @_templateWeeklyPlanning(handler, userPictureUri, userFirstName, userFamilyName, classDetails, CLASS_WEEKLY_PLANS, Some(CREATE_WEEKLY_PLAN)) {
 
     <div class="container-fluid">
@@ -103,28 +120,13 @@
                                                 <div class="tab-pane fade show active" role="tabpanel"
                                                 id="v-pills-content-@termlyPlanForArea.planningArea.toString-@termlyPlanForArea.maybeGroup.get.groupName.name"
                                                 aria-labelledby="v-pills-tab-@termlyPlanForArea.planningArea.toString-@termlyPlanForArea.maybeGroup.get.groupName.name">
-                                                    in view -
-                                                    @{
-                                                        termlyPlanForArea.maybeGroup match {
-                                                            case Some(group) => s"${group.groupName.name}"
-                                                            case None => ""
-                                                        }
-                                                    }
-                                                    <br>
-                                                    <small>
-                                                    @{
-                                                        termlyPlanForArea.maybeGroup match {
-                                                            case Some(group) => s" (${group.groupLevel.value.replace("Level", " Level")})"
-                                                            case None => ""
-                                                        }
-                                                    }
-                                                    </small>
+                                                    @buildEsAndOsSection(termlyPlanForArea)
                                                 </div>
                                             } else {
                                                 <div class="tab-pane fade show active" role="tabpanel"
                                                 id="v-pills-content-@termlyPlanForArea.planningArea.toString"
                                                 aria-labelledby="v-pills-tab-@termlyPlanForArea.planningArea.toString">
-                                                    in view - @termlyPlanForArea.planningArea.toString
+                                                @buildEsAndOsSection(termlyPlanForArea)
                                                 </div>
                                             }
                                         } else {
@@ -132,33 +134,16 @@
                                                 <div class="tab-pane fade" role="tabpanel"
                                                 id="v-pills-content-@termlyPlanForArea.planningArea.toString-@termlyPlanForArea.maybeGroup.get.groupName.name"
                                                 aria-labelledby="v-pills-tab-@termlyPlanForArea.planningArea.toString-@termlyPlanForArea.maybeGroup.get.groupName.name">
-                                                    not in view -
-                                                    @{
-                                                        termlyPlanForArea.maybeGroup match {
-                                                            case Some(group) => s"${group.groupName.name}"
-                                                            case None => ""
-                                                        }
-                                                    }
-                                                    <br>
-                                                    <small>
-                                                    @{
-                                                        termlyPlanForArea.maybeGroup match {
-                                                            case Some(group) => s" (${group.groupLevel.value.replace("Level", " Level")})"
-                                                            case None => ""
-                                                        }
-                                                    }
-                                                    </small>
+                                                @buildEsAndOsSection(termlyPlanForArea)
                                                 </div>
                                             } else {
                                                 <div class="tab-pane fade" role="tabpanel"
                                                 id="v-pills-content-@termlyPlanForArea.planningArea.toString"
                                                 aria-labelledby="v-pills-tab-@termlyPlanForArea.planningArea.toString">
-                                                    not in view - @termlyPlanForArea.planningArea.toString
+                                                @buildEsAndOsSection(termlyPlanForArea)
                                                 </div>
                                             }
                                         }
-
-
                                     }
                                     </div>
                                 </div>
@@ -254,28 +239,13 @@
                                                 <div class="tab-pane fade show active" role="tabpanel"
                                                 id="v-pills-content-@termlyPlanForArea.planningArea.toString-@termlyPlanForArea.maybeGroup.get.groupName.name"
                                                 aria-labelledby="v-pills-tab-@termlyPlanForArea.planningArea.toString-@termlyPlanForArea.maybeGroup.get.groupName.name">
-                                                    in view -
-                                                    @{
-                                                        termlyPlanForArea.maybeGroup match {
-                                                            case Some(group) => s"${group.groupName.name}"
-                                                            case None => ""
-                                                        }
-                                                    }
-                                                    <br>
-                                                    <small>
-                                                    @{
-                                                        termlyPlanForArea.maybeGroup match {
-                                                            case Some(group) => s" (${group.groupLevel.value.replace("Level", " Level")})"
-                                                            case None => ""
-                                                        }
-                                                    }
-                                                    </small>
+                                                @buildEsAndOsSection(termlyPlanForArea)
                                                 </div>
                                             } else {
                                                 <div class="tab-pane fade show active" role="tabpanel"
                                                 id="v-pills-content-@termlyPlanForArea.planningArea.toString"
                                                 aria-labelledby="v-pills-tab-@termlyPlanForArea.planningArea.toString">
-                                                    in view - @termlyPlanForArea.planningArea.toString
+                                                @buildEsAndOsSection(termlyPlanForArea)
                                                 </div>
                                             }
                                         } else {
@@ -283,28 +253,14 @@
                                                 <div class="tab-pane fade" role="tabpanel"
                                                 id="v-pills-content-@termlyPlanForArea.planningArea.toString-@termlyPlanForArea.maybeGroup.get.groupName.name"
                                                 aria-labelledby="v-pills-tab-@termlyPlanForArea.planningArea.toString-@termlyPlanForArea.maybeGroup.get.groupName.name">
-                                                    not in view -
-                                                    @{
-                                                        termlyPlanForArea.maybeGroup match {
-                                                            case Some(group) => s"${group.groupName.name}"
-                                                            case None => ""
-                                                        }
-                                                    }
-                                                    <br>
-                                                    <small>
-                                                    @{
-                                                        termlyPlanForArea.maybeGroup match {
-                                                            case Some(group) => s" (${group.groupLevel.value.replace("Level", " Level")})"
-                                                            case None => ""
-                                                        }
-                                                    }
+                                                    @buildEsAndOsSection(termlyPlanForArea)
                                                     </small>
                                                 </div>
                                             } else {
                                                 <div class="tab-pane fade" role="tabpanel"
                                                 id="v-pills-content-@termlyPlanForArea.planningArea.toString"
                                                 aria-labelledby="v-pills-tab-@termlyPlanForArea.planningArea.toString">
-                                                    not in view - @termlyPlanForArea.planningArea.toString
+                                                @buildEsAndOsSection(termlyPlanForArea)
                                                 </div>
                                             }
                                         }
