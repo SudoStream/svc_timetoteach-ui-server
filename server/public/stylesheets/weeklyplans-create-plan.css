@@ -44,3 +44,12 @@
 .create-weekly-plans-es-os-and-benchmarks-window {
     padding: 1rem;
 }
+
+#create-weekly-plans-outer-tab {
+    padding: 1rem;
+    background-color: white;
+    border-left: 1px solid lightgrey;
+    border-right: 1px solid lightgrey;
+    border-bottom: 1px solid lightgrey;
+
+}
