@@ -1,3 +1,4 @@
+@import curriculum.scotland.EsOsAndBenchmarksBuilderImpl
 @import duplicate.model.ClassDetails
 @import models.timetoteach.planning.ScottishCurriculumPlanningAreaWrapper
 @import models.timetoteach.planning.pdf.CurriculumAreaTermlyPlanForPdfWrapper
@@ -26,15 +27,28 @@
 
 @buildEsAndOsSection(plan: models.timetoteach.planning.pdf.CurriculumAreaTermlyPlanForPdf) = {
     <div class="create-weekly-plans-es-os-and-benchmarks-window">
-    @for(esOsBenchmark <- plan.eAndOsWithBenchmarks) {
-        <p>@esOsBenchmark.sectionName</p>
-        <p>@esOsBenchmark.subsectionName</p>
-        @for(code <- esOsBenchmark.eAndOCodes) {
-            <p>@code</p>
+    @for(esOsWithBenchmarks <- plan.eAndOsWithBenchmarks) {
+        <div class="create-weekly-plans-subsection text-info">
+        @if(esOsWithBenchmarks.subsectionName != EsOsAndBenchmarksBuilderImpl.NO_SUBSECTION_NAME) {
+            @esOsWithBenchmarks.subsectionName
+        } else {
+            @{esOsWithBenchmarks.sectionName}
         }
-        @for(benchmark <- esOsBenchmark.benchmarks) {
-            <p>@benchmark</p>
+        </div>
+
+        <div class="create-weekly-plans-es-and-os-section">
+        @for(code <- esOsWithBenchmarks.eAndOCodes) {
+            <div class="create-weekly-plans-es-and-os-line">
+                <span class="create-weekly-plans-es-and-os-code">@code</span>
+            </div>
         }
+        </div>
+
+        <div class="create-weekly-plans-benchmarks-section">
+        @for(benchmark <- esOsWithBenchmarks.benchmarks) {
+            <div class="create-weekly-plans-benchmark-line">@benchmark</div>
+        }
+        </div>
     }
     </div>
 }

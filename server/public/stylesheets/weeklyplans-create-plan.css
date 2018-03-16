@@ -42,7 +42,32 @@
 }
 
 .create-weekly-plans-es-os-and-benchmarks-window {
-    padding: 1rem;
+    padding-left: 1rem;
+}
+
+.create-weekly-plans-subsection {
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.create-weekly-plans-es-and-os-code {
+    font-weight: bold;
+}
+
+.create-weekly-plans-es-and-os-line {
+    margin-top: 0.3rem;
+    margin-bottom: 0.3rem;
+}
+
+.create-weekly-plans-es-and-os-section {
+    margin-bottom: 1.2rem;
+}
+.create-weekly-plans-benchmark-line {
+    margin-top: 0.3rem;
+    margin-bottom: 0.3rem;
+}
+.create-weekly-plans-benchmarks-section {
+    margin-bottom: 1.2rem;
 }
 
 #create-weekly-plans-outer-tab {
