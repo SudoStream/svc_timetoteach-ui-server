@@ -108,6 +108,7 @@ class WeeklyPlanningController @Inject()(
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(tttUserId)
     val eventualMaybeCurriculumSelection = planningReaderService.
       currentTermlyCurriculumSelection(tttUserId, ClassId(classId), termService.currentSchoolTerm())
+    val eventualEsAndOsToDetailMap = esAndOsReader.esAndOsCodeToEsAndOsDetailMap()
 
     for {
       classes <- eventualClasses
@@ -123,13 +124,15 @@ class WeeklyPlanningController @Inject()(
       classTermlyPlan <- eventualClassTermlyPlan
       classTermlyPlanPdf = CurriculumAreaTermlyPlanForPdfBuilder.buildCurriculumAreaTermlyPlanForPdf(classTermlyPlan, classDetails)
 
+      esAndOsToDetailMap <- eventualEsAndOsToDetailMap
     } yield Ok(views.html.planning.weekly.createPlanForTheWeek(
       new MyDeadboltHandler(userReader),
       userPictureUri,
       userFirstName,
       userFamilyName,
       classDetails,
-      classTermlyPlanPdf
+      classTermlyPlanPdf,
+      esAndOsToDetailMap
     ))
 
   }

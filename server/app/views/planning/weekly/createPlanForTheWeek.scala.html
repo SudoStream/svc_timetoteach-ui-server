@@ -9,7 +9,8 @@
         userFirstName: Option[String],
         userFamilyName: Option[String],
         classDetails: ClassDetails,
-        currentTermlyPlan: CurriculumAreaTermlyPlanForPdfWrapper
+        currentTermlyPlan: CurriculumAreaTermlyPlanForPdfWrapper,
+        esAndOsCodeToDetailMap: Map[String, duplicate.model.esandos.EandO]
 )
 
 @tabContentActiveOrNot(index: Int) = {
@@ -28,26 +29,68 @@
 @buildEsAndOsSection(plan: models.timetoteach.planning.pdf.CurriculumAreaTermlyPlanForPdf) = {
     <div class="create-weekly-plans-es-os-and-benchmarks-window">
     @for(esOsWithBenchmarks <- plan.eAndOsWithBenchmarks) {
-        <div class="create-weekly-plans-subsection text-info">
-        @if(esOsWithBenchmarks.subsectionName != EsOsAndBenchmarksBuilderImpl.NO_SUBSECTION_NAME) {
-            @esOsWithBenchmarks.subsectionName
-        } else {
-            @{esOsWithBenchmarks.sectionName}
-        }
-        </div>
-
-        <div class="create-weekly-plans-es-and-os-section">
-        @for(code <- esOsWithBenchmarks.eAndOCodes) {
-            <div class="create-weekly-plans-es-and-os-line">
-                <span class="create-weekly-plans-es-and-os-code">@code</span>
+        <div class="create-weekly-plans-subsection">
+            <div class="create-weekly-plans-subsection-header text-primary">
+            @if(esOsWithBenchmarks.subsectionName != EsOsAndBenchmarksBuilderImpl.NO_SUBSECTION_NAME) {
+                @esOsWithBenchmarks.subsectionName
+            } else {
+                @{
+                    esOsWithBenchmarks.sectionName
+                }
+            }
             </div>
-        }
-        </div>
 
-        <div class="create-weekly-plans-benchmarks-section">
-        @for(benchmark <- esOsWithBenchmarks.benchmarks) {
-            <div class="create-weekly-plans-benchmark-line">@benchmark</div>
-        }
+            <div class="create-weekly-plans-es-and-os-section">
+                <div class="create-weekly-plans-es-and-os-section-header text-info text-center">
+                Es & Os
+                </div>
+                @for(code <- esOsWithBenchmarks.eAndOCodes) {
+                    <div class="create-weekly-plans-es-and-os-line">
+                        <div class="row">
+                            <div class="col-md-1 col-lg-1 col-xl-1"></div>
+                            <div class="col-md-3 col-lg-2 col-xl-2 create-weekly-plans-es-and-os-code">@code</div>
+                            <div class="col-md-6 col-lg-7 col-xl-7">
+                            @for(sentence <- esAndOsCodeToDetailMap(code).eAndOSentences) {
+                                <div class="create-weekly-plans-es-and-os-sentence">@sentence.value</div>
+                                @if(sentence.bulletPoints.nonEmpty) {
+                                    <ul>
+                                    }
+                                @for(bullet <- sentence.bulletPoints) {
+                                    @if(bullet.value.nonEmpty) {
+                                        <li>@bullet.value</li>
+                                    }
+                                }
+                                @if(sentence.bulletPoints.nonEmpty) {
+                                </ul>
+                                }
+                            }
+                            </div>
+                            <div class="col-md-1 col-lg-1 col-xl-1">
+                                <span class="badge badge-danger">Not Started</span>
+                            </div>
+                            <div class="col-md-1 col-lg-1 col-xl-1"></div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <div class="create-weekly-plans-benchmarks-section">
+                <div class="create-weekly-plans-es-and-os-section-header text-info text-center">
+                Benchmarks
+                </div>
+                @for(benchmark <- esOsWithBenchmarks.benchmarks) {
+                    <div class="row">
+                        <div class="col-md-1 col-lg-1 col-xl-1"></div>
+                        <div class="col-md-9 col-lg-9 col-xl-9">
+                            <div class="create-weekly-plans-benchmark-line">@benchmark</div>
+                        </div>
+                        <div class="col-md-1 col-lg-1 col-xl-1">
+                            <span class="badge badge-danger">Not Started</span>
+                        </div>
+                        <div class="col-md-1 col-lg-1 col-xl-1"></div>
+                    </div>
+                }
+            </div>
         </div>
     }
     </div>
@@ -134,7 +177,7 @@
                                                 <div class="tab-pane fade show active" role="tabpanel"
                                                 id="v-pills-content-@termlyPlanForArea.planningArea.toString-@termlyPlanForArea.maybeGroup.get.groupName.name"
                                                 aria-labelledby="v-pills-tab-@termlyPlanForArea.planningArea.toString-@termlyPlanForArea.maybeGroup.get.groupName.name">
-                                                    @buildEsAndOsSection(termlyPlanForArea)
+                                                @buildEsAndOsSection(termlyPlanForArea)
                                                 </div>
                                             } else {
                                                 <div class="tab-pane fade show active" role="tabpanel"
@@ -268,7 +311,7 @@
                                                 id="v-pills-content-@termlyPlanForArea.planningArea.toString-@termlyPlanForArea.maybeGroup.get.groupName.name"
                                                 aria-labelledby="v-pills-tab-@termlyPlanForArea.planningArea.toString-@termlyPlanForArea.maybeGroup.get.groupName.name">
                                                     @buildEsAndOsSection(termlyPlanForArea)
-                                                    </small>
+                                                </small>
                                                 </div>
                                             } else {
                                                 <div class="tab-pane fade" role="tabpanel"
