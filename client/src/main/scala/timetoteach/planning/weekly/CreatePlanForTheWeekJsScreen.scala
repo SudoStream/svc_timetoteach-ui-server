@@ -17,6 +17,7 @@ object CreatePlanForTheWeekJsScreen {
   private var eAndORowBorderRadius: Option[String] = None
 
   private var currentlySelectedPlanningArea: Option[String] = None
+  private var currentlySelectedPlanningAreaNice: Option[String] = None
 
   def loadJavascript(): Unit = {
     global.console.log("Loading Create Plan For The Week Javascript")
@@ -37,11 +38,12 @@ object CreatePlanForTheWeekJsScreen {
       buttonElement.addEventListener("click", (e: dom.Event) => {
         currentlySelectedPlanningArea = None
         val planningArea = buttonElement.getAttribute("data-planning-area")
+        val planningAreaNice = buttonElement.getAttribute("data-planning-area-nice")
+
         currentlySelectedPlanningArea = Some(planningArea)
+        currentlySelectedPlanningAreaNice = Some(planningAreaNice)
 
-
-
-        dom.document.getElementById("create-weekly-plans-lesson-subject-name").innerHTML = currentlySelectedPlanningArea.getOrElse("")
+        dom.document.getElementById("create-weekly-plans-lesson-subject-name").innerHTML = currentlySelectedPlanningAreaNice.getOrElse("")
 
         val $ = js.Dynamic.global.$
         $("#create-weekly-plans-lesson-modal").modal("show", "backdrop: static", "keyboard : false")

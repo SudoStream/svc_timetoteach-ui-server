@@ -125,6 +125,10 @@ class WeeklyPlanningController @Inject()(
       classTermlyPlanPdf = CurriculumAreaTermlyPlanForPdfBuilder.buildCurriculumAreaTermlyPlanForPdf(classTermlyPlan, classDetails)
 
       esAndOsToDetailMap <- eventualEsAndOsToDetailMap
+      avroClassTimetableFuture = classTimetableReaderProxy.readAvroClassTimetable(tttUserId, WwwClassId(classDetails.id.id))
+      maybeAvroClassTimetable <- avroClassTimetableFuture
+      if maybeAvroClassTimetable.isDefined
+
     } yield Ok(views.html.planning.weekly.createPlanForTheWeek(
       new MyDeadboltHandler(userReader),
       userPictureUri,
@@ -132,7 +136,8 @@ class WeeklyPlanningController @Inject()(
       userFamilyName,
       classDetails,
       classTermlyPlanPdf,
-      esAndOsToDetailMap
+      esAndOsToDetailMap,
+      maybeAvroClassTimetable.get
     ))
 
   }
