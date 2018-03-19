@@ -48,25 +48,33 @@
                     <div class="create-weekly-plans-es-and-os-line">
                         <div class="row">
                             <div class="col-md-1 col-lg-1 col-xl-1"></div>
-                            <div class="col-md-3 col-lg-2 col-xl-2 create-weekly-plans-es-and-os-code">@code</div>
-                            <div class="col-md-6 col-lg-7 col-xl-7">
-                            @for(sentence <- esAndOsCodeToDetailMap(code).eAndOSentences) {
-                                <div class="create-weekly-plans-es-and-os-sentence">@sentence.value</div>
-                                @if(sentence.bulletPoints.nonEmpty) {
-                                    <ul>
+                            <div class="col-md-10 col-lg-10 col-xl-10">
+                                <div class="row create-weekly-plans-es-and-os-row create-weekly-plans-eobenchmark-row"
+                                data-eando-code="@code"
+                                data-curriculum-section="@esOsWithBenchmarks.sectionName"
+                                data-curriculum-subsection="@esOsWithBenchmarks.subsectionName">
+                                    <div class="col-md-4 col-lg-3 col-xl-3 create-weekly-plans-es-and-os-code">
+                                    @code</div>
+                                    <div class="col-md-6 col-lg-8 col-xl-8">
+                                    @for(sentence <- esAndOsCodeToDetailMap(code).eAndOSentences) {
+                                        <div class="create-weekly-plans-es-and-os-sentence">@sentence.value</div>
+                                        @if(sentence.bulletPoints.nonEmpty) {
+                                            <ul>
+                                            }
+                                        @for(bullet <- sentence.bulletPoints) {
+                                            @if(bullet.value.nonEmpty) {
+                                                <li>@bullet.value</li>
+                                            }
+                                        }
+                                        @if(sentence.bulletPoints.nonEmpty) {
+                                        </ul>
+                                        }
                                     }
-                                @for(bullet <- sentence.bulletPoints) {
-                                    @if(bullet.value.nonEmpty) {
-                                        <li>@bullet.value</li>
-                                    }
-                                }
-                                @if(sentence.bulletPoints.nonEmpty) {
-                                </ul>
-                                }
-                            }
-                            </div>
-                            <div class="col-md-1 col-lg-1 col-xl-1">
-                                <span class="badge badge-danger">Not Started</span>
+                                    </div>
+                                    <div class="col-md-1 col-lg-1 col-xl-1">
+                                        <span class="badge badge-danger">Not Started</span>
+                                    </div>
+                                </div>
                             </div>
                             <div class="col-md-1 col-lg-1 col-xl-1"></div>
                         </div>
@@ -79,13 +87,24 @@
                 Benchmarks
                 </div>
                 @for(benchmark <- esOsWithBenchmarks.benchmarks) {
-                    <div class="row">
+                    <div class="row"
+                    data-benchmark="@benchmark"
+                    data-curriculum-section="@esOsWithBenchmarks.sectionName"
+                    data-curriculum-subsection="@esOsWithBenchmarks.subsectionName">
                         <div class="col-md-1 col-lg-1 col-xl-1"></div>
-                        <div class="col-md-9 col-lg-9 col-xl-9">
-                            <div class="create-weekly-plans-benchmark-line">@benchmark</div>
-                        </div>
-                        <div class="col-md-1 col-lg-1 col-xl-1">
-                            <span class="badge badge-danger">Not Started</span>
+                        <div class="col-md-10 col-lg-10 col-xl-10">
+                            <div class="row create-weekly-plans-benchmark-row create-weekly-plans-eobenchmark-row"
+                            data-benchmark="@benchmark"
+                            data-curriculum-section="@esOsWithBenchmarks.sectionName"
+                            data-curriculum-subsection="@esOsWithBenchmarks.subsectionName">
+                                <div class="col-md-11 col-lg-11 col-xl-11">
+                                    <div class="create-weekly-plans-benchmark-line">
+                                    @benchmark</div>
+                                </div>
+                                <div class="col-md-1 col-lg-1 col-xl-1">
+                                    <span class="badge badge-danger">Not Started</span>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-md-1 col-lg-1 col-xl-1"></div>
                     </div>

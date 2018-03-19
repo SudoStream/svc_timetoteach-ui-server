@@ -1,8 +1,5 @@
 package timetoteach.planning.weekly
 
-import org.scalajs.dom
-import org.scalajs.dom.raw.HTMLDivElement
-
 import scala.scalajs.js.Dynamic.global
 
 object WeeklyPlanningJsScreen
