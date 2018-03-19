@@ -28,48 +28,79 @@
 
 @buildEsAndOsSection(plan: models.timetoteach.planning.pdf.CurriculumAreaTermlyPlanForPdf) = {
     <div class="create-weekly-plans-es-os-and-benchmarks-window">
-    @for(esOsWithBenchmarks <- plan.eAndOsWithBenchmarks) {
-        <div class="create-weekly-plans-subsection">
-            <div class="create-weekly-plans-subsection-header text-primary">
-            @if(esOsWithBenchmarks.subsectionName != EsOsAndBenchmarksBuilderImpl.NO_SUBSECTION_NAME) {
-                @esOsWithBenchmarks.subsectionName
-            } else {
-                @{
-                    esOsWithBenchmarks.sectionName
-                }
-            }
-            </div>
 
-            <div class="create-weekly-plans-es-and-os-section">
-                <div class="create-weekly-plans-es-and-os-section-header text-info text-center">
-                Es & Os
+        @for(esOsWithBenchmarks <- plan.eAndOsWithBenchmarks) {
+            <div class="create-weekly-plans-subsection">
+                <div class="create-weekly-plans-subsection-header text-primary">
+                @if(esOsWithBenchmarks.subsectionName != EsOsAndBenchmarksBuilderImpl.NO_SUBSECTION_NAME) {
+                    @esOsWithBenchmarks.subsectionName
+                } else {
+                    @{
+                        esOsWithBenchmarks.sectionName
+                    }
+                }
                 </div>
-                @for(code <- esOsWithBenchmarks.eAndOCodes) {
-                    <div class="create-weekly-plans-es-and-os-line">
-                        <div class="row">
+
+                <div class="create-weekly-plans-es-and-os-section">
+                    <div class="create-weekly-plans-es-and-os-section-header text-info text-center">
+                Es & Os
+                    </div>
+                    @for(code <- esOsWithBenchmarks.eAndOCodes) {
+                        <div class="create-weekly-plans-es-and-os-line">
+                            <div class="row">
+                                <div class="col-md-1 col-lg-1 col-xl-1"></div>
+                                <div class="col-md-10 col-lg-10 col-xl-10">
+                                    <div class="row create-weekly-plans-es-and-os-row create-weekly-plans-eobenchmark-row"
+                                    data-eando-code="@code"
+                                    data-curriculum-section="@esOsWithBenchmarks.sectionName"
+                                    data-curriculum-subsection="@esOsWithBenchmarks.subsectionName">
+                                        <div class="col-md-4 col-lg-3 col-xl-3 create-weekly-plans-es-and-os-code">
+                                        @code</div>
+                                        <div class="col-md-6 col-lg-8 col-xl-8">
+                                        @for(sentence <- esAndOsCodeToDetailMap(code).eAndOSentences) {
+                                            <div class="create-weekly-plans-es-and-os-sentence">@sentence.value</div>
+                                            @if(sentence.bulletPoints.nonEmpty) {
+                                                <ul>
+                                                }
+                                            @for(bullet <- sentence.bulletPoints) {
+                                                @if(bullet.value.nonEmpty) {
+                                                    <li>@bullet.value</li>
+                                                }
+                                            }
+                                            @if(sentence.bulletPoints.nonEmpty) {
+                                            </ul>
+                                            }
+                                        }
+                                        </div>
+                                        <div class="col-md-1 col-lg-1 col-xl-1">
+                                            <span class="badge badge-danger">Not Started</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-1 col-lg-1 col-xl-1"></div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="create-weekly-plans-benchmarks-section">
+                    <div class="create-weekly-plans-es-and-os-section-header text-info text-center">
+                Benchmarks
+                    </div>
+                    @for(benchmark <- esOsWithBenchmarks.benchmarks) {
+                        <div class="row"
+                        data-benchmark="@benchmark"
+                        data-curriculum-section="@esOsWithBenchmarks.sectionName"
+                        data-curriculum-subsection="@esOsWithBenchmarks.subsectionName">
                             <div class="col-md-1 col-lg-1 col-xl-1"></div>
                             <div class="col-md-10 col-lg-10 col-xl-10">
-                                <div class="row create-weekly-plans-es-and-os-row create-weekly-plans-eobenchmark-row"
-                                data-eando-code="@code"
+                                <div class="row create-weekly-plans-benchmark-row create-weekly-plans-eobenchmark-row"
+                                data-benchmark="@benchmark"
                                 data-curriculum-section="@esOsWithBenchmarks.sectionName"
                                 data-curriculum-subsection="@esOsWithBenchmarks.subsectionName">
-                                    <div class="col-md-4 col-lg-3 col-xl-3 create-weekly-plans-es-and-os-code">
-                                    @code</div>
-                                    <div class="col-md-6 col-lg-8 col-xl-8">
-                                    @for(sentence <- esAndOsCodeToDetailMap(code).eAndOSentences) {
-                                        <div class="create-weekly-plans-es-and-os-sentence">@sentence.value</div>
-                                        @if(sentence.bulletPoints.nonEmpty) {
-                                            <ul>
-                                            }
-                                        @for(bullet <- sentence.bulletPoints) {
-                                            @if(bullet.value.nonEmpty) {
-                                                <li>@bullet.value</li>
-                                            }
-                                        }
-                                        @if(sentence.bulletPoints.nonEmpty) {
-                                        </ul>
-                                        }
-                                    }
+                                    <div class="col-md-11 col-lg-11 col-xl-11">
+                                        <div class="create-weekly-plans-benchmark-line">
+                                        @benchmark</div>
                                     </div>
                                     <div class="col-md-1 col-lg-1 col-xl-1">
                                         <span class="badge badge-danger">Not Started</span>
@@ -78,40 +109,24 @@
                             </div>
                             <div class="col-md-1 col-lg-1 col-xl-1"></div>
                         </div>
-                    </div>
-                }
-            </div>
-
-            <div class="create-weekly-plans-benchmarks-section">
-                <div class="create-weekly-plans-es-and-os-section-header text-info text-center">
-                Benchmarks
+                    }
                 </div>
-                @for(benchmark <- esOsWithBenchmarks.benchmarks) {
-                    <div class="row"
-                    data-benchmark="@benchmark"
-                    data-curriculum-section="@esOsWithBenchmarks.sectionName"
-                    data-curriculum-subsection="@esOsWithBenchmarks.subsectionName">
-                        <div class="col-md-1 col-lg-1 col-xl-1"></div>
-                        <div class="col-md-10 col-lg-10 col-xl-10">
-                            <div class="row create-weekly-plans-benchmark-row create-weekly-plans-eobenchmark-row"
-                            data-benchmark="@benchmark"
-                            data-curriculum-section="@esOsWithBenchmarks.sectionName"
-                            data-curriculum-subsection="@esOsWithBenchmarks.subsectionName">
-                                <div class="col-md-11 col-lg-11 col-xl-11">
-                                    <div class="create-weekly-plans-benchmark-line">
-                                    @benchmark</div>
-                                </div>
-                                <div class="col-md-1 col-lg-1 col-xl-1">
-                                    <span class="badge badge-danger">Not Started</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-1 col-lg-1 col-xl-1"></div>
-                    </div>
-                }
             </div>
+        }
+
+
+        <div class="d-flex justify-content-center">
+            <button class="btn btn-success create-weekly-plans-plan-lessons-button"
+            data-planning-area="@plan.planningArea.toString" >
+                Plan
+                <strong>@{
+                    ScottishCurriculumPlanningAreaWrapper(plan.planningArea).niceSubjectLevelValue()
+                }
+                </strong>
+                lessons</button>
         </div>
-    }
+
+
     </div>
 }
 
@@ -123,7 +138,7 @@
         <div class="create-weekly-plans-section">
             <h4 class="display-5 text-center create-weekly-plans-header">Create Weekly Plan</h4>
             <h5 class="text-center create-weekly-plans-sub-header text-info">
-                Select the Es & Os / Benchmarks you'll be covering this week for each area</h5>
+                Select the Es & Os / Benchmarks you'll be covering this week</h5>
 
             <div class="create-weekly-plans-main-section">
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -205,6 +220,7 @@
                                                 @buildEsAndOsSection(termlyPlanForArea)
                                                 </div>
                                             }
+
                                         } else {
                                             @if(ScottishCurriculumPlanningAreaWrapper(termlyPlanForArea.planningArea).planAtGroupLevel) {
                                                 <div class="tab-pane fade" role="tabpanel"
@@ -220,6 +236,7 @@
                                                 </div>
                                             }
                                         }
+
                                     }
                                     </div>
                                 </div>
@@ -356,9 +373,29 @@
             </div>
 
         </div>
-
-
     </div>
+
+
+    <div class="modal" id="create-weekly-plans-lesson-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Plan <span id="create-weekly-plans-lesson-subject-name"></span> Lesson(s)</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Modal body text goes here.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     @scalajs.html.scripts("client", routes.Assets.versioned(_).toString, name => getClass.getResource(s"/public/$name") != null)
 }

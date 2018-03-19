@@ -1,38 +1,66 @@
 package timetoteach.planning.weekly
 
 import org.scalajs.dom
-import org.scalajs.dom.raw.HTMLDivElement
-import timetoteach.planning.termly.ClassGroupPlanningJsScreen.{eAndORowBackgroundNormalColor, eAndORowBorderRadius, eAndORowForegroundNormalColor, selectedEsAndOsWithBenchmarks, setButtonDefaults, _}
+import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement}
 
 import scala.collection.mutable
+import scala.scalajs.js
 import scala.scalajs.js.Dynamic.global
 
 object CreatePlanForTheWeekJsScreen {
 
-  var selectedEsAndOsWithBenchmarks: scala.collection.mutable.Map[String, scala.collection.mutable.Map[String,
+  private var selectedEsAndOsWithBenchmarks: scala.collection.mutable.Map[String, scala.collection.mutable.Map[String,
     (scala.collection.mutable.Set[String], scala.collection.mutable.Set[String])]] = scala.collection.mutable.Map.empty
 
-  var eAndORowBackgroundNormalColor: Option[String] = None
-  var eAndORowForegroundNormalColor: Option[String] = None
-  var eAndORowBorderRadius: Option[String] = None
+  private var eAndORowBackgroundNormalColor: Option[String] = None
+  private var eAndORowForegroundNormalColor: Option[String] = None
+  private var eAndORowBorderRadius: Option[String] = None
 
-  def loadJavascript(): Unit =
-  {
+  private var currentlySelectedPlanningArea: Option[String] = None
+
+  def loadJavascript(): Unit = {
     global.console.log("Loading Create Plan For The Week Javascript")
     mouseoverHighlightEandOsAndBenchmarks()
     clickOnEandO()
     clickOnBenchmark()
+    planLessonsButton()
   }
 
-  private def setButtonDefaults(theDiv: HTMLDivElement): Unit =
-  {
+
+  private def planLessonsButton(): Unit = {
+    val allPlanLessonsButtons = dom.document.getElementsByClassName("create-weekly-plans-plan-lessons-button")
+    val nodeListSize = allPlanLessonsButtons.length
+    var index = 0
+    while (index < nodeListSize) {
+      val buttonElement = allPlanLessonsButtons(index).asInstanceOf[HTMLButtonElement]
+
+      buttonElement.addEventListener("click", (e: dom.Event) => {
+        currentlySelectedPlanningArea = None
+        val planningArea = buttonElement.getAttribute("data-planning-area")
+        currentlySelectedPlanningArea = Some(planningArea)
+
+
+
+        dom.document.getElementById("create-weekly-plans-lesson-subject-name").innerHTML = currentlySelectedPlanningArea.getOrElse("")
+
+        val $ = js.Dynamic.global.$
+        $("#create-weekly-plans-lesson-modal").modal("show", "backdrop: static", "keyboard : false")
+
+      })
+
+
+
+      index = index + 1
+    }
+  }
+
+  private def setButtonDefaults(theDiv: HTMLDivElement): Unit = {
     theDiv.style.backgroundColor = eAndORowBackgroundNormalColor.getOrElse("white")
     theDiv.style.color = eAndORowForegroundNormalColor.getOrElse("grey")
     theDiv.style.borderRadius = eAndORowBorderRadius.getOrElse("0")
   }
 
-  def clickOnEandO(): Unit =
-  {
+  private def clickOnEandO(): Unit = {
     val allEAndORows = dom.document.getElementsByClassName("create-weekly-plans-es-and-os-row")
     val nodeListSize = allEAndORows.length
     var index = 0
@@ -74,8 +102,7 @@ object CreatePlanForTheWeekJsScreen {
   }
 
 
-  def mouseoverHighlightEandOsAndBenchmarks(): Unit =
-  {
+  private def mouseoverHighlightEandOsAndBenchmarks(): Unit = {
     val allEAndOAndBenchmarkRows = dom.document.getElementsByClassName("create-weekly-plans-eobenchmark-row")
     val nodeListSize = allEAndOAndBenchmarkRows.length
     var index = 0
@@ -140,8 +167,7 @@ object CreatePlanForTheWeekJsScreen {
     }
   }
 
-  def clickOnBenchmark(): Unit =
-  {
+  private def clickOnBenchmark(): Unit = {
     val allBenchmarkRows = dom.document.getElementsByClassName("create-weekly-plans-benchmark-row")
     val nodeListSize = allBenchmarkRows.length
     var index = 0
