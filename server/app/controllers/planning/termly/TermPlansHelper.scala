@@ -64,28 +64,28 @@ object TermPlansHelper
   {
     subjectName.toLowerCase match {
       case "empty" => ScottishCurriculumPlanningArea.NONE
-      case "golden-time" => ScottishCurriculumPlanningArea.NONE
+      case "golden-time"|"golden_time" => ScottishCurriculumPlanningArea.NONE
       case "other" => ScottishCurriculumPlanningArea.NONE
       case "ict" => ScottishCurriculumPlanningArea.TECHNOLOGIES
       case "music" | "expressive_arts__music" => ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__MUSIC
       case "drama" | "expressive_arts__drama" => ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__DRAMA
       case "health" => ScottishCurriculumPlanningArea.HEALTH_AND_WELLBEING
-      case "teacher-covertime" => ScottishCurriculumPlanningArea.NONE
+      case "teacher-covertime" | "teacher_covertime"  => ScottishCurriculumPlanningArea.NONE
       case "assembly" => ScottishCurriculumPlanningArea.NONE
       case "reading" | "literacy__reading" => ScottishCurriculumPlanningArea.LITERACY__READING
       case "spelling" => ScottishCurriculumPlanningArea.NONE
       case "writing" | "literacy__writing" => ScottishCurriculumPlanningArea.LITERACY__WRITING
       case "maths" | "mathematics" => ScottishCurriculumPlanningArea.MATHEMATICS
       case "topic" => ScottishCurriculumPlanningArea.TOPIC
-      case "physical-education" => ScottishCurriculumPlanningArea.HEALTH_AND_WELLBEING__PHYSICAL_EDUCATION
+      case "physical-education"|"physical_education" => ScottishCurriculumPlanningArea.HEALTH_AND_WELLBEING__PHYSICAL_EDUCATION
       case "soft-start" => ScottishCurriculumPlanningArea.NONE
       case "numeracy" => ScottishCurriculumPlanningArea.MATHEMATICS
       case "art" | "expressive_arts__art" => ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__ART
       case "rme" => ScottishCurriculumPlanningArea.RME__STANDARD
       case "play" => ScottishCurriculumPlanningArea.NONE
-      case "modern-languages" => ScottishCurriculumPlanningArea.LITERACY__MODERN_LANGUAGES
+      case "modern-languages"|"modern_languages"  => ScottishCurriculumPlanningArea.LITERACY__MODERN_LANGUAGES
       case "science" => ScottishCurriculumPlanningArea.SCIENCE
-      case "hand-writing" => ScottishCurriculumPlanningArea.NONE
+      case "hand-writing"|"hand_writing" => ScottishCurriculumPlanningArea.NONE
       case "geography" => ScottishCurriculumPlanningArea.SOCIAL_STUDIES
       case "history" => ScottishCurriculumPlanningArea.SOCIAL_STUDIES
     }

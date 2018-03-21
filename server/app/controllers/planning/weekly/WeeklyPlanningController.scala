@@ -6,6 +6,7 @@ import be.objectify.deadbolt.scala.DeadboltActions
 import controllers.serviceproxies.{ClassTimetableReaderServiceProxyImpl, PlanningReaderServiceProxy, TermServiceProxy, UserReaderServiceProxyImpl}
 import curriculum.scotland.EsOsAndBenchmarksBuilderImpl
 import duplicate.model.ClassDetails
+import duplicate.model.planning.LessonsThisWeek
 import io.sudostream.timetoteach.messages.systemwide.model.UserPreferences
 import javax.inject.{Inject, Singleton}
 import models.timetoteach.classtimetable.SchoolDayTimes
@@ -15,7 +16,7 @@ import play.api.Logger
 import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}
 import security.MyDeadboltHandler
 import shared.model.classtimetable.WwwClassId
-import shared.util.LocalTimeUtil
+import shared.util.{LocalTimeUtil, PlanningHelper}
 import utils.SchoolConverter
 import utils.TemplateUtils.getCookieStringFromRequest
 
@@ -112,10 +113,11 @@ class WeeklyPlanningController @Inject()(
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
     val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
-    val tttUserId = TimeToTeachUserId(getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO ID"))
+    val tttUserId: TimeToTeachUserId = TimeToTeachUserId(getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO ID"))
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(tttUserId)
     val eventualEsAndOsToDetailMap = esAndOsReader.esAndOsCodeToEsAndOsDetailMap()
 
+    import upickle.default.{ReadWriter => RW, _}
     for {
       classes <- eventualClasses
       classDetailsList = classes.filter(theClass => theClass.id.id == classId)
@@ -146,16 +148,22 @@ class WeeklyPlanningController @Inject()(
       maybeSchoolTerm <- futureMaybeSchoolTerm
       if maybeSchoolTerm.isDefined
 
+      futureMaybeLessonsThisWeek = classTimetableReaderProxy.getThisWeeksLessons(tttUserId, WwwClassId(classDetails.id.id))
+      maybeLessonsThisWeek <- futureMaybeLessonsThisWeek
+      if maybeLessonsThisWeek.isDefined
+      lessonsThisWeekPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[LessonsThisWeek](maybeLessonsThisWeek.get))
     } yield Ok(views.html.planning.weekly.createPlanForTheWeek(
       new MyDeadboltHandler(userReader),
       userPictureUri,
       userFirstName,
       userFamilyName,
+      tttUserId,
       classDetails,
       classTermlyPlanPdf,
       esAndOsToDetailMap,
       maybeAvroClassTimetable.get,
-      maybeSchoolTerm.get
+      maybeSchoolTerm.get,
+      lessonsThisWeekPickled
     ))
 
   }

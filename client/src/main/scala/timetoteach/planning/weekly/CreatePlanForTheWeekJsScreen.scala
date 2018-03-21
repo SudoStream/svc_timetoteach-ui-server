@@ -1,7 +1,9 @@
 package timetoteach.planning.weekly
 
+import duplicate.model.planning.{LessonSummary, LessonsThisWeek}
 import org.scalajs.dom
 import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement}
+import shared.util.PlanningHelper
 
 import scala.collection.mutable
 import scala.scalajs.js
@@ -18,6 +20,7 @@ object CreatePlanForTheWeekJsScreen {
 
   private var currentlySelectedPlanningArea: Option[String] = None
   private var currentlySelectedPlanningAreaNice: Option[String] = None
+  private var currentlySelectedLessonSummariesThisWeek: Option[List[LessonSummary]] = None
 
   def loadJavascript(): Unit = {
     global.console.log("Loading Create Plan For The Week Javascript")
@@ -37,6 +40,9 @@ object CreatePlanForTheWeekJsScreen {
 
       buttonElement.addEventListener("click", (e: dom.Event) => {
         currentlySelectedPlanningArea = None
+        currentlySelectedPlanningAreaNice = None
+        currentlySelectedLessonSummariesThisWeek = None
+
         val planningArea = buttonElement.getAttribute("data-planning-area")
         val planningAreaNice = buttonElement.getAttribute("data-planning-area-nice")
 
@@ -44,13 +50,22 @@ object CreatePlanForTheWeekJsScreen {
         currentlySelectedPlanningAreaNice = Some(planningAreaNice)
 
         dom.document.getElementById("create-weekly-plans-lesson-subject-name").innerHTML = currentlySelectedPlanningAreaNice.getOrElse("")
+        dom.document.getElementById("create-weekly-plans-lesson-subject-name").setAttribute("data-subject-name", currentlySelectedPlanningArea.getOrElse(""))
 
+        val classId = dom.window.localStorage.getItem("classId")
+        val tttUserId = dom.window.localStorage.getItem("tttUserId")
+        val lessonsThisWeekPickled = dom.window.localStorage.getItem("lessonsThisWeekPickled")
+
+        import upickle.default._
+        val lessonsThisWeek: LessonsThisWeek = read[LessonsThisWeek](PlanningHelper.decodeAnyNonFriendlyCharacters(lessonsThisWeekPickled))
+
+        if (lessonsThisWeek.subjectToLessons.isDefinedAt(planningArea)) {
+          currentlySelectedLessonSummariesThisWeek = Some(lessonsThisWeek.subjectToLessons(planningArea))
+          dom.document.getElementById("create-weekly-plans-lessons-summaries").innerHTML = lessonsThisWeek.subjectToLessons(planningArea).toString()
+        }
         val $ = js.Dynamic.global.$
         $("#create-weekly-plans-lesson-modal").modal("show", "backdrop: static", "keyboard : false")
-
       })
-
-
 
       index = index + 1
     }

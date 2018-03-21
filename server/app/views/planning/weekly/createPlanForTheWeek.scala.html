@@ -5,15 +5,19 @@
 @import models.timetoteach.ui._
 @import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.ClassTimetable
 @import models.timetoteach.term.SchoolTerm
+@import duplicate.model.planning.LessonsThisWeek
+@import models.timetoteach.TimeToTeachUserId
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler,
         userPictureUri: Option[String],
         userFirstName: Option[String],
         userFamilyName: Option[String],
+        tttUserId: TimeToTeachUserId,
         classDetails: ClassDetails,
         currentTermlyPlan: CurriculumAreaTermlyPlanForPdfWrapper,
         esAndOsCodeToDetailMap: Map[String, duplicate.model.esandos.EandO],
         classTimetable: ClassTimetable,
-        currentTerm: SchoolTerm
+        currentTerm: SchoolTerm,
+        lessonsThisWeekPickled: String
 )
 
 @tabContentActiveOrNot(index: Int) = {
@@ -384,10 +388,12 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Plan <span id="create-weekly-plans-lesson-subject-name"></span> Lesson(s)</h5>
+                    <h5 class="modal-title">Plan <span data-subject-name=""  id="create-weekly-plans-lesson-subject-name"></span> Lesson(s)</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
+
+                    <div id="create-weekly-plans-lessons-summaries"></div>
                 </div>
                 <div class="modal-body">
                     <p>
@@ -439,6 +445,12 @@
             </div>
         </div>
     </div>
+
+    <script>
+            localStorage.setItem("classId", "@classDetails.id.id");
+            localStorage.setItem("tttUserId", "@tttUserId.value");
+            localStorage.setItem("lessonsThisWeekPickled", "@lessonsThisWeekPickled");
+    </script>
 
 
     @scalajs.html.scripts("client", routes.Assets.versioned(_).toString, name => getClass.getResource(s"/public/$name") != null)
