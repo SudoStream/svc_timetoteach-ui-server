@@ -44,6 +44,11 @@ object CreatePlanForTheWeekJsScreen {
         currentlySelectedPlanningAreaNice = None
         currentlySelectedLessonSummariesThisWeek = None
 
+        val summariesDiv = dom.document.getElementById("create-weekly-plans-lessons-summaries").asInstanceOf[HTMLDivElement]
+        while (summariesDiv.firstChild != null) {
+          summariesDiv.removeChild(summariesDiv.firstChild)
+        }
+
         val planningArea = buttonElement.getAttribute("data-planning-area")
         val planningAreaNice = buttonElement.getAttribute("data-planning-area-nice")
 
