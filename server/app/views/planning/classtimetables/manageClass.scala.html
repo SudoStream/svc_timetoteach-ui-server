@@ -1,9 +1,10 @@
 @import models.timetoteach.TimeToTeachUserId
 @import models.timetoteach.ui.CLASS_SETUP
-@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails)
+@import models.timetoteach.term.SchoolTerm
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails,  currentTerm: SchoolTerm)
 
 @timetoteachAppMain(handler, s"Class ${classDetails.className.name}",
-    userPictureUri, userFirstName, userFamilyName, Some(classDetails.id.id), Some(CLASS_SETUP), None, None) {
+    userPictureUri, userFirstName, userFamilyName, Some(classDetails), Some(CLASS_SETUP), None, None, Some(currentTerm)) {
 
     <div class="in-app-menu-small-devices">
         <li class="nav-item nav-login-button">

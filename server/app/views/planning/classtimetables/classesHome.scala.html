@@ -3,7 +3,7 @@
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classes: List[ClassDetails], schoolsForTeacher: List[models.timetoteach.School])
 
 @timetoteachAppMain(handler, s"Classes Home",
-    userPictureUri, userFirstName, userFamilyName, None, None, None, None) {
+    userPictureUri, userFirstName, userFamilyName, None, None, None, None, None) {
     <div class="in-app-menu-small-devices">
         <li class="nav-item nav-login-button">
             <a class="btn btn-outline-primary btn-block" role="button" href="@routes.Application.timeToTeachApp()">

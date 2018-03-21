@@ -4,13 +4,15 @@
 @import models.timetoteach.ui._
 @import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.sessions.SessionBoundaryType
 @import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.sessions.SessionName
+@import models.timetoteach.term.SchoolTerm
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler,
         userPictureUri: Option[String],
         userFirstName: Option[String],
         userFamilyName: Option[String],
         classDetails: ClassDetails,
         schoolDayTimes: SchoolDayTimes,
-        classTimetable: ClassTimetable
+        classTimetable: ClassTimetable,
+        currentTerm: SchoolTerm
 )
 
 @splitCamel(s: String) = {
@@ -29,7 +31,7 @@
 }
 
 
-@_templateWeeklyPlanning(handler, userPictureUri, userFirstName, userFamilyName, classDetails, CLASS_WEEKLY_PLANS, Some(WEEKLY_VIEW)) {
+@_templateWeeklyPlanning(handler, userPictureUri, userFirstName, userFamilyName, classDetails, CLASS_WEEKLY_PLANS, Some(WEEKLY_VIEW), currentTerm) {
 
     <section id="class-timetable-section">
 

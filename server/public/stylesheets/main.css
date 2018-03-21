@@ -7,6 +7,10 @@
 @import "timetable-colours-weekly-plan.css";
 @import "weeklyplans-create-plan.css";
 
+.in-app-1200px-and-up {
+    display: none;
+}
+
 @font-face {
     font-family: 'simplifica';
     src: url('/assets/fonts/simplifica.ttf') format('truetype');
@@ -15,6 +19,10 @@
 @font-face {
     font-family: 'dkCrayonCrumble';
     src: url('/assets/fonts/dkCrayonCrumble.ttf') format('truetype');
+}
+
+.school-term-in-header {
+    margin-left: 3rem;
 }
 
 .this-is-a-test-site-alert {
@@ -741,6 +749,8 @@ img {
 }
 
 @media screen and ( min-width: 991px) {
+
+
     #the-evidence-section {
         display: block;
     }
@@ -856,7 +866,17 @@ img {
 
 }
 
+@media screen and ( min-width: 1200px) {
+    .in-app-1200px-and-up {
+        display: block;
+    }
+}
+
 @media screen and ( min-width: 1400px) {
+    .school-term-in-header {
+        margin-left: 8rem;
+    }
+
     #appBackground {
         margin-top: 3rem;
         background-image: url('/assets/images/appBackgroundAlt.jpeg');

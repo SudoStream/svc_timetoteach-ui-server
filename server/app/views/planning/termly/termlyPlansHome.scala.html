@@ -1,9 +1,10 @@
 @import models.timetoteach.TimeToTeachUserId
 @import duplicate.model.ClassId
-@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, teacherSchoolToClasses: Map[String, List[duplicate.model.ClassDetails]], classIdToOverallProgress: Map[ClassId, Int])
+
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, teacherSchoolToClasses: Map[String, List[duplicate.model.ClassDetails]], classIdToOverallProgress: Map[ClassId, Int] )
 
 @timetoteachAppMain(handler, s"Termly Plans",
-    userPictureUri, userFirstName, userFamilyName, None, None, None, None) {
+    userPictureUri, userFirstName, userFamilyName, None, None, None, None, None) {
 
     <div class="in-app-menu-small-devices">
         <li class="nav-item nav-login-button">

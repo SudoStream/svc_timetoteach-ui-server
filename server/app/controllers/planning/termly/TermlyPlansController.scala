@@ -137,7 +137,8 @@ class TermlyPlansController @Inject()(
             LocalDateTime.now(),
             maybeSchoolTerm.get
           )
-        )
+        ),
+        maybeSchoolTerm.get
       )(authRequest))
   }
 
@@ -191,7 +192,8 @@ class TermlyPlansController @Inject()(
             classDetails,
             currentTermlyCurriculumSelection,
             maybeCurriculumPlanProgress,
-            maybeOverallCurriculumPlanProgress
+            maybeOverallCurriculumPlanProgress,
+            maybeSchoolTerm.get
           ))
         case None =>
           Redirect(routes.TermlyPlansController.termlyPlansSelectOverallCurriculumAreasForTheTerm(classId))
@@ -256,7 +258,8 @@ class TermlyPlansController @Inject()(
         maybeRelevantEsAndOs.get,
         maybeCurrentTermlyCurriculumSelection.get,
         maybeCurriculumPlanProgress,
-        maybeOverallCurriculumPlanProgress
+        maybeOverallCurriculumPlanProgress,
+        maybeSchoolTerm.get
       ))
     }
   }
@@ -321,7 +324,8 @@ class TermlyPlansController @Inject()(
         maybeCurrentTermlyCurriculumSelection.get,
         curriculumArea,
         maybeCurriculumPlanProgress,
-        maybeOverallCurriculumPlanProgress
+        maybeOverallCurriculumPlanProgress,
+        maybeSchoolTerm.get
       ))
     }
   }
@@ -467,7 +471,8 @@ class TermlyPlansController @Inject()(
             esAndOsCodeToDetailMap,
             maybeCurrentTermlyCurriculumSelection.get,
             maybeCurriculumPlanProgress,
-            maybeOverallCurriculumPlanProgress
+            maybeOverallCurriculumPlanProgress,
+            maybeSchoolTerm.get
           ))
         case None =>
           Redirect(routes.TermlyPlansController.termlyPlansClassLevel_SelectEsOsBenchmarksForCurriculumArea(classId, curriculumArea))
@@ -535,7 +540,8 @@ class TermlyPlansController @Inject()(
         TimeToTeachUserId(tttUserId),
         classDetails,
         curriculumArea,
-        maybeOverallCurriculumPlanProgress
+        maybeOverallCurriculumPlanProgress,
+        maybeSchoolTerm.get
       ))
     } yield route
   }
@@ -606,7 +612,8 @@ class TermlyPlansController @Inject()(
             esAndOsCodeToDetailMap,
             maybeCurrentTermlyCurriculumSelection.get,
             maybeCurriculumPlanProgress,
-            maybeOverallCurriculumPlanProgress
+            maybeOverallCurriculumPlanProgress,
+            maybeSchoolTerm.get
           ))
         case None =>
           Redirect(routes.TermlyPlansController.termlyPlansGroupLevel_SelectEsOsBenchmarksForCurriculumArea(classId, curriculumArea, groupId))

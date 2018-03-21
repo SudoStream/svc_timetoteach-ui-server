@@ -4,7 +4,7 @@
 @import models.timetoteach.planning.pdf.CurriculumAreaTermlyPlanForPdfWrapper
 @import models.timetoteach.ui._
 @import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.ClassTimetable
-
+@import models.timetoteach.term.SchoolTerm
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler,
         userPictureUri: Option[String],
         userFirstName: Option[String],
@@ -12,7 +12,8 @@
         classDetails: ClassDetails,
         currentTermlyPlan: CurriculumAreaTermlyPlanForPdfWrapper,
         esAndOsCodeToDetailMap: Map[String, duplicate.model.esandos.EandO],
-        classTimetable: ClassTimetable
+        classTimetable: ClassTimetable,
+        currentTerm: SchoolTerm
 )
 
 @tabContentActiveOrNot(index: Int) = {
@@ -134,7 +135,7 @@
 }
 
 
-@_templateWeeklyPlanning(handler, userPictureUri, userFirstName, userFamilyName, classDetails, CLASS_WEEKLY_PLANS, Some(CREATE_WEEKLY_PLAN)) {
+@_templateWeeklyPlanning(handler, userPictureUri, userFirstName, userFamilyName, classDetails, CLASS_WEEKLY_PLANS, Some(CREATE_WEEKLY_PLAN), currentTerm) {
 
     <div class="container-fluid">
 

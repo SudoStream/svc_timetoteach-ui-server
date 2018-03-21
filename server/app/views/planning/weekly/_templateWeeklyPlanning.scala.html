@@ -1,14 +1,16 @@
 @import duplicate.model.ClassDetails
+@import models.timetoteach.term.SchoolTerm
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler,
         userPictureUri: Option[String],
         userFirstName: Option[String],
         userFamilyName: Option[String],
         classDetails: ClassDetails,
         classContext: models.timetoteach.ui.ClassIdContext,
-        maybeClassSubContext: Option[models.timetoteach.ui.ClassIdSubContext]
+        maybeClassSubContext: Option[models.timetoteach.ui.ClassIdSubContext],
+        currentTerm: SchoolTerm
 )(weeklyPlanningContent: Html)
 
-    @timetoteachAppMain(handler, s"Class ${classDetails.className.name}", userPictureUri, userFirstName, userFamilyName, Some(classDetails.id.id), Some(classContext), None, None) {
+    @timetoteachAppMain(handler, s"Class ${classDetails.className.name}", userPictureUri, userFirstName, userFamilyName, Some(classDetails), Some(classContext), None, None, Some(currentTerm)) {
         <li></li>
     } {
 
@@ -71,16 +73,6 @@
         </nav>
 
     } {
-        <div class="container">
-            <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <p>Note: The weekly planning is under development</p>
-                <p>i.e. it isn't finished & will be changing rapidly. It is useful to
-                    <em>get an idea</em> of what it will look like.</p>
-            </div>
-        </div>
         <div class="container-fluid weekly-planning-top-margin">
         @weeklyPlanningContent
         </div>

@@ -1,7 +1,10 @@
 @import models.timetoteach.planning.TermlyCurriculumSelection
 @import models.timetoteach.planning.ScottishCurriculumPlanningAreaWrapper
 @import models.timetoteach.planning.CurriculumPlanProgressForClass
-@(handler: be.objectify.deadbolt.scala.DeadboltHandler, title: String, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], maybeClassId: Option[String], maybeClassContext: Option[models.timetoteach.ui.ClassIdContext], maybeCurrentTermlyCurriculumSelection: Option[(TermlyCurriculumSelection, String)], maybePlanProgress: Option[CurriculumPlanProgressForClass])(appNavMenuListItems: Html)(extra3rdLevelNavItems: Html)(content: Html)
+@import duplicate.model.ClassDetails
+@import models.timetoteach.term.SchoolTerm
+@import models.timetoteach.term.SchoolTermName
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, title: String, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], maybeClassDetails: Option[ClassDetails], maybeClassContext: Option[models.timetoteach.ui.ClassIdContext], maybeCurrentTermlyCurriculumSelection: Option[(TermlyCurriculumSelection, String)], maybePlanProgress: Option[CurriculumPlanProgressForClass], maybeCurrentTerm: Option[SchoolTerm])(appNavMenuListItems: Html)(extra3rdLevelNavItems: Html)(content: Html)
 <!DOCTYPE html>
 <html>
     <head>
@@ -54,38 +57,39 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <a id="app-main-screen-title" class="navbar-brand col-md-3 in-app-menu-medium-and-up" href="/">
+            <a id="app-main-screen-title" class="navbar-brand col-md-2 in-app-menu-medium-and-up" href="/">
                 <h5 class="display-5 text-primary">
                     <img src="@routes.Assets.versioned("icons/ttt_owl.png")" alt="logo" height="26">
                     <span class="ttt-icon-writing-main display-5">Time to TEACH</span>
                 </h5>
             </a>
 
-            <div class="d-flex col-md-6">
-                <div class="collapse navbar-collapse " id="startupNavbar">
-                    <ul class="navbar-nav mx-auto">
+            <div class="d-flex col-md-10 ">
+                <div class="collapse navbar-collapse in-app-menu-medium-and-up " >
+                    @if(maybeClassDetails.isDefined) {
+                        <span class="text-primary">Class @maybeClassDetails.get.className.name -
+                            <span class="text-secondary">@maybeClassDetails.get.schoolDetails.name</span>
+                        </span>
+
+                        <div class="in-app-1200px-and-up">
+                        @if(maybeCurrentTerm.isDefined) {
+                            <span class="text-dark text-center school-term-in-header">
+                                @SchoolTermName.niceValue(maybeCurrentTerm.get.schoolTermName),
+                                @java.time.LocalDate.now().getYear
+                            </span>
+                        }
+                        </div>
+                    }
+
+                    <ul class="navbar-nav ml-auto ">
+
                         <div class="row align-items-center">
 
-                            <div class="in-app-menu-small-devices">
-                                <li class="nav-item nav-login-button">
-                                    <a class="btn btn-outline-primary btn-block" role="button" href="/">Home</a>
-                                </li>
-                            </div>
+
                             <li class="nav-item nav-login-button-dashboard in-app-menu-medium-and-up">
                                 <a class="btn btn-sm btn-info btn-block" role="button" href="@controllers.planning.classtimetable.routes.ClassTimetableController.classesHome()">
                                     My Classes</a>
                             </li>
-                        </div>
-
-                    </ul>
-
-                </div>
-            </div>
-            <div class="d-flex col-md-3 ">
-                <div class="collapse navbar-collapse in-app-menu-medium-and-up " >
-                    <ul class="navbar-nav ml-auto ">
-
-                        <div class="row align-items-center">
 
                             @if(userPictureUri.isDefined) {
                                 <li class="nav-item nav-login-button-picture">
@@ -118,7 +122,7 @@
 
         <div id="appBackground">
 
-            @if(maybeClassId.isDefined) {
+            @if(maybeClassDetails.isDefined) {
                 <div class="in-app-menu-medium-and-up">
                     <nav id="dashboard-nav-2" class="navbar navbar-primary bg-secondary navbar-expand-lg red-tooltip">
                         <div class="col-lg-2">
@@ -129,11 +133,11 @@
                             <li class="nav-item ">
                             @if(maybeClassContext.get.isInstanceOf[models.timetoteach.ui.CLASS_SETUP.type]) {
                                 <a class="btn btn-warning btn-sm class-level-button" role="button"
-                                href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(maybeClassId.get)">
+                                href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(maybeClassDetails.get.id.id)">
                                     Class Setup</a>
                             } else {
                                 <a class="btn btn-light text-dark btn-sm class-level-button" role="button"
-                                href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(maybeClassId.get)">
+                                href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(maybeClassDetails.get.id.id)">
                                     Class Setup</a>
                             }
                             </li>
@@ -141,11 +145,11 @@
                             <li class="nav-item ">
                             @if(maybeClassContext.get.isInstanceOf[models.timetoteach.ui.CLASS_TIMETABLE.type]) {
                                 <a id="manage-class-goto-timetable" class="btn btn-warning btn-sm class-level-button" role="button"
-                                href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(maybeClassId.get)">
+                                href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(maybeClassDetails.get.id.id)">
                                     Timetable</a>
                             } else {
                                 <a id="manage-class-goto-timetable" class="btn btn-light text-dark btn-sm class-level-button" role="button"
-                                href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(maybeClassId.get)">
+                                href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(maybeClassDetails.get.id.id)">
                                     Timetable</a>
                             }
                             </li>
@@ -153,15 +157,15 @@
                             <li class="nav-item">
                                 @if(maybeClassContext.get.isInstanceOf[models.timetoteach.ui.CLASS_TERMLY_PLANS.type]) {
                                     <a class="btn btn-warning btn-sm class-level-button" role="button"
-                                    href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(maybeClassId.get)">
+                                    href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(maybeClassDetails.get.id.id)">
                                         Termly Plans</a>
                                 } else if(maybeClassContext.get.isInstanceOf[models.timetoteach.ui.CLASS_TERMLY_PLANS_LOWER.type]) {
                                 <a class="btn btn-outline-warning btn-sm class-level-button" role="button"
-                                href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(maybeClassId.get)">
+                                href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(maybeClassDetails.get.id.id)">
                                     Termly Plans</a>
                                 } else {
                                 <a class="btn btn-light text-dark btn-sm class-level-button" role="button"
-                                href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(maybeClassId.get)">
+                                href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(maybeClassDetails.get.id.id)">
                                     Termly Plans</a>
                                 }
                             </li>
@@ -169,13 +173,13 @@
                             @if(maybeClassContext.get.isInstanceOf[models.timetoteach.ui.CLASS_WEEKLY_PLANS.type]) {
                                 <li class="nav-item">
                                     <a class="btn btn-outline-warning btn-sm class-level-button" role="button"
-                                    href="@controllers.planning.weekly.routes.WeeklyPlanningController.weeklyViewOfWeeklyPlanning(maybeClassId.get)">
+                                    href="@controllers.planning.weekly.routes.WeeklyPlanningController.weeklyViewOfWeeklyPlanning(maybeClassDetails.get.id.id)">
                                         Weekly Plans</a>
                                 </li>
                             } else {
                                 <li class="nav-item">
                                     <a class="btn btn-light text-dark btn-sm class-level-button" role="button"
-                                    href="@controllers.planning.weekly.routes.WeeklyPlanningController.weeklyViewOfWeeklyPlanning(maybeClassId.get)">
+                                    href="@controllers.planning.weekly.routes.WeeklyPlanningController.weeklyViewOfWeeklyPlanning(maybeClassDetails.get.id.id)">
                                         Weekly Plans</a>
                                 </li>
                             }
@@ -183,19 +187,19 @@
                         } else {
                             <li class="nav-item ">
                                 <a class="btn btn-light text-dark btn-sm class-level-button" role="button"
-                                href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(maybeClassId.get)">
+                                href="@controllers.planning.classtimetable.routes.ClassTimetableController.manageClass(maybeClassDetails.get.id.id)">
                                     Class Setup</a>
                             </li>
 
                             <li class="nav-item ">
                                 <a id="manage-class-goto-timetable btn-sm class-level-button" class="btn btn-light  text-dark" role="button"
-                                href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(maybeClassId.get)">
+                                href="@controllers.planning.classtimetable.routes.ClassTimetableController.classTimetable(maybeClassDetails.get.id.id)">
                                     Timetable</a>
                             </li>
 
                             <li class="nav-item">
                                 <a class="btn btn-light text-dark btn-sm class-level-button" role="button"
-                                href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(maybeClassId.get)">
+                                href="@controllers.planning.termly.routes.TermlyPlansController.termlyPlansForClass(maybeClassDetails.get.id.id)">
                                     Termly Plans</a>
                             </li>
                         }
@@ -211,78 +215,78 @@
                         <nav id="dashboard-nav-3" class="navbar navbar-primary bg-dark navbar-expand-lg">
                             <div class="col-md-12 d-flex justify-content-center ">
                                 <ul class="navbar-nav mx-auto">
-                                @for((planningArea, planningAreaIndex) <- maybeCurrentTermlyCurriculumSelection.get._1.planningAreas.map(area => ScottishCurriculumPlanningAreaWrapper(area)).zipWithIndex) {
-                                    @if(planningArea.planAtGroupLevel) {
-                                        @if(planningArea.value.toString == maybeCurrentTermlyCurriculumSelection.get._2) {
-                                            <li class="nav-item">
-                                                <a role="button" class="btn btn-warning btn-sm btn-block curriculum-area-button"
-                                                href="@controllers.planning.termly.routes.TermlyPlansController.termlyOverviewForCurriculumAreaAtGroupLevelWithNoGroupId(maybeClassId.getOrElse("NONE"), planningArea.value.toString)">
-                                                    @planningArea.niceSpecificValueIfPresent().getOrElse(planningArea.niceValue())
-                                                    <span class="termly-plan-done-check-black ">
-                                                    @if(maybePlanProgress.isDefined && maybePlanProgress.get.curriculumProgressMap.isDefinedAt(planningArea) && maybePlanProgress.get.curriculumProgressMap(planningArea)._1.percentValue == 100) {
-                                                        <svg version="1.1" width="16" height="16" viewBox="0 0 12 16" class="octicon octicon-check float-right" aria-hidden="true">
-                                                            <use xlink:href="#check" /></svg>
-                                                    } else {
-                                                        <div></div>
-                                                    }
-                                                    </span>
-                                                </a>
-                                            </li>
+                                    @for((planningArea, planningAreaIndex) <- maybeCurrentTermlyCurriculumSelection.get._1.planningAreas.map(area => ScottishCurriculumPlanningAreaWrapper(area)).zipWithIndex) {
+                                        @if(planningArea.planAtGroupLevel) {
+                                            @if(planningArea.value.toString == maybeCurrentTermlyCurriculumSelection.get._2) {
+                                                <li class="nav-item">
+                                                    <a role="button" class="btn btn-warning btn-sm btn-block curriculum-area-button"
+                                                    href="@controllers.planning.termly.routes.TermlyPlansController.termlyOverviewForCurriculumAreaAtGroupLevelWithNoGroupId(maybeClassDetails.get.id.id, planningArea.value.toString)">
+                                                        @planningArea.niceSpecificValueIfPresent().getOrElse(planningArea.niceValue())
+                                                        <span class="termly-plan-done-check-black ">
+                                                        @if(maybePlanProgress.isDefined && maybePlanProgress.get.curriculumProgressMap.isDefinedAt(planningArea) && maybePlanProgress.get.curriculumProgressMap(planningArea)._1.percentValue == 100) {
+                                                            <svg version="1.1" width="16" height="16" viewBox="0 0 12 16" class="octicon octicon-check float-right" aria-hidden="true">
+                                                                <use xlink:href="#check" /></svg>
+                                                        } else {
+                                                            <div></div>
+                                                        }
+                                                        </span>
+                                                    </a>
+                                                </li>
+                                            } else {
+                                                <li class="nav-item">
+                                                    <a role="button" class="btn btn-outline-light bg-secondary btn-sm btn-block curriculum-area-button"
+                                                    href="@controllers.planning.termly.routes.TermlyPlansController.termlyOverviewForCurriculumAreaAtGroupLevelWithNoGroupId(maybeClassDetails.get.id.id, planningArea.value.toString)">
+                                                        @planningArea.niceSpecificValueIfPresent().getOrElse(planningArea.niceValue())
+                                                        <span class="termly-plan-done-check-green ">
+                                                        @if(maybePlanProgress.isDefined && maybePlanProgress.get.curriculumProgressMap.isDefinedAt(planningArea) && maybePlanProgress.get.curriculumProgressMap(planningArea)._1.percentValue == 100) {
+                                                            <svg version="1.1" width="16" height="16" viewBox="0 0 12 16" class="octicon octicon-check float-right" aria-hidden="true">
+                                                                <use xlink:href="#check" /></svg>
+                                                        } else {
+                                                            <div></div>
+                                                        }
+                                                        </span>
+                                                    </a>
+                                                </li>
+                                            }
+
                                         } else {
-                                            <li class="nav-item">
-                                                <a role="button" class="btn btn-outline-light bg-secondary btn-sm btn-block curriculum-area-button"
-                                                href="@controllers.planning.termly.routes.TermlyPlansController.termlyOverviewForCurriculumAreaAtGroupLevelWithNoGroupId(maybeClassId.getOrElse("NONE"), planningArea.value.toString)">
-                                                    @planningArea.niceSpecificValueIfPresent().getOrElse(planningArea.niceValue())
-                                                    <span class="termly-plan-done-check-green ">
-                                                    @if(maybePlanProgress.isDefined && maybePlanProgress.get.curriculumProgressMap.isDefinedAt(planningArea) && maybePlanProgress.get.curriculumProgressMap(planningArea)._1.percentValue == 100) {
-                                                        <svg version="1.1" width="16" height="16" viewBox="0 0 12 16" class="octicon octicon-check float-right" aria-hidden="true">
-                                                            <use xlink:href="#check" /></svg>
-                                                    } else {
-                                                        <div></div>
-                                                    }
-                                                    </span>
-                                                </a>
-                                            </li>
+                                            @if(planningArea.value.toString == maybeCurrentTermlyCurriculumSelection.get._2) {
+                                                <li class="nav-item">
+                                                    <a role="button" class="btn btn-warning btn-sm btn-block curriculum-area-button"
+                                                    href="@controllers.planning.termly.routes.TermlyPlansController.termlyOverviewForCurriculumAreaAtClassLevel(maybeClassDetails.get.id.id, planningArea.value.toString)">
+                                                        @planningArea.niceSpecificValueIfPresent().getOrElse(planningArea.niceValue())
+                                                        <span class="termly-plan-done-check-black ">
+                                                        @if(maybePlanProgress.isDefined && maybePlanProgress.get.curriculumProgressMap.isDefinedAt(planningArea) && maybePlanProgress.get.curriculumProgressMap(planningArea)._1.percentValue == 100) {
+                                                            <svg version="1.1" width="16" height="16" viewBox="0 0 12 16" class="octicon octicon-check float-right" aria-hidden="true">
+                                                                <use xlink:href="#check" /></svg>
+                                                        } else {
+                                                            <div></div>
+                                                        }
+                                                        </span>
+                                                    </a>
+                                                </li>
+                                            } else {
+                                                <li class="nav-item">
+                                                    <a role="button" class="btn btn-outline-light bg-secondary btn-sm btn-block curriculum-area-button"
+                                                    href="@controllers.planning.termly.routes.TermlyPlansController.termlyOverviewForCurriculumAreaAtClassLevel(maybeClassDetails.get.id.id, planningArea.value.toString)">
+                                                        @planningArea.niceSpecificValueIfPresent().getOrElse(planningArea.niceValue())
+                                                        <span class="termly-plan-done-check-green ">
+                                                        @if(maybePlanProgress.isDefined && maybePlanProgress.get.curriculumProgressMap.isDefinedAt(planningArea) && maybePlanProgress.get.curriculumProgressMap(planningArea)._1.percentValue == 100) {
+                                                            <svg version="1.1" width="16" height="16" viewBox="0 0 12 16" class="octicon octicon-check float-right" aria-hidden="true">
+                                                                <use xlink:href="#check" /></svg>
+                                                        } else {
+                                                            <div></div>
+                                                        }
+                                                        </span>
+                                                    </a>
+                                                </li>
+                                            }
                                         }
 
-                                    } else {
-                                        @if(planningArea.value.toString == maybeCurrentTermlyCurriculumSelection.get._2) {
-                                            <li class="nav-item">
-                                                <a role="button" class="btn btn-warning btn-sm btn-block curriculum-area-button"
-                                                href="@controllers.planning.termly.routes.TermlyPlansController.termlyOverviewForCurriculumAreaAtClassLevel(maybeClassId.getOrElse("NONE"), planningArea.value.toString)">
-                                                    @planningArea.niceSpecificValueIfPresent().getOrElse(planningArea.niceValue())
-                                                    <span class="termly-plan-done-check-black ">
-                                                    @if(maybePlanProgress.isDefined && maybePlanProgress.get.curriculumProgressMap.isDefinedAt(planningArea) && maybePlanProgress.get.curriculumProgressMap(planningArea)._1.percentValue == 100) {
-                                                        <svg version="1.1" width="16" height="16" viewBox="0 0 12 16" class="octicon octicon-check float-right" aria-hidden="true">
-                                                            <use xlink:href="#check" /></svg>
-                                                    } else {
-                                                        <div></div>
-                                                    }
-                                                    </span>
-                                                </a>
-                                            </li>
-                                        } else {
-                                            <li class="nav-item">
-                                                <a role="button" class="btn btn-outline-light bg-secondary btn-sm btn-block curriculum-area-button"
-                                                href="@controllers.planning.termly.routes.TermlyPlansController.termlyOverviewForCurriculumAreaAtClassLevel(maybeClassId.getOrElse("NONE"), planningArea.value.toString)">
-                                                    @planningArea.niceSpecificValueIfPresent().getOrElse(planningArea.niceValue())
-                                                    <span class="termly-plan-done-check-green ">
-                                                    @if(maybePlanProgress.isDefined && maybePlanProgress.get.curriculumProgressMap.isDefinedAt(planningArea) && maybePlanProgress.get.curriculumProgressMap(planningArea)._1.percentValue == 100) {
-                                                        <svg version="1.1" width="16" height="16" viewBox="0 0 12 16" class="octicon octicon-check float-right" aria-hidden="true">
-                                                            <use xlink:href="#check" /></svg>
-                                                    } else {
-                                                        <div></div>
-                                                    }
-                                                    </span>
-                                                </a>
-                                            </li>
-                                        }
                                     }
-
-                                }
                                     <li class="nav-item">
                                         <a id="download-termly-plan-pdf" class="btn btn-sm btn-danger btn-block" role="button"
-                                        href="@controllers.planning.termly.routes.DownloadPdfController.downloadClassPdf(maybeClassId.getOrElse("NONE"))">
+                                        href="@controllers.planning.termly.routes.DownloadPdfController.downloadClassPdf(maybeClassDetails.get.id.id)">
                                             Create Termly Plan PDF</a>
                                     </li>
                                 </ul>

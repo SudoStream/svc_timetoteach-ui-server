@@ -63,6 +63,12 @@ class WeeklyPlanningController @Inject()(
       schoolDayTimes <- futureSchoolDayTimes
       maybeAvroClassTimetable <- avroClassTimetableFuture
       if maybeAvroClassTimetable.isDefined
+
+      futureMaybeSchoolTerm = termService.currentSchoolTerm(SchoolConverter.convertLocalAuthorityStringToAvroVersion(classDetails.schoolDetails.localAuthority))
+      maybeSchoolTerm <- futureMaybeSchoolTerm
+      if maybeSchoolTerm.isDefined
+
+
     } yield Ok(views.html.planning.weekly.weeklyView(
       new MyDeadboltHandler(userReader),
       userPictureUri,
@@ -70,7 +76,8 @@ class WeeklyPlanningController @Inject()(
       userFamilyName,
       classDetails,
       schoolDayTimes,
-      maybeAvroClassTimetable.get
+      maybeAvroClassTimetable.get,
+      maybeSchoolTerm.get
     ))
   }
 
@@ -135,6 +142,10 @@ class WeeklyPlanningController @Inject()(
       maybeAvroClassTimetable <- avroClassTimetableFuture
       if maybeAvroClassTimetable.isDefined
 
+      futureMaybeSchoolTerm = termService.currentSchoolTerm(SchoolConverter.convertLocalAuthorityStringToAvroVersion(classDetails.schoolDetails.localAuthority))
+      maybeSchoolTerm <- futureMaybeSchoolTerm
+      if maybeSchoolTerm.isDefined
+
     } yield Ok(views.html.planning.weekly.createPlanForTheWeek(
       new MyDeadboltHandler(userReader),
       userPictureUri,
@@ -143,7 +154,8 @@ class WeeklyPlanningController @Inject()(
       classDetails,
       classTermlyPlanPdf,
       esAndOsToDetailMap,
-      maybeAvroClassTimetable.get
+      maybeAvroClassTimetable.get,
+      maybeSchoolTerm.get
     ))
 
   }

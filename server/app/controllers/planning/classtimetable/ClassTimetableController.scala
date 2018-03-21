@@ -23,6 +23,7 @@ import security.MyDeadboltHandler
 import shared.model.classtimetable.WwwClassId
 import shared.util.{LocalTimeUtil, PlanningHelper}
 import utils.ClassTimetableConverterToAvro.convertJsonClassTimetableToWwwClassTimetable
+import utils.SchoolConverter
 import utils.TemplateUtils.getCookieStringFromRequest
 
 import scala.concurrent.duration._
@@ -36,6 +37,7 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
                                          cc: ControllerComponents,
                                          deadbolt: DeadboltActions,
                                          handlers: HandlerCache,
+                                         termService: TermServiceProxy,
                                          actionBuilder: ActionBuilders) extends AbstractController(cc)
   with ClassTimetableControllerHelper
 {
@@ -130,10 +132,16 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
       maybeClassDetails: Option[ClassDetails] = classDetailsList.headOption
       if maybeClassDetails.isDefined
       classDetails = maybeClassDetails.get
+
+      futureMaybeCurrentSchoolTerm = termService.currentSchoolTerm(SchoolConverter.convertLocalAuthorityStringToAvroVersion(classDetails.schoolDetails.localAuthority))
+
       schoolDayTimes <- futureSchoolDayTimes
       wwwClassTimetableFuture = classTimetableReaderProxy.
         readClassTimetable(TimeToTeachUserId(tttUserId), WwwClassId(classDetails.id.id))
       maybeWwwClassTimetable <- wwwClassTimetableFuture
+
+      maybeCurrentSchoolTerm <- futureMaybeCurrentSchoolTerm
+      if maybeCurrentSchoolTerm.isDefined
     } yield {
       Ok(views.html.planning.classtimetables.classtimetable(new MyDeadboltHandler(userReader),
         userPictureUri,
@@ -142,7 +150,8 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
         schoolDayTimes,
         maybeWwwClassTimetable,
         TimeToTeachUserId(tttUserId),
-        classDetails
+        classDetails,
+        maybeCurrentSchoolTerm.get
       )(authRequest))
     }
   }
@@ -282,13 +291,17 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
       maybeClassDetails = classDetailsList.headOption
       if maybeClassDetails.isDefined
       classDetails = maybeClassDetails.get
+      futureMaybeCurrentSchoolTerm = termService.currentSchoolTerm(SchoolConverter.convertLocalAuthorityStringToAvroVersion(classDetails.schoolDetails.localAuthority))
+      maybeCurrentSchoolTerm <- futureMaybeCurrentSchoolTerm
+      if maybeCurrentSchoolTerm.isDefined
     } yield {
       Ok(views.html.planning.classtimetables.manageClass(new MyDeadboltHandler(userReader),
         userPictureUri,
         userFirstName,
         userFamilyName,
         TimeToTeachUserId(tttUserId),
-        classDetails
+        classDetails,
+        maybeCurrentSchoolTerm.get
       ))
     }
   }
