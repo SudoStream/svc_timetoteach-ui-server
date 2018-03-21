@@ -3,6 +3,7 @@ package timetoteach.planning.weekly
 import duplicate.model.planning.{LessonSummary, LessonsThisWeek}
 import org.scalajs.dom
 import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement}
+import scalatags.JsDom.all._
 import shared.util.PlanningHelper
 
 import scala.collection.mutable
@@ -61,7 +62,17 @@ object CreatePlanForTheWeekJsScreen {
 
         if (lessonsThisWeek.subjectToLessons.isDefinedAt(planningArea)) {
           currentlySelectedLessonSummariesThisWeek = Some(lessonsThisWeek.subjectToLessons(planningArea))
-          dom.document.getElementById("create-weekly-plans-lessons-summaries").innerHTML = lessonsThisWeek.subjectToLessons(planningArea).toString()
+
+          val lessonTimes = for {
+            lesson <- lessonsThisWeek.subjectToLessons(planningArea)
+          } yield span(`class` := "text-muted")(
+            small(s"${lesson.dayOfWeek.toLowerCase.capitalize}(${lesson.startTimeIso}-${lesson.endTimeIso})"))
+
+          val child = dom.document.createElement("div")
+          child.innerHTML = lessonTimes.mkString(", ")
+
+          dom.document.getElementById("create-weekly-plans-lessons-summaries").appendChild(child)
+          dom.document.getElementById("create-weekly-plans-number-of-lessons").innerHTML = lessonTimes.size.toString
         }
         val $ = js.Dynamic.global.$
         $("#create-weekly-plans-lesson-modal").modal("show", "backdrop: static", "keyboard : false")
