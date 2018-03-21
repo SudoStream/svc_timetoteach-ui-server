@@ -38,45 +38,51 @@ object SchoolConverter {
 
   def convertLocalAuthorityToMessageVersion(localAuthority: LocalAuthority):
   io.sudostream.timetoteach.messages.systemwide.model.LocalAuthority = {
-    localAuthority.value.toUpperCase match {
-      case "ABERDEEN_CITY" => model.LocalAuthority.SCOTLAND__ABERDEEN_CITY
-      case "ABERDEENSHIRE" => model.LocalAuthority.SCOTLAND__ABERDEENSHIRE
-      case "ANGUS" => model.LocalAuthority.SCOTLAND__ANGUS
-      case "ARGYLL_AND_BUTE" => model.LocalAuthority.SCOTLAND__ARGYLL_AND_BUTE
-      case "COMHAIRLE_NAN_EILEAN_SIAR" => model.LocalAuthority.SCOTLAND__COMHAIRLE_NAN_EILEAN_SIAR
-      case "CLACKMANNANSHIRE" => model.LocalAuthority.SCOTLAND__CLACKMANNANSHIRE
-      case "DUMFRIES_AND_GALLOWAY" => model.LocalAuthority.SCOTLAND__DUMFRIES_AND_GALLOWAY
-      case "DUNDEE_CITY" => model.LocalAuthority.SCOTLAND__DUNDEE_CITY
-      case "EAST_AYRSHIRE" => model.LocalAuthority.SCOTLAND__EAST_AYRSHIRE
-      case "EAST_DUMBARTONSHIRE" => model.LocalAuthority.SCOTLAND__EAST_DUMBARTONSHIRE
-      case "EDINBURGH_CITY" => model.LocalAuthority.SCOTLAND__EDINBURGH_CITY
-      case "EAST_LOTHIAN" => model.LocalAuthority.SCOTLAND__EAST_LOTHIAN
-      case "EAST_RENFREWSHIRE" => model.LocalAuthority.SCOTLAND__EAST_RENFREWSHIRE
-      case "FALKIRK" => model.LocalAuthority.SCOTLAND__FALKIRK
-      case "FIFE" => model.LocalAuthority.SCOTLAND__FIFE
-      case "GLASGOW" => model.LocalAuthority.SCOTLAND__GLASGOW
-      case "HIGHLAND" => model.LocalAuthority.SCOTLAND__HIGHLAND
-      case "INVERCLYDE" => model.LocalAuthority.SCOTLAND__INVERCLYDE
-      case "MIDLOTHIAN" => model.LocalAuthority.SCOTLAND__MIDLOTHIAN
-      case "MORAY" => model.LocalAuthority.SCOTLAND__MORAY
-      case "NORTH_AYRSHIRE" => model.LocalAuthority.SCOTLAND__NORTH_AYRSHIRE
-      case "NORTH_LANARKSHIRE" => model.LocalAuthority.SCOTLAND__NORTH_LANARKSHIRE
-      case "ORKNEY" => model.LocalAuthority.SCOTLAND__ORKNEY
-      case "PERTH_AND_KINROSS" => model.LocalAuthority.SCOTLAND__PERTH_AND_KINROSS
-      case "RENFREWSHIRE" => model.LocalAuthority.SCOTLAND__RENFREWSHIRE
-      case "SCOTTISH_BORDERS" => model.LocalAuthority.SCOTLAND__SCOTTISH_BORDERS
-      case "SHETLAND_ISLANDS" => model.LocalAuthority.SCOTLAND__SHETLAND_ISLANDS
-      case "SOUTH_AYRSHIRE" => model.LocalAuthority.SCOTLAND__SOUTH_AYRSHIRE
-      case "SOUTH_LANARKSHIRE" => model.LocalAuthority.SCOTLAND__SOUTH_LANARKSHIRE
-      case "STIRLING" => model.LocalAuthority.SCOTLAND__STIRLING
-      case "WEST_DUMBARTONSHIRE" | "WEST_DUNBARTONSHIRE" => model.LocalAuthority.SCOTLAND__WEST_DUMBARTONSHIRE
-      case "WEST_LOTHIAN" => model.LocalAuthority.SCOTLAND__WEST_LOTHIAN
-      case "OTHER" => model.LocalAuthority.OTHER
+    convertLocalAuthorityStringToAvroVersion(localAuthority.value)
+  }
+
+  def convertLocalAuthorityStringToAvroVersion(localAuthority: String): io.sudostream.timetoteach.messages.systemwide.model.LocalAuthority = {
+    import io.sudostream.timetoteach.messages.systemwide.model.LocalAuthority
+    localAuthority.toUpperCase match {
+      case "ABERDEEN_CITY" => LocalAuthority.SCOTLAND__ABERDEEN_CITY
+      case "ABERDEENSHIRE" => LocalAuthority.SCOTLAND__ABERDEENSHIRE
+      case "ANGUS" => LocalAuthority.SCOTLAND__ANGUS
+      case "ARGYLL_AND_BUTE" => LocalAuthority.SCOTLAND__ARGYLL_AND_BUTE
+      case "COMHAIRLE_NAN_EILEAN_SIAR" => LocalAuthority.SCOTLAND__COMHAIRLE_NAN_EILEAN_SIAR
+      case "CLACKMANNANSHIRE" => LocalAuthority.SCOTLAND__CLACKMANNANSHIRE
+      case "DUMFRIES_AND_GALLOWAY" => LocalAuthority.SCOTLAND__DUMFRIES_AND_GALLOWAY
+      case "DUNDEE_CITY" => LocalAuthority.SCOTLAND__DUNDEE_CITY
+      case "EAST_AYRSHIRE" => LocalAuthority.SCOTLAND__EAST_AYRSHIRE
+      case "EAST_DUMBARTONSHIRE" => LocalAuthority.SCOTLAND__EAST_DUMBARTONSHIRE
+      case "EDINBURGH_CITY" => LocalAuthority.SCOTLAND__EDINBURGH_CITY
+      case "EAST_LOTHIAN" => LocalAuthority.SCOTLAND__EAST_LOTHIAN
+      case "EAST_RENFREWSHIRE" => LocalAuthority.SCOTLAND__EAST_RENFREWSHIRE
+      case "FALKIRK" => LocalAuthority.SCOTLAND__FALKIRK
+      case "FIFE" => LocalAuthority.SCOTLAND__FIFE
+      case "GLASGOW" => LocalAuthority.SCOTLAND__GLASGOW
+      case "HIGHLAND" => LocalAuthority.SCOTLAND__HIGHLAND
+      case "INVERCLYDE" => LocalAuthority.SCOTLAND__INVERCLYDE
+      case "MIDLOTHIAN" => LocalAuthority.SCOTLAND__MIDLOTHIAN
+      case "MORAY" => LocalAuthority.SCOTLAND__MORAY
+      case "NORTH_AYRSHIRE" => LocalAuthority.SCOTLAND__NORTH_AYRSHIRE
+      case "NORTH_LANARKSHIRE" => LocalAuthority.SCOTLAND__NORTH_LANARKSHIRE
+      case "ORKNEY" => LocalAuthority.SCOTLAND__ORKNEY
+      case "PERTH_AND_KINROSS" => LocalAuthority.SCOTLAND__PERTH_AND_KINROSS
+      case "RENFREWSHIRE" => LocalAuthority.SCOTLAND__RENFREWSHIRE
+      case "SCOTTISH_BORDERS" => LocalAuthority.SCOTLAND__SCOTTISH_BORDERS
+      case "SHETLAND_ISLANDS" => LocalAuthority.SCOTLAND__SHETLAND_ISLANDS
+      case "SOUTH_AYRSHIRE" => LocalAuthority.SCOTLAND__SOUTH_AYRSHIRE
+      case "SOUTH_LANARKSHIRE" => LocalAuthority.SCOTLAND__SOUTH_LANARKSHIRE
+      case "STIRLING" => LocalAuthority.SCOTLAND__STIRLING
+      case "WEST_DUMBARTONSHIRE" | "WEST_DUNBARTONSHIRE" => LocalAuthority.SCOTLAND__WEST_DUMBARTONSHIRE
+      case "WEST_LOTHIAN" => LocalAuthority.SCOTLAND__WEST_LOTHIAN
+      case "OTHER" => LocalAuthority.OTHER
       case unknown =>
         logger.warn(s"Local Authority is unknown - ${unknown}")
-        model.LocalAuthority.UNKNOWN
+        LocalAuthority.UNKNOWN
     }
   }
+
 
   def convertLocalAuthorityToModelVersion(localAuthority: io.sudostream.timetoteach.messages.systemwide.model.LocalAuthority):
   LocalAuthority = {

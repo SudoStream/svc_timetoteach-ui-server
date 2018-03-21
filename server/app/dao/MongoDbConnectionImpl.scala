@@ -16,8 +16,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Failure, Success}
 
 @Singleton
-class MongoDbConnectionImpl extends MongoDbConnection with MiniKubeHelper
-{
+class MongoDbConnectionImpl extends MongoDbConnection with MiniKubeHelper {
 
   val logger: Logger = Logger
   private val config = ConfigFactory.load()
@@ -28,12 +27,14 @@ class MongoDbConnectionImpl extends MongoDbConnection with MiniKubeHelper
   private val termlyPlansCollectionName = config.getString("mongodb.termly-plans-collection-name")
   private val termlyCurriculumSelectionCollectionName = config.getString("mongodb.termly-curriculum-selection-collection-name")
 
+  private val calendarDatabaseName = config.getString("mongodb.calendar-database-name")
+  private val schoolTermsCollectionName = config.getString("mongodb.school-terms-collection-name")
+
   private val isLocalMongoDb: Boolean = config.getString("mongodb.localmongodb").toBoolean
   logger.info(s"======================================================== isLocalMongoDb: '$isLocalMongoDb'")
 
 
-  private def createMongoClient: MongoClient =
-  {
+  private def createMongoClient: MongoClient = {
     if (isLocalMongoDb || isMinikubeRun) {
       logger.info("Building local mongo db")
       buildLocalMongoDbClient
@@ -44,8 +45,7 @@ class MongoDbConnectionImpl extends MongoDbConnection with MiniKubeHelper
     }
   }
 
-  private def buildLocalMongoDbClient =
-  {
+  private def buildLocalMongoDbClient = {
     val mongoKeystorePassword = try {
       sys.env("MONGODB_KEYSTORE_PASSWORD")
     } catch {
@@ -77,20 +77,22 @@ class MongoDbConnectionImpl extends MongoDbConnection with MiniKubeHelper
   ensureTermlyPlanningIndexes()
   ensureTermlyCurriculumSelectionIndexes()
 
-  override def getTermlyPlanningCollection: MongoCollection[Document] =
-  {
+  override def getTermlyPlanningCollection: MongoCollection[Document] = {
     val planningDatabase = mongoDbClient.getDatabase(planningDatabaseName)
     planningDatabase.getCollection(termlyPlansCollectionName)
   }
 
-  override def getTermlyCurriculumSelectionCollection: MongoCollection[Document] =
-  {
+  override def getTermlyCurriculumSelectionCollection: MongoCollection[Document] = {
     val planningDatabase = mongoDbClient.getDatabase(planningDatabaseName)
     planningDatabase.getCollection(termlyCurriculumSelectionCollectionName)
   }
 
-  override def ensureTermlyPlanningIndexes(): Unit =
-  {
+  override def getSchoolTermsCollection: MongoCollection[Document] = {
+    val planningDatabase = mongoDbClient.getDatabase(calendarDatabaseName)
+    planningDatabase.getCollection(schoolTermsCollectionName)
+  }
+
+  override def ensureTermlyPlanningIndexes(): Unit = {
     val mainIndex = BsonDocument(
       TermlyPlanningSchema.TTT_USER_ID -> 1,
       TermlyPlanningSchema.CLASS_ID -> 1,
@@ -117,8 +119,7 @@ class MongoDbConnectionImpl extends MongoDbConnection with MiniKubeHelper
 
   }
 
-  override def ensureTermlyCurriculumSelectionIndexes(): Unit =
-  {
+  override def ensureTermlyCurriculumSelectionIndexes(): Unit = {
     val mainIndex = BsonDocument(
       TermlyCurriculumSelectionSchema.TTT_USER_ID -> 1,
       TermlyCurriculumSelectionSchema.CLASS_ID -> 1

@@ -33,7 +33,7 @@
                 Weekly Plans</button>
         </li>
     </div>
-}{
+} {
     <li></li>
 } {
     <div class="container">
@@ -42,12 +42,16 @@
 
             <div class="manage-class-section">
                 <div class="form-row manage-class-form-row">
-                    <div class="col-lg-3">
+                    <div class="col-lg-3 align-items-end d-flex align-bottom">
                         <label class="add-new-class-label text-muted" for="className">Class Name</label>
                         <input type="text" id="className" name="className" class="form-control form-control-sm editable-input-button"
                         placeholder="@classDetails.className.name" value="@classDetails.className.name" >
                     </div>
-                    <div class="col-lg-9"></div>
+                    <div class="col-lg-2"></div>
+                    <div class="col-lg-7 text-right">
+                        <p><strong>@classDetails.schoolDetails.name</strong></p>
+                        <p>@classDetails.schoolDetails.address</p>
+                    </div>
                 </div>
 
                 <div class="form-row manage-class-form-row">
@@ -517,8 +521,8 @@
         </div>
 
         @*<div id="save-class-edit-changes-div" class="d-flex justify-content-end" >*@
-            @*<button id="save-class-edit-changes-button" type="button" class="btn btn-lg btn-primary" disabled="true">*@
-                @*Save Changes</button>*@
+        @*<button id="save-class-edit-changes-button" type="button" class="btn btn-lg btn-primary" disabled="true">*@
+        @*Save Changes</button>*@
         @*</div>*@
 
     </div>

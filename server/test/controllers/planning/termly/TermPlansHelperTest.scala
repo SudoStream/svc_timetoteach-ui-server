@@ -5,12 +5,18 @@ import java.time.LocalDateTime
 import controllers.serviceproxies.TermServiceProxyImpl
 import duplicate.model.{EandOsWithBenchmarks, TermlyPlansToSave}
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
+import io.sudostream.timetoteach.messages.systemwide.model.LocalAuthority
 import models.timetoteach.planning.GroupId
 import models.timetoteach.term.SchoolTermName
 import org.scalatest.FunSpec
 
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
+
 class TermPlansHelperTest extends FunSpec
 {
+
+
 
   private val SCHOOL_ID = "school3333"
   private val CLASS_ID = "classId12312321"
@@ -23,8 +29,8 @@ class TermPlansHelperTest extends FunSpec
   private val SUBJECT_MATHS = "Mathematics"
 
   describe("Given a TermlyPlansToSave, a group id and a subject 'maths', TermPlansHelper.convertTermlyPlanToModel(...)") {
-    val planHelper = new TermPlansHelper(new TermServiceProxyImpl)
-    val subjectTermlyPlan = planHelper.convertTermlyPlanToModel(
+    val planHelper = new TermPlansHelper(new MockTermServiceProxy )
+    val futureSubjectTermlyPlan = planHelper.convertTermlyPlanToModel(
       CLASS_ID,
       TermlyPlansToSave(
         USER_ID,
@@ -36,8 +42,12 @@ class TermPlansHelperTest extends FunSpec
         ))
       ),
       Some(GroupId(GROUP_ID)),
-      SUBJECT_MATHS
+      SUBJECT_MATHS,
+      LocalAuthority.SCOTLAND__STIRLING
     )
+
+    import scala.concurrent.duration._
+    val subjectTermlyPlan = Await.result(futureSubjectTermlyPlan, 1.second)
 
     it("should create a SubjectTermlyPlan with a timestamp after 2 minutes ago ") {
       assert(subjectTermlyPlan.createdTime.isAfter(LocalDateTime.now().minusMinutes(2)))

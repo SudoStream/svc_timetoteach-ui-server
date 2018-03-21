@@ -12,6 +12,7 @@ import javax.inject.{Inject, Singleton}
 import models.timetoteach.planning.pdf.CurriculumAreaTermlyPlanForPdfBuilder
 import models.timetoteach.{ClassId, CookieNames, TimeToTeachUserId}
 import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}
+import utils.SchoolConverter
 import utils.TemplateUtils.getCookieStringFromRequest
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -25,11 +26,9 @@ class DownloadPdfController @Inject()(
                                        userReader: UserReaderServiceProxyImpl,
                                        planningReaderService: PlanningReaderServiceProxy,
                                        esAndOsReader: EsOsAndBenchmarksBuilderImpl,
-                                       deadbolt: DeadboltActions) extends AbstractController(cc)
-{
+                                       deadbolt: DeadboltActions) extends AbstractController(cc) {
 
-  private def createTodaysDatePretty(): String =
-  {
+  private def createTodaysDatePretty(): String = {
     val localDate = LocalDate.now()
     val formatter = DateTimeFormatter.ofPattern("eeee, d MMMM yyyy")
     localDate.format(formatter)
@@ -39,8 +38,6 @@ class DownloadPdfController @Inject()(
     val tttUserId = TimeToTeachUserId(getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO ID"))
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(tttUserId)
     val eventualMaybeUser = userReader.getUserDetails(tttUserId)
-    val eventualMaybeCurriculumSelection = planningReaderService.
-      currentTermlyCurriculumSelection(tttUserId, ClassId(classId), termService.currentSchoolTerm())
     val eventualEsAndOsToDetailMap = esAndOsReader.esAndOsCodeToEsAndOsDetailMap()
 
     for {
@@ -52,6 +49,10 @@ class DownloadPdfController @Inject()(
       maybeUser <- eventualMaybeUser
       if maybeUser.isDefined
       user = maybeUser.get
+      futureMaybeCurrentSchoolTerm = termService.currentSchoolTerm(SchoolConverter.convertLocalAuthorityStringToAvroVersion(classDetails.schoolDetails.localAuthority))
+      maybeCurrentSchoolTerm <- futureMaybeCurrentSchoolTerm
+      if maybeCurrentSchoolTerm.isDefined
+      eventualMaybeCurriculumSelection = planningReaderService.currentTermlyCurriculumSelection(tttUserId, ClassId(classId), maybeCurrentSchoolTerm.get)
 
       maybeTermlyCurriculumSelection <- eventualMaybeCurriculumSelection
       if maybeTermlyCurriculumSelection.isDefined
@@ -64,7 +65,7 @@ class DownloadPdfController @Inject()(
       esAndOsCodeToDetailMap <- eventualEsAndOsToDetailMap
     } yield pdfGeneratorWrapper.pdfGenerator.ok(views.html.planning.termly.pdfViewClassTermlyPlan(
       classDetails,
-      termService.currentSchoolTerm(),
+      maybeCurrentSchoolTerm.get,
       createTodaysDatePretty(),
       List(user),
       classTermlyPlanPdf,

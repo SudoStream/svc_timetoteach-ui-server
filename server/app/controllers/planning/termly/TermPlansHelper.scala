@@ -1,13 +1,17 @@
 package controllers.planning.termly
 
 import java.time.LocalDateTime
-import javax.inject.{Inject, Singleton}
 
+import javax.inject.{Inject, Singleton}
 import controllers.serviceproxies.TermServiceProxy
 import duplicate.model.TermlyPlansToSave
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
-import models.timetoteach.planning.{GroupId, PlanType, CurriculumAreaTermlyPlan}
+import io.sudostream.timetoteach.messages.systemwide.model.LocalAuthority
+import models.timetoteach.planning.{CurriculumAreaTermlyPlan, GroupId, PlanType}
 import models.timetoteach.{ClassId, TimeToTeachUserId}
+
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
 class TermPlansHelper @Inject()(termService: TermServiceProxy)
@@ -19,20 +23,25 @@ class TermPlansHelper @Inject()(termService: TermServiceProxy)
                                 classId: String,
                                 termlyPlansToSave: TermlyPlansToSave,
                                 maybeGroupId: Option[GroupId],
-                                curriculumArea: String
-                              ): CurriculumAreaTermlyPlan =
+                                curriculumArea: String,
+                                localAuthority: LocalAuthority
+                              ): Future[CurriculumAreaTermlyPlan] =
   {
-    val thisTerm = termService.currentSchoolTerm()
+    val futureMaybeThisTerm = termService.currentSchoolTerm(localAuthority)
+
     val planType = if (maybeGroupId.isDefined) {
       PlanType.GROUP_LEVEL_PLAN
     } else {
       PlanType.CLASS_LEVEL_PLAN
     }
 
-    CurriculumAreaTermlyPlan(
+    for {
+      maybeThisTerm <- futureMaybeThisTerm
+      if maybeThisTerm.isDefined
+    } yield CurriculumAreaTermlyPlan(
       termlyPlansToSave.tttUserId,
       planType,
-      thisTerm,
+      maybeThisTerm .get,
       classId,
       maybeGroupId,
       curriculumArea,

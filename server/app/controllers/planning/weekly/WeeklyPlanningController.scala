@@ -16,6 +16,7 @@ import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponent
 import security.MyDeadboltHandler
 import shared.model.classtimetable.WwwClassId
 import shared.util.LocalTimeUtil
+import utils.SchoolConverter
 import utils.TemplateUtils.getCookieStringFromRequest
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -106,8 +107,6 @@ class WeeklyPlanningController @Inject()(
     val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
     val tttUserId = TimeToTeachUserId(getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO ID"))
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(tttUserId)
-    val eventualMaybeCurriculumSelection = planningReaderService.
-      currentTermlyCurriculumSelection(tttUserId, ClassId(classId), termService.currentSchoolTerm())
     val eventualEsAndOsToDetailMap = esAndOsReader.esAndOsCodeToEsAndOsDetailMap()
 
     for {
@@ -116,6 +115,13 @@ class WeeklyPlanningController @Inject()(
       maybeClassDetails: Option[ClassDetails] = classDetailsList.headOption
       if maybeClassDetails.isDefined
       classDetails = maybeClassDetails.get
+
+      futureMaybeSchoolTerm = termService.currentSchoolTerm(SchoolConverter.convertLocalAuthorityStringToAvroVersion(classDetails.schoolDetails.localAuthority))
+      maybeSchoolTerm <- futureMaybeSchoolTerm
+      if maybeSchoolTerm.isDefined
+
+      eventualMaybeCurriculumSelection = planningReaderService.
+        currentTermlyCurriculumSelection(tttUserId, ClassId(classId), maybeSchoolTerm.get)
 
       maybeTermlyCurriculumSelection <- eventualMaybeCurriculumSelection
       if maybeTermlyCurriculumSelection.isDefined

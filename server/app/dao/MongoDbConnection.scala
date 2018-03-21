@@ -8,6 +8,7 @@ trait MongoDbConnection
 {
   def getTermlyPlanningCollection: MongoCollection[Document]
   def getTermlyCurriculumSelectionCollection: MongoCollection[Document]
+  def getSchoolTermsCollection: MongoCollection[Document]
 
   def ensureTermlyCurriculumSelectionIndexes()
   def ensureTermlyPlanningIndexes()

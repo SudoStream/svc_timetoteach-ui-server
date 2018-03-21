@@ -19,6 +19,7 @@ import play.api.data.Forms.{mapping, _}
 import play.api.mvc._
 import security.MyDeadboltHandler
 import shared.util.PlanningHelper
+import utils.SchoolConverter
 import utils.TemplateUtils.getCookieStringFromRequest
 
 import scala.annotation.tailrec
@@ -55,11 +56,14 @@ class TermlyPlansController @Inject()(
     for {
       classes <- eventualClasses
 
-      //hello
+      futureMaybeSchoolTerm = termService.currentSchoolTerm(SchoolConverter.convertLocalAuthorityStringToAvroVersion(classes.head.schoolDetails.localAuthority))
+      maybeSchoolTerm <- futureMaybeSchoolTerm
+      if maybeSchoolTerm.isDefined
+
       futureMaybeCurriculumPlanProgress = planningReaderService.curriculumPlanProgressForClasses(
         TimeToTeachUserId(tttUserId),
         classes,
-        termService.currentSchoolTerm()
+        maybeSchoolTerm.get
       )
 
       maybeCurriculumPlanProgress <- futureMaybeCurriculumPlanProgress
@@ -92,11 +96,6 @@ class TermlyPlansController @Inject()(
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
     val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
     val tttUserId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO ID")
-    val eventualMaybeCurrentTermlyCurriculumSelection = planningReaderService.currentTermlyCurriculumSelection(
-      TimeToTeachUserId(tttUserId),
-      ClassId(classId),
-      termService.currentSchoolTerm()
-    )
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
 
     for {
@@ -105,6 +104,19 @@ class TermlyPlansController @Inject()(
       maybeClassDetails: Option[ClassDetails] = classDetailsList.headOption
       if maybeClassDetails.isDefined
       classDetails = maybeClassDetails.get
+      futureMaybeSchoolTerm = termService.currentSchoolTerm(SchoolConverter.convertLocalAuthorityStringToAvroVersion(classDetails.schoolDetails.localAuthority))
+      maybeSchoolTerm <- futureMaybeSchoolTerm
+      if maybeSchoolTerm.isDefined
+      eventualMaybeCurrentTermlyCurriculumSelection = planningReaderService.currentTermlyCurriculumSelection(
+        TimeToTeachUserId(tttUserId),
+        ClassId(classId),
+        maybeSchoolTerm.get
+      )
+
+      futureMaybeSchoolTerm = termService.currentSchoolTerm(SchoolConverter.convertLocalAuthorityStringToAvroVersion(classDetails.schoolDetails.localAuthority))
+      maybeSchoolTerm <- futureMaybeSchoolTerm
+      if maybeSchoolTerm.isDefined
+
       maybeCurrentTermlyCurriculumSelection: Option[TermlyCurriculumSelection] <- eventualMaybeCurrentTermlyCurriculumSelection
     } yield
       Ok(views.html.planning.termly.termlyPlansSelectOverallCurriculumAreasForTheTerm(
@@ -123,7 +135,7 @@ class TermlyPlansController @Inject()(
             ClassId(classId),
             Nil,
             LocalDateTime.now(),
-            termService.currentSchoolTerm()
+            maybeSchoolTerm.get
           )
         )
       )(authRequest))
@@ -135,11 +147,6 @@ class TermlyPlansController @Inject()(
     val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
     val tttUserId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO ID")
 
-    val eventualMaybeCurrentTermlyCurriculumSelection = planningReaderService.currentTermlyCurriculumSelection(
-      TimeToTeachUserId(tttUserId),
-      ClassId(classId),
-      termService.currentSchoolTerm()
-    )
 
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
     for {
@@ -148,6 +155,15 @@ class TermlyPlansController @Inject()(
       maybeClassDetails: Option[ClassDetails] = classDetailsList.headOption
       if maybeClassDetails.isDefined
       classDetails = maybeClassDetails.get
+
+      futureMaybeSchoolTerm = termService.currentSchoolTerm(SchoolConverter.convertLocalAuthorityStringToAvroVersion(classDetails.schoolDetails.localAuthority))
+      maybeSchoolTerm <- futureMaybeSchoolTerm
+      if maybeSchoolTerm.isDefined
+      eventualMaybeCurrentTermlyCurriculumSelection = planningReaderService.currentTermlyCurriculumSelection(
+        TimeToTeachUserId(tttUserId),
+        ClassId(classId),
+        maybeSchoolTerm.get
+      )
 
       maybeCurrentTermlyCurriculumSelection: Option[TermlyCurriculumSelection] <- eventualMaybeCurrentTermlyCurriculumSelection
 
@@ -159,7 +175,7 @@ class TermlyPlansController @Inject()(
       futureMaybeOverallCurriculumPlanProgress = planningReaderService.curriculumPlanProgressForClasses(
         TimeToTeachUserId(tttUserId),
         classes,
-        termService.currentSchoolTerm()
+        maybeSchoolTerm.get
       )
       maybeOverallCurriculumPlanProgress <- futureMaybeOverallCurriculumPlanProgress
 
@@ -190,11 +206,6 @@ class TermlyPlansController @Inject()(
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
     val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
     val tttUserId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO ID")
-    val eventualMaybeCurrentTermlyCurriculumSelection = planningReaderService.currentTermlyCurriculumSelection(
-      TimeToTeachUserId(tttUserId),
-      ClassId(classId),
-      termService.currentSchoolTerm()
-    )
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
 
     for {
@@ -203,6 +214,15 @@ class TermlyPlansController @Inject()(
       maybeClassDetails: Option[ClassDetails] = classDetailsList.headOption
       if maybeClassDetails.isDefined
       classDetails = maybeClassDetails.get
+      futureMaybeSchoolTerm = termService.currentSchoolTerm(SchoolConverter.convertLocalAuthorityStringToAvroVersion(classDetails.schoolDetails.localAuthority))
+      maybeSchoolTerm <- futureMaybeSchoolTerm
+      if maybeSchoolTerm.isDefined
+      eventualMaybeCurrentTermlyCurriculumSelection = planningReaderService.currentTermlyCurriculumSelection(
+        TimeToTeachUserId(tttUserId),
+        ClassId(classId),
+        maybeSchoolTerm.get
+      )
+
       maybeRelevantEsAndOs <- esAndOsReader.buildEsOsAndBenchmarks(
         convertCurriculumAreaToModel(curriculumArea)
       )
@@ -220,7 +240,7 @@ class TermlyPlansController @Inject()(
       futureMaybeOverallCurriculumPlanProgress = planningReaderService.curriculumPlanProgressForClasses(
         TimeToTeachUserId(tttUserId),
         classes,
-        termService.currentSchoolTerm()
+        maybeSchoolTerm.get
       )
 
       maybeOverallCurriculumPlanProgress <- futureMaybeOverallCurriculumPlanProgress
@@ -250,11 +270,6 @@ class TermlyPlansController @Inject()(
     val tttUserId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO ID")
 
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
-    val eventualMaybeCurrentTermlyCurriculumSelection = planningReaderService.currentTermlyCurriculumSelection(
-      TimeToTeachUserId(tttUserId),
-      ClassId(classId),
-      termService.currentSchoolTerm()
-    )
 
     for {
       classes <- eventualClasses
@@ -262,6 +277,15 @@ class TermlyPlansController @Inject()(
       maybeClassDetails: Option[ClassDetails] = classDetailsList.headOption
       if maybeClassDetails.isDefined
       classDetails = maybeClassDetails.get
+      futureMaybeSchoolTerm = termService.currentSchoolTerm(SchoolConverter.convertLocalAuthorityStringToAvroVersion(classDetails.schoolDetails.localAuthority))
+      maybeSchoolTerm <- futureMaybeSchoolTerm
+      if maybeSchoolTerm.isDefined
+      eventualMaybeCurrentTermlyCurriculumSelection = planningReaderService.currentTermlyCurriculumSelection(
+        TimeToTeachUserId(tttUserId),
+        ClassId(classId),
+        maybeSchoolTerm.get
+      )
+
       group = classDetails.groups.filter(group => group.groupId.id == groupId).head
       relevantEsAndOs <- esAndOsReader.buildEsOsAndBenchmarks(
         group.groupLevel,
@@ -279,7 +303,7 @@ class TermlyPlansController @Inject()(
       futureMaybeOverallCurriculumPlanProgress = planningReaderService.curriculumPlanProgressForClasses(
         TimeToTeachUserId(tttUserId),
         classes,
-        termService.currentSchoolTerm()
+        maybeSchoolTerm.get
       )
 
       maybeOverallCurriculumPlanProgress <- futureMaybeOverallCurriculumPlanProgress
@@ -304,12 +328,14 @@ class TermlyPlansController @Inject()(
 
   val termlyPlansToSaveForm = Form(
     mapping(
-      "termlyPlansPickled" -> text
+      "termlyPlansPickled" -> text,
+      "tttUserId" -> text
     )(TermlyPlansToSaveJson.apply)(TermlyPlansToSaveJson.unapply)
   )
 
   case class TermlyPlansToSaveJson(
-                                    groupTermlyPlansPickled: String
+                                    groupTermlyPlansPickled: String,
+                                    tttUserId: String
                                   )
 
   def savePlansForGroup(classId: String, curriculumArea: String, groupId: String): Action[AnyContent] = Action.async { implicit request =>
@@ -320,10 +346,29 @@ class TermlyPlansController @Inject()(
     val termlyPlansToSave: TermlyPlansToSave = read[TermlyPlansToSave](PlanningHelper.decodeAnyNonFriendlyCharacters(termlyPlansForGroup.groupTermlyPlansPickled))
     logger.debug(s"Termly plans Unpickled = ${termlyPlansToSave.toString}")
 
-    val termlyPlansAsModel = termsPlanHelper.convertTermlyPlanToModel(classId, termlyPlansToSave, Some(GroupId(groupId)), curriculumArea)
-    val savedPlan = planningWriterService.saveSubjectTermlyPlan(termlyPlansAsModel)
+    val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(termlyPlansForGroup.tttUserId))
 
     for {
+      classes <- eventualClasses
+      classDetailsList = classes.filter(theClass => theClass.id.id == classId)
+      maybeClassDetails: Option[ClassDetails] = classDetailsList.headOption
+      if maybeClassDetails.isDefined
+      classDetails = maybeClassDetails.get
+
+      futureTermlyPlansAsModel = termsPlanHelper.convertTermlyPlanToModel(classId,
+        termlyPlansToSave,
+        Some(GroupId(groupId)),
+        curriculumArea,
+        SchoolConverter.convertLocalAuthorityStringToAvroVersion(classDetails.schoolDetails.localAuthority)
+      )
+
+      termlyPlansAsModel <- futureTermlyPlansAsModel
+      savedPlan = planningWriterService.saveSubjectTermlyPlan(termlyPlansAsModel)
+
+      futureMaybeSchoolTerm = termService.currentSchoolTerm(SchoolConverter.convertLocalAuthorityStringToAvroVersion(classDetails.schoolDetails.localAuthority))
+      maybeSchoolTerm <- futureMaybeSchoolTerm
+      if maybeSchoolTerm.isDefined
+
       done <- savedPlan
     } yield Ok("Saved termly plans!")
   }
@@ -335,11 +380,27 @@ class TermlyPlansController @Inject()(
     import upickle.default._
     val termlyPlansToSave: TermlyPlansToSave = read[TermlyPlansToSave](PlanningHelper.decodeAnyNonFriendlyCharacters(termlyPlansForGroup.groupTermlyPlansPickled))
     logger.debug(s"Termly plans Unpickled = ${termlyPlansToSave.toString}")
+    val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(termlyPlansForGroup.tttUserId))
 
-    val termlyPlansAsModel = termsPlanHelper.convertTermlyPlanToModel(classId, termlyPlansToSave, None, curriculumArea)
-    val savedPlan = planningWriterService.saveSubjectTermlyPlan(termlyPlansAsModel)
 
     for {
+      classes <- eventualClasses
+      classDetailsList = classes.filter(theClass => theClass.id.id == classId)
+      maybeClassDetails: Option[ClassDetails] = classDetailsList.headOption
+      if maybeClassDetails.isDefined
+      classDetails = maybeClassDetails.get
+
+
+      futureTermlyPlansAsModel = termsPlanHelper.convertTermlyPlanToModel(classId,
+        termlyPlansToSave,
+        None,
+        curriculumArea,
+        SchoolConverter.convertLocalAuthorityStringToAvroVersion(classDetails.schoolDetails.localAuthority)
+      )
+      termlyPlansAsModel <- futureTermlyPlansAsModel
+
+      savedPlan = planningWriterService.saveSubjectTermlyPlan(termlyPlansAsModel)
+
       done <- savedPlan
     } yield Ok("Saved termly plans!")
   }
@@ -351,11 +412,7 @@ class TermlyPlansController @Inject()(
     val tttUserId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO ID")
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
     val eventualEsAndOsToDetailMap = esAndOsReader.esAndOsCodeToEsAndOsDetailMap()
-    val eventualMaybeCurrentTermlyCurriculumSelection = planningReaderService.currentTermlyCurriculumSelection(
-      TimeToTeachUserId(tttUserId),
-      ClassId(classId),
-      termService.currentSchoolTerm()
-    )
+
     val futureMaybeCurriculumAreaTermlyPlanForClassLevel = findAnyCurrentTermlyPlanForCurriculumAreaAtClassLevel(classId, curriculumArea, tttUserId)
 
     import utils.CurriculumConverterUtil.convertSubjectToScottishCurriculumPlanningAreaWrapper
@@ -366,6 +423,16 @@ class TermlyPlansController @Inject()(
       maybeClassDetails: Option[ClassDetails] = classDetailsList.headOption
       if maybeClassDetails.isDefined
       classDetails = maybeClassDetails.get
+
+      futureMaybeSchoolTerm = termService.currentSchoolTerm(SchoolConverter.convertLocalAuthorityStringToAvroVersion(classDetails.schoolDetails.localAuthority))
+      maybeSchoolTerm <- futureMaybeSchoolTerm
+      if maybeSchoolTerm.isDefined
+
+      eventualMaybeCurrentTermlyCurriculumSelection = planningReaderService.currentTermlyCurriculumSelection(
+        TimeToTeachUserId(tttUserId),
+        ClassId(classId),
+        maybeSchoolTerm.get
+      )
 
       maybeCurrentTermlyCurriculumSelection: Option[TermlyCurriculumSelection] <- eventualMaybeCurrentTermlyCurriculumSelection
       if maybeCurrentTermlyCurriculumSelection.isDefined
@@ -381,7 +448,7 @@ class TermlyPlansController @Inject()(
       futureMaybeOverallCurriculumPlanProgress = planningReaderService.curriculumPlanProgressForClasses(
         TimeToTeachUserId(tttUserId),
         classes,
-        termService.currentSchoolTerm()
+        maybeSchoolTerm.get
       )
 
       maybeOverallCurriculumPlanProgress <- futureMaybeOverallCurriculumPlanProgress
@@ -448,10 +515,14 @@ class TermlyPlansController @Inject()(
       if maybeClassDetails.isDefined
       classDetails = maybeClassDetails.get
 
+      futureMaybeSchoolTerm = termService.currentSchoolTerm(SchoolConverter.convertLocalAuthorityStringToAvroVersion(classDetails.schoolDetails.localAuthority))
+      maybeSchoolTerm <- futureMaybeSchoolTerm
+      if maybeSchoolTerm.isDefined
+
       futureMaybeOverallCurriculumPlanProgress = planningReaderService.curriculumPlanProgressForClasses(
         TimeToTeachUserId(tttUserId),
         classes,
-        termService.currentSchoolTerm()
+        maybeSchoolTerm.get
       )
 
       maybeOverallCurriculumPlanProgress <- futureMaybeOverallCurriculumPlanProgress
@@ -477,11 +548,7 @@ class TermlyPlansController @Inject()(
     val tttUserId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO ID")
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
     val eventualEsAndOsToDetailMap = esAndOsReader.esAndOsCodeToEsAndOsDetailMap()
-    val eventualMaybeCurrentTermlyCurriculumSelection = planningReaderService.currentTermlyCurriculumSelection(
-      TimeToTeachUserId(tttUserId),
-      ClassId(classId),
-      termService.currentSchoolTerm()
-    )
+
     val futureMaybeCurriculumAreaTermlyPlanForGroup = findAnyCurrentTermlyPlanForCurriculumAreaAndGroup(classId, curriculumArea, groupId, tttUserId)
 
     for {
@@ -491,6 +558,17 @@ class TermlyPlansController @Inject()(
       maybeClassDetails: Option[ClassDetails] = classDetailsList.headOption
       if maybeClassDetails.isDefined
       classDetails = maybeClassDetails.get
+
+      futureMaybeSchoolTerm = termService.currentSchoolTerm(SchoolConverter.convertLocalAuthorityStringToAvroVersion(classDetails.schoolDetails.localAuthority))
+      maybeSchoolTerm <- futureMaybeSchoolTerm
+      if maybeSchoolTerm.isDefined
+
+      eventualMaybeCurrentTermlyCurriculumSelection = planningReaderService.currentTermlyCurriculumSelection(
+        TimeToTeachUserId(tttUserId),
+        ClassId(classId),
+        maybeSchoolTerm.get
+      )
+
       group = classDetails.groups.filter(group => group.groupId.id == groupId).head
 
       maybeCurrentTermlyCurriculumSelection: Option[TermlyCurriculumSelection] <- eventualMaybeCurrentTermlyCurriculumSelection
@@ -508,7 +586,7 @@ class TermlyPlansController @Inject()(
       futureMaybeOverallCurriculumPlanProgress = planningReaderService.curriculumPlanProgressForClasses(
         TimeToTeachUserId(tttUserId),
         classes,
-        termService.currentSchoolTerm()
+        maybeSchoolTerm.get
       )
 
       maybeOverallCurriculumPlanProgress <- futureMaybeOverallCurriculumPlanProgress
@@ -600,13 +678,7 @@ class TermlyPlansController @Inject()(
         case Some(userId) => userId.value
         case None => ""
       }
-      val termlyCurriculumSelection: TermlyCurriculumSelection = createTermlyCurriculumSelection(
-        TimeToTeachUserId(theTimeToTeachUserId),
-        LocalDateTime.now(),
-        termService.currentSchoolTerm(),
-        curriculumAreaSelectionData
-      )
-      val insertCompleted = planningWriterService.saveTermlyCurriculumSelection(termlyCurriculumSelection)
+
 
       for {
         classes <- eventualClasses
@@ -614,6 +686,20 @@ class TermlyPlansController @Inject()(
         maybeClassDetails: Option[ClassDetails] = classDetailsList.headOption
         if maybeClassDetails.isDefined
         classDetails = maybeClassDetails.get
+
+        futureMaybeSchoolTerm = termService.currentSchoolTerm(SchoolConverter.convertLocalAuthorityStringToAvroVersion(classDetails.schoolDetails.localAuthority))
+        maybeSchoolTerm <- futureMaybeSchoolTerm
+        if maybeSchoolTerm.isDefined
+
+        termlyCurriculumSelection: TermlyCurriculumSelection = createTermlyCurriculumSelection(
+          TimeToTeachUserId(theTimeToTeachUserId),
+          LocalDateTime.now(),
+          maybeSchoolTerm.get,
+          curriculumAreaSelectionData
+        )
+
+        insertCompleted = planningWriterService.saveTermlyCurriculumSelection(termlyCurriculumSelection)
+
         done <- insertCompleted
       } yield {
         Redirect(routes.TermlyPlansController.termlyPlansForClass(classDetails.id.id))

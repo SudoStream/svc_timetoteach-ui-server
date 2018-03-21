@@ -9,26 +9,26 @@ import models.timetoteach.term.SchoolTerm
 import models.timetoteach.{ClassId, TimeToTeachUserId}
 import play.api.Logger
 import potentialmicroservice.planning.reader.PlanningReaderService
+import utils.SchoolConverter
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.control.NonFatal
 
 @Singleton
-class PlanningReaderServiceProxyImpl @Inject()(planningReaderService: PlanningReaderService, termService: TermServiceProxy) extends PlanningReaderServiceProxy
-{
+class PlanningReaderServiceProxyImpl @Inject()(planningReaderService: PlanningReaderService,
+                                               classTimetableReaderProxy: ClassTimetableReaderServiceProxyImpl,
+                                               termService: TermServiceProxy) extends PlanningReaderServiceProxy {
   private val logger: Logger = Logger
 
-  override def currentTermlyCurriculumSelection(tttUserId: TimeToTeachUserId, classId: ClassId, term: SchoolTerm): Future[Option[TermlyCurriculumSelection]] =
-  {
+  override def currentTermlyCurriculumSelection(tttUserId: TimeToTeachUserId, classId: ClassId, term: SchoolTerm): Future[Option[TermlyCurriculumSelection]] = {
     planningReaderService.currentTermlyCurriculumSelection(tttUserId, classId, term)
   }
 
   override def curriculumPlanProgress(tttUserId: TimeToTeachUserId,
                                       classDetails: ClassDetails,
                                       maybeCurrentTermlyCurriculumSelection: Option[TermlyCurriculumSelection]
-                                     ): Future[Option[CurriculumPlanProgressForClass]] =
-  {
+                                     ): Future[Option[CurriculumPlanProgressForClass]] = {
     maybeCurrentTermlyCurriculumSelection match {
       case Some(currentTermlyCurriculumSelection) =>
         planningReaderService.curriculumPlanProgress(
@@ -45,21 +45,18 @@ class PlanningReaderServiceProxyImpl @Inject()(planningReaderService: PlanningRe
   override def readCurriculumAreaTermlyPlanForGroup(tttUserId: TimeToTeachUserId,
                                                     classId: ClassId,
                                                     groupId: GroupId,
-                                                    planningArea: ScottishCurriculumPlanningArea): Future[Option[CurriculumAreaTermlyPlan]] =
-  {
+                                                    planningArea: ScottishCurriculumPlanningArea): Future[Option[CurriculumAreaTermlyPlan]] = {
     planningReaderService.readCurriculumAreaTermlyPlanForGroup(tttUserId, classId, groupId, planningArea)
   }
 
 
-  override def readCurriculumAreaTermlyPlanForClassLevel(tttUserId: TimeToTeachUserId, classId: ClassId, planningArea: ScottishCurriculumPlanningArea): Future[Option[CurriculumAreaTermlyPlan]] =
-  {
+  override def readCurriculumAreaTermlyPlanForClassLevel(tttUserId: TimeToTeachUserId, classId: ClassId, planningArea: ScottishCurriculumPlanningArea): Future[Option[CurriculumAreaTermlyPlan]] = {
     planningReaderService.readCurriculumAreaTermlyPlanForClassLevel(tttUserId, classId, planningArea)
   }
 
   override def allClassTermlyPlans(tttUserId: TimeToTeachUserId,
                                    classDetails: ClassDetails,
-                                   planningAreas: List[ScottishCurriculumPlanningArea]): Future[List[CurriculumAreaTermlyPlan]] =
-  {
+                                   planningAreas: List[ScottishCurriculumPlanningArea]): Future[List[CurriculumAreaTermlyPlan]] = {
     //TODO: Performance - this can be imporoved to be one DB call rather than a db call for every curriculum area
     logger.debug(s"readCurriculumAreaTermlyPlanAtClassLevelForPlanningAreas() - " +
       s"${tttUserId.value} ${classDetails.id.id} ${planningAreas.toString()}")
@@ -79,8 +76,7 @@ class PlanningReaderServiceProxyImpl @Inject()(planningReaderService: PlanningRe
   private def extractPlansForGroupLevelAreas(tttUserId: TimeToTeachUserId,
                                              classDetails: ClassDetails,
                                              planningAreas: List[ScottishCurriculumPlanningArea])
-  : List[Future[Option[CurriculumAreaTermlyPlan]]] =
-  {
+  : List[Future[Option[CurriculumAreaTermlyPlan]]] = {
     val eventualMaybeCurriculumTermlyPlansAtGroupLevel: List[Future[Option[CurriculumAreaTermlyPlan]]] =
       for {
         planningArea <- planningAreas
@@ -103,8 +99,7 @@ class PlanningReaderServiceProxyImpl @Inject()(planningReaderService: PlanningRe
   }
   private def extractPlansForClassLevelAreas(tttUserId: TimeToTeachUserId,
                                              classId: ClassId,
-                                             planningAreas: List[ScottishCurriculumPlanningArea]): List[Future[Option[CurriculumAreaTermlyPlan]]] =
-  {
+                                             planningAreas: List[ScottishCurriculumPlanningArea]): List[Future[Option[CurriculumAreaTermlyPlan]]] = {
     val eventualMaybeCurriculumTermlyPlansAtClassLevel: List[Future[Option[CurriculumAreaTermlyPlan]]] =
       for {
         planningArea <- planningAreas
@@ -121,12 +116,10 @@ class PlanningReaderServiceProxyImpl @Inject()(planningReaderService: PlanningRe
     eventualMaybeCurriculumTermlyPlansWithHandledErrors
   }
   private def convertToPlanningAreas(classIdToTermlyCurriculumSelection: Map[ClassId, Option[TermlyCurriculumSelection]]):
-  Map[ClassId, List[ScottishCurriculumPlanningArea]] =
-  {
+  Map[ClassId, List[ScottishCurriculumPlanningArea]] = {
     logger.debug(s"incoming map to convertToPlanningAreas() is ${classIdToTermlyCurriculumSelection.toString}")
 
-    def safeConvert(maybeSelection: Option[TermlyCurriculumSelection]): List[ScottishCurriculumPlanningArea] =
-    {
+    def safeConvert(maybeSelection: Option[TermlyCurriculumSelection]): List[ScottishCurriculumPlanningArea] = {
       maybeSelection match {
         case Some(termlySelection) => termlySelection.planningAreas
         case None => Nil
@@ -136,15 +129,20 @@ class PlanningReaderServiceProxyImpl @Inject()(planningReaderService: PlanningRe
     classIdToTermlyCurriculumSelection.toList.map(entryTuple => (entryTuple._1, safeConvert(entryTuple._2))).toMap
   }
 
-  override def curriculumPlanProgressForClasses(tttUserId: TimeToTeachUserId, classes: List[ClassDetails], term: SchoolTerm): Future[Map[model.ClassId, Int]] =
-  {
+  override def curriculumPlanProgressForClasses(tttUserId: TimeToTeachUserId, classes: List[ClassDetails], term: SchoolTerm): Future[Map[model.ClassId, Int]] = {
     val classIds = classes.map(aClass => models.timetoteach.ClassId(aClass.id.id))
+    val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(tttUserId)
 
     for {
+      classes <- eventualClasses
+      futureMaybeSchoolTerm = termService.currentSchoolTerm(SchoolConverter.convertLocalAuthorityStringToAvroVersion(classes.head.schoolDetails.localAuthority))
+      maybeSchoolTerm <- futureMaybeSchoolTerm
+      if maybeSchoolTerm.isDefined
+
       classIdToTermlyCurriculumSelection <- planningReaderService.currentTermlyCurriculumSelection(
         tttUserId,
         classIds,
-        termService.currentSchoolTerm()
+        maybeSchoolTerm.get
       )
       classIdToPlanningAreas = convertToPlanningAreas(classIdToTermlyCurriculumSelection)
       classIdToProgressPercent <- planningReaderService.curriculumPlanProgressForClasses(tttUserId, classes, classIdToPlanningAreas, term)
