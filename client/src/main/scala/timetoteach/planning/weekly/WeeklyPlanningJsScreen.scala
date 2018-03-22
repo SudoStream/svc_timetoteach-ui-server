@@ -20,6 +20,17 @@ object WeeklyPlanningJsScreen {
     simpleRenderClassTimetable()
     setMondayDateToCurrentlySelectedWeek()
     clickingAMondayWeekButtonUpdatesDates()
+    planThisWeekButton()
+  }
+
+  def planThisWeekButton(): Unit = {
+    val planThisWeekButton = dom.document.getElementById("weekly-planning-plan-this-week-button").asInstanceOf[HTMLButtonElement]
+    if (planThisWeekButton != null) {
+      planThisWeekButton.addEventListener("click", (e: dom.Event) => {
+        val classId = dom.window.localStorage.getItem("classId")
+        dom.window.location.href = s"/createPlanForTheWeek/$classId"
+      })
+    }
   }
 
   private def setAllWeeklyMondayButtonsToDefault(): Unit = {

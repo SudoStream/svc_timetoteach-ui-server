@@ -17,7 +17,8 @@
         esAndOsCodeToDetailMap: Map[String, duplicate.model.esandos.EandO],
         classTimetable: ClassTimetable,
         currentTerm: SchoolTerm,
-        lessonsThisWeekPickled: String
+        lessonsThisWeekPickled: String,
+        weekNumber: Int
 )
 
 @tabContentActiveOrNot(index: Int) = {
@@ -139,7 +140,7 @@
 }
 
 
-@_templateWeeklyPlanning(handler, userPictureUri, userFirstName, userFamilyName, classDetails, CLASS_WEEKLY_PLANS, Some(CREATE_WEEKLY_PLAN), currentTerm) {
+@_templateWeeklyPlanning(handler, userPictureUri, userFirstName, userFamilyName, classDetails, CLASS_WEEKLY_PLANS, Some(CREATE_WEEKLY_PLAN), currentTerm, weekNumber) {
 
     <div class="container-fluid">
 

@@ -12,7 +12,8 @@
         classDetails: ClassDetails,
         schoolDayTimes: SchoolDayTimes,
         classTimetable: ClassTimetable,
-        currentTerm: SchoolTerm
+        currentTerm: SchoolTerm,
+        weekNumber: Int
 )
 
 @splitCamel(s: String) = {
@@ -31,10 +32,10 @@
 }
 
 
-@_templateWeeklyPlanning(handler, userPictureUri, userFirstName, userFamilyName, classDetails, CLASS_WEEKLY_PLANS, Some(WEEKLY_VIEW), currentTerm) {
+@_templateWeeklyPlanning(handler, userPictureUri, userFirstName, userFamilyName, classDetails, CLASS_WEEKLY_PLANS, Some(WEEKLY_VIEW), currentTerm, weekNumber) {
 
-    <div id="weekly-planning-plan-this-week-button" class="row d-flex justify-content-around">
-        <button type="button" class="btn btn-primary btn-lg">
+    <div class="row d-flex justify-content-around">
+        <button id="weekly-planning-plan-this-week-button" type="button" class="btn btn-primary btn-lg">
             Plan This Week
         </button>
     </div>

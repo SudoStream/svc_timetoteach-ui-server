@@ -7,7 +7,8 @@
         classDetails: ClassDetails,
         classContext: models.timetoteach.ui.ClassIdContext,
         maybeClassSubContext: Option[models.timetoteach.ui.ClassIdSubContext],
-        currentTerm: SchoolTerm
+        currentTerm: SchoolTerm,
+        weekNumber: Int
 )(weeklyPlanningContent: Html)
 
 @timetoteachAppMain(handler, s"Class ${classDetails.className.name}", userPictureUri, userFirstName, userFamilyName, Some(classDetails), Some(classContext), None, None, Some(currentTerm)) {
@@ -25,12 +26,15 @@
             <span id="term-start-text" class="text-success">Term Start</span>
         </span>
         @for((mondayInTerm, index) <- currentTerm.listOfAllMondaysInTerm().zipWithIndex) {
-            @if(index == 0) {
+            @if(index == (weekNumber - 1) ||
+                    (((weekNumber - 1) > currentTerm.listOfAllMondaysInTerm.size) && (index == currentTerm.listOfAllMondaysInTerm.size - 1)) ||
+                    ((weekNumber - 1) < 0) && index == 0) {
                 <button type="button"
                 class="btn btn-outline-secondary btn-sm template-weekly-planning-mondays-actual-monday-date-btn"
                 data-selected-monday-date="@mondayInTerm.toString"
                 data-is-currently-selected="true">
-                    <small>Week of Monday</small><br>
+                    <small>Week of Monday</small>
+                    <br>
                     @mondayInTerm.getDayOfMonth, @mondayInTerm.getMonth.toString.toLowerCase.capitalize
                 </button>
             } else {
@@ -38,7 +42,8 @@
                 class="btn btn-outline-secondary btn-sm template-weekly-planning-mondays-actual-monday-date-btn"
                 data-selected-monday-date="@mondayInTerm.toString"
                 data-is-currently-selected="false">
-                    <small>Week of Monday</small><br>
+                    <small>Week of Monday</small>
+                    <br>
                     @mondayInTerm.getDayOfMonth, @mondayInTerm.getMonth.toString.toLowerCase.capitalize
                 </button>
             }
