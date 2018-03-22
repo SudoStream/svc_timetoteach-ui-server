@@ -1,3 +1,20 @@
+#weekly-planning-plan-this-week-button {
+    margin-top: 2rem;
+}
+
+#weekly-planning-plan-status {
+
+}
+
+.happy-smiley-end-of-term {
+    color: green;
+}
+
+.template-weekly-planning-mondays-in-term {
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+}
+
 .weekly-planning-top-margin {
     margin-top: 1.5rem;
 }
@@ -93,9 +110,17 @@
 
 }
 
+.weekly-plan-dayoftheweek-specific-date{
+    font-size: 0.8rem;
+}
+
 @media (max-width: 1400px) {
     .weekly-plan-dayoftheweek {
         font-size: 0.9rem;
+    }
+
+    .weekly-plan-dayoftheweek-specific-date {
+        font-size: 0.7rem;
     }
 
     .weekly-plan-subject-name {

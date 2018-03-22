@@ -31,7 +31,6 @@ object CreatePlanForTheWeekJsScreen {
     planLessonsButton()
   }
 
-
   private def planLessonsButton(): Unit = {
     val allPlanLessonsButtons = dom.document.getElementsByClassName("create-weekly-plans-plan-lessons-button")
     val nodeListSize = allPlanLessonsButtons.length

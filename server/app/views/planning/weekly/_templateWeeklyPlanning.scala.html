@@ -10,71 +10,48 @@
         currentTerm: SchoolTerm
 )(weeklyPlanningContent: Html)
 
-    @timetoteachAppMain(handler, s"Class ${classDetails.className.name}", userPictureUri, userFirstName, userFamilyName, Some(classDetails), Some(classContext), None, None, Some(currentTerm)) {
-        <li></li>
-    } {
+@timetoteachAppMain(handler, s"Class ${classDetails.className.name}", userPictureUri, userFirstName, userFamilyName, Some(classDetails), Some(classContext), None, None, Some(currentTerm)) {
+    <li></li>
+} {
 
-        <nav id="dashboard-nav-weekly-planning" class="navbar navbar-primary bg-dark navbar-expand-lg">
-            <div class="col-md-1">
-                <a class="navbar-brand text-light" href="#"></a>
-            </div>
-            <div class="col-md-10 d-flex justify-content-center">
-                <ul class="navbar-nav mx-auto">
-                @if(maybeClassSubContext.isDefined) {
-                    @if(maybeClassSubContext.get.isInstanceOf[models.timetoteach.ui.WEEKLY_VIEW.type]) {
-                        <li class="nav-item">
-                            <a role="button" class="btn btn-warning btn-sm btn-block class-level-button"
-                            href="@controllers.planning.weekly.routes.WeeklyPlanningController.weeklyViewOfWeeklyPlanning(classDetails.id.id)">
-                                Weekly View
-                            </a>
-                        </li>
-                    } else {
-                        <li class="nav-item">
-                            <a role="button" class="btn btn-light text-dark btn-sm btn-block class-level-button"
-                            href="@controllers.planning.weekly.routes.WeeklyPlanningController.weeklyViewOfWeeklyPlanning(classDetails.id.id)">
-                                Weekly View
-                            </a>
-                        </li>
-                    }
+    <nav></nav>
 
-                    @if(maybeClassSubContext.get.isInstanceOf[models.timetoteach.ui.CREATE_WEEKLY_PLAN.type]) {
-                        <li class="nav-item">
-                            <a role="button" class="btn btn-warning btn-sm btn-block class-level-button"
-                            href="@controllers.planning.weekly.routes.WeeklyPlanningController.createPlanForTheWeek(classDetails.id.id)">
-                                Plan Week
-                            </a>
-                        </li>
-                    } else {
-                        <li class="nav-item">
-                            <a class="btn btn-light text-dark btn-sm btn-block class-level-button" role="button"
-                            href="@controllers.planning.weekly.routes.WeeklyPlanningController.createPlanForTheWeek(classDetails.id.id)">
-                                Plan Week
-                            </a>
-                        </li>
-                    }
 
-                } else {
-                    <li class="nav-item">
-                        <a class="btn btn-light text-dark btn-sm btn-block class-level-button" role="button"
-                        href="@controllers.planning.weekly.routes.WeeklyPlanningController.createPlanForTheWeek(classDetails.id.id)">
-                            Weekly View
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="btn btn-light text-dark btn-sm btn-block class-level-button" role="button"
-                        href="#">
-                            Plan Week
-                        </a>
-                    </li>
-                }
-                </ul>
-            </div>
-            <div class="col-md-1"></div>
-        </nav>
+} {
 
-    } {
-        <div class="container-fluid weekly-planning-top-margin">
-        @weeklyPlanningContent
-        </div>
+    <div class="template-weekly-planning-mondays-in-term row d-flex justify-content-around">
+        <span><svg version="1.1" width="24" height="24" viewBox="0 0 24 24" class="happy-smiley-end-of-term octicon octicon-rocket float-left" aria-hidden="true">
+            <use xlink:href="#rocket" /></svg>
+            <span id="term-start-text" class="text-success">Term Start</span>
+        </span>
+        @for((mondayInTerm, index) <- currentTerm.listOfAllMondaysInTerm().zipWithIndex) {
+            @if(index == 0) {
+                <button type="button"
+                class="btn btn-success btn-sm template-weekly-planning-mondays-actual-monday-date-btn"
+                data-selected-monday-date="@mondayInTerm.toString"
+                data-is-currently-selected="true">
+                    <small>Week of Mon</small><br>
+                    @mondayInTerm.getDayOfMonth, @mondayInTerm.getMonth.toString.toLowerCase.capitalize
+                </button>
+            } else {
+                <button type="button"
+                class="btn btn-outline-success btn-sm bg-light template-weekly-planning-mondays-actual-monday-date-btn"
+                data-selected-monday-date="@mondayInTerm.toString"
+                data-is-currently-selected="false">
+                    <small>Week of Monday</small><br>
+                    @mondayInTerm.getDayOfMonth, @mondayInTerm.getMonth.toString.toLowerCase.capitalize
+                </button>
+            }
+        }
+        <span>
+            <span id="term-end-text" class="text-success">Term End</span>
+            <svg version="1.1" width="24" height="24" viewBox="0 0 24 24" class="happy-smiley-end-of-term octicon octicon-smiley float-right" aria-hidden="true">
+                <use xlink:href="#smiley" /></svg>
+        </span>
+    </div>
 
-    }
+    <div class="container-fluid weekly-planning-top-margin">
+    @weeklyPlanningContent
+    </div>
+
+}
