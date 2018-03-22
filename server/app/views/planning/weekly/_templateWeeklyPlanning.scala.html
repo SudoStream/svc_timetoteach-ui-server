@@ -27,15 +27,15 @@
         @for((mondayInTerm, index) <- currentTerm.listOfAllMondaysInTerm().zipWithIndex) {
             @if(index == 0) {
                 <button type="button"
-                class="btn btn-success btn-sm template-weekly-planning-mondays-actual-monday-date-btn"
+                class="btn btn-outline-secondary btn-sm template-weekly-planning-mondays-actual-monday-date-btn"
                 data-selected-monday-date="@mondayInTerm.toString"
                 data-is-currently-selected="true">
-                    <small>Week of Mon</small><br>
+                    <small>Week of Monday</small><br>
                     @mondayInTerm.getDayOfMonth, @mondayInTerm.getMonth.toString.toLowerCase.capitalize
                 </button>
             } else {
                 <button type="button"
-                class="btn btn-outline-success btn-sm bg-light template-weekly-planning-mondays-actual-monday-date-btn"
+                class="btn btn-outline-secondary btn-sm template-weekly-planning-mondays-actual-monday-date-btn"
                 data-selected-monday-date="@mondayInTerm.toString"
                 data-is-currently-selected="false">
                     <small>Week of Monday</small><br>

@@ -6,6 +6,13 @@
 
 }
 
+.template-weekly-planning-mondays-actual-monday-date-btn {
+    background-color: ghostwhite;
+    border-color: grey;
+    color: grey;
+    font-size: 1rem;
+}
+
 .happy-smiley-end-of-term {
     color: green;
 }
@@ -110,7 +117,7 @@
 
 }
 
-.weekly-plan-dayoftheweek-specific-date{
+.weekly-plan-dayoftheweek-specific-date {
     font-size: 0.8rem;
 }
 
@@ -161,6 +168,5 @@
         white-space: normal;
         word-wrap: break-word;
     }
-
 
 }

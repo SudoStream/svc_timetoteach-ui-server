@@ -10,12 +10,58 @@ object WeeklyPlanningJsScreen {
 
   private var currentlySelectMondayStartOfWeekDate: Option[String] = None
 
+  var defaultBackgroundColorOfWeekMondayButton = "ghostwhite"
+  var defaultBorderColorOfWeekMondayButton = "grey"
+  var defaultColorOfWeekMondayButton = "grey"
+  var defaultFontSize = "1rem"
+
   def loadJavascript(): Unit = {
     global.console.log("Loading Weekly Planning Javascript")
     simpleRenderClassTimetable()
     setMondayDateToCurrentlySelectedWeek()
+    clickingAMondayWeekButtonUpdatesDates()
   }
 
+  private def setAllWeeklyMondayButtonsToDefault(): Unit = {
+    val allMondayButtons = dom.document.getElementsByClassName("template-weekly-planning-mondays-actual-monday-date-btn")
+    val nodeListSize = allMondayButtons.length
+    var index = 0
+    while (index < nodeListSize) {
+      val buttonElement = allMondayButtons(index).asInstanceOf[HTMLButtonElement]
+      buttonElement.setAttribute("data-is-currently-selected", "false")
+      buttonElement.style.backgroundColor = defaultBackgroundColorOfWeekMondayButton
+      buttonElement.style.borderColor = defaultBorderColorOfWeekMondayButton
+      buttonElement.style.color = defaultBorderColorOfWeekMondayButton
+      buttonElement.style.fontSize = defaultFontSize
+      buttonElement.style.fontWeight = "normal"
+      index = index + 1
+    }
+  }
+
+  private def clickingAMondayWeekButtonUpdatesDates(): Unit = {
+    val allMondayButtons = dom.document.getElementsByClassName("template-weekly-planning-mondays-actual-monday-date-btn")
+    val nodeListSize = allMondayButtons.length
+    var index = 0
+    while (index < nodeListSize) {
+      val buttonElement = allMondayButtons(index).asInstanceOf[HTMLButtonElement]
+      buttonElement.addEventListener("click", (e: dom.Event) => {
+        setAllWeeklyMondayButtonsToDefault()
+        setSelectedButton(buttonElement)
+        setMondayDateToCurrentlySelectedWeek()
+      })
+      index = index + 1
+    }
+
+  }
+
+  private def setSelectedButton(buttonElement: HTMLButtonElement) = {
+    buttonElement.setAttribute("data-is-currently-selected", "true")
+    buttonElement.style.backgroundColor = "white"
+    buttonElement.style.borderColor = "green"
+    buttonElement.style.fontSize = "1.1rem"
+    buttonElement.style.color = "green"
+    buttonElement.style.fontWeight = "bold"
+  }
   private def setMondayDateToCurrentlySelectedWeek(): Unit = {
     currentlySelectMondayStartOfWeekDate = None
     val allMondayButtons = dom.document.getElementsByClassName("template-weekly-planning-mondays-actual-monday-date-btn")
@@ -27,6 +73,7 @@ object WeeklyPlanningJsScreen {
       if (isSelected == "true") {
         val mondayDateIso = buttonElement.getAttribute("data-selected-monday-date")
         currentlySelectMondayStartOfWeekDate = Some(mondayDateIso)
+        setSelectedButton(buttonElement)
       }
       index = index + 1
     }
