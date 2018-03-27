@@ -5,10 +5,10 @@
 @import models.timetoteach.planning.CurriculumPlanProgressForClass
 @import duplicate.model.ClassId
 @import models.timetoteach.term.SchoolTerm
-@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails, groupDetails: duplicate.model.Group, curriculumArea: String, subjectTermlyPlan: CurriculumAreaTermlyPlan, esAndOsCodeToDetailMap: Map[String, duplicate.model.esandos.EandO], currentTermlyCurriculumSelection: TermlyCurriculumSelection, maybeCurriculumPlanProgress: Option[CurriculumPlanProgressForClass], classIdToOverallProgress: Map[ClassId, Int], currentTerm: SchoolTerm )
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: TimeToTeachUserId, classDetails: duplicate.model.ClassDetails, groupDetails: duplicate.model.Group, curriculumArea: String, subjectTermlyPlan: CurriculumAreaTermlyPlan, esAndOsCodeToDetailMap: Map[String, duplicate.model.esandos.EandO], currentTermlyCurriculumSelection: TermlyCurriculumSelection, maybeCurriculumPlanProgress: Option[CurriculumPlanProgressForClass], classIdToOverallProgress: Map[ClassId, Int], currentTerm: SchoolTerm , todaysDate: java.time.LocalDate)
 
 @timetoteachAppMain(handler, s"Class ${classDetails.className.name}",
-    userPictureUri, userFirstName, userFamilyName, Some(classDetails), Some(CLASS_TERMLY_PLANS_LOWER), Some(currentTermlyCurriculumSelection, subjectTermlyPlan.planningArea.toString), maybeCurriculumPlanProgress, Some(currentTerm)) {
+    userPictureUri, userFirstName, userFamilyName, Some(classDetails), Some(CLASS_TERMLY_PLANS_LOWER), Some(currentTermlyCurriculumSelection, subjectTermlyPlan.planningArea.toString), maybeCurriculumPlanProgress, Some(currentTerm), todaysDate) {
     <div class="in-app-menu-small-devices">
         <li class="nav-item nav-login-button">
             <a class="btn btn-outline-primary btn-block" role="button" href="@routes.Application.timeToTeachApp()">

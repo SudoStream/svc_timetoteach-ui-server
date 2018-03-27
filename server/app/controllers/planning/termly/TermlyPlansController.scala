@@ -2,11 +2,13 @@ package controllers.planning.termly
 
 import java.time.{LocalDateTime, LocalTime}
 
+import scala.concurrent.duration._
 import be.objectify.deadbolt.scala.cache.HandlerCache
 import be.objectify.deadbolt.scala.{AuthenticatedRequest, DeadboltActions}
 import controllers.pdf.PdfGeneratorWrapper
 import controllers.planning.termly.TermlyPlansControllerFormHelper._
 import controllers.serviceproxies._
+import controllers.time.SystemTime
 import curriculum.scotland.EsOsAndBenchmarksBuilderImpl
 import duplicate.model.{ClassDetails, TermlyPlansToSave}
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
@@ -24,7 +26,7 @@ import utils.TemplateUtils.getCookieStringFromRequest
 
 import scala.annotation.tailrec
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{Await, Future}
 
 @Singleton
 class TermlyPlansController @Inject()(
@@ -38,6 +40,7 @@ class TermlyPlansController @Inject()(
                                        termsPlanHelper: TermPlansHelper,
                                        termService: TermServiceProxy,
                                        pdfGeneratorWrapper: PdfGeneratorWrapper,
+                                       systemTime: SystemTime,
                                        deadbolt: DeadboltActions) extends AbstractController(cc) {
 
   import TermlyPlansController.buildSchoolNameToClassesMap
@@ -50,7 +53,7 @@ class TermlyPlansController @Inject()(
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
     val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
     val tttUserId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO ID")
-
+    val eventualTodaysDate = systemTime.getToday()
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
 
     for {
@@ -68,6 +71,7 @@ class TermlyPlansController @Inject()(
 
       maybeCurriculumPlanProgress <- futureMaybeCurriculumPlanProgress
 
+      todaysDate <- eventualTodaysDate
     } yield {
       Ok(views.html.planning.termly.termlyPlansHome(new MyDeadboltHandler(userReader),
         userPictureUri,
@@ -75,7 +79,8 @@ class TermlyPlansController @Inject()(
         userFamilyName,
         TimeToTeachUserId(tttUserId),
         buildSchoolNameToClassesMap(classes),
-        maybeCurriculumPlanProgress
+        maybeCurriculumPlanProgress,
+        todaysDate
       ))
     }
   }
@@ -97,6 +102,7 @@ class TermlyPlansController @Inject()(
     val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
     val tttUserId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO ID")
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
+    val eventualTodaysDate = systemTime.getToday()
 
     for {
       classes <- eventualClasses
@@ -118,6 +124,7 @@ class TermlyPlansController @Inject()(
       if maybeSchoolTerm.isDefined
 
       maybeCurrentTermlyCurriculumSelection: Option[TermlyCurriculumSelection] <- eventualMaybeCurrentTermlyCurriculumSelection
+      todaysDate <- eventualTodaysDate
     } yield
       Ok(views.html.planning.termly.termlyPlansSelectOverallCurriculumAreasForTheTerm(
         new MyDeadboltHandler(userReader),
@@ -138,7 +145,8 @@ class TermlyPlansController @Inject()(
             maybeSchoolTerm.get
           )
         ),
-        maybeSchoolTerm.get
+        maybeSchoolTerm.get,
+        todaysDate
       )(authRequest))
   }
 
@@ -147,9 +155,9 @@ class TermlyPlansController @Inject()(
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
     val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
     val tttUserId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO ID")
-
-
+    val eventualTodaysDate = systemTime.getToday()
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
+
     for {
       classes <- eventualClasses
       classDetailsList = classes.filter(theClass => theClass.id.id == classId)
@@ -182,6 +190,8 @@ class TermlyPlansController @Inject()(
 
       maybeCurriculumPlanProgress <- futureMaybeCurriculumPlanProgress
 
+      todaysDate <- eventualTodaysDate
+
       route = maybeCurrentTermlyCurriculumSelection match {
         case Some(currentTermlyCurriculumSelection) =>
           Ok(views.html.planning.termly.termlyPlansForClassOverallOverview(new MyDeadboltHandler(userReader),
@@ -193,7 +203,8 @@ class TermlyPlansController @Inject()(
             currentTermlyCurriculumSelection,
             maybeCurriculumPlanProgress,
             maybeOverallCurriculumPlanProgress,
-            maybeSchoolTerm.get
+            maybeSchoolTerm.get,
+            todaysDate
           ))
         case None =>
           Redirect(routes.TermlyPlansController.termlyPlansSelectOverallCurriculumAreasForTheTerm(classId))
@@ -209,6 +220,7 @@ class TermlyPlansController @Inject()(
     val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
     val tttUserId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO ID")
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
+    val eventualTodaysDate = systemTime.getToday()
 
     for {
       classes <- eventualClasses
@@ -247,6 +259,7 @@ class TermlyPlansController @Inject()(
 
       maybeOverallCurriculumPlanProgress <- futureMaybeOverallCurriculumPlanProgress
       maybeCurriculumPlanProgress <- futureMaybeCurriculumPlanProgress
+      todaysDate <- eventualTodaysDate
     } yield {
       Ok(views.html.planning.termly.termlyPlansSelectEsOsBenchmarksForCurriculumAreaAtClassLevel(new MyDeadboltHandler(userReader),
         userPictureUri,
@@ -259,7 +272,8 @@ class TermlyPlansController @Inject()(
         maybeCurrentTermlyCurriculumSelection.get,
         maybeCurriculumPlanProgress,
         maybeOverallCurriculumPlanProgress,
-        maybeSchoolTerm.get
+        maybeSchoolTerm.get,
+        todaysDate
       ))
     }
   }
@@ -273,6 +287,7 @@ class TermlyPlansController @Inject()(
     val tttUserId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO ID")
 
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
+    val eventualTodaysDate = systemTime.getToday()
 
     for {
       classes <- eventualClasses
@@ -311,6 +326,7 @@ class TermlyPlansController @Inject()(
 
       maybeOverallCurriculumPlanProgress <- futureMaybeOverallCurriculumPlanProgress
       maybeCurriculumPlanProgress <- futureMaybeCurriculumPlanProgress
+      todaysDate <- eventualTodaysDate
     } yield {
       Ok(views.html.planning.termly.termlyPlansSelectEsOsBenchmarksForCurriculumAreaAtGroupLevel(new MyDeadboltHandler(userReader),
         userPictureUri,
@@ -325,7 +341,8 @@ class TermlyPlansController @Inject()(
         curriculumArea,
         maybeCurriculumPlanProgress,
         maybeOverallCurriculumPlanProgress,
-        maybeSchoolTerm.get
+        maybeSchoolTerm.get,
+        todaysDate
       ))
     }
   }
@@ -418,6 +435,7 @@ class TermlyPlansController @Inject()(
     val eventualEsAndOsToDetailMap = esAndOsReader.esAndOsCodeToEsAndOsDetailMap()
 
     val futureMaybeCurriculumAreaTermlyPlanForClassLevel = findAnyCurrentTermlyPlanForCurriculumAreaAtClassLevel(classId, curriculumArea, tttUserId)
+    val eventualTodaysDate = systemTime.getToday()
 
     import utils.CurriculumConverterUtil.convertSubjectToScottishCurriculumPlanningAreaWrapper
     for {
@@ -458,6 +476,8 @@ class TermlyPlansController @Inject()(
       maybeOverallCurriculumPlanProgress <- futureMaybeOverallCurriculumPlanProgress
       maybeCurriculumPlanProgress <- futureMaybeCurriculumPlanProgress
 
+      todaysDate <- eventualTodaysDate
+
       route = maybeCurriculumAreaTermlyPlanForGroup match {
         case Some(curriculumAreaTermlyPlan: CurriculumAreaTermlyPlan) =>
           Ok(views.html.planning.termly.termlyPlansOverviewForCurriculumAtClassLevel(new MyDeadboltHandler(userReader),
@@ -472,7 +492,8 @@ class TermlyPlansController @Inject()(
             maybeCurrentTermlyCurriculumSelection.get,
             maybeCurriculumPlanProgress,
             maybeOverallCurriculumPlanProgress,
-            maybeSchoolTerm.get
+            maybeSchoolTerm.get,
+            todaysDate
           ))
         case None =>
           Redirect(routes.TermlyPlansController.termlyPlansClassLevel_SelectEsOsBenchmarksForCurriculumArea(classId, curriculumArea))
@@ -512,6 +533,7 @@ class TermlyPlansController @Inject()(
     val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
     val tttUserId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO ID")
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
+    val eventualTodaysDate = systemTime.getToday()
 
     for {
       classes <- eventualClasses
@@ -532,6 +554,8 @@ class TermlyPlansController @Inject()(
 
       maybeOverallCurriculumPlanProgress <- futureMaybeOverallCurriculumPlanProgress
 
+      todaysDate <- eventualTodaysDate
+
       route = Ok(views.html.planning.termly.termlyPlansOverviewNoGroupsError(
         new MyDeadboltHandler(userReader),
         userPictureUri,
@@ -541,7 +565,8 @@ class TermlyPlansController @Inject()(
         classDetails,
         curriculumArea,
         maybeOverallCurriculumPlanProgress,
-        maybeSchoolTerm.get
+        maybeSchoolTerm.get,
+        todaysDate
       ))
     } yield route
   }
@@ -556,6 +581,7 @@ class TermlyPlansController @Inject()(
     val eventualEsAndOsToDetailMap = esAndOsReader.esAndOsCodeToEsAndOsDetailMap()
 
     val futureMaybeCurriculumAreaTermlyPlanForGroup = findAnyCurrentTermlyPlanForCurriculumAreaAndGroup(classId, curriculumArea, groupId, tttUserId)
+    val eventualTodaysDate = systemTime.getToday()
 
     for {
       classes <- eventualClasses
@@ -588,7 +614,6 @@ class TermlyPlansController @Inject()(
         maybeCurrentTermlyCurriculumSelection
       )
 
-
       futureMaybeOverallCurriculumPlanProgress = planningReaderService.curriculumPlanProgressForClasses(
         TimeToTeachUserId(tttUserId),
         classes,
@@ -597,6 +622,8 @@ class TermlyPlansController @Inject()(
 
       maybeOverallCurriculumPlanProgress <- futureMaybeOverallCurriculumPlanProgress
       maybeCurriculumPlanProgress <- futureMaybeCurriculumPlanProgress
+
+      todaysDate <- eventualTodaysDate
 
       route = maybeCurriculumAreaTermlyPlanForGroup match {
         case Some(curriculumAreaTermlyPlan: CurriculumAreaTermlyPlan) =>
@@ -613,7 +640,8 @@ class TermlyPlansController @Inject()(
             maybeCurrentTermlyCurriculumSelection.get,
             maybeCurriculumPlanProgress,
             maybeOverallCurriculumPlanProgress,
-            maybeSchoolTerm.get
+            maybeSchoolTerm.get,
+            todaysDate
           ))
         case None =>
           Redirect(routes.TermlyPlansController.termlyPlansGroupLevel_SelectEsOsBenchmarksForCurriculumArea(classId, curriculumArea, groupId))
@@ -657,7 +685,9 @@ class TermlyPlansController @Inject()(
     val tttUserId = getCookieStringFromRequest(CookieNames.timetoteachId, request).getOrElse("NO ID")
 
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
+    val eventualTodaysDate = systemTime.getToday()
 
+    val todaysDate = Await.result(eventualTodaysDate, 1.second)
     val errorFunction = { formWithErrors: Form[CurriculumAreaSelectionData] =>
       logger.error(s"${LocalTime.now.toString} : Form ERROR : Oh well ... " + formWithErrors.errors.toString())
       for {
@@ -669,7 +699,8 @@ class TermlyPlansController @Inject()(
           userFamilyName,
           TimeToTeachUserId(tttUserId),
           buildSchoolNameToClassesMap(classes),
-          Map()
+          Map(),
+          todaysDate
         ))
       }
       // TODO: ANDY : Empty Map above should have progress in it

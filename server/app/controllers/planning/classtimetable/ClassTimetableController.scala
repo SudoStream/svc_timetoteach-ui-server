@@ -10,6 +10,7 @@ import be.objectify.deadbolt.scala.cache.HandlerCache
 import be.objectify.deadbolt.scala.{ActionBuilders, AuthenticatedRequest, DeadboltActions}
 import com.typesafe.config.ConfigFactory
 import controllers.serviceproxies._
+import controllers.time.SystemTime
 import duplicate.model.ClassDetails
 import io.sudostream.timetoteach.messages.systemwide.model
 import io.sudostream.timetoteach.messages.systemwide.model.{User, UserPreferences}
@@ -38,6 +39,7 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
                                          deadbolt: DeadboltActions,
                                          handlers: HandlerCache,
                                          termService: TermServiceProxy,
+                                         systemTime: SystemTime,
                                          actionBuilder: ActionBuilders) extends AbstractController(cc)
   with ClassTimetableControllerHelper
 {
@@ -101,6 +103,7 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
 
 
   def classTimetable(classId: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest =>
+    val eventualTodaysDate = systemTime.getToday()
     val (userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: String) = extractCommonHeaders(authRequest)
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
     val futureUserPrefs: Future[Option[UserPreferences]] = userReader.getUserPreferences(TimeToTeachUserId(tttUserId))
@@ -127,6 +130,7 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
     }
 
     for {
+      todaysDate <- eventualTodaysDate
       classes <- eventualClasses
       classDetailsList = classes.filter(theClass => theClass.id.id == classId)
       maybeClassDetails: Option[ClassDetails] = classDetailsList.headOption
@@ -151,7 +155,8 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
         maybeWwwClassTimetable,
         TimeToTeachUserId(tttUserId),
         classDetails,
-        maybeCurrentSchoolTerm.get
+        maybeCurrentSchoolTerm.get,
+        todaysDate
       )(authRequest))
     }
   }
@@ -168,10 +173,12 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
   def classesHome: Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest =>
     val (userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: String) = extractCommonHeaders(authRequest)
     val futureMaybeUser = userReader.getUserDetails(TimeToTeachUserId(tttUserId))
+    val eventualTodaysDate = systemTime.getToday()
 
     {
       for {
         classesAssociatedWithTeacher <- classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
+        todaysDate <- eventualTodaysDate
         maybeUser <- futureMaybeUser
         user: User = maybeUser match {
           case Some(theUser) => theUser
@@ -187,7 +194,8 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
           userFamilyName,
           TimeToTeachUserId(tttUserId),
           classesAssociatedWithTeacher,
-          allSchools.filter(school => userSchoolIds.contains(school.id))
+          allSchools.filter(school => userSchoolIds.contains(school.id)),
+          todaysDate
         ))
       }
     }.flatMap(res => res)
@@ -197,10 +205,12 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
   def addNewClass(): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest =>
     val (userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: String) = extractCommonHeaders(authRequest)
     val futureMaybeUser = userReader.getUserDetails(TimeToTeachUserId(tttUserId))
+    val eventualTodaysDate = systemTime.getToday()
 
     {
       for {
         classesAssociatedWithTeacher <- classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
+        todaysDate <- eventualTodaysDate
         maybeUser <- futureMaybeUser
         user: User = maybeUser match {
           case Some(theUser) => theUser
@@ -222,7 +232,8 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
           userFirstName,
           userFamilyName,
           TimeToTeachUserId(tttUserId),
-          allUserSchools
+          allUserSchools,
+          todaysDate
         ))
       }
     }.flatMap(res => res)
@@ -284,6 +295,7 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
   def manageClass(classId: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest =>
     val (userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: String) = extractCommonHeaders(authRequest)
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
+    val eventualTodaysDate = systemTime.getToday()
 
     for {
       classes <- eventualClasses
@@ -294,6 +306,7 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
       futureMaybeCurrentSchoolTerm = termService.currentSchoolTerm(SchoolConverter.convertLocalAuthorityStringToAvroVersion(classDetails.schoolDetails.localAuthority))
       maybeCurrentSchoolTerm <- futureMaybeCurrentSchoolTerm
       if maybeCurrentSchoolTerm.isDefined
+      todaysDate <- eventualTodaysDate
     } yield {
       Ok(views.html.planning.classtimetables.manageClass(new MyDeadboltHandler(userReader),
         userPictureUri,
@@ -301,7 +314,8 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
         userFamilyName,
         TimeToTeachUserId(tttUserId),
         classDetails,
-        maybeCurrentSchoolTerm.get
+        maybeCurrentSchoolTerm.get,
+        todaysDate
       ))
     }
   }

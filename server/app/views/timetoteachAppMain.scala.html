@@ -4,7 +4,7 @@
 @import duplicate.model.ClassDetails
 @import models.timetoteach.term.SchoolTerm
 @import models.timetoteach.term.SchoolTermName
-@(handler: be.objectify.deadbolt.scala.DeadboltHandler, title: String, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], maybeClassDetails: Option[ClassDetails], maybeClassContext: Option[models.timetoteach.ui.ClassIdContext], maybeCurrentTermlyCurriculumSelection: Option[(TermlyCurriculumSelection, String)], maybePlanProgress: Option[CurriculumPlanProgressForClass], maybeCurrentTerm: Option[SchoolTerm])(appNavMenuListItems: Html)(extra3rdLevelNavItems: Html)(content: Html)
+@(handler: be.objectify.deadbolt.scala.DeadboltHandler, title: String, userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], maybeClassDetails: Option[ClassDetails], maybeClassContext: Option[models.timetoteach.ui.ClassIdContext], maybeCurrentTermlyCurriculumSelection: Option[(TermlyCurriculumSelection, String)], maybePlanProgress: Option[CurriculumPlanProgressForClass], maybeCurrentTerm: Option[SchoolTerm], today: java.time.LocalDate)(appNavMenuListItems: Html)(extra3rdLevelNavItems: Html)(content: Html)
 <!DOCTYPE html>
 <html>
     <head>
@@ -67,8 +67,8 @@
             <div class="d-flex col-md-10 ">
                 <div class="collapse navbar-collapse in-app-menu-medium-and-up " >
                     @if(maybeClassDetails.isDefined) {
-                        <span class="text-primary">Class @maybeClassDetails.get.className.name -
-                            <span class="text-secondary">@maybeClassDetails.get.schoolDetails.name</span>
+                        <span class="text-dark">@maybeClassDetails.get.className.name -
+                            <span class="text-dark">@maybeClassDetails.get.schoolDetails.name</span>
                         </span>
 
                         <div class="in-app-1200px-and-up">

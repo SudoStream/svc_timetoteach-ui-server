@@ -18,7 +18,8 @@
         classTimetable: ClassTimetable,
         currentTerm: SchoolTerm,
         lessonsThisWeekPickled: String,
-        weekNumber: Int
+        weekNumber: Int,
+        todaysDate: java.time.LocalDate
 )
 
 @tabContentActiveOrNot(index: Int) = {
@@ -140,7 +141,7 @@
 }
 
 
-@_templateWeeklyPlanning(handler, userPictureUri, userFirstName, userFamilyName, classDetails, CLASS_WEEKLY_PLANS, Some(CREATE_WEEKLY_PLAN), currentTerm, weekNumber) {
+@_templateWeeklyPlanning(handler, userPictureUri, userFirstName, userFamilyName, classDetails, CLASS_WEEKLY_PLANS, Some(CREATE_WEEKLY_PLAN), currentTerm, weekNumber, todaysDate) {
 
     <div class="container-fluid">
 

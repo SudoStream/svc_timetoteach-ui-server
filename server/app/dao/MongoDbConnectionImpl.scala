@@ -30,6 +30,9 @@ class MongoDbConnectionImpl extends MongoDbConnection with MiniKubeHelper {
   private val calendarDatabaseName = config.getString("mongodb.calendar-database-name")
   private val schoolTermsCollectionName = config.getString("mongodb.school-terms-collection-name")
 
+  private val systemTimeDatabaseName = config.getString("mongodb.system-time-database-name")
+  private val systemDateCollectionName = config.getString("mongodb.system-date-collection-name")
+
   private val isLocalMongoDb: Boolean = config.getString("mongodb.localmongodb").toBoolean
   logger.info(s"======================================================== isLocalMongoDb: '$isLocalMongoDb'")
 
@@ -90,6 +93,11 @@ class MongoDbConnectionImpl extends MongoDbConnection with MiniKubeHelper {
   override def getSchoolTermsCollection: MongoCollection[Document] = {
     val planningDatabase = mongoDbClient.getDatabase(calendarDatabaseName)
     planningDatabase.getCollection(schoolTermsCollectionName)
+  }
+
+  override def getSystemDateCollection: MongoCollection[Document] = {
+    val planningDatabase = mongoDbClient.getDatabase(systemTimeDatabaseName)
+    planningDatabase.getCollection(systemDateCollectionName)
   }
 
   override def ensureTermlyPlanningIndexes(): Unit = {

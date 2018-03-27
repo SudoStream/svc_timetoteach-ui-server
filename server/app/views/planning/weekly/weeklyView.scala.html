@@ -13,7 +13,8 @@
         schoolDayTimes: SchoolDayTimes,
         classTimetable: ClassTimetable,
         currentTerm: SchoolTerm,
-        weekNumber: Int
+        weekNumber: Int,
+        todaysDate: java.time.LocalDate
 )
 
 @splitCamel(s: String) = {
@@ -31,8 +32,7 @@
 @{s"""col-${(12 / numberOfLessonsInSession).toString.trim}"""}
 }
 
-
-@_templateWeeklyPlanning(handler, userPictureUri, userFirstName, userFamilyName, classDetails, CLASS_WEEKLY_PLANS, Some(WEEKLY_VIEW), currentTerm, weekNumber) {
+@_templateWeeklyPlanning(handler, userPictureUri, userFirstName, userFamilyName, classDetails, CLASS_WEEKLY_PLANS, Some(WEEKLY_VIEW), currentTerm, weekNumber, todaysDate) {
 
     <div class="row d-flex justify-content-around">
         <button id="weekly-planning-plan-this-week-button" type="button" class="btn btn-primary btn-lg">

@@ -8,10 +8,11 @@
         classContext: models.timetoteach.ui.ClassIdContext,
         maybeClassSubContext: Option[models.timetoteach.ui.ClassIdSubContext],
         currentTerm: SchoolTerm,
-        weekNumber: Int
+        weekNumber: Int,
+        todaysDate: java.time.LocalDate
 )(weeklyPlanningContent: Html)
 
-@timetoteachAppMain(handler, s"Class ${classDetails.className.name}", userPictureUri, userFirstName, userFamilyName, Some(classDetails), Some(classContext), None, None, Some(currentTerm)) {
+@timetoteachAppMain(handler, s"Class ${classDetails.className.name}", userPictureUri, userFirstName, userFamilyName, Some(classDetails), Some(classContext), None, None, Some(currentTerm), todaysDate) {
     <li></li>
 } {
 

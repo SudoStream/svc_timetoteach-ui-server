@@ -4,6 +4,7 @@ import java.time.LocalTime
 
 import be.objectify.deadbolt.scala.DeadboltActions
 import controllers.serviceproxies.{ClassTimetableReaderServiceProxyImpl, PlanningReaderServiceProxy, TermServiceProxy, UserReaderServiceProxyImpl}
+import controllers.time.SystemTime
 import curriculum.scotland.EsOsAndBenchmarksBuilderImpl
 import duplicate.model.ClassDetails
 import duplicate.model.planning.LessonsThisWeek
@@ -31,7 +32,8 @@ class WeeklyPlanningController @Inject()(
                                           classTimetableReaderProxy: ClassTimetableReaderServiceProxyImpl,
                                           userReader: UserReaderServiceProxyImpl,
                                           planningReaderService: PlanningReaderServiceProxy,
-                                          termService: TermServiceProxy
+                                          termService: TermServiceProxy,
+                                          systemTime: SystemTime
                                         ) extends AbstractController(cc) {
 
   private val logger: Logger.type = Logger
@@ -52,6 +54,7 @@ class WeeklyPlanningController @Inject()(
     val tttUserId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO ID")
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
     val futureSchoolDayTimes: Future[SchoolDayTimes] = getSchoolDayTimes(tttUserId)
+    val eventualTodaysDate = systemTime.getToday()
 
     for {
       classes <- eventualClasses
@@ -69,6 +72,7 @@ class WeeklyPlanningController @Inject()(
       maybeSchoolTerm <- futureMaybeSchoolTerm
       if maybeSchoolTerm.isDefined
 
+      todaysDate <- eventualTodaysDate
     } yield Ok(views.html.planning.weekly.weeklyView(
       new MyDeadboltHandler(userReader),
       userPictureUri,
@@ -78,7 +82,8 @@ class WeeklyPlanningController @Inject()(
       schoolDayTimes,
       maybeAvroClassTimetable.get,
       maybeSchoolTerm.get,
-      weekNumber
+      weekNumber,
+      todaysDate
     ))
   }
 
@@ -116,6 +121,7 @@ class WeeklyPlanningController @Inject()(
     val tttUserId: TimeToTeachUserId = TimeToTeachUserId(getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO ID"))
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(tttUserId)
     val eventualEsAndOsToDetailMap = esAndOsReader.esAndOsCodeToEsAndOsDetailMap()
+    val eventualTodaysDate = systemTime.getToday()
 
     import upickle.default.{ReadWriter => RW, _}
     for {
@@ -152,6 +158,7 @@ class WeeklyPlanningController @Inject()(
       maybeLessonsThisWeek <- futureMaybeLessonsThisWeek
       if maybeLessonsThisWeek.isDefined
       lessonsThisWeekPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[LessonsThisWeek](maybeLessonsThisWeek.get))
+      todaysDate <- eventualTodaysDate
     } yield Ok(views.html.planning.weekly.createPlanForTheWeek(
       new MyDeadboltHandler(userReader),
       userPictureUri,
@@ -164,9 +171,9 @@ class WeeklyPlanningController @Inject()(
       maybeAvroClassTimetable.get,
       maybeSchoolTerm.get,
       lessonsThisWeekPickled,
-      0
+      0,
+      todaysDate
     ))
-
   }
 
 }

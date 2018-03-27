@@ -1,14 +1,14 @@
 package controllers
 
 import java.time.LocalTime
-import java.time.LocalTime
 
-import javax.inject.Inject
 import be.objectify.deadbolt.scala.cache.HandlerCache
 import be.objectify.deadbolt.scala.{ActionBuilders, DeadboltActions}
 import com.typesafe.config.ConfigFactory
 import controllers.serviceproxies._
-import io.sudostream.timetoteach.messages.systemwide.model.{User, UserPreferences}
+import controllers.time.SystemTime
+import io.sudostream.timetoteach.messages.systemwide.model.User
+import javax.inject.Inject
 import models.timetoteach.classtimetable.SchoolDayTimes
 import models.timetoteach.{CookieNames, InitialUserPreferences, TimeToTeachUserId}
 import play.api.Logger
@@ -32,8 +32,8 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl,
                             schoolsReader: SchoolReaderServiceProxyImpl,
                             deadbolt: DeadboltActions,
                             handlers: HandlerCache,
-                            actionBuilder: ActionBuilders) extends Controller
-{
+                            systemTime: SystemTime,
+                            actionBuilder: ActionBuilders) extends Controller {
 
   private val defaultSchoolDayTimes = SchoolDayTimes(
     schoolDayStarts = LocalTime.of(9, 0),
@@ -85,15 +85,17 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl,
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
     val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
+    val eventualTodaysDate = systemTime.getToday()
 
-    Future {
-      Ok(views.html.timetoteachDashboard(new MyDeadboltHandler(userReader),
-        SharedMessages.httpMainTitle,
-        userPictureUri,
-        userFirstName,
-        userFamilyName,
-        generalDevelopmentToggle)(authRequest))
-    }
+    for {
+      todaysDate <- eventualTodaysDate
+    } yield Ok(views.html.timetoteachDashboard(new MyDeadboltHandler(userReader),
+      SharedMessages.httpMainTitle,
+      userPictureUri,
+      userFirstName,
+      userFamilyName,
+      generalDevelopmentToggle,
+      todaysDate)(authRequest))
   }
 
   def view(foo: String, bar: String) = Action {
@@ -129,7 +131,7 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl,
         if (classesAssociatedWithTeacher.size == 1) {
           val theOneClass = classesAssociatedWithTeacher.head
           if (theOneClass.groups.isEmpty) {
-            Future{
+            Future {
               Redirect(controllers.planning.classtimetable.routes.ClassTimetableController.gotoClass(theOneClass.id.id))
             }
           } else {
@@ -167,13 +169,13 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl,
           val allSchools = schoolsReader.getAllSchools().getOrElse(Nil)
 
 
-          Future{
+          Future {
             Redirect(controllers.planning.classtimetable.routes.ClassTimetableController.classesHome())
           }
         }
       } else {
 
-        Future{
+        Future {
           Redirect(routes.Application.askInitialPreferences())
         }
 
@@ -188,79 +190,93 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl,
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
     val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
 
-    val timeToTeachUserId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest)
-    timeToTeachUserId match {
-      case Some(userId) =>
-        val userInfoFuture = userReader.getUserDetails(TimeToTeachUserId(userId))
-        userInfoFuture map {
-          case Some(userInfo) =>
-            Ok(views.html.askInitialPreferences(new MyDeadboltHandler(userReader),
-              userPictureUri,
-              userFirstName,
-              userFamilyName,
-              userInfo,
-              postInitialUserPreferencesUrl
-            )(authRequest))
-        }
-      case None =>
-        Future {
-          NotFound(s"Time To Teach User Id not found: ${timeToTeachUserId.toString}")
-        }
-    }
+    val eventualTodaysDate = systemTime.getToday()
+    val timeToTeachUserId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO_USER_ID")
+    val userInfoFuture = userReader.getUserDetails(TimeToTeachUserId(timeToTeachUserId))
+
+    for {
+      todaysDate <- eventualTodaysDate
+      userInfo <- userInfoFuture
+      if userInfo.isDefined
+    } yield Ok(views.html.askInitialPreferences(new MyDeadboltHandler(userReader),
+      userPictureUri,
+      userFirstName,
+      userFamilyName,
+      userInfo.get,
+      postInitialUserPreferencesUrl,
+      todaysDate
+    )(authRequest))
+
   }
 
-  def initialPreferencesCreated: Action[AnyContent] = deadbolt.SubjectPresent()() { implicit request =>
-    val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, request)
-    val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, request)
+  def initialPreferencesCreated: Action[AnyContent] = deadbolt.SubjectPresent()() {
+    implicit request =>
+      val eventualTodaysDate = systemTime.getToday()
+      val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, request)
+      val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, request)
 
-    val errorFunction = { formWithErrors: Form[InitialUserPreferences] =>
-      logger.error(s"${LocalTime.now.toString} : Form ERROR : Oh well ... " + formWithErrors.errors.toString())
-      Future {
-        BadRequest(views.html.askInitialPreferences(
-          handler = new MyDeadboltHandler(userReader),
-          userPictureUri = userPictureUri,
-          userFirstName = userFirstName,
-          userFamilyName = None,
-          tttUser = new User(),
-          postInitialPreferencesUrl = postInitialUserPreferencesUrl))
-      }
-    }
+      val todaysDate = Await.result(eventualTodaysDate, 1.second)
 
-    val successFunction = { newUserPreferences: InitialUserPreferences =>
-      logger.info(s"${LocalTime.now.toString} : Form SUCCESS")
-      logger.debug(s"${LocalTime.now.toString} : New User Prefs are - ${newUserPreferences.toString}")
-      val cookies = request.cookies
-
-      val theUserPictureUri = cookies.get(CookieNames.socialNetworkPicture) match {
-        case Some(pictureCookie) => pictureCookie.value
-        case None => ""
-      }
-
-      val theSocialNetwork = cookies.get(CookieNames.socialNetworkName) match {
-        case Some(socialNetworkCookie) => socialNetworkCookie.value
-        case None => ""
+      val errorFunction = {
+        formWithErrors: Form[InitialUserPreferences] =>
+          logger.error(s"${
+            LocalTime.now.toString
+          } : Form ERROR : Oh well ... " + formWithErrors.errors.toString())
+          Future {
+            BadRequest(views.html.askInitialPreferences(
+              handler = new MyDeadboltHandler(userReader),
+              userPictureUri = userPictureUri,
+              userFirstName = userFirstName,
+              userFamilyName = None,
+              tttUser = new User(),
+              postInitialPreferencesUrl = postInitialUserPreferencesUrl,
+              todaysDate)
+            )
+          }
       }
 
-      val theSocialNetworkUserId = cookies.get(CookieNames.socialNetworkUserId) match {
-        case Some(socialUserIdCookie) => socialUserIdCookie.value
-        case None => ""
+      val successFunction = {
+        newUserPreferences: InitialUserPreferences =>
+          logger.info(s"${
+            LocalTime.now.toString
+          } : Form SUCCESS")
+          logger.debug(s"${
+            LocalTime.now.toString
+          } : New User Prefs are - ${
+            newUserPreferences.toString
+          }")
+          val cookies = request.cookies
+
+          val theUserPictureUri = cookies.get(CookieNames.socialNetworkPicture) match {
+            case Some(pictureCookie) => pictureCookie.value
+            case None => ""
+          }
+
+          val theSocialNetwork = cookies.get(CookieNames.socialNetworkName) match {
+            case Some(socialNetworkCookie) => socialNetworkCookie.value
+            case None => ""
+          }
+
+          val theSocialNetworkUserId = cookies.get(CookieNames.socialNetworkUserId) match {
+            case Some(socialUserIdCookie) => socialUserIdCookie.value
+            case None => ""
+          }
+
+          val theTimeToTeachUserId = cookies.get(CookieNames.timetoteachId) match {
+            case Some(userId) => userId.value
+            case None => ""
+          }
+
+          val userPreferencesUpdated = userWriter.updateUserPreferences(TimeToTeachUserId(theTimeToTeachUserId), newUserPreferences)
+          Await.result(userPreferencesUpdated, 1 seconds)
+
+          Future {
+            Redirect(routes.Application.timeToTeachApp())
+          }
       }
 
-      val theTimeToTeachUserId = cookies.get(CookieNames.timetoteachId) match {
-        case Some(userId) => userId.value
-        case None => ""
-      }
-
-      val userPreferencesUpdated = userWriter.updateUserPreferences(TimeToTeachUserId(theTimeToTeachUserId), newUserPreferences)
-      Await.result(userPreferencesUpdated, 1 seconds)
-
-      Future {
-        Redirect(routes.Application.timeToTeachApp())
-      }
-    }
-
-    val formValidationResult = initialUserPreferencesForm.bindFromRequest
-    formValidationResult.fold(errorFunction, successFunction)
+      val formValidationResult = initialUserPreferencesForm.bindFromRequest
+      formValidationResult.fold(errorFunction, successFunction)
   }
 
 }
