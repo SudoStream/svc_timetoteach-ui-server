@@ -21,9 +21,48 @@ object WeeklyPlanningJsScreen {
     setMondayDateToCurrentlySelectedWeek()
     clickingAMondayWeekButtonUpdatesDates()
     planThisWeekButton()
+    toShowOrNotShowPlanThisWeekButtonGivenTheWeekSelected()
   }
 
-  def planThisWeekButton(): Unit = {
+  private def getSelectedWeekButton(): Option[HTMLButtonElement] = {
+    val allMondayButtons = dom.document.getElementsByClassName("template-weekly-planning-mondays-actual-monday-date-btn")
+    val nodeListSize = allMondayButtons.length
+    var index = 0
+    while (index < nodeListSize) {
+      val buttonElement = allMondayButtons(index).asInstanceOf[HTMLButtonElement]
+      val buttonSelected = buttonElement.getAttribute("data-is-currently-selected").toBoolean
+      if (buttonSelected) {
+        return Some(buttonElement)
+      }
+
+      index = index + 1
+    }
+    None
+  }
+
+  private def toShowOrNotShowPlanThisWeekButtonGivenTheWeekSelected(): Unit = {
+    val planThisWeekButton = dom.document.getElementById("weekly-planning-plan-this-week-button").asInstanceOf[HTMLButtonElement]
+    val maybeSelectedWeekButton = getSelectedWeekButton()
+    global.console.log(s"Selected week button ${maybeSelectedWeekButton.toString}")
+    maybeSelectedWeekButton match {
+      case Some(selectedWeekButton) =>
+        val mondayOfTheWeekDate = selectedWeekButton.getAttribute("data-selected-monday-date")
+        val mondayJsDate = new js.Date(mondayOfTheWeekDate)
+        val systemTodayDate = new js.Date(dom.window.localStorage.getItem("systemDateTodayIso"))
+        global.console.log(s"System: ${systemTodayDate.toISOString()}, monday: ${mondayJsDate.toISOString()}")
+        global.console.log(s"System: ${systemTodayDate.getTime()}, monday: ${mondayJsDate.getTime()}")
+        if (systemTodayDate.getTime() > mondayJsDate.getTime()) {
+          planThisWeekButton.style.display = "none"
+        } else {
+          planThisWeekButton.style.display = "block"
+        }
+
+      case None =>
+        planThisWeekButton.style.display = "block"
+    }
+  }
+
+  private def planThisWeekButton(): Unit = {
     val planThisWeekButton = dom.document.getElementById("weekly-planning-plan-this-week-button").asInstanceOf[HTMLButtonElement]
     if (planThisWeekButton != null) {
       planThisWeekButton.addEventListener("click", (e: dom.Event) => {
@@ -59,6 +98,7 @@ object WeeklyPlanningJsScreen {
         setAllWeeklyMondayButtonsToDefault()
         setSelectedButton(buttonElement)
         setMondayDateToCurrentlySelectedWeek()
+        toShowOrNotShowPlanThisWeekButtonGivenTheWeekSelected()
       })
       index = index + 1
     }
@@ -73,7 +113,8 @@ object WeeklyPlanningJsScreen {
     buttonElement.style.color = "green"
     buttonElement.style.fontWeight = "bold"
   }
-  private def setMondayDateToCurrentlySelectedWeek(): Unit = {
+
+  private def setMondayDateToCurrentlySelectedWeek(): Unit  = {
     currentlySelectMondayStartOfWeekDate = None
     val allMondayButtons = dom.document.getElementsByClassName("template-weekly-planning-mondays-actual-monday-date-btn")
     val nodeListSize = allMondayButtons.length
@@ -96,7 +137,7 @@ object WeeklyPlanningJsScreen {
     }
   }
 
-  private def getMonthFromNumber(month: Int): String = {
+  private def getMonthFromNumber(month: Int): String  = {
     month match {
       case 0 => "January"
       case 1 => "February"
@@ -116,7 +157,7 @@ object WeeklyPlanningJsScreen {
     }
   }
 
-  private def generateNiceDate(dayOfWeek: String, jsDateOfMonday: js.Date): String = {
+  private def generateNiceDate(dayOfWeek: String, jsDateOfMonday: js.Date): String  = {
     dayOfWeek.toUpperCase match {
       case "MONDAY" =>
         s"${jsDateOfMonday.getDate()} ${getMonthFromNumber(jsDateOfMonday.getMonth())}"
@@ -138,7 +179,7 @@ object WeeklyPlanningJsScreen {
     }
   }
 
-  private def updateDaysOfTheWeeksDate(): Unit = {
+  private def updateDaysOfTheWeeksDate(): Unit  = {
     currentlySelectMondayStartOfWeekDate match {
       case Some(dateOfTheMonday) =>
         val allDaysOfTheWeek = dom.document.getElementsByClassName("weekly-plan-dayoftheweek-specific-date")
@@ -155,7 +196,7 @@ object WeeklyPlanningJsScreen {
     }
   }
 
-  private def simpleRenderClassTimetable(): Unit = {
+  private def simpleRenderClassTimetable(): Unit  = {
     //    val theDaysSubjectsAsHtml = generateHtmlForWeeklyPlanning(classTimetable)
     //    val allTheDaysDiv = dom.document.getElementById("all-the-days-rows").asInstanceOf[HTMLDivElement]
     //    allTheDaysDiv.innerHTML = theDaysSubjectsAsHtml

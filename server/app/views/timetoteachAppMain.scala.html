@@ -73,47 +73,49 @@
 
                         <div class="in-app-1200px-and-up">
                         @if(maybeCurrentTerm.isDefined) {
-                            <span class="text-dark text-center school-term-in-header">
-                                @SchoolTermName.niceValue(maybeCurrentTerm.get.schoolTermName),
-                                @java.time.LocalDate.now().getYear
+                            <span class="text-muted text-center school-term-in-header">
+                                @SchoolTermName.niceValue(maybeCurrentTerm.get.schoolTermName) -
+                                @today.getDayOfWeek.toString.toLowerCase.capitalize
+                                @today.getDayOfMonth
+                                @today.getMonth.toString.toLowerCase.capitalize
+                                @today.getYear
                             </span>
                         }
                         </div>
                     }
 
-                    <ul class="navbar-nav ml-auto ">
+                <ul class="navbar-nav ml-auto ">
 
-                        <div class="row align-items-center">
+                    <div class="row align-items-center">
 
-
-                            <li class="nav-item nav-login-button-dashboard in-app-menu-medium-and-up">
-                                <a class="btn btn-sm btn-info btn-block" role="button" href="@controllers.planning.classtimetable.routes.ClassTimetableController.classesHome()">
+                        <li class="nav-item nav-login-button-dashboard in-app-menu-medium-and-up">
+                            <a class="btn btn-sm btn-info btn-block" role="button" href="@controllers.planning.classtimetable.routes.ClassTimetableController.classesHome()">
                                     My Classes</a>
+                        </li>
+
+                        @if(userPictureUri.isDefined) {
+                            <li class="nav-item nav-login-button-picture">
+                                <a class="nav-link" href="#"><img class="img-circle-standard" src="@userPictureUri" height="32px"></a>
                             </li>
+                        }
 
-                            @if(userPictureUri.isDefined) {
-                                <li class="nav-item nav-login-button-picture">
-                                    <a class="nav-link" href="#"><img class="img-circle-standard" src="@userPictureUri" height="32px"></a>
-                                </li>
-                            }
+                        <li class="nav-item nav-login-button">
+                            <a href="https://www.facebook.com/groups/305966139892476/">
+                                <img src="@routes.Assets.versioned("icons/FB-f-Logo__blue_29.png")" alt="logo" height="24"></a>
+                        </li>
 
-                            <li class="nav-item nav-login-button">
-                                <a href="https://www.facebook.com/groups/305966139892476/">
-                                    <img src="@routes.Assets.versioned("icons/FB-f-Logo__blue_29.png")" alt="logo" height="24"></a>
-                            </li>
+                        <li class="nav-item nav-login-button">
+                        @if(userFirstName.isDefined) {
+                            <a class="btn btn-sm btn-outline-primary btn-block" href="#" onclick="signOut();">
+                                Sign Out</a>
+                        } else {
+                            <a class="btn btn-sm btn-outline-primary btn-block" href="@routes.Application.login()">
+                                Log In</a>
+                        }
+                        </li>
+                    </div>
 
-                            <li class="nav-item nav-login-button">
-                            @if(userFirstName.isDefined) {
-                                <a class="btn btn-sm btn-outline-primary btn-block" href="#" onclick="signOut();">
-                                    Sign Out</a>
-                            } else {
-                                <a class="btn btn-sm btn-outline-primary btn-block" href="@routes.Application.login()">
-                                    Log In</a>
-                            }
-                            </li>
-                        </div>
-
-                    </ul>
+                </ul>
 
                 </div>
 
@@ -298,36 +300,36 @@
                 </div>
             }
 
-            <div id="mainAppTopMargin"></div>
+        <div id="mainAppTopMargin"></div>
 
-            <div class="container">
-                <div class="in-app-menu-small-devices alert alert-info alert-dismissible fade show this-is-a-for-larger-screens-alert " role="alert" >
-                    <div >
-                        <p >
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                            <strong>Note:</strong>
-                            This app is aimed for larger screens presently to test the flow. The current mobile version
-                            is inconsistent and lacks certain functionality, but will be improved going forward.
-                        </p>
-                        <p>
+        <div class="container">
+            <div class="in-app-menu-small-devices alert alert-info alert-dismissible fade show this-is-a-for-larger-screens-alert " role="alert" >
+                <div >
+                    <p >
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <strong>Note:</strong>
+                        This app is aimed for larger screens presently to test the flow. The current mobile version
+                        is inconsistent and lacks certain functionality, but will be improved going forward.
+                    </p>
+                    <p>
                             In the meantime please use the full screen to test the app.
-                        </p>
-                    </div>
+                    </p>
                 </div>
-
-                <div class="in-app-menu-small-devices">
-                    <div class="d-flex justify-content-center">
-                        <a href="/" class="btn btn-lg btn-outline-primary">Back Home</a>
-                    </div>
-                </div>
-
             </div>
 
-            <div class="in-app-menu-medium-and-up">
-            @content
+            <div class="in-app-menu-small-devices">
+                <div class="d-flex justify-content-center">
+                    <a href="/" class="btn btn-lg btn-outline-primary">Back Home</a>
+                </div>
             </div>
+
+        </div>
+
+        <div class="in-app-menu-medium-and-up">
+        @content
+        </div>
         </div>
 
 
@@ -379,6 +381,11 @@
                 </div>
             </div>
         </footer>
+
+
+        <script>
+            localStorage.setItem("systemDateTodayIso", "@{today}");
+        </script>
         @* ========================================================================================================*@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"
         integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
