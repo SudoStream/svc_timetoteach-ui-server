@@ -5,12 +5,13 @@ import org.scalajs.dom
 import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement}
 import scalatags.JsDom.all._
 import shared.util.PlanningHelper
+import timetoteach.planning.weekly.WeeklyPlanningJsScreen.{clickingAMondayWeekButtonUpdatesDates, setMondayDateToCurrentlySelectedWeek}
 
 import scala.collection.mutable
 import scala.scalajs.js
 import scala.scalajs.js.Dynamic.global
 
-object CreatePlanForTheWeekJsScreen {
+object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
 
   private var selectedEsAndOsWithBenchmarks: scala.collection.mutable.Map[String, scala.collection.mutable.Map[String,
     (scala.collection.mutable.Set[String], scala.collection.mutable.Set[String])]] = scala.collection.mutable.Map.empty
@@ -25,6 +26,8 @@ object CreatePlanForTheWeekJsScreen {
 
   def loadJavascript(): Unit = {
     global.console.log("Loading Create Plan For The Week Javascript")
+    setMondayDateToCurrentlySelectedWeek()
+    clickingAMondayWeekButtonUpdatesDates()
     mouseoverHighlightEandOsAndBenchmarks()
     clickOnEandO()
     clickOnBenchmark()

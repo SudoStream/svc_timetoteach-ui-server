@@ -1,6 +1,6 @@
 package controllers.planning.weekly
 
-import java.time.LocalTime
+import java.time.{LocalDate, LocalTime}
 
 import be.objectify.deadbolt.scala.DeadboltActions
 import controllers.serviceproxies.{ClassTimetableReaderServiceProxyImpl, PlanningReaderServiceProxy, TermServiceProxy, UserReaderServiceProxyImpl}
@@ -115,7 +115,7 @@ class WeeklyPlanningController @Inject()(
   }
 
 
-  def createPlanForTheWeek(classId: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest =>
+  def createPlanForTheWeek(classId: String, mondayDateOfWeekIso: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest =>
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
     val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
@@ -172,7 +172,7 @@ class WeeklyPlanningController @Inject()(
       maybeAvroClassTimetable.get,
       maybeSchoolTerm.get,
       lessonsThisWeekPickled,
-      0,
+      maybeSchoolTerm.get.weekNumberForGivenDate(LocalDate.parse(mondayDateOfWeekIso)),
       todaysDate
     ))
   }

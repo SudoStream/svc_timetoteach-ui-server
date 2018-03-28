@@ -40,7 +40,7 @@ GET           /termlyPlansOverviewNoGroupsError/:classId/:curriculumArea        
 GET           /termlyplanningdownloadclassplan/:classId                                             controllers.planning.termly.DownloadPdfController.downloadClassPdf(classId)
 
 GET           /weeklyViewOfWeeklyPlanning/:classId/:weekNumber                                      controllers.planning.weekly.WeeklyPlanningController.weeklyViewOfWeeklyPlanning(classId, weekNumber :Int)
-GET           /createPlanForTheWeek/:classId                                                        controllers.planning.weekly.WeeklyPlanningController.createPlanForTheWeek(classId)
+GET           /createPlanForTheWeek/:classId/:mondayDateOfWeekIso                                   controllers.planning.weekly.WeeklyPlanningController.createPlanForTheWeek(classId, mondayDateOfWeekIso)
 
 GET           /classes                                                                              controllers.planning.classtimetable.ClassTimetableController.classesHome
 GET           /addnewclass                                                                          controllers.planning.classtimetable.ClassTimetableController.addNewClass
@@ -54,4 +54,3 @@ DELETE        /deleteclass/:tttUserId/:classId                                  
 POST          /classtimetablesave                                                                   controllers.planning.classtimetable.ClassTimetableController.classTimetableSave
 #########################
 GET           /twitter/auth                                                                         controllers.Twitter.authenticate()
-#GET     /view/:foo/:bar             controllers.Application.view(foo: String, bar: String)
