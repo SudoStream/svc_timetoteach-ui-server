@@ -60,6 +60,22 @@
                                 <div class="col-md-1 col-lg-1 col-xl-1"></div>
                                 <div class="col-md-10 col-lg-10 col-xl-10">
                                     <div class="row create-weekly-plans-es-and-os-row create-weekly-plans-eobenchmark-row"
+                                    data-group-id-or-not="@{
+                                        plan.maybeGroup match {
+                                            case Some(group) =>
+                                                plan.planningArea.toString + "___" + group.groupId.id
+                                            case None =>
+                                                plan.planningArea.toString + "___" + "CLASS_LEVEL"
+                                        }
+                                    }"
+                                    data-group-name-or-not="@{
+                                        plan.maybeGroup match {
+                                            case Some(group) =>
+                                                group.groupName.name
+                                            case None =>
+                                                "CLASS_LEVEL"
+                                        }
+                                    }"
                                     data-eando-code="@code"
                                     data-curriculum-section="@esOsWithBenchmarks.sectionName"
                                     data-curriculum-subsection="@esOsWithBenchmarks.subsectionName">
@@ -104,6 +120,22 @@
                             <div class="col-md-1 col-lg-1 col-xl-1"></div>
                             <div class="col-md-10 col-lg-10 col-xl-10">
                                 <div class="row create-weekly-plans-benchmark-row create-weekly-plans-eobenchmark-row"
+                                data-group-id-or-not="@{
+                                    plan.maybeGroup match {
+                                        case Some(group) =>
+                                            plan.planningArea.toString + "___" + group.groupId.id
+                                        case None =>
+                                            plan.planningArea.toString + "___" + "CLASS_LEVEL"
+                                    }
+                                }"
+                                data-group-name-or-not="@{
+                                    plan.maybeGroup match {
+                                        case Some(group) =>
+                                            group.groupName.name
+                                        case None =>
+                                            "CLASS_LEVEL"
+                                    }
+                                }"
                                 data-benchmark="@benchmark"
                                 data-curriculum-section="@esOsWithBenchmarks.sectionName"
                                 data-curriculum-subsection="@esOsWithBenchmarks.subsectionName">
@@ -146,7 +178,6 @@
     <div class="container-fluid">
 
         <div class="create-weekly-plans-section">
-            <h4 class="display-5 text-center create-weekly-plans-header">Create Weekly Plan</h4>
             <h5 class="text-center create-weekly-plans-sub-header text-info">
                 Select the Es & Os / Benchmarks you'll be covering this week</h5>
 
@@ -391,10 +422,10 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Plan <span id="create-weekly-plans-number-of-lessons"></span>
-                        <span data-subject-name=""  id="create-weekly-plans-lesson-subject-name"></span>
-                         Lesson(s)
+                        <span data-subject-name="" id="create-weekly-plans-lesson-subject-name"></span>
+                        Lesson(s)
                         <br>
-                    <div id="create-weekly-plans-lessons-summaries"></div>
+                        <div id="create-weekly-plans-lessons-summaries"></div>
                     </h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
