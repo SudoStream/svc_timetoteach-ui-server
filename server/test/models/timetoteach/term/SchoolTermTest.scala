@@ -66,4 +66,26 @@ class SchoolTermTest extends FunSpec {
     }
   }
 
+  describe("Given a SchoolTerm with start date Monday 19th Feb 2018 & end date Thursday 29th March 2018, weekNumberForGivenDate(...)") {
+    val schoolTerm = SchoolTerm(
+      SchoolYear(2017, Some(2018)),
+      SchoolTermName.SPRING_SECOND_TERM,
+      LocalDate.of(2018, 2, 19),
+      LocalDate.of(2018, 3, 29)
+    )
+    it("should return 0 for an input date of Sunday 18th Feb 2018") {
+      assert(schoolTerm.weekNumberForGivenDate(LocalDate.of(2018, 2, 18)) == 0)
+    }
+    it("should return 1 for an input date of Monday 19th Feb 2018") {
+      assert(schoolTerm.weekNumberForGivenDate(LocalDate.of(2018, 2, 19)) == 1)
+    }
+    it("should return 1 for an input date of Sunday 25th Feb 2018") {
+      assert(schoolTerm.weekNumberForGivenDate(LocalDate.of(2018, 2, 25)) == 1)
+    }
+    it("should return 2 for an input date of  Monday 26th Feb 2018") {
+      assert(schoolTerm.weekNumberForGivenDate(LocalDate.of(2018, 2, 26)) == 2)
+    }
+
+  }
+
 }

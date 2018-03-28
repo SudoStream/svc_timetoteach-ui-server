@@ -175,13 +175,13 @@
                             @if(maybeClassContext.get.isInstanceOf[models.timetoteach.ui.CLASS_WEEKLY_PLANS.type]) {
                                 <li class="nav-item">
                                     <a class="btn btn-warning btn-sm class-level-button" role="button"
-                                    href="@controllers.planning.weekly.routes.WeeklyPlanningController.weeklyViewOfWeeklyPlanning(maybeClassDetails.get.id.id, 1)">
+                                    href="@controllers.planning.weekly.routes.WeeklyPlanningController.weeklyViewOfWeeklyPlanning(maybeClassDetails.get.id.id, 0)">
                                         Weekly Plans</a>
                                 </li>
                             } else {
                                 <li class="nav-item">
                                     <a class="btn btn-light text-dark btn-sm class-level-button" role="button"
-                                    href="@controllers.planning.weekly.routes.WeeklyPlanningController.weeklyViewOfWeeklyPlanning(maybeClassDetails.get.id.id, 1)">
+                                    href="@controllers.planning.weekly.routes.WeeklyPlanningController.weeklyViewOfWeeklyPlanning(maybeClassDetails.get.id.id, 0)">
                                         Weekly Plans</a>
                                 </li>
                             }

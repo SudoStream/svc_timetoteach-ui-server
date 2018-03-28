@@ -17,19 +17,31 @@ case class SchoolTerm(
 
   def listOfAllMondaysInTerm(): List[LocalDate] = {
     def listOfAllMondaysInTermLoop(dateToTest: LocalDate, currentResponse: List[LocalDate]): List[LocalDate] = {
-      if (findNearestPreviousMonday(dateToTest).isAfter(termLastDay) ) {
+      if (findNearestPreviousMonday(dateToTest).isAfter(termLastDay)) {
         currentResponse
       } else {
         val mondayToAdd = findNearestPreviousMonday(dateToTest)
         listOfAllMondaysInTermLoop(dateToTest.plusDays(7), mondayToAdd :: currentResponse)
       }
     }
+
     listOfAllMondaysInTermLoop(termFirstDay, Nil).reverse
   }
+
+  def weekNumberForGivenDate(date: LocalDate): Int = {
+    @tailrec
+    def loop(currentWeekNumber: Int, mondayToCheckAgainst: LocalDate): Int = {
+      if (mondayToCheckAgainst.isAfter(date)) currentWeekNumber
+      else loop(currentWeekNumber + 1, mondayToCheckAgainst.plusDays(7))
+    }
+
+    loop(0, findNearestPreviousMonday(termFirstDay))
+  }
+
 }
 
 object SchoolTerm {
-  private[term] def findNearestPreviousMonday(date: LocalDate): LocalDate = {
+  def findNearestPreviousMonday(date: LocalDate): LocalDate = {
     @tailrec
     def findNearestPreviousMondayLoop(dateToCheckIsMonday: LocalDate): LocalDate = {
       if (dateToCheckIsMonday.getDayOfWeek == DayOfWeek.MONDAY) dateToCheckIsMonday
@@ -37,6 +49,7 @@ object SchoolTerm {
         findNearestPreviousMondayLoop(dateToCheckIsMonday.minusDays(1))
       }
     }
+
     findNearestPreviousMondayLoop(date)
   }
 }

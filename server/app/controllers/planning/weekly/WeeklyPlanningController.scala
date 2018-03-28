@@ -47,7 +47,7 @@ class WeeklyPlanningController @Inject()(
     schoolDayEnds = LocalTime.of(15, 0)
   )
 
-  def weeklyViewOfWeeklyPlanning(classId: String, weekNumber: Int): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest =>
+  def weeklyViewOfWeeklyPlanning(classId: String, weekNumberRequested: Int): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest =>
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
     val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
@@ -71,8 +71,9 @@ class WeeklyPlanningController @Inject()(
       futureMaybeSchoolTerm = termService.currentSchoolTerm(SchoolConverter.convertLocalAuthorityStringToAvroVersion(classDetails.schoolDetails.localAuthority))
       maybeSchoolTerm <- futureMaybeSchoolTerm
       if maybeSchoolTerm.isDefined
-
+      schoolTerm = maybeSchoolTerm.get
       todaysDate <- eventualTodaysDate
+      weekNumber = if (weekNumberRequested == 0) schoolTerm.weekNumberForGivenDate(todaysDate) else weekNumberRequested
     } yield Ok(views.html.planning.weekly.weeklyView(
       new MyDeadboltHandler(userReader),
       userPictureUri,
