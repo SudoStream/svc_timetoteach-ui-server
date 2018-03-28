@@ -53,7 +53,7 @@ class TermlyPlansController @Inject()(
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
     val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
     val tttUserId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO ID")
-    val eventualTodaysDate = systemTime.getToday()
+    val eventualTodaysDate = systemTime.getToday
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
 
     for {
@@ -102,7 +102,7 @@ class TermlyPlansController @Inject()(
     val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
     val tttUserId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO ID")
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
-    val eventualTodaysDate = systemTime.getToday()
+    val eventualTodaysDate = systemTime.getToday
 
     for {
       classes <- eventualClasses
@@ -155,7 +155,7 @@ class TermlyPlansController @Inject()(
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
     val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
     val tttUserId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO ID")
-    val eventualTodaysDate = systemTime.getToday()
+    val eventualTodaysDate = systemTime.getToday
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
 
     for {
@@ -220,7 +220,7 @@ class TermlyPlansController @Inject()(
     val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
     val tttUserId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO ID")
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
-    val eventualTodaysDate = systemTime.getToday()
+    val eventualTodaysDate = systemTime.getToday
 
     for {
       classes <- eventualClasses
@@ -287,7 +287,7 @@ class TermlyPlansController @Inject()(
     val tttUserId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO ID")
 
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
-    val eventualTodaysDate = systemTime.getToday()
+    val eventualTodaysDate = systemTime.getToday
 
     for {
       classes <- eventualClasses
@@ -435,7 +435,7 @@ class TermlyPlansController @Inject()(
     val eventualEsAndOsToDetailMap = esAndOsReader.esAndOsCodeToEsAndOsDetailMap()
 
     val futureMaybeCurriculumAreaTermlyPlanForClassLevel = findAnyCurrentTermlyPlanForCurriculumAreaAtClassLevel(classId, curriculumArea, tttUserId)
-    val eventualTodaysDate = systemTime.getToday()
+    val eventualTodaysDate = systemTime.getToday
 
     import utils.CurriculumConverterUtil.convertSubjectToScottishCurriculumPlanningAreaWrapper
     for {
@@ -533,7 +533,7 @@ class TermlyPlansController @Inject()(
     val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
     val tttUserId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO ID")
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
-    val eventualTodaysDate = systemTime.getToday()
+    val eventualTodaysDate = systemTime.getToday
 
     for {
       classes <- eventualClasses
@@ -581,7 +581,7 @@ class TermlyPlansController @Inject()(
     val eventualEsAndOsToDetailMap = esAndOsReader.esAndOsCodeToEsAndOsDetailMap()
 
     val futureMaybeCurriculumAreaTermlyPlanForGroup = findAnyCurrentTermlyPlanForCurriculumAreaAndGroup(classId, curriculumArea, groupId, tttUserId)
-    val eventualTodaysDate = systemTime.getToday()
+    val eventualTodaysDate = systemTime.getToday
 
     for {
       classes <- eventualClasses
@@ -685,7 +685,7 @@ class TermlyPlansController @Inject()(
     val tttUserId = getCookieStringFromRequest(CookieNames.timetoteachId, request).getOrElse("NO ID")
 
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
-    val eventualTodaysDate = systemTime.getToday()
+    val eventualTodaysDate = systemTime.getToday
 
     val todaysDate = Await.result(eventualTodaysDate, 1.second)
     val errorFunction = { formWithErrors: Form[CurriculumAreaSelectionData] =>

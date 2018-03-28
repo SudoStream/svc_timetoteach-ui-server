@@ -85,7 +85,7 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl,
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
     val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
-    val eventualTodaysDate = systemTime.getToday()
+    val eventualTodaysDate = systemTime.getToday
 
     for {
       todaysDate <- eventualTodaysDate
@@ -190,7 +190,7 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl,
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
     val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
 
-    val eventualTodaysDate = systemTime.getToday()
+    val eventualTodaysDate = systemTime.getToday
     val timeToTeachUserId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO_USER_ID")
     val userInfoFuture = userReader.getUserDetails(TimeToTeachUserId(timeToTeachUserId))
 
@@ -211,7 +211,7 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl,
 
   def initialPreferencesCreated: Action[AnyContent] = deadbolt.SubjectPresent()() {
     implicit request =>
-      val eventualTodaysDate = systemTime.getToday()
+      val eventualTodaysDate = systemTime.getToday
       val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, request)
       val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, request)
 

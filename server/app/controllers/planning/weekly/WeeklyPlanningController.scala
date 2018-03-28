@@ -54,7 +54,7 @@ class WeeklyPlanningController @Inject()(
     val tttUserId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO ID")
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
     val futureSchoolDayTimes: Future[SchoolDayTimes] = getSchoolDayTimes(tttUserId)
-    val eventualTodaysDate = systemTime.getToday()
+    val eventualTodaysDate = systemTime.getToday
 
     for {
       classes <- eventualClasses
@@ -121,7 +121,7 @@ class WeeklyPlanningController @Inject()(
     val tttUserId: TimeToTeachUserId = TimeToTeachUserId(getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO ID"))
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(tttUserId)
     val eventualEsAndOsToDetailMap = esAndOsReader.esAndOsCodeToEsAndOsDetailMap()
-    val eventualTodaysDate = systemTime.getToday()
+    val eventualTodaysDate = systemTime.getToday
 
     import upickle.default.{ReadWriter => RW, _}
     for {

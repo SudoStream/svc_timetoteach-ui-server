@@ -18,7 +18,7 @@ class SystemTime @Inject()(mongoDbConnection: MongoDbConnection) {
   private val logger: Logger = Logger
   private val systemDateCollection: MongoCollection[Document] = mongoDbConnection.getSystemDateCollection
 
-  def getToday(): Future[LocalDate] = {
+  def getToday: Future[LocalDate] = {
     if (readTestDate) {
       val findMatcher = BsonDocument()
       val eventualSystemTimeDocs = systemDateCollection.find(findMatcher).toFuture()

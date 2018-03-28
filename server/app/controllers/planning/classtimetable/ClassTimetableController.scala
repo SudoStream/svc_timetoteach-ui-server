@@ -103,7 +103,7 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
 
 
   def classTimetable(classId: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest =>
-    val eventualTodaysDate = systemTime.getToday()
+    val eventualTodaysDate = systemTime.getToday
     val (userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: String) = extractCommonHeaders(authRequest)
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
     val futureUserPrefs: Future[Option[UserPreferences]] = userReader.getUserPreferences(TimeToTeachUserId(tttUserId))
@@ -173,7 +173,7 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
   def classesHome: Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest =>
     val (userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: String) = extractCommonHeaders(authRequest)
     val futureMaybeUser = userReader.getUserDetails(TimeToTeachUserId(tttUserId))
-    val eventualTodaysDate = systemTime.getToday()
+    val eventualTodaysDate = systemTime.getToday
 
     {
       for {
@@ -205,7 +205,7 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
   def addNewClass(): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest =>
     val (userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: String) = extractCommonHeaders(authRequest)
     val futureMaybeUser = userReader.getUserDetails(TimeToTeachUserId(tttUserId))
-    val eventualTodaysDate = systemTime.getToday()
+    val eventualTodaysDate = systemTime.getToday
 
     {
       for {
@@ -295,7 +295,7 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
   def manageClass(classId: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest =>
     val (userPictureUri: Option[String], userFirstName: Option[String], userFamilyName: Option[String], tttUserId: String) = extractCommonHeaders(authRequest)
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
-    val eventualTodaysDate = systemTime.getToday()
+    val eventualTodaysDate = systemTime.getToday
 
     for {
       classes <- eventualClasses
