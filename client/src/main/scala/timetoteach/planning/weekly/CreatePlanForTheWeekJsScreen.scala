@@ -33,6 +33,33 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     planLessonsButton()
   }
 
+  private def setEsOsBenchmarksSummary() : Unit = {
+    global.console.log(s"setEsOsBenchmarksSummary ... ${currentlySelectedPlanningArea.getOrElse("NOTHING_THERE")}")
+
+    val esOsBenchSummariesDiv = dom.document.getElementById("es-and-os-and-benchmarks-summary").asInstanceOf[HTMLDivElement]
+    while (esOsBenchSummariesDiv.firstChild != null) {
+      esOsBenchSummariesDiv.removeChild(esOsBenchSummariesDiv .firstChild)
+    }
+
+    val subjectAndGroupkeys = groupToSelectedEsOsAndBenchmarks.keySet.filter{
+      key =>
+        val subjectAndGroupId = key.split("___")
+        subjectAndGroupId(0) == currentlySelectedPlanningArea.getOrElse("NOTHING_THERE")
+    }
+
+    global.console.log(s"subjectAndGroupkeys  : ${subjectAndGroupkeys}")
+
+    for (key <- subjectAndGroupkeys) {
+      val selectedEsAndOsForSubjectAndGroup = groupToSelectedEsOsAndBenchmarks(key)
+      val groupId = key.split("___")(1)
+
+      val child = dom.document.createElement("div")
+      global.console.log(s"group: $groupId | ${selectedEsAndOsForSubjectAndGroup.toString()}")
+      child.innerHTML = s"group: $groupId | ${selectedEsAndOsForSubjectAndGroup.toString()}"
+      esOsBenchSummariesDiv.appendChild(child)
+    }
+  }
+
   private def planLessonsButton(): Unit = {
     val allPlanLessonsButtons = dom.document.getElementsByClassName("create-weekly-plans-plan-lessons-button")
     val nodeListSize = allPlanLessonsButtons.length
@@ -80,6 +107,9 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
           dom.document.getElementById("create-weekly-plans-lessons-summaries").appendChild(child)
           dom.document.getElementById("create-weekly-plans-number-of-lessons").innerHTML = lessonTimes.size.toString
         }
+
+        setEsOsBenchmarksSummary()
+
         val $ = js.Dynamic.global.$
         $("#create-weekly-plans-lesson-modal").modal("show", "backdrop: static", "keyboard : false")
       })

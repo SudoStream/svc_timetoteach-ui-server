@@ -10,7 +10,7 @@ trait WeeklyPlansCommon {
   var defaultBackgroundColorOfWeekMondayButton = "ghostwhite"
   var defaultBorderColorOfWeekMondayButton = "grey"
   var defaultColorOfWeekMondayButton = "grey"
-  var defaultFontSize = "1rem"
+  var defaultFontSize = "0.7rem"
 
   private[weekly] var currentlySelectMondayStartOfWeekDate: Option[String] = None
 
@@ -41,7 +41,7 @@ trait WeeklyPlansCommon {
     buttonElement.setAttribute("data-is-currently-selected", "true")
     buttonElement.style.backgroundColor = "white"
     buttonElement.style.borderColor = "green"
-    buttonElement.style.fontSize = "1.1rem"
+    buttonElement.style.fontSize = "0.8rem"
     buttonElement.style.color = "green"
     buttonElement.style.fontWeight = "bold"
   }

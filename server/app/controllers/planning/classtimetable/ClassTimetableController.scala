@@ -41,8 +41,7 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
                                          termService: TermServiceProxy,
                                          systemTime: SystemTime,
                                          actionBuilder: ActionBuilders) extends AbstractController(cc)
-  with ClassTimetableControllerHelper
-{
+  with ClassTimetableControllerHelper {
 
   implicit val system: ActorSystem = ActorSystem()
   implicit val executor: ExecutionContextExecutor = system.dispatcher
@@ -129,11 +128,17 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
       case None => defaultSchoolDayTimes
     }
 
+    def printToLog(number: Int, something: Any): Int = {
+      println(s"++++++++++++++++++++++++++++++ cough $number.toString ========= ${something.toString}")
+      1
+    }
+
     for {
       todaysDate <- eventualTodaysDate
       classes <- eventualClasses
       classDetailsList = classes.filter(theClass => theClass.id.id == classId)
       maybeClassDetails: Option[ClassDetails] = classDetailsList.headOption
+      cough = printToLog(1, maybeClassDetails)
       if maybeClassDetails.isDefined
       classDetails = maybeClassDetails.get
 
@@ -145,6 +150,7 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
       maybeWwwClassTimetable <- wwwClassTimetableFuture
 
       maybeCurrentSchoolTerm <- futureMaybeCurrentSchoolTerm
+      cough2 = printToLog(2, maybeCurrentSchoolTerm )
       if maybeCurrentSchoolTerm.isDefined
     } yield {
       Ok(views.html.planning.classtimetables.classtimetable(new MyDeadboltHandler(userReader),
@@ -161,8 +167,7 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
     }
   }
 
-  private def extractCommonHeaders(authRequest: AuthenticatedRequest[AnyContent]) =
-  {
+  private def extractCommonHeaders(authRequest: AuthenticatedRequest[AnyContent]) = {
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
     val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)

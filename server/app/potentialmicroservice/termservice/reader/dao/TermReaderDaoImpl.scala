@@ -2,6 +2,7 @@ package potentialmicroservice.termservice.reader.dao
 
 import java.time.LocalDate
 
+import controllers.time.SystemTime
 import dao.MongoDbConnection
 import io.sudostream.timetoteach.messages.systemwide.model.LocalAuthority
 import javax.inject.{Inject, Singleton}
@@ -16,7 +17,8 @@ import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
 @Singleton
-class TermReaderDaoImpl @Inject()(mongoDbConnection: MongoDbConnection) extends TermReaderDao {
+class TermReaderDaoImpl @Inject()(mongoDbConnection: MongoDbConnection,
+                                  systemTime: SystemTime) extends TermReaderDao {
 
   private val logger: Logger = Logger
   private val schoolTermsCollection: MongoCollection[Document] = mongoDbConnection.getSchoolTermsCollection
@@ -29,50 +31,66 @@ class TermReaderDaoImpl @Inject()(mongoDbConnection: MongoDbConnection) extends 
     )
 
     val futureFoundSchoolTermDocumentsDocuments = schoolTermsCollection.find(findMatcher).toFuture()
-    extractSchoolFromDocs(futureFoundSchoolTermDocumentsDocuments)
+    extractSchoolTermFromDocs(futureFoundSchoolTermDocumentsDocuments)
   }
 
   override def nextSchoolTerm(localAuthority: LocalAuthority): Future[Option[SchoolTerm]] = ???
 
-  private def extractSchoolFromDocs(futureFoundSchoolTermDocumentsDocuments: Future[Seq[Document]]): Future[Option[SchoolTerm]] = {
-    val today = LocalDate.now()
-    val filteredSchools = futureFoundSchoolTermDocumentsDocuments.map {
-      schoolTerms =>
-        schoolTerms.filter { schoolTermDoc =>
-          val termFirstDay = schoolTermDoc.getString(SchoolTermSchema.TERM_FIRST_DAY)
-          val termLastDay = schoolTermDoc.getString(SchoolTermSchema.TERM_LAST_DAY)
-          today.isBefore(LocalDate.parse(termLastDay)) && today.isAfter(LocalDate.parse(termFirstDay))
+  private def extractSchoolTermFromDocs(futureFoundSchoolTermDocumentsDocuments: Future[Seq[Document]]): Future[Option[SchoolTerm]] = {
+
+    val eventualToday = systemTime.getToday
+
+    {
+      for {
+        today <- eventualToday
+
+        nothing = logger.debug(s"________________________ today is ${today}")
+
+        currentAndFutureSchoolTermsAfterTermStart = futureFoundSchoolTermDocumentsDocuments.map {
+          schoolTerms =>
+            schoolTerms.filter { schoolTermDoc =>
+              logger.debug(s"________________________ schoolTermDoc is ${schoolTermDoc.toString}")
+              val termFirstDay = schoolTermDoc.getString(SchoolTermSchema.TERM_FIRST_DAY)
+              val termLastDay = schoolTermDoc.getString(SchoolTermSchema.TERM_LAST_DAY)
+              (
+                (today.isBefore(LocalDate.parse(termLastDay).plusDays(1)) &&
+                  today.isAfter(LocalDate.parse(termFirstDay).minusDays(1)))
+                  ||
+                  (today.isBefore(LocalDate.parse(termLastDay)) && today.isBefore(LocalDate.parse(termFirstDay)))
+                )
+            }
         }
-    }
 
-    val filteredSchoolTerms = filteredSchools.map { schoolTerms =>
-      val convertedTerms = schoolTerms.map { term =>
-        val schoolYear = term.getString(SchoolTermSchema.SCHOOL_YEAR).split("-")
-        val maybeTermName = SchoolTermName.convertToSchoolTermName(term.getString(SchoolTermSchema.SCHOOL_TERM_NAME))
-        maybeTermName match {
-          case Some(termName) =>
-            Some(SchoolTerm(
-              SchoolYear(schoolYear(0).toInt, Some(schoolYear(1).toInt)),
-              termName,
-              LocalDate.parse(term.getString(SchoolTermSchema.TERM_FIRST_DAY)),
-              LocalDate.parse(term.getString(SchoolTermSchema.TERM_LAST_DAY))
-            ))
-          case None => None
+        filteredSchoolTerms = currentAndFutureSchoolTermsAfterTermStart.map { schoolTerms =>
+          val convertedTerms = schoolTerms.map { term =>
+            val schoolYear = term.getString(SchoolTermSchema.SCHOOL_YEAR).split("-")
+            val maybeTermName = SchoolTermName.convertToSchoolTermName(term.getString(SchoolTermSchema.SCHOOL_TERM_NAME))
+            maybeTermName match {
+              case Some(termName) =>
+                Some(SchoolTerm(
+                  SchoolYear(schoolYear(0).toInt, Some(schoolYear(1).toInt)),
+                  termName,
+                  LocalDate.parse(term.getString(SchoolTermSchema.TERM_FIRST_DAY)),
+                  LocalDate.parse(term.getString(SchoolTermSchema.TERM_LAST_DAY))
+                ))
+              case None => None
+            }
+          }
+
+          val sortedTerms = convertedTerms.sortBy {
+            case Some(term) => term.termFirstDay.toEpochDay
+            case None => LocalDate.of(2000, 1, 1).toEpochDay
+          }
+
+          logger.debug(s"((((((((((((((((())))))))))))))))))))) ${sortedTerms.toString}")
+
+          if (sortedTerms.nonEmpty)
+            sortedTerms.head
+          else
+            None
         }
-      }
 
-      if (convertedTerms.nonEmpty)
-        convertedTerms.head
-      else
-        None
-    }
-
-
-    filteredSchoolTerms onComplete {
-      case Success(maybeSchoolTerm) => logger.debug(s" - - - - - MaybeSchool term = ${maybeSchoolTerm.toString}")
-      case Failure(t) => logger.debug("filteredSchoolTerms an error has occured: " + t.getMessage)
-    }
-
-    filteredSchoolTerms
+      } yield filteredSchoolTerms
+    }.flatMap(res => res)
   }
 }

@@ -127,20 +127,26 @@ class WeeklyPlanningController @Inject()(
     import upickle.default.{ReadWriter => RW, _}
     for {
       classes <- eventualClasses
+      nothing0 = logger.debug(s"+=+= we are underway 0 - ${classes.toString}")
+      nothing01 = logger.debug(s"+=+= we are underway 01 - filtyering classId = ${classId}")
       classDetailsList = classes.filter(theClass => theClass.id.id == classId)
       maybeClassDetails: Option[ClassDetails] = classDetailsList.headOption
+      nothing1 = logger.debug(s"+=+= we are underway 1 - ${classDetailsList.toString}")
       if maybeClassDetails.isDefined
       classDetails = maybeClassDetails.get
-
+      nothing2 = logger.debug(s"+=+= we are underway 2")
       futureMaybeSchoolTerm = termService.currentSchoolTerm(SchoolConverter.convertLocalAuthorityStringToAvroVersion(classDetails.schoolDetails.localAuthority))
       maybeSchoolTerm <- futureMaybeSchoolTerm
       if maybeSchoolTerm.isDefined
+
+      nothing3 = logger.debug(s"+=+= we are underway 3")
 
       eventualMaybeCurriculumSelection = planningReaderService.
         currentTermlyCurriculumSelection(tttUserId, ClassId(classId), maybeSchoolTerm.get)
 
       maybeTermlyCurriculumSelection <- eventualMaybeCurriculumSelection
       if maybeTermlyCurriculumSelection.isDefined
+      nothing4 = logger.debug(s"+=+= we are underway 4")
       curriculumSelection = maybeTermlyCurriculumSelection.get
       eventualClassTermlyPlan = planningReaderService.allClassTermlyPlans(tttUserId, classDetails, curriculumSelection.planningAreas)
       classTermlyPlan <- eventualClassTermlyPlan
@@ -150,10 +156,13 @@ class WeeklyPlanningController @Inject()(
       avroClassTimetableFuture = classTimetableReaderProxy.readAvroClassTimetable(tttUserId, WwwClassId(classDetails.id.id))
       maybeAvroClassTimetable <- avroClassTimetableFuture
       if maybeAvroClassTimetable.isDefined
+      nothing5 = logger.debug(s"+=+= we are underway 5")
 
       futureMaybeSchoolTerm = termService.currentSchoolTerm(SchoolConverter.convertLocalAuthorityStringToAvroVersion(classDetails.schoolDetails.localAuthority))
       maybeSchoolTerm <- futureMaybeSchoolTerm
       if maybeSchoolTerm.isDefined
+
+      nothing = logger.debug(s"+=+= maybeSchoolTerm = ${maybeSchoolTerm.get}")
 
       futureMaybeLessonsThisWeek = classTimetableReaderProxy.getThisWeeksLessons(tttUserId, WwwClassId(classDetails.id.id))
       maybeLessonsThisWeek <- futureMaybeLessonsThisWeek
