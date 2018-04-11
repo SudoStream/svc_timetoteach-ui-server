@@ -129,10 +129,16 @@
 
 .create-weekly-plans-add-to-lesson-button {
     color: white !important;
-    margin-top: 1rem;
+    margin-bottom: 1.5rem;
     margin-left: 2rem;
 }
 
 #create-weekly-plans-lessons-summaries {
     font-size: 1rem;
+}
+
+#create-weekly-plans-add-to-lesson-button-add-activity-div {
+    width: 90%;
+    margin-top: 0.25rem;
+    margin-left: 5rem;
 }

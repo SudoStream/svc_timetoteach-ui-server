@@ -3,7 +3,7 @@ package timetoteach.planning.weekly
 import duplicate.model.planning.{LessonSummary, LessonsThisWeek}
 import org.scalajs.dom
 import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement}
-import scalatags.JsDom.all._
+import scalatags.JsDom.all.{`class`, div, _}
 import shared.util.PlanningHelper
 
 import scala.collection.mutable
@@ -31,17 +31,18 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     clickOnEandO()
     clickOnBenchmark()
     planLessonsButton()
+    clickingOnAddToLessonsButtons()
   }
 
-  private def setEsOsBenchmarksSummary() : Unit = {
+  private def setEsOsBenchmarksSummary(): Unit = {
     global.console.log(s"setEsOsBenchmarksSummary ... ${currentlySelectedPlanningArea.getOrElse("NOTHING_THERE")}")
 
     val esOsBenchSummariesDiv = dom.document.getElementById("es-and-os-and-benchmarks-summary").asInstanceOf[HTMLDivElement]
     while (esOsBenchSummariesDiv.firstChild != null) {
-      esOsBenchSummariesDiv.removeChild(esOsBenchSummariesDiv .firstChild)
+      esOsBenchSummariesDiv.removeChild(esOsBenchSummariesDiv.firstChild)
     }
 
-    val subjectAndGroupkeys = groupToSelectedEsOsAndBenchmarks.keySet.filter{
+    val subjectAndGroupkeys = groupToSelectedEsOsAndBenchmarks.keySet.filter {
       key =>
         val subjectAndGroupId = key.split("___")
         subjectAndGroupId(0) == currentlySelectedPlanningArea.getOrElse("NOTHING_THERE")
@@ -86,6 +87,8 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
         dom.document.getElementById("create-weekly-plans-lesson-subject-name").innerHTML = currentlySelectedPlanningAreaNice.getOrElse("")
         dom.document.getElementById("create-weekly-plans-lesson-subject-name").setAttribute("data-subject-name", currentlySelectedPlanningArea.getOrElse(""))
 
+        dom.document.getElementById("create-weekly-plans-lesson-modal-week-of").innerHTML = currentlySelectMondayStartOfWeekDate.getOrElse("")
+
         val classId = dom.window.localStorage.getItem("classId")
         val tttUserId = dom.window.localStorage.getItem("tttUserId")
         val lessonsThisWeekPickled = dom.window.localStorage.getItem("lessonsThisWeekPickled")
@@ -109,6 +112,8 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
         }
 
         setEsOsBenchmarksSummary()
+
+        cleanupModalAdds()
 
         val $ = js.Dynamic.global.$
         $("#create-weekly-plans-lesson-modal").modal("show", "backdrop: static", "keyboard : false")
@@ -230,9 +235,9 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
             groupToSelectedEsOsAndBenchmarks.isEmpty ||
               !groupToSelectedEsOsAndBenchmarks.isDefinedAt(groupIdOrNot) ||
               groupToSelectedEsOsAndBenchmarks(groupIdOrNot).isEmpty ||
-            !groupToSelectedEsOsAndBenchmarks(groupIdOrNot).isDefinedAt(curriculumSection) ||
-            !groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection).isDefinedAt(curriculumSubSection) ||
-            !groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection)(curriculumSubSection)._1.contains(eAndOCode))) ||
+              !groupToSelectedEsOsAndBenchmarks(groupIdOrNot).isDefinedAt(curriculumSection) ||
+              !groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection).isDefinedAt(curriculumSubSection) ||
+              !groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection)(curriculumSubSection)._1.contains(eAndOCode))) ||
           (benchmarkValue != null && benchmarkValue.nonEmpty &&
             (groupToSelectedEsOsAndBenchmarks.isEmpty ||
               !groupToSelectedEsOsAndBenchmarks.isDefinedAt(groupIdOrNot) ||
@@ -266,11 +271,11 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
 
         global.console.log(s"Selected the Benchmark '$benchmarkValue'||$curriculumSection||$curriculumSubSection")
         if ((
-            groupToSelectedEsOsAndBenchmarks.nonEmpty &&
-              groupToSelectedEsOsAndBenchmarks.isDefinedAt(groupIdOrNot) &&
-              groupToSelectedEsOsAndBenchmarks(groupIdOrNot).nonEmpty &&
-              groupToSelectedEsOsAndBenchmarks(groupIdOrNot).isDefinedAt(curriculumSection) &&
-              groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection).isDefinedAt(curriculumSubSection)) &&
+          groupToSelectedEsOsAndBenchmarks.nonEmpty &&
+            groupToSelectedEsOsAndBenchmarks.isDefinedAt(groupIdOrNot) &&
+            groupToSelectedEsOsAndBenchmarks(groupIdOrNot).nonEmpty &&
+            groupToSelectedEsOsAndBenchmarks(groupIdOrNot).isDefinedAt(curriculumSection) &&
+            groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection).isDefinedAt(curriculumSubSection)) &&
           groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection)(curriculumSubSection)._2.contains(benchmarkValue)) {
           groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection)(curriculumSubSection)._2.remove(benchmarkValue)
           setButtonDefaults(theDiv)
@@ -296,6 +301,41 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     }
   }
 
+  private def clickingOnAddToLessonsButtons(): Unit = {
+    addActivityClickBehaviour()
+  }
+
+
+  private def cleanupModalAdds() : Unit = {
+    cleanupActivity()
+  }
+
+  private def cleanupActivity() : Unit = {
+    val activityDiv = dom.document.getElementById("create-weekly-plans-add-to-lesson-button-add-activity-div").asInstanceOf[HTMLDivElement]
+    while (activityDiv.hasChildNodes()) {
+      activityDiv.removeChild(activityDiv.lastChild)
+    }
+  }
+
+  private def addActivityClickBehaviour(): Unit = {
+    val addActivityButton = dom.document.getElementById(
+      "create-weekly-plans-add-to-lesson-button-add-activity").asInstanceOf[HTMLButtonElement]
+
+    addActivityButton.addEventListener("click", (e: dom.Event) => {
+      val newActivityRow = form(
+        div(`class` := "form-group")(
+          input(`type` := "text", `class` := "form-control form-control-sm", placeholder := "Enter Activity")
+        )
+      )
+
+      val child = dom.document.createElement("div")
+      child.innerHTML = newActivityRow.toString
+
+      val newGroupsDiv = dom.document.getElementById("create-weekly-plans-add-to-lesson-button-add-activity-div").asInstanceOf[HTMLDivElement]
+      newGroupsDiv.appendChild(child)
+
+    })
+  }
 
 }
 
