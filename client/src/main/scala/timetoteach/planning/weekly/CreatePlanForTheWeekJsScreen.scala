@@ -181,8 +181,8 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     }
   }
 
-  private def repaintTheEsAndOs() : Unit = {
-    val allEAndOAndBenchmarksRows = dom.document.getElementsByClassName("create-weekly-plans-es-and-os-row create-weekly-plans-eobenchmark-row")
+  private def repaintTheEsAndOs(className: String) : Unit = {
+    val allEAndOAndBenchmarksRows = dom.document.getElementsByClassName(className)
     val nodeListSize = allEAndOAndBenchmarksRows.length
     var index = 0
     while (index < nodeListSize) {
@@ -192,6 +192,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
       theDiv.style.borderRadius = eAndORowBorderRadius.getOrElse("0")
       index = index + 1
     }
+
 
   }
 
@@ -319,24 +320,35 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
   }
 
   private def clickingOnAddToLessonsButtons(): Unit = {
-    addActivityClickBehaviour()
+    addButtonClickBehaviour("create-weekly-plans-add-to-lesson-button-add-activity", "Activity", true)
+    addButtonClickBehaviour("create-weekly-plans-add-to-lesson-button-add-resource", "Resource", false)
+    addButtonClickBehaviour("create-weekly-plans-add-to-lesson-button-add-learning-intention", "Learning Intention", true)
+    addButtonClickBehaviour("create-weekly-plans-add-to-lesson-button-add-success-criteria", "Success Criteria", true)
+    addButtonClickBehaviour("create-weekly-plans-add-to-lesson-button-add-plenary", "Plenary", false)
+    addButtonClickBehaviour("create-weekly-plans-add-to-lesson-button-add-formative-assessment", "Formative Assessment", false)
+    addButtonClickBehaviour("create-weekly-plans-add-to-lesson-button-add-note", "Note", false)
   }
 
 
   private def cleanupModalAdds(): Unit = {
-    cleanupActivity()
+    cleanupActivity("create-weekly-plans-add-to-lesson-button-add-activity-div")
+    cleanupActivity("create-weekly-plans-add-to-lesson-button-add-resource-div")
+    cleanupActivity("create-weekly-plans-add-to-lesson-button-add-learning-intention-div")
+    cleanupActivity("create-weekly-plans-add-to-lesson-button-add-success-criteria-div")
+    cleanupActivity("create-weekly-plans-add-to-lesson-button-add-plenary-div")
+    cleanupActivity("create-weekly-plans-add-to-lesson-button-add-formative-assessment-div")
+    cleanupActivity("create-weekly-plans-add-to-lesson-button-add-note-div")
   }
 
-  private def cleanupActivity(): Unit = {
-    val activityDiv = dom.document.getElementById("create-weekly-plans-add-to-lesson-button-add-activity-div").asInstanceOf[HTMLDivElement]
+  private def cleanupActivity(elementId: String): Unit = {
+    val activityDiv = dom.document.getElementById(elementId).asInstanceOf[HTMLDivElement]
     while (activityDiv.hasChildNodes()) {
       activityDiv.removeChild(activityDiv.lastChild)
     }
   }
 
-  private def addActivityClickBehaviour(): Unit = {
-    val addActivityButton = dom.document.getElementById(
-      "create-weekly-plans-add-to-lesson-button-add-activity").asInstanceOf[HTMLButtonElement]
+  private def addButtonClickBehaviour(buttonElementId : String, buttonNameType: String, applyToGroups: Boolean): Unit = {
+    val addActivityButton = dom.document.getElementById(buttonElementId).asInstanceOf[HTMLButtonElement]
 
     addActivityButton.addEventListener("click", (e: dom.Event) => {
       global.console.log(s"groups: ${groupToSelectedEsOsAndBenchmarks.keys.toString()}")
@@ -361,7 +373,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
         )
       }.toSeq
 
-      val groupsAsCheckboxesInContainer = if (groupNamesToGroupIds.nonEmpty) {
+      val groupsAsCheckboxesInContainer = if (groupNamesToGroupIds.nonEmpty && applyToGroups) {
         div(`class` := "form-row")(
           span(`class` := "create-weekly-plans-lesson-modal-select-groups")(small("Applies to which groups: ")),
           groupsAsCheckboxes
@@ -376,8 +388,8 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
             span(attr("aria-hidden") := "true")(raw("&times;"))
           ),
           fieldset()(
-            legend("Activity"),
-            input(`type` := "text", `class` := "form-control form-control-sm", placeholder := "Enter Activity"),
+            legend(buttonNameType),
+            input(`type` := "text", `class` := "form-control form-control-sm", placeholder := s"Enter $buttonNameType"),
             groupsAsCheckboxesInContainer
           )
         )
@@ -386,7 +398,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
       val child = dom.document.createElement("div")
       child.innerHTML = newActivityRow.toString
 
-      val newGroupsDiv = dom.document.getElementById("create-weekly-plans-add-to-lesson-button-add-activity-div").asInstanceOf[HTMLDivElement]
+      val newGroupsDiv = dom.document.getElementById(s"$buttonElementId-div").asInstanceOf[HTMLDivElement]
       newGroupsDiv.appendChild(child)
 
       deleteSingleRowFromClassPlan()
@@ -417,7 +429,8 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     val $ = js.Dynamic.global.$
     $("a[data-toggle=\"tab\"]").on("shown.bs.tab", (e: dom.Event) => {
       groupToSelectedEsOsAndBenchmarks.clear()
-      repaintTheEsAndOs()
+      repaintTheEsAndOs("create-weekly-plans-es-and-os-row")
+      repaintTheEsAndOs("create-weekly-plans-eobenchmark-row")
     })
   }
 

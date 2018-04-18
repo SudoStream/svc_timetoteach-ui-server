@@ -137,11 +137,11 @@
     font-size: 1rem;
 }
 
-#create-weekly-plans-add-to-lesson-button-add-activity-div {
-    width: 90%;
-    margin-top: 0.25rem;
-    margin-left: 2rem;
-}
+/*#create-weekly-plans-add-to-lesson-button-add-activity-div {*/
+    /*width: 90%;*/
+    /*margin-top: 0.25rem;*/
+    /*margin-left: 2rem;*/
+/*}*/
 
 #create-weekly-plans-lesson-modal fieldset {
     padding-top: 0.5rem;
