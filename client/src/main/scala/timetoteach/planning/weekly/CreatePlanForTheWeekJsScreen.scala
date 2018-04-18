@@ -181,6 +181,19 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     }
   }
 
+  private def repaintTheEsAndOs() : Unit = {
+    val allEAndOAndBenchmarksRows = dom.document.getElementsByClassName("create-weekly-plans-es-and-os-row create-weekly-plans-eobenchmark-row")
+    val nodeListSize = allEAndOAndBenchmarksRows.length
+    var index = 0
+    while (index < nodeListSize) {
+      val theDiv = allEAndOAndBenchmarksRows(index).asInstanceOf[HTMLDivElement]
+      theDiv.style.backgroundColor = eAndORowBackgroundNormalColor.getOrElse("white")
+      theDiv.style.color = eAndORowForegroundNormalColor.getOrElse("grey")
+      theDiv.style.borderRadius = eAndORowBorderRadius.getOrElse("0")
+      index = index + 1
+    }
+
+  }
 
   private def mouseoverHighlightEandOsAndBenchmarks(): Unit = {
     val allEAndOAndBenchmarkRows = dom.document.getElementsByClassName("create-weekly-plans-eobenchmark-row")
@@ -404,6 +417,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     val $ = js.Dynamic.global.$
     $("a[data-toggle=\"tab\"]").on("shown.bs.tab", (e: dom.Event) => {
       groupToSelectedEsOsAndBenchmarks.clear()
+      repaintTheEsAndOs()
     })
   }
 
