@@ -54,15 +54,15 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
 
     global.console.log(s"subjectAndGroupkeys  : ${subjectAndGroupkeys}")
 
-    for (key <- subjectAndGroupkeys) {
-      val selectedEsAndOsForSubjectAndGroup = groupToSelectedEsOsAndBenchmarks(key)
-      val groupId = key.split("___")(1)
-
-      val child = dom.document.createElement("div")
-      global.console.log(s"group: $groupId | ${selectedEsAndOsForSubjectAndGroup.toString()}")
-      child.innerHTML = s"group: $groupId | ${selectedEsAndOsForSubjectAndGroup.toString()}"
-      esOsBenchSummariesDiv.appendChild(child)
-    }
+//    for (key <- subjectAndGroupkeys) {
+//      val selectedEsAndOsForSubjectAndGroup = groupToSelectedEsOsAndBenchmarks(key)
+//      val groupId = key.split("___")(1)
+//
+//      val child = dom.document.createElement("div")
+//      global.console.log(s"group: $groupId | ${selectedEsAndOsForSubjectAndGroup.toString()}")
+//      child.innerHTML = s"group: $groupId | ${selectedEsAndOsForSubjectAndGroup.toString()}"
+//      esOsBenchSummariesDiv.appendChild(child)
+//    }
   }
 
   private def planLessonsButton(): Unit = {
