@@ -502,6 +502,9 @@
             localStorage.setItem("classId", "@classDetails.id.id");
             localStorage.setItem("tttUserId", "@tttUserId.value");
             localStorage.setItem("lessonsThisWeekPickled", "@lessonsThisWeekPickled");
+            @for(group <- classDetails.groups) {
+                localStorage.setItem("@group.groupId.id", "@group.groupName.name");
+            }
     </script>
 
 

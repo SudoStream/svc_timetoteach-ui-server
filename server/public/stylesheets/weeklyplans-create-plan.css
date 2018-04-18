@@ -140,5 +140,29 @@
 #create-weekly-plans-add-to-lesson-button-add-activity-div {
     width: 90%;
     margin-top: 0.25rem;
-    margin-left: 5rem;
+    margin-left: 2rem;
+}
+
+#create-weekly-plans-lesson-modal fieldset {
+    padding-top: 0.5rem;
+    padding-bottom: 1rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    border: 1px solid #3c7b9b;
+}
+
+#create-weekly-plans-lesson-modal legend {
+    font-size: smaller;
+    color: #3c7b9b;
+}
+
+.create-weekly-plans-lesson-modal-select-groups {
+    margin-top: 1rem;
+    margin-left: 1rem;
+    margin-right: 2rem;
+}
+
+.create-weekly-plans-lesson-modal-delete-this-row {
+    margin-left: 1rem;
+    margin-top: 1rem;
 }

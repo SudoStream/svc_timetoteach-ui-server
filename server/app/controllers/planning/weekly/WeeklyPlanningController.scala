@@ -128,7 +128,7 @@ class WeeklyPlanningController @Inject()(
     for {
       classes <- eventualClasses
       nothing0 = logger.debug(s"+=+= we are underway 0 - ${classes.toString}")
-      nothing01 = logger.debug(s"+=+= we are underway 01 - filtyering classId = ${classId}")
+      nothing01 = logger.debug(s"+=+= we are underway 01 - filtering classId = ${classId}")
       classDetailsList = classes.filter(theClass => theClass.id.id == classId)
       maybeClassDetails: Option[ClassDetails] = classDetailsList.headOption
       nothing1 = logger.debug(s"+=+= we are underway 1 - ${classDetailsList.toString}")

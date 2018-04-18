@@ -22,10 +22,10 @@
 } {
 
     <div class="template-weekly-planning-mondays-in-term row d-flex justify-content-around">
-        <span><svg version="1.1" width="24" height="24" viewBox="0 0 24 24" class="happy-smiley-end-of-term octicon octicon-rocket float-left" aria-hidden="true">
-            <use xlink:href="#rocket" /></svg>
-            <span id="term-start-text" class="text-success">Go!</span>
-        </span>
+        @*<span><svg version="1.1" width="24" height="24" viewBox="0 0 24 24" class="happy-smiley-end-of-term octicon octicon-rocket float-left" aria-hidden="true">*@
+            @*<use xlink:href="#rocket" /></svg>*@
+            @*<span id="term-start-text" class="text-success">Go!</span>*@
+        @*</span>*@
         @for((mondayInTerm, index) <- currentTerm.listOfAllMondaysInTerm().zipWithIndex) {
             @if(index == (weekNumber - 1) ||
                     (((weekNumber - 1) > currentTerm.listOfAllMondaysInTerm.size) && (index == currentTerm.listOfAllMondaysInTerm.size - 1)) ||
@@ -50,11 +50,11 @@
                 </button>
             }
         }
-        <span>
-            <span id="term-end-text" class="text-success">Relax!</span>
-            <svg version="1.1" width="24" height="24" viewBox="0 0 24 24" class="happy-smiley-end-of-term octicon octicon-smiley float-right" aria-hidden="true">
-                <use xlink:href="#smiley" /></svg>
-        </span>
+        @*<span>*@
+            @*<span id="term-end-text" class="text-success">Relax!</span>*@
+            @*<svg version="1.1" width="24" height="24" viewBox="0 0 24 24" class="happy-smiley-end-of-term octicon octicon-smiley float-right" aria-hidden="true">*@
+                @*<use xlink:href="#smiley" /></svg>*@
+        @*</span>*@
     </div>
 
     <div class="container-fluid weekly-planning-top-margin">
