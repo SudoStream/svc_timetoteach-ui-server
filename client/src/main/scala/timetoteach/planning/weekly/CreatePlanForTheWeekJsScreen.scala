@@ -46,23 +46,14 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
       esOsBenchSummariesDiv.removeChild(esOsBenchSummariesDiv.firstChild)
     }
 
-    val subjectAndGroupkeys = groupToSelectedEsOsAndBenchmarks.keySet.filter {
+    val subjectAndGroupKeys = groupToSelectedEsOsAndBenchmarks.keySet.filter {
       key =>
         val subjectAndGroupId = key.split("___")
         subjectAndGroupId(0) == currentlySelectedPlanningArea.getOrElse("NOTHING_THERE")
     }
 
-    global.console.log(s"subjectAndGroupkeys  : ${subjectAndGroupkeys}")
+    global.console.log(s"subjectAndGroupkeys  : $subjectAndGroupKeys")
 
-//    for (key <- subjectAndGroupkeys) {
-//      val selectedEsAndOsForSubjectAndGroup = groupToSelectedEsOsAndBenchmarks(key)
-//      val groupId = key.split("___")(1)
-//
-//      val child = dom.document.createElement("div")
-//      global.console.log(s"group: $groupId | ${selectedEsAndOsForSubjectAndGroup.toString()}")
-//      child.innerHTML = s"group: $groupId | ${selectedEsAndOsForSubjectAndGroup.toString()}"
-//      esOsBenchSummariesDiv.appendChild(child)
-//    }
   }
 
   private def planLessonsButton(): Unit = {
@@ -116,6 +107,8 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
         }
 
         setEsOsBenchmarksSummary()
+
+//        buildTabbedWeekOfPlanning()
 
         cleanupModalAdds()
 
