@@ -2,7 +2,7 @@ package timetoteach.planning.weekly
 
 import duplicate.model.planning.{LessonSummary, LessonsThisWeek}
 import org.scalajs.dom
-import org.scalajs.dom.html.Div
+import org.scalajs.dom.html.{Div, LI, UList}
 import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement, HTMLElement}
 import scalatags.JsDom
 import scalatags.JsDom.all.{`class`, div, _}
@@ -33,7 +33,6 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     clickOnEandO()
     clickOnBenchmark()
     planLessonsButton()
-    clickingOnAddToLessonsButtons()
     deleteSingleRowFromClassPlan()
     resetValuesOnTabClick()
   }
@@ -56,6 +55,76 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
 
   }
 
+  def createTabbedWeeklyPlan(lessonSummary: LessonSummary, index: Int): JsDom.TypedTag[LI] = {
+    val anchorClasses = if (index == 0) "nav-link active" else "nav-link"
+
+    li(`class` := "nav-item")(
+      a(`class` := anchorClasses,
+        href := s"#tabbed-weekly-plans-tab-content_$index",
+        id := s"tabbed-weekly-plans-tab-$index",
+        attr("data-toggle") := "tab",
+        attr("role") := "tab"
+      )(
+        lessonSummary.dayOfWeek.toLowerCase.capitalize,
+        br,
+        span(`class` := "text-muted")(
+          small(s"(${lessonSummary.startTimeIso}-${lessonSummary.endTimeIso})"))
+      )
+    )
+  }
+
+  private def createAddButton(buttonIdRoot: String, buttonDescription: String, index: Int): List[JsDom.TypedTag[Div]] = {
+    val addDetailsDiv = div(`id` := s"$buttonIdRoot-div-$index", `class` := s"$buttonIdRoot-div")
+    val buttonDiv = div(`class` := "row")(
+      button(id := s"$buttonIdRoot-$index", `class` := s"$buttonIdRoot btn btn-sm btn-success create-weekly-plans-add-to-lesson-button",
+        attr("data-button-index") := index)(
+        s"+ $buttonDescription"
+      )
+    )
+
+    List(addDetailsDiv, buttonDiv)
+  }
+
+  private def createTabbedContent(): JsDom.TypedTag[Div] = {
+    val innerTabbedContent = for {
+      (lessonSummary, index) <- currentlySelectedLessonSummariesThisWeek.getOrElse(Nil).zipWithIndex
+      divClasses = if (index == 0) "tab-pane fade show active" else "tab-pane fade"
+    } yield div(`class` := divClasses, id := s"tabbed-weekly-plans-tab-content_$index", attr("role") := "tabpanel")(
+      createAddButton("create-weekly-plans-add-to-lesson-button-add-activity", "Activity", index),
+      createAddButton("create-weekly-plans-add-to-lesson-button-add-resource", "Resource", index),
+
+      createAddButton("create-weekly-plans-add-to-lesson-button-add-learning-intention", "Learning Intention", index),
+      createAddButton("create-weekly-plans-add-to-lesson-button-add-success-criteria", "Success Criteria", index),
+      createAddButton("create-weekly-plans-add-to-lesson-button-add-plenary", "Plenary", index),
+      createAddButton("create-weekly-plans-add-to-lesson-button-add-formative-assessment", "Formative Assessment", index),
+      createAddButton("create-weekly-plans-add-to-lesson-button-add-note", "Note", index)
+    )
+
+    div(`class` := "tab-content the-weekly-plans-modal-content-section")(
+      innerTabbedContent
+    )
+  }
+
+  private def buildTabbedWeekOfPlanning(lessonsThisWeek: LessonsThisWeek, planningArea: String): Unit = {
+    val tabbedWeeklyPlansDiv = dom.document.getElementById("create-weekly-plans-modal-body").asInstanceOf[HTMLDivElement]
+    while (tabbedWeeklyPlansDiv.hasChildNodes()) {
+      tabbedWeeklyPlansDiv.removeChild(tabbedWeeklyPlansDiv.lastChild)
+    }
+
+    var count = 0
+    val innerTabbedWeeklyPlansLIs = for (
+      (lessonSummary, index) <- currentlySelectedLessonSummariesThisWeek.getOrElse(Nil).zipWithIndex
+    ) yield createTabbedWeeklyPlan(lessonSummary, index)
+
+    val tabbedWeeklyPlans: JsDom.TypedTag[UList] = ul(`class` := "nav nav-tabs")(innerTabbedWeeklyPlansLIs)
+    val tabbedContent: JsDom.TypedTag[Div] = createTabbedContent()
+    val tabsAndContent = div(tabbedWeeklyPlans, tabbedContent)
+
+    val child = dom.document.createElement("div")
+    child.innerHTML = tabsAndContent.toString()
+    dom.document.getElementById("create-weekly-plans-modal-body").appendChild(child)
+  }
+
   private def planLessonsButton(): Unit = {
     val allPlanLessonsButtons = dom.document.getElementsByClassName("create-weekly-plans-plan-lessons-button")
     val nodeListSize = allPlanLessonsButtons.length
@@ -67,11 +136,6 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
         currentlySelectedPlanningArea = None
         currentlySelectedPlanningAreaNice = None
         currentlySelectedLessonSummariesThisWeek = None
-
-        val summariesDiv = dom.document.getElementById("create-weekly-plans-lessons-summaries").asInstanceOf[HTMLDivElement]
-        while (summariesDiv.firstChild != null) {
-          summariesDiv.removeChild(summariesDiv.firstChild)
-        }
 
         val planningArea = buttonElement.getAttribute("data-planning-area")
         val planningAreaNice = buttonElement.getAttribute("data-planning-area-nice")
@@ -90,27 +154,14 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
 
         import upickle.default._
         val lessonsThisWeek: LessonsThisWeek = read[LessonsThisWeek](PlanningHelper.decodeAnyNonFriendlyCharacters(lessonsThisWeekPickled))
-
         if (lessonsThisWeek.subjectToLessons.isDefinedAt(planningArea)) {
           currentlySelectedLessonSummariesThisWeek = Some(lessonsThisWeek.subjectToLessons(planningArea))
-
-          val lessonTimes = for {
-            lesson <- lessonsThisWeek.subjectToLessons(planningArea)
-          } yield span(`class` := "text-muted")(
-            small(s"${lesson.dayOfWeek.toLowerCase.capitalize}(${lesson.startTimeIso}-${lesson.endTimeIso})"))
-
-          val child = dom.document.createElement("div")
-          child.innerHTML = lessonTimes.mkString(", ")
-
-          dom.document.getElementById("create-weekly-plans-lessons-summaries").appendChild(child)
-          dom.document.getElementById("create-weekly-plans-number-of-lessons").innerHTML = lessonTimes.size.toString
         }
 
         setEsOsBenchmarksSummary()
-
-//        buildTabbedWeekOfPlanning()
-
+        buildTabbedWeekOfPlanning(lessonsThisWeek, planningArea)
         cleanupModalAdds()
+        clickingOnAddToLessonsButtons()
 
         val $ = js.Dynamic.global.$
         $("#create-weekly-plans-lesson-modal").modal("show", "backdrop: static", "keyboard : false")
@@ -162,7 +213,9 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
           }
 
           groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection)(curriculumSubSection)._1.add(eAndOCode)
-          global.console.log(s"Should be now .. values of Es and Os are ... ${groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection)(curriculumSubSection)._1.toString()}")
+          global.console.log(s"Should be now .. values of Es and Os are ... ${
+            groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection)(curriculumSubSection)._1.toString()
+          }")
           theDiv.style.backgroundColor = "#016ecd"
           theDiv.style.color = "white"
           theDiv.style.borderRadius = "7px"
@@ -174,7 +227,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     }
   }
 
-  private def repaintTheEsAndOs(className: String) : Unit = {
+  private def repaintTheEsAndOs(className: String): Unit = {
     val allEAndOAndBenchmarksRows = dom.document.getElementsByClassName(className)
     val nodeListSize = allEAndOAndBenchmarksRows.length
     var index = 0
@@ -335,67 +388,99 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
 
   private def cleanupActivity(elementId: String): Unit = {
     val activityDiv = dom.document.getElementById(elementId).asInstanceOf[HTMLDivElement]
-    while (activityDiv.hasChildNodes()) {
+    while (activityDiv != null && activityDiv.hasChildNodes()) {
       activityDiv.removeChild(activityDiv.lastChild)
     }
   }
 
-  private def addButtonClickBehaviour(buttonElementId : String, buttonNameType: String, applyToGroups: Boolean): Unit = {
-    val addActivityButton = dom.document.getElementById(buttonElementId).asInstanceOf[HTMLButtonElement]
+  private def addButtonClickBehaviour(buttonElementId: String, buttonNameType: String, applyToGroups: Boolean): Unit = {
+    val addActivityButtons = dom.document.getElementsByClassName(buttonElementId)
+    val nodeListSize = addActivityButtons.length
 
-    addActivityButton.addEventListener("click", (e: dom.Event) => {
-      global.console.log(s"groups: ${groupToSelectedEsOsAndBenchmarks.keys.toString()}")
+    global.console.log(s"There are $nodeListSize buttons with the class = $buttonElementId")
 
-      val groupNamesToGroupIds = for {
-        group <- groupToSelectedEsOsAndBenchmarks.keys
-        subjectAndGroupId = group.split("___")
-        groupId = subjectAndGroupId(1)
-        groupName = dom.window.localStorage.getItem(s"$groupId")
-        if groupName != null
-        uniqIdForRow = java.util.UUID.randomUUID().toString
-      } yield (groupName, groupId, uniqIdForRow)
+    var index = 0
+    while (index < nodeListSize) {
+      val addActivityButton = addActivityButtons(index).asInstanceOf[HTMLButtonElement]
 
-      val groupsAsCheckboxes: Seq[JsDom.TypedTag[Div]] = {
-        for (groupNameToGroupId <- groupNamesToGroupIds) yield div(`class` :=
-          "custom-control custom-checkbox create-weekly-plans-lesson-modal-select-groups")(
-          input(`id` := s"group-checkbox-${groupNameToGroupId._2}-${groupNameToGroupId._3}", `name` := s"group-checkbox-${groupNameToGroupId._2}-${groupNameToGroupId._3}",
-            `type` := "checkbox", `class` := "custom-control-input", `value` := "On"),
-          input(`name` := s"group-checkbox-${groupNameToGroupId._2}-${groupNameToGroupId._3}", `type` := "hidden", `value` := "Off"),
-          label(`class` := "custom-control-label", `for` := s"group-checkbox-${groupNameToGroupId._2}-${groupNameToGroupId._3}"),
-          span(`class` := "custom-control-description")(s"${groupNameToGroupId._1}")
-        )
-      }.toSeq
+      addActivityButton.addEventListener("click", (e: dom.Event) => {
+        global.console.log(s"groups: ${
+          groupToSelectedEsOsAndBenchmarks.keys.toString()
+        }")
 
-      val groupsAsCheckboxesInContainer = if (groupNamesToGroupIds.nonEmpty && applyToGroups) {
-        div(`class` := "form-row")(
-          span(`class` := "create-weekly-plans-lesson-modal-select-groups")(small("Applies to which groups: ")),
-          groupsAsCheckboxes
-        )
-      } else {
-        div()
-      }
+        val groupNamesToGroupIds = for {
+          group <- groupToSelectedEsOsAndBenchmarks.keys
+          subjectAndGroupId = group.split("___")
+          groupId = subjectAndGroupId(1)
+          groupName = dom.window.localStorage.getItem(s"$groupId")
+          if groupName != null
+          uniqIdForRow = java.util.UUID.randomUUID().toString
+        } yield (groupName, groupId, uniqIdForRow)
 
-      val newActivityRow = form()(
-        div(`class` := "form-group")(
-          button(`class` := "close create-weekly-plans-lesson-modal-delete-this-row", attr("aria-label") := "Close")(
-            span(attr("aria-hidden") := "true")(raw("&times;"))
-          ),
-          fieldset()(
-            legend(buttonNameType),
-            input(`type` := "text", `class` := "form-control form-control-sm", placeholder := s"Enter $buttonNameType"),
-            groupsAsCheckboxesInContainer
+        val groupsAsCheckboxes: Seq[JsDom.TypedTag[Div]] = {
+          for (groupNameToGroupId <- groupNamesToGroupIds) yield div(`class` :=
+            "custom-control custom-checkbox create-weekly-plans-lesson-modal-select-groups")(
+            input(`id` := s"group-checkbox-${
+              groupNameToGroupId._2
+            }-${
+              groupNameToGroupId._3
+            }", `name` := s"group-checkbox-${
+              groupNameToGroupId._2
+            }-${
+              groupNameToGroupId._3
+            }",
+              `type` := "checkbox", `class` := "custom-control-input", `value` := "On"),
+            input(`name` := s"group-checkbox-${
+              groupNameToGroupId._2
+            }-${
+              groupNameToGroupId._3
+            }", `type` := "hidden", `value` := "Off"),
+            label(`class` := "custom-control-label", `for` := s"group-checkbox-${
+              groupNameToGroupId._2
+            }-${
+              groupNameToGroupId._3
+            }"),
+            span(`class` := "custom-control-description")(s"${
+              groupNameToGroupId._1
+            }")
+          )
+        }.toSeq
+
+        val groupsAsCheckboxesInContainer = if (groupNamesToGroupIds.nonEmpty && applyToGroups) {
+          div(`class` := "form-row")(
+            span(`class` := "create-weekly-plans-lesson-modal-select-groups")(small("Applies to which groups: ")),
+            groupsAsCheckboxes
+          )
+        } else {
+          div()
+        }
+
+        val newActivityRow = form()(
+          div(`class` := "form-group")(
+            button(`class` := "close create-weekly-plans-lesson-modal-delete-this-row", attr("aria-label") := "Close")(
+              span(attr("aria-hidden") := "true")(raw("&times;"))
+            ),
+            fieldset()(
+              legend(buttonNameType),
+              input(`type` := "text", `class` := "form-control form-control-sm", placeholder := s"Enter $buttonNameType"),
+              groupsAsCheckboxesInContainer
+            )
           )
         )
-      )
 
-      val child = dom.document.createElement("div")
-      child.innerHTML = newActivityRow.toString
+        val child = dom.document.createElement("div")
+        child.innerHTML = newActivityRow.toString
 
-      val newGroupsDiv = dom.document.getElementById(s"$buttonElementId-div").asInstanceOf[HTMLDivElement]
-      newGroupsDiv.appendChild(child)
+        val buttonIndex = addActivityButton.getAttribute("data-button-index")
+        val newGroupsDiv = dom.document.getElementById(s"$buttonElementId-div-$buttonIndex").asInstanceOf[HTMLDivElement]
+        newGroupsDiv.appendChild(child)
 
-      deleteSingleRowFromClassPlan()
-    })
+        deleteSingleRowFromClassPlan()
+      })
+
+
+      index = index + 1
+    }
   }
 
   private def deleteSingleRowFromClassPlan(): Unit = {
@@ -408,7 +493,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
       theDeleteButton.addEventListener("click", (e: dom.Event) => {
         val theRowDiv = theDeleteButton.parentNode.parentNode.parentNode.asInstanceOf[HTMLElement]
         val theParent = theRowDiv.parentNode
-        if (theRowDiv != null && theParent != null ) {
+        if (theRowDiv != null && theParent != null) {
           theParent.removeChild(theRowDiv)
         }
       })
