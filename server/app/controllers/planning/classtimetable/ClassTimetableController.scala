@@ -306,10 +306,12 @@ class ClassTimetableController @Inject()(classTimetableWriter: ClassTimetableWri
       classes <- eventualClasses
       classDetailsList = classes.filter(theClass => theClass.id.id == classId)
       maybeClassDetails = classDetailsList.headOption
+      log1 = logger.debug(s"maybeClassDetails := ${maybeClassDetails.toString}")
       if maybeClassDetails.isDefined
       classDetails = maybeClassDetails.get
       futureMaybeCurrentSchoolTerm = termService.currentSchoolTerm(SchoolConverter.convertLocalAuthorityStringToAvroVersion(classDetails.schoolDetails.localAuthority))
       maybeCurrentSchoolTerm <- futureMaybeCurrentSchoolTerm
+      log2 = logger.debug(s"maybeCurrentSchoolTerm := ${maybeCurrentSchoolTerm.toString}")
       if maybeCurrentSchoolTerm.isDefined
       todaysDate <- eventualTodaysDate
     } yield {
