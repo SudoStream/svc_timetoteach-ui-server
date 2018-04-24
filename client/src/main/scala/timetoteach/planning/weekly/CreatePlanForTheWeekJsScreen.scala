@@ -172,7 +172,8 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
   }
 
   private def setButtonDefaults(theDiv: HTMLDivElement): Unit = {
-    theDiv.style.backgroundColor = eAndORowBackgroundNormalColor.getOrElse("white")
+    global.console.log(s"eAndORowBackgroundNormalColor = $eAndORowBackgroundNormalColor.toString")
+    theDiv.style.backgroundColor = eAndORowBackgroundNormalColor.getOrElse("f6f6f6")
     theDiv.style.color = eAndORowForegroundNormalColor.getOrElse("grey")
     theDiv.style.borderRadius = eAndORowBorderRadius.getOrElse("0")
   }
@@ -233,7 +234,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     var index = 0
     while (index < nodeListSize) {
       val theDiv = allEAndOAndBenchmarksRows(index).asInstanceOf[HTMLDivElement]
-      theDiv.style.backgroundColor = eAndORowBackgroundNormalColor.getOrElse("white")
+      theDiv.style.backgroundColor = eAndORowBackgroundNormalColor.getOrElse("f6f6f6")
       theDiv.style.color = eAndORowForegroundNormalColor.getOrElse("grey")
       theDiv.style.borderRadius = eAndORowBorderRadius.getOrElse("0")
       index = index + 1
@@ -309,7 +310,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
               !groupToSelectedEsOsAndBenchmarks(groupIdOrNot).isDefinedAt(curriculumSection) ||
               !groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection).isDefinedAt(curriculumSubSection) ||
               !groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection)(curriculumSubSection)._2.contains(benchmarkValue)))) {
-          theDiv.style.backgroundColor = eAndORowBackgroundNormalColor.getOrElse("white")
+          theDiv.style.backgroundColor = eAndORowBackgroundNormalColor.getOrElse("f6f6f6")
           theDiv.style.color = eAndORowForegroundNormalColor.getOrElse("grey")
           theDiv.style.borderRadius = eAndORowBorderRadius.getOrElse("0")
         }
