@@ -1,16 +1,21 @@
 package timetoteach.planning.weekly
 
-import duplicate.model.planning.{LessonSummary, LessonsThisWeek}
+import duplicate.model.TermlyPlansToSave
+import duplicate.model.planning.{LessonSummary, LessonsThisWeek, WeeklyPlanOfOneSubject}
 import org.scalajs.dom
+import org.scalajs.dom.ext.Ajax
+import org.scalajs.dom.ext.Ajax.InputData
 import org.scalajs.dom.html.{Div, LI, UList}
 import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement, HTMLElement}
 import scalatags.JsDom
 import scalatags.JsDom.all.{`class`, div, _}
 import shared.util.PlanningHelper
+import upickle.default.write
 
 import scala.collection.mutable
 import scala.scalajs.js
 import scala.scalajs.js.Dynamic.global
+import scala.util.{Failure, Success}
 
 object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
 
@@ -35,6 +40,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     planLessonsButton()
     deleteSingleRowFromClassPlan()
     resetValuesOnTabClick()
+    saveSubjectWeeksPlanButton()
   }
 
   private def setEsOsBenchmarksSummary(): Unit = {
@@ -511,6 +517,54 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
       repaintTheEsAndOs("create-weekly-plans-es-and-os-row")
       repaintTheEsAndOs("create-weekly-plans-eobenchmark-row")
     })
+  }
+
+  private def saveSubjectWeeksPlanButton() : Unit = {
+    val saveSubjectWeeksPlanButton = dom.document.getElementById("create-weekly-plans-save-subject-plan")
+    if (saveSubjectWeeksPlanButton != null) {
+      saveSubjectWeeksPlanButton.addEventListener("click", (e: dom.Event) => {
+
+        val subject = currentlySelectedPlanningArea.getOrElse("NO_SUBJECT")
+        val classId = dom.window.localStorage.getItem("classId")
+        val tttUserId = dom.window.localStorage.getItem("tttUserId")
+
+        global.console.log(s"Subject == $subject")
+        global.console.log(s"classId == $classId")
+        global.console.log(s"tttUserId == $tttUserId")
+//        postSave()
+      })
+    }
+  }
+
+  private def postSave(subjectWeeklyPlan: WeeklyPlanOfOneSubject) : Unit = {
+    val subjectWeeklyPlansPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[WeeklyPlanOfOneSubject](subjectWeeklyPlan))
+    global.console.log(s"Pickled, this == $subjectWeeklyPlansPickled")
+
+//    import scala.concurrent.ExecutionContext.Implicits.global
+//    val theUrl = s"/termlysaveplanningforsubjectandgroup/$classId/$subject/$groupId"
+//    val theHeaders = Map(
+//      "Content-Type" -> "application/x-www-form-urlencoded",
+//      "X-Requested-With" -> "Accept"
+//    )
+//    val theData = InputData.str2ajax(s"subjectWeeklyPlansPickled=$subjectWeeklyPlansPickled")
+//
+//    Ajax.post(
+//      url = theUrl,
+//      headers = theHeaders,
+//      data = theData
+//    ).onComplete {
+//      case Success(xhr) =>
+//        val responseText = xhr.responseText
+//        println(s"response = '$responseText'")
+//        dom.window.setTimeout(() => {
+//          println(s"lets goto group planning overview")
+//          dom.window.location.href = s"/termlyoverviewforcurriculumareaandgroup/$classId/$subject/$groupId"
+//        }, 10)
+//      case Failure(ex) =>
+//        dom.window.alert("Something went wrong with saving group termly plans. Specifically : -" +
+//          s"\n\n${ex.toString}")
+//    }
+
   }
 
 }

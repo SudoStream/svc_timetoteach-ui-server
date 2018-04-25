@@ -60,16 +60,19 @@ class WeeklyPlanningController @Inject()(
       classes <- eventualClasses
       classDetailsList = classes.filter(theClass => theClass.id.id == classId)
       maybeClassDetails: Option[ClassDetails] = classDetailsList.headOption
+      log1 = logger.debug(s"maybeClassDetails : ${maybeClassDetails.toString}")
       if maybeClassDetails.isDefined
       classDetails = maybeClassDetails.get
       avroClassTimetableFuture = classTimetableReaderProxy.
         readAvroClassTimetable(TimeToTeachUserId(tttUserId), WwwClassId(classDetails.id.id))
       schoolDayTimes <- futureSchoolDayTimes
       maybeAvroClassTimetable <- avroClassTimetableFuture
+      log2 = logger.debug(s"maybeAvroClassTimetable : ${maybeAvroClassTimetable.toString}")
       if maybeAvroClassTimetable.isDefined
 
       futureMaybeSchoolTerm = termService.currentSchoolTerm(SchoolConverter.convertLocalAuthorityStringToAvroVersion(classDetails.schoolDetails.localAuthority))
       maybeSchoolTerm <- futureMaybeSchoolTerm
+      log3 = logger.debug(s"maybeSchoolTerm : ${maybeSchoolTerm.toString}")
       if maybeSchoolTerm.isDefined
       schoolTerm = maybeSchoolTerm.get
       todaysDate <- eventualTodaysDate
