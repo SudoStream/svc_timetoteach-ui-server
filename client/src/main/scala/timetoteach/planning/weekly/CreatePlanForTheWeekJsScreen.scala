@@ -1,10 +1,9 @@
 package timetoteach.planning.weekly
 
-import duplicate.model.TermlyPlansToSave
+import duplicate.model.CurriculumLevel
+import duplicate.model.esandos._
 import duplicate.model.planning.{LessonSummary, LessonsThisWeek, WeeklyPlanOfOneSubject}
 import org.scalajs.dom
-import org.scalajs.dom.ext.Ajax
-import org.scalajs.dom.ext.Ajax.InputData
 import org.scalajs.dom.html.{Div, LI, UList}
 import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement, HTMLElement}
 import scalatags.JsDom
@@ -15,7 +14,6 @@ import upickle.default.write
 import scala.collection.mutable
 import scala.scalajs.js
 import scala.scalajs.js.Dynamic.global
-import scala.util.{Failure, Success}
 
 object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
 
@@ -519,7 +517,76 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     })
   }
 
-  private def saveSubjectWeeksPlanButton() : Unit = {
+
+  private def createEandOSetSubSection(esAndOsPlusBenchmarksForSubsection: (mutable.Set[String], mutable.Set[String])): EandOSetSubSection = {
+    val esAndOs: List[EandO] = {
+      for {
+        esAndOsCode <- esAndOsPlusBenchmarksForSubsection._1
+      } yield EandO(esAndOsCode, Nil)
+    }.toList
+
+    val benchmarks: List[Benchmark] = {
+      for {
+        benchmark <- esAndOsPlusBenchmarksForSubsection._2
+      } yield Benchmark(benchmark)
+    }.toList
+
+    EandOSetSubSection(
+      "",
+      esAndOs,
+      benchmarks
+    )
+  }
+
+  private def createSetSectionNameToSubSectionsMap(sectionName: String, subsectionToEsAndOs:
+  mutable.Map[String, (mutable.Set[String], mutable.Set[String])]): Map[String, Map[String, EandOSetSubSection]] = {
+    val mutableMap: mutable.Map[String, EandOSetSubSection] = mutable.Map.empty
+
+    for (subsectionName <- subsectionToEsAndOs.keys) {
+      val esAndOsPlusBenchmarksForSubsection = subsectionToEsAndOs(subsectionName)
+      val esOsSetSubSection: EandOSetSubSection = createEandOSetSubSection(esAndOsPlusBenchmarksForSubsection)
+      mutableMap += (subsectionName -> esOsSetSubSection)
+    }
+
+    Map(sectionName -> mutableMap.toMap)
+  }
+
+  private def extractCurriculumLevel(eAndO: EandO): CurriculumLevel = {
+    CurriculumLevel.createCurriculumLevelFromEAndOCode(eAndO.code)
+  }
+
+  private def extractCurriculumLevel(setSectionNameToSubSectionsMap: Map[String, Map[String, EandOSetSubSection]]): CurriculumLevel = {
+    global.console.log(s"setSectionNameToSubSectionsMap = ${setSectionNameToSubSectionsMap}")
+    val levels = for {
+      sectionName <- setSectionNameToSubSectionsMap.keys
+      subsectionName <- setSectionNameToSubSectionsMap(sectionName).keys
+      eAndOCodes = setSectionNameToSubSectionsMap(sectionName)(subsectionName).eAndOs
+      log1 = global.console.log(s"eAndOCodes = ${eAndOCodes.toString}")
+      if eAndOCodes.nonEmpty
+      level = extractCurriculumLevel(eAndOCodes.head)
+    } yield level
+
+    levels.head
+  }
+
+  private def populateGroupToEsOsBenchmarks(): Map[String, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel] = {
+    {
+      for {
+        planningAreaAndGroupIdKey <- groupToSelectedEsOsAndBenchmarks.keys
+        groupId = planningAreaAndGroupIdKey.split("___")(1)
+
+        sectionName <- groupToSelectedEsOsAndBenchmarks(planningAreaAndGroupIdKey).keys
+        setSectionNameToSubSectionsMap = createSetSectionNameToSubSectionsMap(sectionName, groupToSelectedEsOsAndBenchmarks(planningAreaAndGroupIdKey)(sectionName))
+        curriculumLevel: CurriculumLevel = extractCurriculumLevel(setSectionNameToSubSectionsMap)
+      } yield (groupId, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel(
+        curriculumLevel,
+        CurriculumArea.createCurriculumAreaFromString(currentlySelectedPlanningArea.getOrElse("NO_SUBJECT")),
+        setSectionNameToSubSectionsMap
+      ))
+    }.toMap
+  }
+
+  private def saveSubjectWeeksPlanButton(): Unit = {
     val saveSubjectWeeksPlanButton = dom.document.getElementById("create-weekly-plans-save-subject-plan")
     if (saveSubjectWeeksPlanButton != null) {
       saveSubjectWeeksPlanButton.addEventListener("click", (e: dom.Event) => {
@@ -527,43 +594,50 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
         val subject = currentlySelectedPlanningArea.getOrElse("NO_SUBJECT")
         val classId = dom.window.localStorage.getItem("classId")
         val tttUserId = dom.window.localStorage.getItem("tttUserId")
-
+        val weekBeginningIsoDate = currentlySelectMondayStartOfWeekDate.getOrElse("1970-01-01")
         global.console.log(s"Subject == $subject")
         global.console.log(s"classId == $classId")
         global.console.log(s"tttUserId == $tttUserId")
-//        postSave()
+        global.console.log(s"weekBeginningIsoDate == $weekBeginningIsoDate")
+        global.console.log(s"groupToSelectedEsOsAndBenchmarks == ${groupToSelectedEsOsAndBenchmarks.toString}")
+
+        val groupToEsOsBenchmarks = populateGroupToEsOsBenchmarks()
+        global.console.log(s"groupToEsOsBenchmarks == ${groupToEsOsBenchmarks.toString}")
+
+
+        //        postSave()
       })
     }
   }
 
-  private def postSave(subjectWeeklyPlan: WeeklyPlanOfOneSubject) : Unit = {
+  private def postSave(subjectWeeklyPlan: WeeklyPlanOfOneSubject): Unit = {
     val subjectWeeklyPlansPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[WeeklyPlanOfOneSubject](subjectWeeklyPlan))
     global.console.log(s"Pickled, this == $subjectWeeklyPlansPickled")
 
-//    import scala.concurrent.ExecutionContext.Implicits.global
-//    val theUrl = s"/termlysaveplanningforsubjectandgroup/$classId/$subject/$groupId"
-//    val theHeaders = Map(
-//      "Content-Type" -> "application/x-www-form-urlencoded",
-//      "X-Requested-With" -> "Accept"
-//    )
-//    val theData = InputData.str2ajax(s"subjectWeeklyPlansPickled=$subjectWeeklyPlansPickled")
-//
-//    Ajax.post(
-//      url = theUrl,
-//      headers = theHeaders,
-//      data = theData
-//    ).onComplete {
-//      case Success(xhr) =>
-//        val responseText = xhr.responseText
-//        println(s"response = '$responseText'")
-//        dom.window.setTimeout(() => {
-//          println(s"lets goto group planning overview")
-//          dom.window.location.href = s"/termlyoverviewforcurriculumareaandgroup/$classId/$subject/$groupId"
-//        }, 10)
-//      case Failure(ex) =>
-//        dom.window.alert("Something went wrong with saving group termly plans. Specifically : -" +
-//          s"\n\n${ex.toString}")
-//    }
+    //    import scala.concurrent.ExecutionContext.Implicits.global
+    //    val theUrl = s"/termlysaveplanningforsubjectandgroup/$classId/$subject/$groupId"
+    //    val theHeaders = Map(
+    //      "Content-Type" -> "application/x-www-form-urlencoded",
+    //      "X-Requested-With" -> "Accept"
+    //    )
+    //    val theData = InputData.str2ajax(s"subjectWeeklyPlansPickled=$subjectWeeklyPlansPickled")
+    //
+    //    Ajax.post(
+    //      url = theUrl,
+    //      headers = theHeaders,
+    //      data = theData
+    //    ).onComplete {
+    //      case Success(xhr) =>
+    //        val responseText = xhr.responseText
+    //        println(s"response = '$responseText'")
+    //        dom.window.setTimeout(() => {
+    //          println(s"lets goto group planning overview")
+    //          dom.window.location.href = s"/termlyoverviewforcurriculumareaandgroup/$classId/$subject/$groupId"
+    //        }, 10)
+    //      case Failure(ex) =>
+    //        dom.window.alert("Something went wrong with saving group termly plans. Specifically : -" +
+    //          s"\n\n${ex.toString}")
+    //    }
 
   }
 

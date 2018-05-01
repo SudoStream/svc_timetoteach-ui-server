@@ -66,6 +66,34 @@ sealed trait CurriculumArea {
 
 object CurriculumArea {
   implicit def rw: RW[CurriculumArea] = macroRW
+
+  def createCurriculumAreaFromString(areaAsString: String): CurriculumArea = {
+    areaAsString match {
+      case "EXPRESSIVE_ARTS" => ExpressiveArts__Only
+      case "EXPRESSIVE_ARTS__ART" => ExpressiveArts__Art
+      case "EXPRESSIVE_ARTS__DRAMA" => ExpressiveArts__Drama
+      case "EXPRESSIVE_ARTS__DANCE" => ExpressiveArts__Dance
+      case "EXPRESSIVE_ARTS__MUSIC" => ExpressiveArts__Music
+      case "HEALTH_AND_WELLBEING" => HealthAndWellbeing
+      case "HEALTH_AND_WELLBEING__PHYSICAL_EDUCATION" => HealthAndWellbeing
+      case "LITERACY__WRITING" => Literacy_Writing
+      case "LITERACY__READING" => Literacy_Reading
+      case "LITERACY__LISTENING_AND_TALKING" => Literacy_ListeningAndTalking
+      case "LITERACY__CLASSICAL_LANGUAGES" => Languages_ClassicalLanguages
+      case "LITERACY__GAELIC_LEARNERS" => Languages_Gaelic
+      case "LITERACY__LITERACY_AND_GAIDLIG" => Languages_LiteracyAndGaidhlig
+      case "LITERACY__MODERN_LANGUAGES" => Languages_ModernLanguages
+      case "MATHEMATICS" => Mathematics
+      case "RME__STANDARD" => ReligionAndMoralEducationStandard
+      case "RME__CATHOLIC" => ReligionAndMoralEducationStandard
+      case "SCIENCE" => Sciences
+      case "SOCIAL_STUDIES" => SocialStudies
+      case "TECHNOLOGIES" => Technologies
+      case "TOPIC" => SocialStudies
+      case "NONE" => NotDefined
+    }
+  }
+
 }
 
 case object ExpressiveArts__Only extends CurriculumArea {
