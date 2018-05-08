@@ -4,6 +4,8 @@ import duplicate.model.CurriculumLevel
 import duplicate.model.esandos._
 import duplicate.model.planning.{LessonPlan, LessonSummary, LessonsThisWeek, WeeklyPlanOfOneSubject}
 import org.scalajs.dom
+import org.scalajs.dom.ext.Ajax
+import org.scalajs.dom.ext.Ajax.InputData
 import org.scalajs.dom.html.{Div, LI, UList}
 import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement, HTMLElement, HTMLInputElement}
 import scalatags.JsDom
@@ -15,6 +17,7 @@ import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.scalajs.js
 import scala.scalajs.js.Dynamic.global
+import scala.util.{Failure, Success}
 
 object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
 
@@ -793,40 +796,44 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
             weekBeginningIsoDate,
             groupToEsOsBenchmarks,
             lessons
-          )
+          ),
+          classId
         )
       })
     }
   }
 
-  private def postSave(subjectWeeklyPlan: WeeklyPlanOfOneSubject): Unit = {
+  private def postSave(subjectWeeklyPlan: WeeklyPlanOfOneSubject, classId: String): Unit = {
     val subjectWeeklyPlansPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[WeeklyPlanOfOneSubject](subjectWeeklyPlan))
     global.console.log(s"Pickled, this == $subjectWeeklyPlansPickled")
 
-    //    import scala.concurrent.ExecutionContext.Implicits.global
-    //    val theUrl = s"/termlysaveplanningforsubjectandgroup/$classId/$subject/$groupId"
-    //    val theHeaders = Map(
-    //      "Content-Type" -> "application/x-www-form-urlencoded",
-    //      "X-Requested-With" -> "Accept"
-    //    )
-    //    val theData = InputData.str2ajax(s"subjectWeeklyPlansPickled=$subjectWeeklyPlansPickled")
-    //
-    //    Ajax.post(
-    //      url = theUrl,
-    //      headers = theHeaders,
-    //      data = theData
-    //    ).onComplete {
-    //      case Success(xhr) =>
-    //        val responseText = xhr.responseText
-    //        println(s"response = '$responseText'")
-    //        dom.window.setTimeout(() => {
-    //          println(s"lets goto group planning overview")
-    //          dom.window.location.href = s"/termlyoverviewforcurriculumareaandgroup/$classId/$subject/$groupId"
-    //        }, 10)
-    //      case Failure(ex) =>
-    //        dom.window.alert("Something went wrong with saving group termly plans. Specifically : -" +
-    //          s"\n\n${ex.toString}")
-    //    }
+    import scala.concurrent.ExecutionContext.Implicits.global
+    val theUrl = s"/savePlanForTheWeek/$classId"
+    val theHeaders = Map(
+      "Content-Type" -> "application/x-www-form-urlencoded",
+      "X-Requested-With" -> "Accept"
+    )
+    val theData = InputData.str2ajax(s"subjectWeeklyPlansPickled=$subjectWeeklyPlansPickled")
+
+    Ajax.post(
+      url = theUrl,
+      headers = theHeaders,
+      data = theData
+    ).onComplete {
+      case Success(xhr) =>
+        val responseText = xhr.responseText
+        println(s"response = '$responseText'")
+        dom.window.setTimeout(() => {
+          val $ = js.Dynamic.global.$
+          $("#create-weekly-plans-lesson-modal").modal("hide")
+
+        }, 10)
+      case Failure(ex) =>
+        dom.window.alert("Something went wrong with saving group termly plans. Specifically : -" +
+          s"\n\n${ex.toString}")
+        val $ = js.Dynamic.global.$
+        $("#create-weekly-plans-lesson-modal").modal("hide")
+    }
 
   }
 

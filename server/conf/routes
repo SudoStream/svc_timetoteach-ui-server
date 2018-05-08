@@ -41,6 +41,7 @@ GET           /termlyplanningdownloadclassplan/:classId                         
 
 GET           /weeklyViewOfWeeklyPlanning/:classId/:weekNumber                                      controllers.planning.weekly.WeeklyPlanningController.weeklyViewOfWeeklyPlanning(classId, weekNumber :Int)
 GET           /createPlanForTheWeek/:classId/:mondayDateOfWeekIso                                   controllers.planning.weekly.WeeklyPlanningController.createPlanForTheWeek(classId, mondayDateOfWeekIso)
+POST          /savePlanForTheWeek/:classId                                                          controllers.planning.weekly.WeeklyPlanningController.savePlanForTheWeek(classId)
 
 GET           /classes                                                                              controllers.planning.classtimetable.ClassTimetableController.classesHome
 GET           /addnewclass                                                                          controllers.planning.classtimetable.ClassTimetableController.addNewClass

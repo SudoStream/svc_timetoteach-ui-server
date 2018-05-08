@@ -6,14 +6,16 @@ import be.objectify.deadbolt.scala.DeadboltActions
 import controllers.serviceproxies.{ClassTimetableReaderServiceProxyImpl, PlanningReaderServiceProxy, TermServiceProxy, UserReaderServiceProxyImpl}
 import controllers.time.SystemTime
 import curriculum.scotland.EsOsAndBenchmarksBuilderImpl
-import duplicate.model.ClassDetails
-import duplicate.model.planning.LessonsThisWeek
+import duplicate.model.planning.{LessonsThisWeek, WeeklyPlanOfOneSubject}
+import duplicate.model.{ClassDetails, TermlyPlansToSave}
 import io.sudostream.timetoteach.messages.systemwide.model.UserPreferences
 import javax.inject.{Inject, Singleton}
 import models.timetoteach.classtimetable.SchoolDayTimes
 import models.timetoteach.planning.pdf.CurriculumAreaTermlyPlanForPdfBuilder
 import models.timetoteach.{ClassId, CookieNames, TimeToTeachUserId}
 import play.api.Logger
+import play.api.data.Form
+import play.api.data.Forms.{mapping, _}
 import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}
 import security.MyDeadboltHandler
 import shared.model.classtimetable.WwwClassId
@@ -46,6 +48,18 @@ class WeeklyPlanningController @Inject()(
     lunchEnds = LocalTime.of(13, 0),
     schoolDayEnds = LocalTime.of(15, 0)
   )
+
+
+  val subjectWeeklyPlansToSaveForm = Form(
+    mapping(
+      "subjectWeeklyPlansPickled" -> text
+    )(OneSubectWeeklyPlansJson.apply)(OneSubectWeeklyPlansJson.unapply)
+  )
+
+  case class OneSubectWeeklyPlansJson(
+                                       subjectWeeklyPlansPickled: String
+                                     )
+
 
   def weeklyViewOfWeeklyPlanning(classId: String, weekNumberRequested: Int): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest =>
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
@@ -127,7 +141,7 @@ class WeeklyPlanningController @Inject()(
     val eventualEsAndOsToDetailMap = esAndOsReader.esAndOsCodeToEsAndOsDetailMap()
     val eventualTodaysDate = systemTime.getToday
 
-    import upickle.default.{ReadWriter => RW, _}
+    import upickle.default._
     for {
       classes <- eventualClasses
       nothing0 = logger.debug(s"+=+= we are underway 0 - ${classes.toString}")
@@ -189,4 +203,20 @@ class WeeklyPlanningController @Inject()(
     ))
   }
 
+
+  def savePlanForTheWeek(classId: String): Action[AnyContent] = Action.async { implicit request =>
+
+    val subjectWeeklyPlans = subjectWeeklyPlansToSaveForm.bindFromRequest.get
+    logger.debug(s"Subject Weekly Plans Pickled = #${subjectWeeklyPlans.subjectWeeklyPlansPickled}#")
+
+    import upickle.default._
+    val weeklyPlansToSave: WeeklyPlanOfOneSubject = read[WeeklyPlanOfOneSubject](
+      PlanningHelper.decodeAnyNonFriendlyCharacters(subjectWeeklyPlans.subjectWeeklyPlansPickled))
+
+    logger.debug(s"Subject Weekly plans Unpickled = ${weeklyPlansToSave.toString}")
+
+    Future{
+      Ok("Done")
+    }
+  }
 }
