@@ -14,6 +14,8 @@ object LessonsThisWeek {
 
 case class LessonSummary(
                           subject: String,
+                          subjectAdditionalInfo: String,
+                          isoDateOfLesson: Option[String],
                           dayOfWeek: String,
                           startTimeIso: String,
                           endTimeIso: String

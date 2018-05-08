@@ -216,6 +216,8 @@ class ClassTimetableReaderServiceProxyImpl @Inject()(schoolReader: SchoolReaderS
           remainingSubjects.head._2.subjectDetail.subjectName.toString).toString
         val nextSubjectLessonSummary = LessonSummary(
           subject = nextSubjectName,
+          subjectAdditionalInfo = remainingSubjects.head._2.subjectDetail.additionalInfo.value,
+          isoDateOfLesson = None,
           dayOfWeek = remainingSubjects.head._1,
           startTimeIso = remainingSubjects.head._2.subjectDetail.startTime.timeIso8601,
           endTimeIso = remainingSubjects.head._2.subjectDetail.endTime.timeIso8601

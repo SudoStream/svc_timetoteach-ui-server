@@ -27,7 +27,7 @@ case class LessonPlan(
                        resources: List[String],
                        learningIntentionsPerGroup: Map[String, List[String]],
                        successCriteriaPerGroup: Map[String, List[String]],
-                       plenary: String,
+                       plenary: List[String],
                        formativeAssessmentPerGroup: Map[String, List[String]],
                        notesBefore: List[String],
                        notesAfter: List[String]
