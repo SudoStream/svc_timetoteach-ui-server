@@ -9,7 +9,7 @@ import org.mongodb.scala.bson.BsonDocument
 import org.mongodb.scala.connection.{NettyStreamFactoryFactory, SslSettings}
 import org.mongodb.scala.{Document, MongoClient, MongoClientSettings, MongoCollection, ServerAddress}
 import play.api.Logger
-import potentialmicroservice.planning.sharedschema.{TermlyCurriculumSelectionSchema, TermlyPlanningSchema}
+import potentialmicroservice.planning.sharedschema.{SingleLessonPlanSchema, TermlyCurriculumSelectionSchema, TermlyPlanningSchema, WeeklyPlanningSchema}
 
 import scala.collection.JavaConverters._
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -26,6 +26,8 @@ class MongoDbConnectionImpl extends MongoDbConnection with MiniKubeHelper {
   private val planningDatabaseName = config.getString("mongodb.planning-database-name")
   private val termlyPlansCollectionName = config.getString("mongodb.termly-plans-collection-name")
   private val termlyCurriculumSelectionCollectionName = config.getString("mongodb.termly-curriculum-selection-collection-name")
+  private val lessonPlansCollectionName = config.getString("mongodb.lesson-plans-collection-name")
+  private val weeklyPlansCollectionName = config.getString("mongodb.weekly-plans-collection-name")
 
   private val calendarDatabaseName = config.getString("mongodb.calendar-database-name")
   private val schoolTermsCollectionName = config.getString("mongodb.school-terms-collection-name")
@@ -78,6 +80,8 @@ class MongoDbConnectionImpl extends MongoDbConnection with MiniKubeHelper {
   private lazy val mongoDbClient: MongoClient = createMongoClient
 
   ensureTermlyPlanningIndexes()
+  ensureWeeklyPlanningIndexes()
+  ensureLessonPlanningIndexes()
   ensureTermlyCurriculumSelectionIndexes()
 
   override def getTermlyPlanningCollection: MongoCollection[Document] = {
@@ -88,6 +92,16 @@ class MongoDbConnectionImpl extends MongoDbConnection with MiniKubeHelper {
   override def getTermlyCurriculumSelectionCollection: MongoCollection[Document] = {
     val planningDatabase = mongoDbClient.getDatabase(planningDatabaseName)
     planningDatabase.getCollection(termlyCurriculumSelectionCollectionName)
+  }
+
+  override def getWeeklyPlanningCollection: MongoCollection[Document] = {
+    val planningDatabase = mongoDbClient.getDatabase(planningDatabaseName)
+    planningDatabase.getCollection(weeklyPlansCollectionName)
+  }
+
+  override def getLessonPlanningCollection: MongoCollection[Document] = {
+    val planningDatabase = mongoDbClient.getDatabase(planningDatabaseName)
+    planningDatabase.getCollection(lessonPlansCollectionName)
   }
 
   override def getSchoolTermsCollection: MongoCollection[Document] = {
@@ -124,6 +138,69 @@ class MongoDbConnectionImpl extends MongoDbConnection with MiniKubeHelper {
       case Success(msg) => logger.info(s"Ensure termly planning index 2 attempt completed with msg : $msg")
       case Failure(ex) => logger.info(s"Ensure termly planning index 2 failed to complete: ${ex.getMessage}")
     }
+
+  }
+
+  override def ensureWeeklyPlanningIndexes(): Unit = {
+    val mainIndex = BsonDocument(
+      WeeklyPlanningSchema.TTT_USER_ID -> 1,
+      WeeklyPlanningSchema.CLASS_ID -> 1,
+      WeeklyPlanningSchema.SUBJECT -> 1,
+      WeeklyPlanningSchema.WEEK_BEGINNING_ISO_DATE -> 1
+    )
+
+    logger.info(s"Ensuring index created on weekly planning collection : ${mainIndex.toString}")
+
+    val obs = getTermlyPlanningCollection.createIndex(mainIndex)
+    obs.toFuture().onComplete {
+      case Success(msg) => logger.info(s"Ensure weekly planning index 1 attempt completed with msg : $msg")
+      case Failure(ex) => logger.info(s"Ensure weekly planning index 1 failed to complete: ${ex.getMessage}")
+    }
+    ////
+    val secondIndex = BsonDocument(
+      WeeklyPlanningSchema.TTT_USER_ID -> 1,
+      WeeklyPlanningSchema.CLASS_ID -> 1
+    )
+    logger.info(s"Ensuring second index created on weekly planning collection : ${secondIndex.toString}")
+    val obs2 = getTermlyPlanningCollection.createIndex(secondIndex)
+    obs2.toFuture().onComplete {
+      case Success(msg) => logger.info(s"Ensure weekly planning index 2 attempt completed with msg : $msg")
+      case Failure(ex) => logger.info(s"Ensure weekly planning index 2 failed to complete: ${ex.getMessage}")
+    }
+
+  }
+
+  override def ensureLessonPlanningIndexes(): Unit = {
+    val mainIndex = BsonDocument(
+      SingleLessonPlanSchema.TTT_USER_ID -> 1,
+      SingleLessonPlanSchema.CLASS_ID -> 1,
+      SingleLessonPlanSchema.SUBJECT -> 1,
+      SingleLessonPlanSchema.WEEK_BEGINNING_ISO_DATE -> 1
+    )
+
+    logger.info(s"Ensuring index created on lesson planning collection : ${mainIndex.toString}")
+
+    val obs = getTermlyPlanningCollection.createIndex(mainIndex)
+    obs.toFuture().onComplete {
+      case Success(msg) => logger.info(s"Ensure lesson planning index 1 attempt completed with msg : $msg")
+      case Failure(ex) => logger.info(s"Ensure lesson planning index 1 failed to complete: ${ex.getMessage}")
+    }
+    ////
+    val secondIndex = BsonDocument(
+      SingleLessonPlanSchema.TTT_USER_ID -> 1,
+      SingleLessonPlanSchema.CLASS_ID -> 1,
+      SingleLessonPlanSchema.SUBJECT -> 1,
+      SingleLessonPlanSchema.LESSON_DATE -> 1
+    )
+
+    logger.info(s"Ensuring second index created on lesson planning collection : ${secondIndex.toString}")
+    val obs2 = getTermlyPlanningCollection.createIndex(secondIndex)
+    obs2.toFuture().onComplete {
+      case Success(msg) => logger.info(s"Ensure lesson planning index 2 attempt completed with msg : $msg")
+      case Failure(ex) => logger.info(s"Ensure lesson planning index 2 failed to complete: ${ex.getMessage}")
+    }
+
+
 
   }
 

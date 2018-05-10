@@ -3,7 +3,7 @@ package controllers.planning.weekly
 import java.time.{LocalDate, LocalTime}
 
 import be.objectify.deadbolt.scala.DeadboltActions
-import controllers.serviceproxies.{ClassTimetableReaderServiceProxyImpl, PlanningReaderServiceProxy, TermServiceProxy, UserReaderServiceProxyImpl}
+import controllers.serviceproxies._
 import controllers.time.SystemTime
 import curriculum.scotland.EsOsAndBenchmarksBuilderImpl
 import duplicate.model.planning.{LessonsThisWeek, WeeklyPlanOfOneSubject}
@@ -34,6 +34,7 @@ class WeeklyPlanningController @Inject()(
                                           classTimetableReaderProxy: ClassTimetableReaderServiceProxyImpl,
                                           userReader: UserReaderServiceProxyImpl,
                                           planningReaderService: PlanningReaderServiceProxy,
+                                          planningWriterService: PlanningWriterServiceProxy,
                                           termService: TermServiceProxy,
                                           systemTime: SystemTime
                                         ) extends AbstractController(cc) {
@@ -205,18 +206,24 @@ class WeeklyPlanningController @Inject()(
 
 
   def savePlanForTheWeek(classId: String): Action[AnyContent] = Action.async { implicit request =>
-
     val subjectWeeklyPlans = subjectWeeklyPlansToSaveForm.bindFromRequest.get
-    logger.debug(s"Subject Weekly Plans Pickled = #${subjectWeeklyPlans.subjectWeeklyPlansPickled}#")
 
     import upickle.default._
     val weeklyPlansToSave: WeeklyPlanOfOneSubject = read[WeeklyPlanOfOneSubject](
       PlanningHelper.decodeAnyNonFriendlyCharacters(subjectWeeklyPlans.subjectWeeklyPlansPickled))
-
     logger.debug(s"Subject Weekly plans Unpickled = ${weeklyPlansToSave.toString}")
 
-    Future{
-      Ok("Done")
-    }
+    val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(weeklyPlansToSave.tttUserId))
+
+    for {
+      classes <- eventualClasses
+      classDetailsList = classes.filter(theClass => theClass.id.id == classId)
+      maybeClassDetails: Option[ClassDetails] = classDetailsList.headOption
+      if maybeClassDetails.isDefined
+      classDetails = maybeClassDetails.get
+
+      savedPlanFutures = planningWriterService.saveWeeklyPlanForSingleSubject(weeklyPlansToSave)
+      theFutures <- savedPlanFutures
+    } yield Ok("Saved Weekly Plan Ok")
   }
 }

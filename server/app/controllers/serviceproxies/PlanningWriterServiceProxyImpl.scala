@@ -1,7 +1,7 @@
 package controllers.serviceproxies
 
+import duplicate.model.planning.WeeklyPlanOfOneSubject
 import javax.inject.{Inject, Singleton}
-
 import models.timetoteach.planning.{CurriculumAreaTermlyPlan, TermlyCurriculumSelection}
 import org.mongodb.scala.Completed
 import potentialmicroservice.planning.writer.PlanningWriterService
@@ -20,6 +20,10 @@ class PlanningWriterServiceProxyImpl @Inject()(planningWriterService: PlanningWr
   override def saveTermlyCurriculumSelection(termlyCurriculumSelection: TermlyCurriculumSelection): Future[Completed] =
   {
     planningWriterService.saveTermlyCurriculumSelection(termlyCurriculumSelection)
+  }
+
+  override def saveWeeklyPlanForSingleSubject(weeklyPlansToSave: WeeklyPlanOfOneSubject): Future[List[Completed]] = {
+    planningWriterService.saveWeeklyPlanForSingleSubject(weeklyPlansToSave)
   }
 
 }
