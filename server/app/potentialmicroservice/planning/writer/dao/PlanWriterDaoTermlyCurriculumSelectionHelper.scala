@@ -1,13 +1,13 @@
 package potentialmicroservice.planning.writer.dao
 
 import duplicate.model.esandos.{EandOSetSubSection, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel}
-import duplicate.model.planning.WeeklyPlanOfOneSubject
+import duplicate.model.planning.{LessonPlan, WeeklyPlanOfOneSubject}
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
 import models.timetoteach.planning.TermlyCurriculumSelection
 import org.mongodb.scala.bson.collection.immutable.Document
 import org.mongodb.scala.bson.{BsonArray, BsonDocument, BsonString}
 import potentialmicroservice.planning.sharedschema.TermlyCurriculumSelectionSchema._
-import potentialmicroservice.planning.sharedschema.WeeklyPlanningSchema
+import potentialmicroservice.planning.sharedschema.{SingleLessonPlanSchema, WeeklyPlanningSchema}
 
 trait PlanWriterDaoTermlyCurriculumSelectionHelper {
   def convertTermlyCurriculumSelectionToMongoDbDocument(termlyCurriculumSelection: TermlyCurriculumSelection): Document = {
@@ -46,13 +46,57 @@ trait PlanWriterDaoTermlyCurriculumSelectionHelper {
   }
 
   def extractAllLessonPlansAsMongoDbDocuments(weeklyPlansToSave: WeeklyPlanOfOneSubject): List[Document] = {
-    Nil
+    for {
+      lessonPlan: LessonPlan <- weeklyPlansToSave.lessons
+    } yield createDocumentFromLessonPlan(
+      weeklyPlansToSave.tttUserId,
+      weeklyPlansToSave.classId,
+      weeklyPlansToSave.weekBeginningIsoDate,
+      lessonPlan
+    )
   }
 
   //////////// Implementation ///////////////
 
-  private def convertListStringsToBsonArray(listOfStrings: List[String]) : BsonArray = {
-    BsonArray{
+  private def createDocumentFromLessonPlan(tttUserId: String,
+                                           classId: String,
+                                           weekBeginningIsoDate: String,
+                                           lessonPlan: LessonPlan): Document = {
+    Document(
+      SingleLessonPlanSchema.TTT_USER_ID -> tttUserId,
+      SingleLessonPlanSchema.CLASS_ID -> classId,
+      SingleLessonPlanSchema.SUBJECT -> lessonPlan.subject,
+      SingleLessonPlanSchema.SUBJECT_ADDITIONAL_INFO -> lessonPlan.subjectAdditionalInfo,
+      SingleLessonPlanSchema.WEEK_BEGINNING_ISO_DATE -> weekBeginningIsoDate,
+      SingleLessonPlanSchema.LESSON_DATE -> lessonPlan.lessonDateIso,
+      SingleLessonPlanSchema.CREATED_TIMESTAMP -> java.time.LocalDateTime.now().toString.replace("T", " "),
+      SingleLessonPlanSchema.LESSON_START_TIME -> lessonPlan.startTimeIso,
+      SingleLessonPlanSchema.LESSON_END_TIME -> lessonPlan.endTimeIso,
+
+      SingleLessonPlanSchema.ACTIVITIES_PER_GROUP -> convertGroupAttributesToBsonArray(lessonPlan.activitiesPerGroup),
+      SingleLessonPlanSchema.RESOURCES -> convertListStringsToBsonArray(lessonPlan.resources),
+      SingleLessonPlanSchema.LEARNING_INTENTIONS_PER_GROUP -> convertGroupAttributesToBsonArray(lessonPlan.learningIntentionsPerGroup),
+      SingleLessonPlanSchema.SUCCESS_CRITERIA_PER_GROUP -> convertGroupAttributesToBsonArray(lessonPlan.successCriteriaPerGroup),
+      SingleLessonPlanSchema.PLENARIES -> convertListStringsToBsonArray(lessonPlan.plenary),
+      SingleLessonPlanSchema.FORMATIVE_ASSESSMENT_PER_GROUP -> convertGroupAttributesToBsonArray(lessonPlan.formativeAssessmentPerGroup),
+      SingleLessonPlanSchema.NOTES_BEFORE -> convertListStringsToBsonArray(lessonPlan.notesBefore),
+      SingleLessonPlanSchema.NOTES_AFTER -> convertListStringsToBsonArray(lessonPlan.notesAfter)
+    )
+  }
+
+  private def convertGroupAttributesToBsonArray(attributeMap: Map[String, List[String]]): BsonArray = {
+    BsonArray(
+      for {
+        attributeKeyValue <- attributeMap.keys.toList
+      } yield Document(
+        SingleLessonPlanSchema.ATTRIBUTE_VALUE -> attributeKeyValue,
+        SingleLessonPlanSchema.GROUP_IDS -> convertListStringsToBsonArray(attributeMap(attributeKeyValue))
+      )
+    )
+  }
+
+  private def convertListStringsToBsonArray(listOfStrings: List[String]): BsonArray = {
+    BsonArray {
       for {
         elem <- listOfStrings
       } yield BsonString(elem)
@@ -64,14 +108,14 @@ trait PlanWriterDaoTermlyCurriculumSelectionHelper {
       for {
         sectionName <- esOsBenchmarks.setSectionNameToSubSections.keys.toList
         subSectionName <- esOsBenchmarks.setSectionNameToSubSections(sectionName).keys.toList
-        esOsBenchies  : EandOSetSubSection = esOsBenchmarks.setSectionNameToSubSections(sectionName)(subSectionName)
+        esOsBenchies: EandOSetSubSection = esOsBenchmarks.setSectionNameToSubSections(sectionName)(subSectionName)
         esAndOs = esOsBenchies.eAndOs.map(elem => elem.code)
         benchies = esOsBenchies.benchmarks.map(elem => elem.value)
       } yield Document(
         WeeklyPlanningSchema.SELECTED_SECTION_NAME -> sectionName,
         WeeklyPlanningSchema.SELECTED_SUBSECTION_NAME -> subSectionName,
-        WeeklyPlanningSchema.SELECTED_ES_AND_OS -> convertListStringsToBsonArray(esAndOs ),
-        WeeklyPlanningSchema.SELECTED_BENCHMARKS -> convertListStringsToBsonArray(benchies )
+        WeeklyPlanningSchema.SELECTED_ES_AND_OS -> convertListStringsToBsonArray(esAndOs),
+        WeeklyPlanningSchema.SELECTED_BENCHMARKS -> convertListStringsToBsonArray(benchies)
       )
     )
   }

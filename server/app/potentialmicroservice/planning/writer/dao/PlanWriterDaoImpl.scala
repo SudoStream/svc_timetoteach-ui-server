@@ -41,11 +41,11 @@ class PlanWriterDaoImpl @Inject()(mongoDbConnection: MongoDbConnection)
     val highLevelPlanInsertFutureComplete = observableWeeklyPlan.toFuture()
 
     val lessonPlansAsDocuments = extractAllLessonPlansAsMongoDbDocuments(weeklyPlansToSave)
-    logger.info(s"Inserting high level weekly plan to database: ${highLevelWeeklyPlanAsDocument.toString}")
+    logger.info(s"Inserting weekly lessons to database: ${lessonPlansAsDocuments .toString}")
     val futureLessonCompletes = for {
       lessonPlanAsDoc <- lessonPlansAsDocuments
-      logMsg = logger.info(s"Inserting high level weekly plan to database: ${lessonPlanAsDoc .toString}")
-      observableLessonPlan = lessonPlansCollection.insertOne(highLevelWeeklyPlanAsDocument)
+      logMsg = logger.info(s"Inserting weekly lessons to database: ${lessonPlanAsDoc .toString}")
+      observableLessonPlan = lessonPlansCollection.insertOne(lessonPlanAsDoc)
     } yield observableLessonPlan.toFuture()
 
     val allFutureInserts = highLevelPlanInsertFutureComplete :: futureLessonCompletes
