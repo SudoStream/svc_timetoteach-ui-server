@@ -184,7 +184,7 @@
 
             <div class="create-weekly-plans-main-section">
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
-                @for((planningArea, indexPlanningArea) <- currentTermlyPlan.fullTermlyPlan.keys.zipWithIndex) {
+                @for((planningArea, indexPlanningArea) <- currentTermlyPlan.plansAtSubjectLevel.keys.toList.sortBy(elem => elem.orderNumber).zipWithIndex) {
                     @if(indexPlanningArea == 0) {
                         <li class="nav-item">
                             <a class="nav-link active"
@@ -192,7 +192,7 @@
                             aria-controls="weekly-plans-tab_content_@planningArea.value.toString"
                             href="#weekly-plans-tab-content_@planningArea.value.toString"
                             data-toggle="tab" role="tab" aria-selected="true">
-                            @planningArea.niceValue()
+                            @planningArea.niceSubjectLevelValue()
                             </a>
                         </li>
                     } else {
@@ -202,7 +202,7 @@
                             aria-controls="weekly-plans-tab_content_@planningArea.value.toString"
                             href="#weekly-plans-tab-content_@planningArea.value.toString"
                             data-toggle="tab" role="tab" aria-selected="false">
-                            @planningArea.niceValue()
+                            @planningArea.niceSubjectLevelValue()
                             </a>
                         </li>
                     }
@@ -210,7 +210,7 @@
                 </ul>
 
                 <div class="tab-content" id="create-weekly-plans-outer-tab">
-                @for((planningArea, indexPlanningArea) <- currentTermlyPlan.fullTermlyPlan.keys.zipWithIndex) {
+                @for((planningArea, indexPlanningArea) <- currentTermlyPlan.plansAtSubjectLevel.keys.toList.sortBy(elem => elem.orderNumber).zipWithIndex) {
                     @if(indexPlanningArea == 0) {
                         <div class="tab-pane fade show active"
                         id="weekly-plans-tab-content_@planningArea.value.toString"
@@ -219,7 +219,7 @@
                             <div class="row">
                                 <div class="col-md-3 col-lg-2">
                                     <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                                    @for((termlyPlanForArea, indexTermlyPlanForArea) <- currentTermlyPlan.fullTermlyPlan(planningArea).sortBy(elem => elem.orderNumber).zipWithIndex) {
+                                    @for((termlyPlanForArea, indexTermlyPlanForArea) <- currentTermlyPlan.plansAtSubjectLevel(planningArea).sortBy(elem => elem.orderNumber).zipWithIndex) {
                                         @if(indexTermlyPlanForArea == 0 && indexPlanningArea == 0) {
                                             <a class="nav-link active" data-toggle="pill" role="tab" aria-selected="true"
                                             id="v-pills-tab-@termlyPlanForArea.planningArea.toString"
@@ -246,7 +246,7 @@
 
                                 <div class="col-md-9 col-lg-10">
                                     <div class="tab-content" id="v-pills-tabContent">
-                                    @for((termlyPlanForArea, indexTermlyPlanForArea) <- currentTermlyPlan.fullTermlyPlan(planningArea).sortBy(elem => elem.orderNumber).zipWithIndex) {
+                                    @for((termlyPlanForArea, indexTermlyPlanForArea) <- currentTermlyPlan.plansAtSubjectLevel(planningArea).sortBy(elem => elem.orderNumber).zipWithIndex) {
                                         @if(indexTermlyPlanForArea == 0) {
                                             @if(ScottishCurriculumPlanningAreaWrapper(termlyPlanForArea.planningArea).planAtGroupLevel) {
                                                 <div class="tab-pane fade show active" role="tabpanel"
@@ -294,7 +294,7 @@
                             <div class="row">
                                 <div class="col-md-3 col-lg-2">
                                     <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                                    @for((termlyPlanForArea, indexTermlyPlanForArea) <- currentTermlyPlan.fullTermlyPlan(planningArea).sortBy(elem => elem.orderNumber).zipWithIndex) {
+                                    @for((termlyPlanForArea, indexTermlyPlanForArea) <- currentTermlyPlan.plansAtSubjectLevel(planningArea).sortBy(elem => elem.orderNumber).zipWithIndex) {
                                         @if(indexTermlyPlanForArea == 0) {
                                             @if(ScottishCurriculumPlanningAreaWrapper(termlyPlanForArea.planningArea).planAtGroupLevel) {
                                                 <a class="nav-link active" data-toggle="pill" role="tab" aria-selected="false"
@@ -368,7 +368,7 @@
 
                                 <div class="col-md-9 col-lg-10">
                                     <div class="tab-content" id="v-pills-tabContent">
-                                    @for((termlyPlanForArea, indexTermlyPlanForArea) <- currentTermlyPlan.fullTermlyPlan(planningArea).sortBy(elem => elem.orderNumber).zipWithIndex) {
+                                    @for((termlyPlanForArea, indexTermlyPlanForArea) <- currentTermlyPlan.plansAtSubjectLevel(planningArea).sortBy(elem => elem.orderNumber).zipWithIndex) {
                                         @if(indexTermlyPlanForArea == 0) {
                                             @if(ScottishCurriculumPlanningAreaWrapper(termlyPlanForArea.planningArea).planAtGroupLevel) {
                                                 <div class="tab-pane fade show active" role="tabpanel"
