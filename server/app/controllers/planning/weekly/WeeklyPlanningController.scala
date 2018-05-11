@@ -6,7 +6,7 @@ import be.objectify.deadbolt.scala.DeadboltActions
 import controllers.serviceproxies._
 import controllers.time.SystemTime
 import curriculum.scotland.EsOsAndBenchmarksBuilderImpl
-import duplicate.model.planning.{LessonsThisWeek, WeeklyPlanOfOneSubject}
+import duplicate.model.planning.{FullWeeklyPlanOfLessons, LessonsThisWeek, WeeklyPlanOfOneSubject}
 import duplicate.model.{ClassDetails, TermlyPlansToSave}
 import io.sudostream.timetoteach.messages.systemwide.model.UserPreferences
 import javax.inject.{Inject, Singleton}
@@ -187,6 +187,11 @@ class WeeklyPlanningController @Inject()(
       if maybeLessonsThisWeek.isDefined
       lessonsThisWeekPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[LessonsThisWeek](maybeLessonsThisWeek.get))
       todaysDate <- eventualTodaysDate
+
+      futureMaybefullWeeklyPlanOfLessons = planningReaderService.retrieveFullWeekOfLessons(tttUserId, ClassId(classId), mondayDateOfWeekIso)
+      maybefullWeeklyPlanOfLessons <- futureMaybefullWeeklyPlanOfLessons
+      if maybefullWeeklyPlanOfLessons.isDefined
+      fullWeeklyPlanOfLessonsPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[FullWeeklyPlanOfLessons](maybefullWeeklyPlanOfLessons.get))
     } yield Ok(views.html.planning.weekly.createPlanForTheWeek(
       new MyDeadboltHandler(userReader),
       userPictureUri,
@@ -199,6 +204,7 @@ class WeeklyPlanningController @Inject()(
       maybeAvroClassTimetable.get,
       maybeSchoolTerm.get,
       lessonsThisWeekPickled,
+      fullWeeklyPlanOfLessonsPickled,
       maybeSchoolTerm.get.weekNumberForGivenDate(LocalDate.parse(mondayDateOfWeekIso)),
       todaysDate
     ))

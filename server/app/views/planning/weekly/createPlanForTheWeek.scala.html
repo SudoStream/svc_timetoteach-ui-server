@@ -7,6 +7,7 @@
 @import models.timetoteach.term.SchoolTerm
 @import duplicate.model.planning.LessonsThisWeek
 @import models.timetoteach.TimeToTeachUserId
+@import duplicate.model.planning.FullWeeklyPlanOfLessons
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler,
         userPictureUri: Option[String],
         userFirstName: Option[String],
@@ -18,6 +19,7 @@
         classTimetable: ClassTimetable,
         currentTerm: SchoolTerm,
         lessonsThisWeekPickled: String,
+        fullWeeklyPlanOfLessonsPickled: String,
         weekNumber: Int,
         todaysDate: java.time.LocalDate
 )

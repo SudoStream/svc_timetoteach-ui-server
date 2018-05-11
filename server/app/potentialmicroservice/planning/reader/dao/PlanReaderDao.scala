@@ -2,6 +2,7 @@ package potentialmicroservice.planning.reader.dao
 
 import com.google.inject.ImplementedBy
 import duplicate.model.ClassDetails
+import duplicate.model.planning.FullWeeklyPlanOfLessons
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
 import models.timetoteach.planning.{CurriculumAreaTermlyPlan, CurriculumPlanProgressForClass, GroupId, TermlyCurriculumSelection}
 import models.timetoteach.term.SchoolTerm
@@ -51,5 +52,7 @@ trait PlanReaderDao
                                                  classId: ClassId,
                                                  planningArea: ScottishCurriculumPlanningArea
                                                ): Future[Option[CurriculumAreaTermlyPlan]]
+
+  def retrieveFullWeekOfLessons(tttUserId: TimeToTeachUserId, classId: ClassId, mondayDateOfWeekIso: String): Future[Option[FullWeeklyPlanOfLessons]]
 
 }

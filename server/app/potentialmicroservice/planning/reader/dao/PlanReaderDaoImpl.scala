@@ -3,6 +3,7 @@ package potentialmicroservice.planning.reader.dao
 import dao.MongoDbConnection
 import duplicate.model
 import duplicate.model.ClassDetails
+import duplicate.model.planning.FullWeeklyPlanOfLessons
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
 import javax.inject.{Inject, Singleton}
 import models.timetoteach.planning._
@@ -197,6 +198,12 @@ class PlanReaderDaoImpl @Inject()(mongoDbConnection: MongoDbConnection) extends 
     }
   }
 
+
+  override def retrieveFullWeekOfLessons(tttUserId: TimeToTeachUserId,
+                                         classId: ClassId,
+                                         mondayDateOfWeekIso: String): Future[Option[FullWeeklyPlanOfLessons]] = ???
+
+
   ////
 
 
@@ -208,5 +215,7 @@ class PlanReaderDaoImpl @Inject()(mongoDbConnection: MongoDbConnection) extends 
       } yield BsonString(classId.value)
     })
   }
+
+
 
 }

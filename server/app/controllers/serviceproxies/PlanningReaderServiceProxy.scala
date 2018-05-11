@@ -2,6 +2,7 @@ package controllers.serviceproxies
 
 import com.google.inject.ImplementedBy
 import duplicate.model.ClassDetails
+import duplicate.model.planning.FullWeeklyPlanOfLessons
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
 import models.timetoteach.planning.{CurriculumAreaTermlyPlan, CurriculumPlanProgressForClass, GroupId, TermlyCurriculumSelection}
 import models.timetoteach.term.SchoolTerm
@@ -49,5 +50,10 @@ trait PlanningReaderServiceProxy
                                                  classDetails: ClassDetails,
                                                  planningAreas: List[ScottishCurriculumPlanningArea]
                                                ): Future[List[CurriculumAreaTermlyPlan]]
+
+  def retrieveFullWeekOfLessons(
+                                 tttUserId: TimeToTeachUserId,
+                                 classId: ClassId,
+                                 mondayDateOfWeekIso: String): Future[Option[FullWeeklyPlanOfLessons]]
 
 }

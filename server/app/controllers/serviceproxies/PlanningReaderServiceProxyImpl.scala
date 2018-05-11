@@ -2,6 +2,7 @@ package controllers.serviceproxies
 
 import duplicate.model
 import duplicate.model.ClassDetails
+import duplicate.model.planning.FullWeeklyPlanOfLessons
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
 import javax.inject.{Inject, Singleton}
 import models.timetoteach.planning.{CurriculumAreaTermlyPlan, CurriculumPlanProgressForClass, GroupId, TermlyCurriculumSelection}
@@ -147,6 +148,16 @@ class PlanningReaderServiceProxyImpl @Inject()(planningReaderService: PlanningRe
       classIdToPlanningAreas = convertToPlanningAreas(classIdToTermlyCurriculumSelection)
       classIdToProgressPercent <- planningReaderService.curriculumPlanProgressForClasses(tttUserId, classes, classIdToPlanningAreas, term)
     } yield classIdToProgressPercent
+  }
+
+
+  //////////////
+
+  def retrieveFullWeekOfLessons(
+                                 tttUserId: TimeToTeachUserId,
+                                 classId: ClassId,
+                                 mondayDateOfWeekIso: String): Future[Option[FullWeeklyPlanOfLessons]] = {
+    planningReaderService.retrieveFullWeekOfLessons(tttUserId, classId, mondayDateOfWeekIso)
   }
 
 }
