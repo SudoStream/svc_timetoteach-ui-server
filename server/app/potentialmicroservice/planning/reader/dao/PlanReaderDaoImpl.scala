@@ -201,7 +201,17 @@ class PlanReaderDaoImpl @Inject()(mongoDbConnection: MongoDbConnection) extends 
 
   override def retrieveFullWeekOfLessons(tttUserId: TimeToTeachUserId,
                                          classId: ClassId,
-                                         mondayDateOfWeekIso: String): Future[Option[FullWeeklyPlanOfLessons]] = ???
+                                         mondayDateOfWeekIso: String): Future[Option[FullWeeklyPlanOfLessons]] = {
+
+    // TODO: 1) Read all the high level weekly plans for the "class" and "week" in question
+    // TODO: 2) Get the latest version of the plan for each subject
+    // TODO: 3) Read all the Single Lesson Plans  for the "class" and "week" in question
+    // TODO: 4) Get the latest version of each seperate lesson plan .... for each subject
+    // TODO: 5) Stitch together into appropriate "WeeklyPlanOfOneSubject"s
+    // TODO: 6) Create a "FullWeeklyPlanOfLessons"
+    // TODO: 7) Done!
+
+  }
 
 
   ////
