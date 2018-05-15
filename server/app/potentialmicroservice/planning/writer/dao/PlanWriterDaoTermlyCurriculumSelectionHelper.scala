@@ -104,8 +104,9 @@ trait PlanWriterDaoTermlyCurriculumSelectionHelper {
   }
 
   private def createBsonArrayOfSelectedEsOsAndBenchmarks(esOsBenchmarks: EsAndOsPlusBenchmarksForCurriculumAreaAndLevel): BsonArray = {
-    BsonArray(
-      for {
+    val bsonArrayToreturn = BsonArray()
+
+    val docsToAdd = for {
         sectionName <- esOsBenchmarks.setSectionNameToSubSections.keys.toList
         subSectionName <- esOsBenchmarks.setSectionNameToSubSections(sectionName).keys.toList
         esOsBenchies: EandOSetSubSection = esOsBenchmarks.setSectionNameToSubSections(sectionName)(subSectionName)
@@ -117,7 +118,12 @@ trait PlanWriterDaoTermlyCurriculumSelectionHelper {
         WeeklyPlanningSchema.SELECTED_ES_AND_OS -> convertListStringsToBsonArray(esAndOs),
         WeeklyPlanningSchema.SELECTED_BENCHMARKS -> convertListStringsToBsonArray(benchies)
       )
-    )
+
+    for(doc <- docsToAdd) {
+      bsonArrayToreturn.add(doc.toBsonDocument)
+    }
+
+    bsonArrayToreturn
   }
 
   private def createDocumentForGroupToEsOsAndBenchmarks(groupId: String, esOsBenchmarks: EsAndOsPlusBenchmarksForCurriculumAreaAndLevel): Document = {
