@@ -12,13 +12,22 @@ trait RetrieveFullWeekOfLessonsDaoHelperTestCanned extends PlanWriterDaoTermlyCu
 
   def createSomeArtHighLevelPlans(): List[Document] = {
     List(
-      createCannedHighLevelWeeklyPlan(TEST_SUBJECT_ART, TEST_WEEK2, TEST_TIMESTAMP_WEEK2_A, TEST_ART_ES_AND_OS_2),
-      createCannedHighLevelWeeklyPlan(TEST_SUBJECT_ART, TEST_WEEK2, TEST_TIMESTAMP_WEEK2_B, TEST_ART_ES_AND_OS_3),
-      createCannedHighLevelWeeklyPlan(TEST_SUBJECT_ART, TEST_WEEK2, TEST_TIMESTAMP_WEEK2_C, TEST_ART_ES_AND_OS_1),
       createCannedHighLevelWeeklyPlan(TEST_SUBJECT_ART, TEST_WEEK2, TEST_TIMESTAMP_WEEK2_D, TEST_ART_ES_AND_OS_2),
-      createCannedHighLevelWeeklyPlan(TEST_SUBJECT_ART, TEST_WEEK2, TEST_TIMESTAMP_WEEK2_E, TEST_ART_ES_AND_OS_3)
+      createCannedHighLevelWeeklyPlan(TEST_SUBJECT_ART, TEST_WEEK2, TEST_TIMESTAMP_WEEK2_A, TEST_ART_ES_AND_OS_2),
+      createCannedHighLevelWeeklyPlan(TEST_SUBJECT_ART, TEST_WEEK2, TEST_TIMESTAMP_WEEK2_E, TEST_ART_ES_AND_OS_3),
+      createCannedHighLevelWeeklyPlan(TEST_SUBJECT_ART, TEST_WEEK2, TEST_TIMESTAMP_WEEK2_C, TEST_ART_ES_AND_OS_1),
+      createCannedHighLevelWeeklyPlan(TEST_SUBJECT_ART, TEST_WEEK2, TEST_TIMESTAMP_WEEK2_B, TEST_ART_ES_AND_OS_3)
     )
   }
+
+  def createSomeMathsHighLevelPlans(): List[Document] = {
+    List(
+      createCannedHighLevelWeeklyPlan(TEST_SUBJECT_MATHS, TEST_WEEK2, TEST_TIMESTAMP_WEEK2_A, TEST_ART_ES_AND_OS_2),
+      createCannedHighLevelWeeklyPlan(TEST_SUBJECT_MATHS, TEST_WEEK2, TEST_TIMESTAMP_WEEK2_C, TEST_ART_ES_AND_OS_1),
+      createCannedHighLevelWeeklyPlan(TEST_SUBJECT_MATHS, TEST_WEEK2, TEST_TIMESTAMP_WEEK2_B, TEST_ART_ES_AND_OS_3)
+    )
+  }
+
 
   def createCannedHighLevelWeeklyPlan(
                                        subject: String,
@@ -77,6 +86,9 @@ trait RetrieveFullWeekOfLessonsDaoHelperTestCanned extends PlanWriterDaoTermlyCu
 
   private[dao] val TEST_ART_SECTION_NAME = "Art and design"
   private[dao] val TEST_ART_SUBSECTION_NAME = "NO_SUBSECTION_NAME"
+
+  private[dao] val TEST_MATHS_SECTION_NAME = "Mathematics"
+  private[dao] val TEST_MATHS_SUBSECTION_NAME = "Shapes"
 
   private[dao] val TEST_ART_ES_AND_OS_1: Map[String, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel] = Map(
     "CLASS_LEVEL" -> EsAndOsPlusBenchmarksForCurriculumAreaAndLevel(
@@ -137,6 +149,120 @@ trait RetrieveFullWeekOfLessonsDaoHelperTestCanned extends PlanWriterDaoTermlyCu
       )
     )
   )
+
+
+  private[dao] val TEST_MATHS_ES_AND_OS_1: Map[String, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel] = Map(
+    "group1" -> EsAndOsPlusBenchmarksForCurriculumAreaAndLevel(
+      FirstLevel,
+      Mathematics,
+      Map(
+        TEST_MATHS_SECTION_NAME -> Map(
+          TEST_MATHS_SUBSECTION_NAME -> EandOSetSubSection(
+            "",
+            List(
+              EandO("EXA 1-02a", Nil)
+            ),
+            Nil
+          )
+        )
+      )
+    ),
+    "group2" -> EsAndOsPlusBenchmarksForCurriculumAreaAndLevel(
+      FirstLevel,
+      Mathematics,
+      Map(
+        TEST_MATHS_SECTION_NAME -> Map(
+          TEST_MATHS_SUBSECTION_NAME -> EandOSetSubSection(
+            "",
+            List(
+              EandO("EXA 1-02a", Nil)
+            ),
+            Nil
+          )
+        )
+      )
+    ),
+    "group3" -> EsAndOsPlusBenchmarksForCurriculumAreaAndLevel(
+      FirstLevel,
+      Mathematics,
+      Map(
+        TEST_MATHS_SECTION_NAME -> Map(
+          TEST_MATHS_SUBSECTION_NAME -> EandOSetSubSection(
+            "",
+            List(
+              EandO("EXA 1-02a", Nil)
+            ),
+            Nil
+          )
+        )
+      )
+    )
+  )
+
+
+  private[dao] val TEST_MATHS_ES_AND_OS_2: Map[String, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel] = Map(
+    "group1" -> EsAndOsPlusBenchmarksForCurriculumAreaAndLevel(
+      FirstLevel,
+      Mathematics,
+      Map(
+        TEST_MATHS_SECTION_NAME -> Map(
+          TEST_MATHS_SUBSECTION_NAME -> EandOSetSubSection(
+            "",
+            List(
+              EandO("EXA 1-02a", Nil)
+            ),
+            List(
+              Benchmark("Shares thoughts and feelings by expressing personal views in response to the work " +
+                "of at least one artist and one designer."),
+              Benchmark("Records directly from experiences across the curriculum, for example, observes and " +
+                "sketches a view from a window, features of the built environment, pets, self or others.")
+            )
+          )
+        )
+      )
+    ),
+    "group2" -> EsAndOsPlusBenchmarksForCurriculumAreaAndLevel(
+      FirstLevel,
+      Mathematics,
+      Map(
+        TEST_MATHS_SECTION_NAME -> Map(
+          TEST_MATHS_SUBSECTION_NAME -> EandOSetSubSection(
+            "",
+            List(
+              EandO("EXA 1-02a", Nil)
+            ),
+            List(
+              Benchmark("Shares thoughts and feelings by expressing personal views in response to the work " +
+                "of at least one artist and one designer."),
+              Benchmark("Records directly from experiences across the curriculum, for example, observes and " +
+                "sketches a view from a window, features of the built environment, pets, self or others.")
+            )
+          )
+        )
+      )
+    ),
+    "group3" -> EsAndOsPlusBenchmarksForCurriculumAreaAndLevel(
+      FirstLevel,
+      Mathematics,
+      Map(
+        TEST_MATHS_SECTION_NAME -> Map(
+          TEST_MATHS_SUBSECTION_NAME -> EandOSetSubSection(
+            "",
+            List(
+              EandO("EXA 1-02a", Nil)
+            ),
+            List(
+              Benchmark("Shares thoughts and feelings by expressing personal views in response to the work " +
+                "of at least one artist and one designer."),
+              Benchmark("Records directly from experiences across the curriculum, for example, observes and " +
+                "sketches a view from a window, features of the built environment, pets, self or others.")
+            )
+          )
+        )
+      )
+    )
+  )
+
 
 
 }

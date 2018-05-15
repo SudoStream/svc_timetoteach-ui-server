@@ -6,6 +6,7 @@ import dao.MongoDbConnection
 import duplicate.model.CurriculumLevel
 import duplicate.model.esandos._
 import duplicate.model.planning.FullWeeklyPlanOfLessons
+import models.timetoteach.planning.ScottishCurriculumPlanningAreaWrapper
 import models.timetoteach.planning.weekly.WeeklyHighLevelPlan
 import models.timetoteach.{ClassId, TimeToTeachUserId}
 import org.mongodb.scala.Document
@@ -195,7 +196,29 @@ trait RetrieveFullWeekOfLessonsDaoHelper {
   }
 
   private[dao] def latestValueForEachSubject(allPlansAllSubjectsForTheWeek: List[WeeklyHighLevelPlan]): List[WeeklyHighLevelPlan] = {
-    Nil
+    def loop(
+              remainingPlans: List[WeeklyHighLevelPlan],
+              currentLatestSubjectPlans: Map[ScottishCurriculumPlanningAreaWrapper, WeeklyHighLevelPlan]
+            ): List[WeeklyHighLevelPlan] = {
+      if (remainingPlans.isEmpty) {
+        currentLatestSubjectPlans.values.toList
+      } else {
+        val nextPlan = remainingPlans.head
+        val maybeComparablePlan = currentLatestSubjectPlans.get(nextPlan.subject)
+        val nextLatestSubjectMap = maybeComparablePlan match {
+          case Some(currentPlan) => if (nextPlan.timestamp.isAfter(currentPlan.timestamp)) {
+            currentLatestSubjectPlans + (nextPlan.subject -> nextPlan)
+          } else {
+            currentLatestSubjectPlans
+          }
+          case None => currentLatestSubjectPlans + (nextPlan.subject -> nextPlan)
+        }
+
+        loop(remainingPlans.tail, nextLatestSubjectMap)
+      }
+    }
+
+    loop(allPlansAllSubjectsForTheWeek, Map())
   }
 
 }
