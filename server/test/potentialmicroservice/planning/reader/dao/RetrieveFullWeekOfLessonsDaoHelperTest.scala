@@ -1,7 +1,5 @@
 package potentialmicroservice.planning.reader.dao
 
-import java.time.LocalDateTime
-
 import dao.MongoDbConnection
 import org.scalatest.FunSpec
 import utils.mongodb.MongoDbSafety
@@ -44,6 +42,23 @@ class RetrieveFullWeekOfLessonsDaoHelperTest extends FunSpec with RetrieveFullWe
       val OneOfTheWeekTwoTimestamps = MongoDbSafety.safelyParseTimestamp(TEST_TIMESTAMP_WEEK2_A)
       assert(res.count(elem => elem.timestamp.isEqual(OneOfTheWeekTwoTimestamps)) === 1)
     }
+    it("should return a list which all contain 1 selected Es And Os group") {
+      val res = dao.convertPlanAllSubjectsForTheWeekToModel(createSomeArtHighLevelPlans())
+      assert(res.count(elem => elem.selectedEsOsBenchmarksByGroup.keys.size == 1) === 5)
+    }
+    it("should return a list which all contain 2 elements with 2 benchmarks") {
+      val res = dao.convertPlanAllSubjectsForTheWeekToModel(createSomeArtHighLevelPlans())
+      assert(res.count(elem => elem.selectedEsOsBenchmarksByGroup.head._2.setSectionNameToSubSections.head._2.head._2.benchmarks.size == 2) === 2)
+    }
+    it("should return a list which all contain 1 elements with 0 benchmarks") {
+      val res = dao.convertPlanAllSubjectsForTheWeekToModel(createSomeArtHighLevelPlans())
+      assert(res.count(elem => elem.selectedEsOsBenchmarksByGroup.head._2.setSectionNameToSubSections.head._2.head._2.benchmarks.isEmpty) === 1)
+    }
+    it("should return a list which all contain 2 elements with 1 benchmarks") {
+      val res = dao.convertPlanAllSubjectsForTheWeekToModel(createSomeArtHighLevelPlans())
+      assert(res.count(elem => elem.selectedEsOsBenchmarksByGroup.head._2.setSectionNameToSubSections.head._2.head._2.benchmarks.size == 1) === 2)
+    }
+
   }
 
 
