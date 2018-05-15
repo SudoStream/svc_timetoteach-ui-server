@@ -1,15 +1,12 @@
 package potentialmicroservice.planning.reader.dao
 
-import duplicate.model.Group
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
-import models.timetoteach.planning.{GroupLevelProgressPercent, OverallClassLevelProgressPercent, PlanType, ScottishCurriculumPlanningAreaWrapper}
+import models.timetoteach.planning.{PlanType, ScottishCurriculumPlanningAreaWrapper}
 import org.scalatest.FunSpec
 import potentialmicroservice.planning.sharedschema.TermlyPlanningSchema
 
-class PlanReaderDaoSubjectTermlyPlanHelperTest extends FunSpec
-{
-  private val planReaderDao = new PlanReaderDaoSubjectTermlyPlanHelper
-  {
+class PlanReaderDaoSubjectTermlyPlanHelperTest extends FunSpec {
+  private val planReaderDao = new PlanReaderDaoSubjectTermlyPlanHelper {
   }
 
   describe("When given an empty list of mongo docs, findLatestVersionOfTermlyPlan()") {

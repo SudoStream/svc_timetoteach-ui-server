@@ -22,15 +22,17 @@ import scala.util.{Failure, Success}
 @Singleton
 class PlanReaderDaoImpl @Inject()(mongoDbConnection: MongoDbConnection) extends PlanReaderDao
   with PlanReaderDaoSubjectTermlyPlanHelper with PlanReaderDaoTermlyCurriculumSelectionHelper
-{
+  with RetrieveFullWeekOfLessonsDaoHelper {
+
   private val logger: Logger = Logger
   private val termlyPlanningCollection: MongoCollection[Document] = mongoDbConnection.getTermlyPlanningCollection
   private val termlyCurriculumSelectionCollection: MongoCollection[Document] = mongoDbConnection.getTermlyCurriculumSelectionCollection
 
+  override def getDbConnection: MongoDbConnection = mongoDbConnection
+
   override def currentTermlyCurriculumSelection(tttUserId: TimeToTeachUserId,
                                                 classId: ClassId,
-                                                term: SchoolTerm): Future[Option[TermlyCurriculumSelection]] =
-  {
+                                                term: SchoolTerm): Future[Option[TermlyCurriculumSelection]] = {
     logger.info(s"Looking for latest termly curriculum selection from Database: $tttUserId|$classId|$term")
 
     val findMatcher = BsonDocument(
@@ -52,8 +54,7 @@ class PlanReaderDaoImpl @Inject()(mongoDbConnection: MongoDbConnection) extends 
     }
   }
 
-  override def currentTermlyCurriculumSelection(tttUserId: TimeToTeachUserId, classes: List[ClassId], term: SchoolTerm): Future[Map[ClassId, Option[TermlyCurriculumSelection]]] =
-  {
+  override def currentTermlyCurriculumSelection(tttUserId: TimeToTeachUserId, classes: List[ClassId], term: SchoolTerm): Future[Map[ClassId, Option[TermlyCurriculumSelection]]] = {
     logger.info(s"Looking for latest termly curriculum selection from Database for following class ids: $tttUserId|$term|${classes.toString}")
 
     val findMatcher = BsonDocument(
@@ -91,8 +92,7 @@ class PlanReaderDaoImpl @Inject()(mongoDbConnection: MongoDbConnection) extends 
   override def curriculumPlanProgress(tttUserId: TimeToTeachUserId,
                                       classDetails: ClassDetails,
                                       planningAreas: List[ScottishCurriculumPlanningArea],
-                                      term: SchoolTerm): Future[Option[CurriculumPlanProgressForClass]] =
-  {
+                                      term: SchoolTerm): Future[Option[CurriculumPlanProgressForClass]] = {
     logger.info(s"Looking for latest plan progress from Database: $tttUserId|$classDetails|$planningAreas|$term")
 
     val findMatcher = BsonDocument(
@@ -122,8 +122,7 @@ class PlanReaderDaoImpl @Inject()(mongoDbConnection: MongoDbConnection) extends 
   override def curriculumPlanProgressForClasses(tttUserId: TimeToTeachUserId,
                                                 classes: List[ClassDetails],
                                                 classIdToPlanningSelection: Map[ClassId, List[ScottishCurriculumPlanningArea]],
-                                                term: SchoolTerm): Future[Map[model.ClassId, Int]] =
-  {
+                                                term: SchoolTerm): Future[Map[model.ClassId, Int]] = {
     logger.debug(s"curriculumPlanProgressForClasses() : ${classIdToPlanningSelection.toString()}")
 
     val listOfClassId_FutureMaybePlanProgress = for {
@@ -164,8 +163,7 @@ class PlanReaderDaoImpl @Inject()(mongoDbConnection: MongoDbConnection) extends 
   override def readCurriculumAreaTermlyPlanForGroup(tttUserId: TimeToTeachUserId,
                                                     classId: ClassId,
                                                     groupId: GroupId,
-                                                    planningArea: ScottishCurriculumPlanningArea): Future[Option[CurriculumAreaTermlyPlan]] =
-  {
+                                                    planningArea: ScottishCurriculumPlanningArea): Future[Option[CurriculumAreaTermlyPlan]] = {
     logger.info(s"Reading subject termly plan for group from Database: $tttUserId|$classId|$groupId|$planningArea")
 
     val findMatcher = BsonDocument(
@@ -181,8 +179,7 @@ class PlanReaderDaoImpl @Inject()(mongoDbConnection: MongoDbConnection) extends 
     }
   }
 
-  override def readCurriculumAreaTermlyPlanForClassLevel(tttUserId: TimeToTeachUserId, classId: ClassId, planningArea: ScottishCurriculumPlanningArea): Future[Option[CurriculumAreaTermlyPlan]] =
-  {
+  override def readCurriculumAreaTermlyPlanForClassLevel(tttUserId: TimeToTeachUserId, classId: ClassId, planningArea: ScottishCurriculumPlanningArea): Future[Option[CurriculumAreaTermlyPlan]] = {
     logger.info(s"Reading subject termly plan for class level from Database: $tttUserId|$classId|$planningArea")
 
     val findMatcher = BsonDocument(
@@ -202,30 +199,19 @@ class PlanReaderDaoImpl @Inject()(mongoDbConnection: MongoDbConnection) extends 
   override def retrieveFullWeekOfLessons(tttUserId: TimeToTeachUserId,
                                          classId: ClassId,
                                          mondayDateOfWeekIso: String): Future[Option[FullWeeklyPlanOfLessons]] = {
-
-    // TODO: 1) Read all the high level weekly plans for the "class" and "week" in question
-    // TODO: 2) Get the latest version of the plan for each subject
-    // TODO: 3) Read all the Single Lesson Plans  for the "class" and "week" in question
-    // TODO: 4) Get the latest version of each seperate lesson plan .... for each subject
-    // TODO: 5) Stitch together into appropriate "WeeklyPlanOfOneSubject"s
-    // TODO: 6) Create a "FullWeeklyPlanOfLessons"
-    // TODO: 7) Done!
-
+    retrieveFullWeekOfLessonsImpl(tttUserId, classId, mondayDateOfWeekIso)
   }
 
 
   ////
 
 
-  private def createClassIdArray(classes: List[ClassId]): BsonArray =
-  {
+  private def createClassIdArray(classes: List[ClassId]): BsonArray = {
     BsonArray({
       for {
         classId <- classes
       } yield BsonString(classId.value)
     })
   }
-
-
 
 }

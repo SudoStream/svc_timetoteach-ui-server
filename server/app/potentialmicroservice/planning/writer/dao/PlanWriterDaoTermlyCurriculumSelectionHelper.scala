@@ -40,7 +40,7 @@ trait PlanWriterDaoTermlyCurriculumSelectionHelper {
       WeeklyPlanningSchema.SUBJECT -> weeklyPlansToSave.subject,
       WeeklyPlanningSchema.WEEK_BEGINNING_ISO_DATE -> weeklyPlansToSave.weekBeginningIsoDate,
       WeeklyPlanningSchema.CREATED_TIMESTAMP -> java.time.LocalDateTime.now().toString.replace("T", " "),
-      WeeklyPlanningSchema.SELECTED_ES_OS_AND_BENCHMARKS_BY_GROUP -> convertGroupToEsAndOsBenchmarksToBsonDocument(weeklyPlansToSave.groupToEsOsBenchmarks),
+      WeeklyPlanningSchema.SELECTED_ES_OS_AND_BENCHMARKS_BY_GROUP -> convertGroupToEsAndOsBenchmarksToBsonArray(weeklyPlansToSave.groupToEsOsBenchmarks),
       WeeklyPlanningSchema.COMPLETED_ES_OS_AND_BENCHMARKS_BY_GROUP -> BsonArray()
     )
   }
@@ -127,14 +127,17 @@ trait PlanWriterDaoTermlyCurriculumSelectionHelper {
     )
   }
 
-  private def convertGroupToEsAndOsBenchmarksToBsonDocument(groupToEsOsBenchmarks: Map[String, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel]): BsonArray = {
-    BsonArray({
-      for {
-        groupId <- groupToEsOsBenchmarks.keys
-        documentGroupIdToEsOsBenchmarks = createDocumentForGroupToEsOsAndBenchmarks(groupId, groupToEsOsBenchmarks(groupId))
-      } yield documentGroupIdToEsOsBenchmarks
-    }.toList)
+  def convertGroupToEsAndOsBenchmarksToBsonArray(groupToEsOsBenchmarks: Map[String, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel]): BsonArray = {
+    val groupToEsOsAndBenchiesBsonArray = BsonArray()
+
+    for (groupId <- groupToEsOsBenchmarks.keys) {
+      val docToAdd = createDocumentForGroupToEsOsAndBenchmarks(groupId, groupToEsOsBenchmarks(groupId))
+      groupToEsOsAndBenchiesBsonArray.add(docToAdd.toBsonDocument)
+    }
+
+    groupToEsOsAndBenchiesBsonArray
   }
+
 
   private def convertListOfScottishCurriculumPlanningAreasToBsonArray(scottishCurriculaPlanningAreas: List[ScottishCurriculumPlanningArea]): BsonArray = {
     BsonArray({

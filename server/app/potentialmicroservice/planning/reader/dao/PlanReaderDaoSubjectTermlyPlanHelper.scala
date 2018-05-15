@@ -267,18 +267,6 @@ trait PlanReaderDaoSubjectTermlyPlanHelper extends PlanReaderDaoCommonHelper
     }
   }
 
-  private def safelyParseTimestamp(nextTimestampIso: String): LocalDateTime =
-  {
-    val time = try {
-      LocalDateTime.parse(nextTimestampIso, formatter)
-    } catch {
-      case e: Throwable =>
-        logger.warn(s"Failed to parse assumed fomat. ${formatter.toString}, trying ${formatter2.toString}")
-        LocalDateTime.parse(nextTimestampIso, formatter2)
-    }
-    logger.debug(s"Time parsed = '${time.toString}'")
-    time
-  }
 
   private def convertDocumentEandOsWithBenchmarks(document: BsonDocument): Option[EandOsWithBenchmarks] =
   {
