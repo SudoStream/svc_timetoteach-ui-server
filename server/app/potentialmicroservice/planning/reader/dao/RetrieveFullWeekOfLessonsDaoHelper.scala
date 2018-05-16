@@ -4,7 +4,7 @@ import java.time.LocalDate
 
 import dao.MongoDbConnection
 import duplicate.model.esandos._
-import duplicate.model.planning.FullWeeklyPlanOfLessons
+import duplicate.model.planning.{FullWeeklyPlanOfLessons, LessonPlan}
 import models.timetoteach.planning.ScottishCurriculumPlanningAreaWrapper
 import models.timetoteach.planning.weekly.WeeklyHighLevelPlanOfOneSubject
 import models.timetoteach.{ClassId, TimeToTeachUserId}
@@ -32,7 +32,8 @@ trait RetrieveFullWeekOfLessonsDaoHelper {
     val latestHighLevelPlansForAllSubjects = readLatestHighLevelPlansForTheWeek(tttUserId, classId, mondayDateOfWeekIso)
 
     // TODO: 3) Read all the Single Lesson Plans  for the "class" and "week" in question
-    // TODO: 4) Get the latest version of each seperate lesson plan .... for each subject
+    // TODO: 4) Get the latest version of each separate lesson plan .... for each subject
+    val latestLessonPlansForAllSubjects = readLatestLessonPlansForTheWeek(tttUserId, classId, mondayDateOfWeekIso)
 
     // TODO: 5) Stitch together into appropriate "WeeklyPlanOfOneSubject"s
 
@@ -62,6 +63,46 @@ trait RetrieveFullWeekOfLessonsDaoHelper {
       } yield latestWeeklyPlansForEachSubject
     }
   }
+
+
+  private[dao] def readLatestLessonPlansForTheWeek(tttUserId: TimeToTeachUserId,
+                                                   classId: ClassId,
+                                                   mondayDateOfWeekIso: String):
+  Future[Map[ScottishCurriculumPlanningAreaWrapper, List[LessonPlan]]] = {
+    val allLessonPlansForTheWeekAsDocs: Future[List[Document]] = readAllLessonPlansForTheWeek(tttUserId, classId, mondayDateOfWeekIso)
+
+    for {
+      allLessonPlansAsDocs <- allLessonPlansForTheWeekAsDocs
+      allLessonPlans = convertLessonPlansForTheWeekToModel(allLessonPlansAsDocs)
+      subjectToLatestLessonsForTheWeek = buildSubjectToLatestLessonsForTheWeekMap(allLessonPlans)
+    } yield subjectToLatestLessonsForTheWeek
+  }
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  private def readAllLessonPlansForTheWeek(tttUserId: TimeToTeachUserId,
+                                           classId: ClassId,
+                                           mondayDateOfWeekIso: String
+                                          ): Future[List[Document]] = {
+    val findMatcher = BsonDocument(
+      WeeklyPlanningSchema.TTT_USER_ID -> tttUserId.value,
+      WeeklyPlanningSchema.CLASS_ID -> classId.value,
+      WeeklyPlanningSchema.WEEK_BEGINNING_ISO_DATE -> mondayDateOfWeekIso
+    )
+
+    getDbConnection.getLessonPlanningCollection.find(findMatcher).toFuture()
+
+  }
+
+  private[dao] def convertLessonPlansForTheWeekToModel(alllessonPlansAsDocs: List[Document]): List[LessonPlan] = {
+
+  }
+
+  private[dao] def buildSubjectToLatestLessonsForTheWeekMap(
+                                                             allLessonPlans: List[LessonPlan]
+                                                           ): Map[ScottishCurriculumPlanningAreaWrapper, List[LessonPlan]] = ???
 
   private[dao] def readAllHighLevelPlansForTheWeek(tttUserId: TimeToTeachUserId,
                                                    classId: ClassId,

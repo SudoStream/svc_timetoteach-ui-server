@@ -151,7 +151,7 @@ class MongoDbConnectionImpl extends MongoDbConnection with MiniKubeHelper {
 
     logger.info(s"Ensuring index created on weekly planning collection : ${mainIndex.toString}")
 
-    val obs = getTermlyPlanningCollection.createIndex(mainIndex)
+    val obs = getWeeklyPlanningCollection.createIndex(mainIndex)
     obs.toFuture().onComplete {
       case Success(msg) => logger.info(s"Ensure weekly planning index 1 attempt completed with msg : $msg")
       case Failure(ex) => logger.info(s"Ensure weekly planning index 1 failed to complete: ${ex.getMessage}")
@@ -162,7 +162,7 @@ class MongoDbConnectionImpl extends MongoDbConnection with MiniKubeHelper {
       WeeklyPlanningSchema.CLASS_ID -> 1
     )
     logger.info(s"Ensuring second index created on weekly planning collection : ${secondIndex.toString}")
-    val obs2 = getTermlyPlanningCollection.createIndex(secondIndex)
+    val obs2 = getWeeklyPlanningCollection.createIndex(secondIndex)
     obs2.toFuture().onComplete {
       case Success(msg) => logger.info(s"Ensure weekly planning index 2 attempt completed with msg : $msg")
       case Failure(ex) => logger.info(s"Ensure weekly planning index 2 failed to complete: ${ex.getMessage}")
@@ -180,7 +180,7 @@ class MongoDbConnectionImpl extends MongoDbConnection with MiniKubeHelper {
 
     logger.info(s"Ensuring index created on lesson planning collection : ${mainIndex.toString}")
 
-    val obs = getTermlyPlanningCollection.createIndex(mainIndex)
+    val obs = getLessonPlanningCollection.createIndex(mainIndex)
     obs.toFuture().onComplete {
       case Success(msg) => logger.info(s"Ensure lesson planning index 1 attempt completed with msg : $msg")
       case Failure(ex) => logger.info(s"Ensure lesson planning index 1 failed to complete: ${ex.getMessage}")
@@ -194,14 +194,11 @@ class MongoDbConnectionImpl extends MongoDbConnection with MiniKubeHelper {
     )
 
     logger.info(s"Ensuring second index created on lesson planning collection : ${secondIndex.toString}")
-    val obs2 = getTermlyPlanningCollection.createIndex(secondIndex)
+    val obs2 = getLessonPlanningCollection.createIndex(secondIndex)
     obs2.toFuture().onComplete {
       case Success(msg) => logger.info(s"Ensure lesson planning index 2 attempt completed with msg : $msg")
       case Failure(ex) => logger.info(s"Ensure lesson planning index 2 failed to complete: ${ex.getMessage}")
     }
-
-
-
   }
 
   override def ensureTermlyCurriculumSelectionIndexes(): Unit = {
