@@ -6,7 +6,7 @@ import dao.MongoDbConnection
 import duplicate.model.esandos._
 import duplicate.model.planning.FullWeeklyPlanOfLessons
 import models.timetoteach.planning.ScottishCurriculumPlanningAreaWrapper
-import models.timetoteach.planning.weekly.WeeklyHighLevelPlan
+import models.timetoteach.planning.weekly.WeeklyHighLevelPlanOfOneSubject
 import models.timetoteach.{ClassId, TimeToTeachUserId}
 import org.mongodb.scala.Document
 import org.mongodb.scala.bson.{BsonArray, BsonDocument}
@@ -46,7 +46,7 @@ trait RetrieveFullWeekOfLessonsDaoHelper {
 
   private[dao] def readLatestHighLevelPlansForTheWeek(tttUserId: TimeToTeachUserId,
                                                       classId: ClassId,
-                                                      mondayDateOfWeekIso: String): Future[List[WeeklyHighLevelPlan]] = {
+                                                      mondayDateOfWeekIso: String): Future[List[WeeklyHighLevelPlanOfOneSubject]] = {
     if (tttUserId == null || classId == null || mondayDateOfWeekIso == null) {
       Future {
         Nil
@@ -201,8 +201,8 @@ trait RetrieveFullWeekOfLessonsDaoHelper {
     }
   }
 
-  def convertWeekPlanDocToModel(planDoc: Document): WeeklyHighLevelPlan = {
-    WeeklyHighLevelPlan(
+  def convertWeekPlanDocToModel(planDoc: Document): WeeklyHighLevelPlanOfOneSubject = {
+    WeeklyHighLevelPlanOfOneSubject(
       TimeToTeachUserId(planDoc.getString(WeeklyPlanningSchema.TTT_USER_ID)),
       ClassId(planDoc.getString(WeeklyPlanningSchema.CLASS_ID)),
       CurriculumConverterUtil.convertSubjectToScottishCurriculumPlanningAreaWrapper(
@@ -221,7 +221,7 @@ trait RetrieveFullWeekOfLessonsDaoHelper {
 
 
   private[dao] def convertPlanAllSubjectsForTheWeekToModel(plansForTheWeekAsDoc: List[Document]):
-  List[WeeklyHighLevelPlan] = {
+  List[WeeklyHighLevelPlanOfOneSubject] = {
     if (plansForTheWeekAsDoc == null) {
       Nil
     } else {
@@ -231,11 +231,11 @@ trait RetrieveFullWeekOfLessonsDaoHelper {
     }
   }
 
-  private[dao] def latestValueForEachSubject(allPlansAllSubjectsForTheWeek: List[WeeklyHighLevelPlan]): List[WeeklyHighLevelPlan] = {
+  private[dao] def latestValueForEachSubject(allPlansAllSubjectsForTheWeek: List[WeeklyHighLevelPlanOfOneSubject]): List[WeeklyHighLevelPlanOfOneSubject] = {
     def loop(
-              remainingPlans: List[WeeklyHighLevelPlan],
-              currentLatestSubjectPlans: Map[ScottishCurriculumPlanningAreaWrapper, WeeklyHighLevelPlan]
-            ): List[WeeklyHighLevelPlan] = {
+              remainingPlans: List[WeeklyHighLevelPlanOfOneSubject],
+              currentLatestSubjectPlans: Map[ScottishCurriculumPlanningAreaWrapper, WeeklyHighLevelPlanOfOneSubject]
+            ): List[WeeklyHighLevelPlanOfOneSubject] = {
       if (remainingPlans.isEmpty) {
         currentLatestSubjectPlans.values.toList
       } else {

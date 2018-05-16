@@ -6,7 +6,7 @@ import duplicate.model.esandos.EsAndOsPlusBenchmarksForCurriculumAreaAndLevel
 import models.timetoteach.planning.ScottishCurriculumPlanningAreaWrapper
 import models.timetoteach.{ClassId, TimeToTeachUserId}
 
-case class WeeklyHighLevelPlan(
+case class WeeklyHighLevelPlanOfOneSubject(
                                 timeToTeachUserId: TimeToTeachUserId,
                                 classId: ClassId,
                                 subject: ScottishCurriculumPlanningAreaWrapper,
