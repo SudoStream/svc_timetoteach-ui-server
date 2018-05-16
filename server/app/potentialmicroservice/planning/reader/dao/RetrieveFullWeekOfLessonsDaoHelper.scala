@@ -3,7 +3,6 @@ package potentialmicroservice.planning.reader.dao
 import java.time.LocalDate
 
 import dao.MongoDbConnection
-import duplicate.model.CurriculumLevel
 import duplicate.model.esandos._
 import duplicate.model.planning.FullWeeklyPlanOfLessons
 import models.timetoteach.planning.ScottishCurriculumPlanningAreaWrapper
@@ -119,39 +118,76 @@ trait RetrieveFullWeekOfLessonsDaoHelper {
   }
 
 
+  private[dao] def createSectionNameToSubSections(selectedEsAndOsWithBenchmarksDocs: List[BsonDocument]): Map[String, Map[String, EandOSetSubSection]] = {
+    @tailrec
+    def loop(
+              remainingBsonDocs: List[BsonDocument],
+              currentMap: Map[String, Map[String, EandOSetSubSection]]
+            ): Map[String, Map[String, EandOSetSubSection]] = {
+      if (remainingBsonDocs.isEmpty) {
+        currentMap
+      } else {
+        val nextDoc = remainingBsonDocs.head
+
+        val sectionName = nextDoc.getString(WeeklyPlanningSchema.SELECTED_SECTION_NAME).getValue
+        val subsectionName = nextDoc.getString(WeeklyPlanningSchema.SELECTED_SUBSECTION_NAME).getValue
+
+        val esAndOs = createEsAndOs(nextDoc.getArray(WeeklyPlanningSchema.SELECTED_ES_AND_OS))
+        val benchies = createBenchies(nextDoc.getArray(WeeklyPlanningSchema.SELECTED_BENCHMARKS))
+        val eAndOSubSection = EandOSetSubSection("", esAndOs, benchies)
+
+        val nextMap: Map[String, Map[String, EandOSetSubSection]] = if (currentMap.isDefinedAt(sectionName)) {
+          val currentSubSectionMap = currentMap(sectionName)
+          val nextSubSectionMap = currentSubSectionMap + (subsectionName -> eAndOSubSection)
+          currentMap + (sectionName -> nextSubSectionMap)
+        } else {
+          currentMap + (sectionName -> Map(subsectionName -> eAndOSubSection))
+        }
+
+        loop(remainingBsonDocs.tail, nextMap)
+      }
+    }
+
+    loop(selectedEsAndOsWithBenchmarksDocs, Map())
+  }
+
   private def createEsAndOsPlusBenchmarksForCurriculumAreaAndLevelMap(
                                                                        esOsBenchmarksByGroup: BsonArray,
-                                                                       curriculumArea: String):
-  Map[String, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel] = {
-
+                                                                       curriculumArea: String
+                                                                     ): Map[String, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel] = {
     import scala.collection.JavaConverters._
 
-    val groupId_to_selectedEsOsBenchies_tuple: List[(String, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel)] = for {
-      docAsValue <- esOsBenchmarksByGroup.getValues.asScala.toList
-      doc = docAsValue.asDocument()
-      groupId = doc.getString(WeeklyPlanningSchema.GROUP_ID)
+    @tailrec
+    def loop(
+              remainingEsOsBenchmarksByGroup: List[BsonDocument],
+              currentMap: Map[String, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel])
+    : Map[String, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel] = {
+      if (remainingEsOsBenchmarksByGroup.isEmpty) {
+        currentMap
+      } else {
+        val doc = remainingEsOsBenchmarksByGroup.head
+        val groupId = doc.getString(WeeklyPlanningSchema.GROUP_ID).getValue
 
-      selectedEsAndOsWithBenchmarksArray = doc.getArray(WeeklyPlanningSchema.SELECTED_ES_AND_OS_WITH_BENCHMARKS)
-      selectedEsAndOsWithBenchmarksBsonValue <- selectedEsAndOsWithBenchmarksArray.getValues.asScala.toList
-      selectedEsAndOsWithBenchmarksDoc = selectedEsAndOsWithBenchmarksBsonValue.asDocument()
+        val selectedEsAndOsWithBenchmarksArray = doc.getArray(WeeklyPlanningSchema.SELECTED_ES_AND_OS_WITH_BENCHMARKS)
+        val selectedEsAndOsWithBenchmarksDocs = selectedEsAndOsWithBenchmarksArray.getValues.asScala.toList.map(elem => elem.asDocument())
+        val selectedSectionNameToSubSections: Map[String, Map[String, EandOSetSubSection]] = createSectionNameToSubSections(selectedEsAndOsWithBenchmarksDocs)
 
-      sectionName = selectedEsAndOsWithBenchmarksDoc.getString(WeeklyPlanningSchema.SELECTED_SECTION_NAME).getValue
-      subsectionName = selectedEsAndOsWithBenchmarksDoc.getString(WeeklyPlanningSchema.SELECTED_SUBSECTION_NAME).getValue
-      esAndOs = createEsAndOs(selectedEsAndOsWithBenchmarksDoc.getArray(WeeklyPlanningSchema.SELECTED_ES_AND_OS))
-      benchies = createBenchies(selectedEsAndOsWithBenchmarksDoc.getArray(WeeklyPlanningSchema.SELECTED_BENCHMARKS))
+        val completedEsAndOsWithBenchmarksArray = doc.getArray(WeeklyPlanningSchema.COMPLETED_ES_AND_OS_WITH_BENCHMARKS)
+        val completedEsAndOsWithBenchmarksDocs = completedEsAndOsWithBenchmarksArray.getValues.asScala.toList.map(elem => elem.asDocument())
+        val completedSectionNameToSubSections: Map[String, Map[String, EandOSetSubSection]] = createSectionNameToSubSections(completedEsAndOsWithBenchmarksDocs)
 
-      eAndOSubSection = EandOSetSubSection("", esAndOs, benchies)
+        val nextVal: EsAndOsPlusBenchmarksForCurriculumAreaAndLevel = EsAndOsPlusBenchmarksForCurriculumAreaAndLevel(
+          null,
+          CurriculumArea.createCurriculumAreaFromString(curriculumArea),
+          completedSectionNameToSubSections
+        )
 
+        val nextMap = currentMap + (groupId -> nextVal)
+        loop(remainingEsOsBenchmarksByGroup.tail, nextMap)
+      }
+    }
 
-    } yield (groupId.getValue, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel(
-      CurriculumLevel.createCurriculumLevelFromEAndOCode(esAndOs.headOption.getOrElse(EandO("", Nil)).code),
-      CurriculumArea.createCurriculumAreaFromString(curriculumArea),
-      Map(sectionName -> Map(subsectionName -> eAndOSubSection))
-    ))
-
-    // TODO: ANDY CHECK THAT THE MAP ABOVE MAY NEED TO BE BUILT MORE CLEVERLY
-
-    groupId_to_selectedEsOsBenchies_tuple.toMap
+    loop(esOsBenchmarksByGroup.getValues.asScala.toList.map(bsonValue => bsonValue.asDocument()), Map())
   }
 
   private def createEsAndOsPlusBenchmarksForCurriculumAreaAndLevelMapFromOption(

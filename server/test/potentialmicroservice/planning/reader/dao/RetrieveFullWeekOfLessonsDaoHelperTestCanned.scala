@@ -2,12 +2,62 @@ package potentialmicroservice.planning.reader.dao
 
 import duplicate.model.FirstLevel
 import duplicate.model.esandos._
-import org.mongodb.scala.bson.BsonArray
 import org.mongodb.scala.bson.collection.immutable.Document
+import org.mongodb.scala.bson.{BsonArray, BsonDocument}
 import potentialmicroservice.planning.sharedschema.WeeklyPlanningSchema
 import potentialmicroservice.planning.writer.dao.PlanWriterDaoTermlyCurriculumSelectionHelper
 
 trait RetrieveFullWeekOfLessonsDaoHelperTestCanned extends PlanWriterDaoTermlyCurriculumSelectionHelper {
+
+  def createSomeLowLevelSectionNameToSubSectionsEsAndOsBsonDocs(): List[BsonDocument] = {
+    BsonDocument(
+      WeeklyPlanningSchema.SELECTED_SECTION_NAME -> "Number, money and measure",
+      WeeklyPlanningSchema.SELECTED_SUBSECTION_NAME -> "Estimation and rounding",
+      WeeklyPlanningSchema.SELECTED_ES_AND_OS -> BsonArray("MNU 0-01a"),
+      WeeklyPlanningSchema.SELECTED_BENCHMARKS -> BsonArray(
+        "Recognises the number of objects in a group, without counting (subitising) and uses this information to " +
+          "estimate the number of objects in other groups",
+        "Checks estimates by counting.",
+        "Demonstrates skills of estimation in the contexts of number and measure using relevant vocabulary, " +
+          "including less than, longer than, more than and the same."
+      )
+    ) :: BsonDocument(
+      WeeklyPlanningSchema.SELECTED_SECTION_NAME -> "Number, money and measure",
+      WeeklyPlanningSchema.SELECTED_SUBSECTION_NAME -> "Number and number processes",
+      WeeklyPlanningSchema.SELECTED_ES_AND_OS -> BsonArray("MNU 0-02a", "MNU 0-03a"),
+      WeeklyPlanningSchema.SELECTED_BENCHMARKS -> BsonArray(
+        "Explains that zero means there is none of a particular quantity and is represented by the numeral 0",
+        "Recalls the number sequence forwards within the range 0 - 30, from any given number.",
+        "Recalls the number sequence backwards from 20",
+        "Identifies and recognises numbers from 0 to 20."
+      )
+    ) :: BsonDocument(
+      WeeklyPlanningSchema.SELECTED_SECTION_NAME -> "Number, money and measure",
+      WeeklyPlanningSchema.SELECTED_SUBSECTION_NAME -> "Fractions, decimal fractions and percentages",
+      WeeklyPlanningSchema.SELECTED_ES_AND_OS -> BsonArray("MNU 0-07a"),
+      WeeklyPlanningSchema.SELECTED_BENCHMARKS -> BsonArray(
+        "Splits a whole into smaller parts and explains that equal parts are the same size.",
+        "Uses appropriate vocabulary to describe halves"
+      )
+    ) :: BsonDocument(
+      WeeklyPlanningSchema.SELECTED_SECTION_NAME -> "Number, money and measure",
+      WeeklyPlanningSchema.SELECTED_SUBSECTION_NAME -> "Money",
+      WeeklyPlanningSchema.SELECTED_ES_AND_OS -> BsonArray("MNU 0-09a"),
+      WeeklyPlanningSchema.SELECTED_BENCHMARKS -> BsonArray(
+        "Identifies all coins to £2",
+        "Applies addition and subtraction skills and uses 1p, 2p, 5p and 10p coins to pay the exact value for items to 10p"
+      )
+    ) :: BsonDocument(
+      WeeklyPlanningSchema.SELECTED_SECTION_NAME -> "Information handling",
+      WeeklyPlanningSchema.SELECTED_SUBSECTION_NAME -> "Data and analysis",
+      WeeklyPlanningSchema.SELECTED_ES_AND_OS -> BsonArray("MNU 0-20a","MNU 0-20b","MNU 0-20c"),
+      WeeklyPlanningSchema.SELECTED_BENCHMARKS -> BsonArray(
+        "Asks simple questions to collect data for a specific purpose",
+        "Collects and organises objects for a specific purpose."
+      )
+    ) :: Nil
+
+  }
 
 
   def createSomeArtHighLevelPlans(): List[Document] = {
@@ -22,9 +72,9 @@ trait RetrieveFullWeekOfLessonsDaoHelperTestCanned extends PlanWriterDaoTermlyCu
 
   def createSomeMathsHighLevelPlans(): List[Document] = {
     List(
-      createCannedHighLevelWeeklyPlan(TEST_SUBJECT_MATHS, TEST_WEEK2, TEST_TIMESTAMP_WEEK2_A, TEST_ART_ES_AND_OS_2),
-      createCannedHighLevelWeeklyPlan(TEST_SUBJECT_MATHS, TEST_WEEK2, TEST_TIMESTAMP_WEEK2_C, TEST_ART_ES_AND_OS_1),
-      createCannedHighLevelWeeklyPlan(TEST_SUBJECT_MATHS, TEST_WEEK2, TEST_TIMESTAMP_WEEK2_B, TEST_ART_ES_AND_OS_3)
+      createCannedHighLevelWeeklyPlan(TEST_SUBJECT_MATHS, TEST_WEEK2, TEST_TIMESTAMP_WEEK2_A, TEST_MATHS_ES_AND_OS_1),
+      createCannedHighLevelWeeklyPlan(TEST_SUBJECT_MATHS, TEST_WEEK2, TEST_TIMESTAMP_WEEK2_C, TEST_MATHS_ES_AND_OS_2),
+      createCannedHighLevelWeeklyPlan(TEST_SUBJECT_MATHS, TEST_WEEK2, TEST_TIMESTAMP_WEEK2_B, TEST_MATHS_ES_AND_OS_1)
     )
   }
 
@@ -262,7 +312,6 @@ trait RetrieveFullWeekOfLessonsDaoHelperTestCanned extends PlanWriterDaoTermlyCu
       )
     )
   )
-
 
 
 }

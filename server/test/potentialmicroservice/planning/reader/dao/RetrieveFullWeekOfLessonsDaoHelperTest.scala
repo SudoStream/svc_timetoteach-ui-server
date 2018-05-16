@@ -110,9 +110,41 @@ class RetrieveFullWeekOfLessonsDaoHelperTest extends FunSpec with RetrieveFullWe
       val latestVersions = dao.latestValueForEachSubject(variousSubjectCandidates)
       val maths = latestVersions.filter(elem => elem.subject == ScottishCurriculumPlanningAreaWrapper(ScottishCurriculumPlanningArea.MATHEMATICS))
 
-      val expectedTimestamp = MongoDbSafety.safelyParseTimestamp(TEST_TIMESTAMP_WEEK2_C)
-
+      println(s"Hello :=> ${maths.head.selectedEsOsBenchmarksByGroup.toString()}")
       assert(maths.head.selectedEsOsBenchmarksByGroup.keys.size === 3)
+    }
+  }
+
+  describe("Given 5 valid BsonDocuments with set sections & subsections plus es and os, createSectionNameToSubSections()") {
+    it("should return a map with 2 keys") {
+      val setSectionSubSectionToEsOsBenchiesMap = dao.createSectionNameToSubSections(
+        createSomeLowLevelSectionNameToSubSectionsEsAndOsBsonDocs()
+      )
+      assert(setSectionSubSectionToEsOsBenchiesMap.keys.size === 2)
+    }
+    it ("should have a 'Number, money and measure' section which has 4 subsections"){
+      val setSectionSubSectionToEsOsBenchiesMap = dao.createSectionNameToSubSections(
+        createSomeLowLevelSectionNameToSubSectionsEsAndOsBsonDocs()
+      )
+      assert(setSectionSubSectionToEsOsBenchiesMap("Number, money and measure").size === 4)
+    }
+    it ("should have an 'Information handling' section which has 1 subsection"){
+      val setSectionSubSectionToEsOsBenchiesMap = dao.createSectionNameToSubSections(
+        createSomeLowLevelSectionNameToSubSectionsEsAndOsBsonDocs()
+      )
+      assert(setSectionSubSectionToEsOsBenchiesMap("Information handling").size === 1)
+    }
+    it ("should have an 'Information handling' section with a 'Data and analysis' subsection which has 3 Es & Os"){
+      val setSectionSubSectionToEsOsBenchiesMap = dao.createSectionNameToSubSections(
+        createSomeLowLevelSectionNameToSubSectionsEsAndOsBsonDocs()
+      )
+      assert(setSectionSubSectionToEsOsBenchiesMap("Information handling")("Data and analysis").eAndOs.size === 3)
+    }
+    it ("should have an 'Information handling' section with a 'Data and analysis' subsection which has 2 Benchmarks"){
+      val setSectionSubSectionToEsOsBenchiesMap = dao.createSectionNameToSubSections(
+        createSomeLowLevelSectionNameToSubSectionsEsAndOsBsonDocs()
+      )
+      assert(setSectionSubSectionToEsOsBenchiesMap("Information handling")("Data and analysis").benchmarks.size === 2)
     }
 
   }
