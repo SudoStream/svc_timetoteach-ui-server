@@ -156,103 +156,91 @@ class RetrieveFullWeekOfLessonsDaoHelperTest extends FunSpec with RetrieveFullWe
   }
 
   describe("Given a single valid document, convertDocumentToLessonPlan()") {
+    val lessonPlan = dao.convertDocumentToLessonPlan(createSingleMathsLessonPlanDocument())
     it("should return a lesson plan with a subject of 'MATHEMATICS'") {
-      val lessonPlan = dao.convertDocumentToLessonPlan(createSingleMathsLessonPlanDocument())
       assert(lessonPlan.subject === "MATHEMATICS")
     }
     it(s"should return a lesson plan with a week beginning iso date of '$TEST_WEEK1'") {
-      val lessonPlan = dao.convertDocumentToLessonPlan(createSingleMathsLessonPlanDocument())
       assert(lessonPlan.weekBeginningIsoDate === TEST_WEEK1)
     }
     it(s"should return a lesson plan with a lesson date of '$TEST_LESSON_DATE2_OF_WEEK1'") {
-      val lessonPlan = dao.convertDocumentToLessonPlan(createSingleMathsLessonPlanDocument())
       assert(lessonPlan.lessonDateIso === TEST_LESSON_DATE2_OF_WEEK1)
     }
     it(s"should return a lesson plan with a lesson start time of '$TEST_ISO_TIME_0900'") {
-      val lessonPlan = dao.convertDocumentToLessonPlan(createSingleMathsLessonPlanDocument())
       assert(lessonPlan.startTimeIso === TEST_ISO_TIME_0900)
     }
     it(s"should return a lesson plan with a lesson end time of '$TEST_ISO_TIME_1000'") {
-      val lessonPlan = dao.convertDocumentToLessonPlan(createSingleMathsLessonPlanDocument())
       assert(lessonPlan.endTimeIso === TEST_ISO_TIME_1000)
     }
 
     it(s"should return a lesson plan with an activities group which contains 'Some activity ONE'") {
-      val lessonPlan = dao.convertDocumentToLessonPlan(createSingleMathsLessonPlanDocument())
       assert(lessonPlan.activitiesPerGroup.isDefinedAt("Some activity ONE"))
     }
     it(s"should return a lesson plan with an activities group which contains 'Some activity ONE' with 2 groups") {
-      val lessonPlan = dao.convertDocumentToLessonPlan(createSingleMathsLessonPlanDocument())
       assert(lessonPlan.activitiesPerGroup("Some activity ONE").size === 2)
     }
 
     it(s"should return a lesson plan with resources called resourceA") {
-      val lessonPlan = dao.convertDocumentToLessonPlan(createSingleMathsLessonPlanDocument())
       assert(lessonPlan.resources.contains("resourceA"))
     }
     it(s"should return a lesson plan with resources called resourceB") {
-      val lessonPlan = dao.convertDocumentToLessonPlan(createSingleMathsLessonPlanDocument())
       assert(lessonPlan.resources.contains("resourceB"))
     }
     it(s"should return a lesson plan with resources size == 2") {
-      val lessonPlan = dao.convertDocumentToLessonPlan(createSingleMathsLessonPlanDocument())
       assert(lessonPlan.resources.size === 2)
     }
 
     it(s"should return a lesson plan with learning intentions group which contains 'Some Learning Intention ONE'") {
-      val lessonPlan = dao.convertDocumentToLessonPlan(createSingleMathsLessonPlanDocument())
       assert(lessonPlan.learningIntentionsPerGroup.isDefinedAt("Some Learning Intention ONE"))
     }
     it(s"should return a lesson plan with learning intentions size 3") {
-      val lessonPlan = dao.convertDocumentToLessonPlan(createSingleMathsLessonPlanDocument())
       assert(lessonPlan.learningIntentionsPerGroup.size === 3)
     }
-
     it(s"should return a lesson plan with success criteria which contains 'Some Success Criteria FOUR'") {
-      val lessonPlan = dao.convertDocumentToLessonPlan(createSingleMathsLessonPlanDocument())
       assert(lessonPlan.successCriteriaPerGroup.isDefinedAt("Some Success Criteria FOUR"))
     }
     it(s"should return a lesson plan with success criteria size 4") {
-      val lessonPlan = dao.convertDocumentToLessonPlan(createSingleMathsLessonPlanDocument())
       assert(lessonPlan.successCriteriaPerGroup.size === 4)
     }
-
-
     it(s"should return a lesson plan with plenary called 'plenary FIVE'") {
-      val lessonPlan = dao.convertDocumentToLessonPlan(createSingleMathsLessonPlanDocument())
       assert(lessonPlan.plenary.contains("plenary FIVE"))
     }
     it(s"should return a lesson plan with plenary size == 5") {
-      val lessonPlan = dao.convertDocumentToLessonPlan(createSingleMathsLessonPlanDocument())
       assert(lessonPlan.plenary.size === 5)
     }
-
     it(s"should return a lesson plan with formativeAssessments which contains 'Some Formative Assessment SIX'") {
-      val lessonPlan = dao.convertDocumentToLessonPlan(createSingleMathsLessonPlanDocument())
       assert(lessonPlan.formativeAssessmentPerGroup.isDefinedAt("Some Formative Assessment SIX"))
     }
     it(s"should return a lesson plan with formativeAssessmentPerGroup size 4") {
-      val lessonPlan = dao.convertDocumentToLessonPlan(createSingleMathsLessonPlanDocument())
       assert(lessonPlan.formativeAssessmentPerGroup.size === 6)
     }
-
     it(s"should return a lesson plan with notes before called 'NoteB SEVEN'") {
-      val lessonPlan = dao.convertDocumentToLessonPlan(createSingleMathsLessonPlanDocument())
       assert(lessonPlan.notesBefore.contains("NoteB SEVEN"))
     }
     it(s"should return a lesson plan with notes before size == 7") {
-      val lessonPlan = dao.convertDocumentToLessonPlan(createSingleMathsLessonPlanDocument())
       assert(lessonPlan.notesBefore.size === 7)
     }
     it(s"should return a lesson plan with notes after called 'NoteA EIGHT'") {
-      val lessonPlan = dao.convertDocumentToLessonPlan(createSingleMathsLessonPlanDocument())
       assert(lessonPlan.notesAfter.contains("NoteA EIGHT"))
     }
     it(s"should return a lesson plan with notes after size == 8") {
-      val lessonPlan = dao.convertDocumentToLessonPlan(createSingleMathsLessonPlanDocument())
       assert(lessonPlan.notesAfter.size === 8)
     }
+  }
 
+  describe("Given a list of one document, convertLessonPlansForTheWeekToModel()"){
+    it("should return a list of ONE lesson plan"){
+      val lessonPlans = dao.convertLessonPlansForTheWeekToModel(createSingleMathsLessonPlanDocument() :: Nil)
+      assert(lessonPlans.size === 1)
+    }
+  }
 
+  describe("Given a list of one lesson plan, buildSubjectToLatestLessonsForTheWeekMap()") {
+    val lessonPlans = dao.convertLessonPlansForTheWeekToModel(createSingleMathsLessonPlanDocument() :: Nil)
+    val latestLessonsForTheWeek = dao.buildSubjectToLatestLessonsForTheWeekMap(lessonPlans)
+
+    it("should return a map with one key") {
+      assert(latestLessonsForTheWeek.keys.size === 1)
+    }
   }
 }

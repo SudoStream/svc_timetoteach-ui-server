@@ -168,12 +168,16 @@ trait RetrieveFullWeekOfLessonsDaoHelper {
   }
 
   private[dao] def convertLessonPlansForTheWeekToModel(allLessonPlansAsDocs: List[Document]): List[LessonPlan] = {
-    Nil
+   for {
+     lessonPlanDoc <- allLessonPlansAsDocs
+   } yield convertDocumentToLessonPlan(lessonPlanDoc)
   }
 
   private[dao] def buildSubjectToLatestLessonsForTheWeekMap(
                                                              allLessonPlans: List[LessonPlan]
-                                                           ): Map[ScottishCurriculumPlanningAreaWrapper, List[LessonPlan]] = ???
+                                                           ): Map[ScottishCurriculumPlanningAreaWrapper, List[LessonPlan]] = {
+    Map()
+  }
 
   private[dao] def readAllHighLevelPlansForTheWeek(tttUserId: TimeToTeachUserId,
                                                    classId: ClassId,
