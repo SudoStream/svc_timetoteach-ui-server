@@ -51,7 +51,6 @@ trait PlanWriterDaoTermlyCurriculumSelectionHelper {
     } yield createDocumentFromLessonPlan(
       weeklyPlansToSave.tttUserId,
       weeklyPlansToSave.classId,
-      weeklyPlansToSave.weekBeginningIsoDate,
       lessonPlan
     )
   }
@@ -60,14 +59,13 @@ trait PlanWriterDaoTermlyCurriculumSelectionHelper {
 
   private def createDocumentFromLessonPlan(tttUserId: String,
                                            classId: String,
-                                           weekBeginningIsoDate: String,
                                            lessonPlan: LessonPlan): Document = {
     Document(
       SingleLessonPlanSchema.TTT_USER_ID -> tttUserId,
       SingleLessonPlanSchema.CLASS_ID -> classId,
       SingleLessonPlanSchema.SUBJECT -> lessonPlan.subject,
       SingleLessonPlanSchema.SUBJECT_ADDITIONAL_INFO -> lessonPlan.subjectAdditionalInfo,
-      SingleLessonPlanSchema.WEEK_BEGINNING_ISO_DATE -> weekBeginningIsoDate,
+      SingleLessonPlanSchema.WEEK_BEGINNING_ISO_DATE -> lessonPlan.weekBeginningIsoDate,
       SingleLessonPlanSchema.LESSON_DATE -> lessonPlan.lessonDateIso,
       SingleLessonPlanSchema.CREATED_TIMESTAMP -> java.time.LocalDateTime.now().toString.replace("T", " "),
       SingleLessonPlanSchema.LESSON_START_TIME -> lessonPlan.startTimeIso,

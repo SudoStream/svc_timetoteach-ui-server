@@ -19,6 +19,7 @@ object WeeklyPlanOfOneSubject {
 case class LessonPlan(
                        subject: String,
                        subjectAdditionalInfo: String,
+                       weekBeginningIsoDate: String,
                        lessonDateIso: String,
                        startTimeIso: String,
                        endTimeIso: String,

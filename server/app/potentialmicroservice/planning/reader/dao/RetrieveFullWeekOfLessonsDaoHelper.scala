@@ -11,7 +11,7 @@ import models.timetoteach.{ClassId, TimeToTeachUserId}
 import org.mongodb.scala.Document
 import org.mongodb.scala.bson.{BsonArray, BsonDocument}
 import play.api.Logger
-import potentialmicroservice.planning.sharedschema.WeeklyPlanningSchema
+import potentialmicroservice.planning.sharedschema.{SingleLessonPlanSchema, WeeklyPlanningSchema}
 import utils.CurriculumConverterUtil
 import utils.mongodb.MongoDbSafety
 
@@ -93,10 +93,83 @@ trait RetrieveFullWeekOfLessonsDaoHelper {
     )
 
     getDbConnection.getLessonPlanningCollection.find(findMatcher).toFuture()
-
   }
 
-  private[dao] def convertLessonPlansForTheWeekToModel(alllessonPlansAsDocs: List[Document]): List[LessonPlan] = ???
+  private def stringBsonArrayToList(bsonArray: BsonArray): List[String] = {
+    import scala.collection.JavaConverters._
+
+    for {
+      bsonValue <- bsonArray.getValues.asScala.toList
+    } yield bsonValue.asString().getValue
+  }
+
+  private[dao] def attrGroupBsonArrayToMapStringToListString(bsonArray: BsonArray): Map[String, List[String]] = {
+    import scala.collection.JavaConverters._
+
+    @tailrec
+    def loop(remainingDocs: List[BsonDocument], currentMap: Map[String, List[String]]): Map[String, List[String]] = {
+      if (remainingDocs.isEmpty) {
+        currentMap
+      } else {
+        val nextDoc = remainingDocs.head
+        val attribute = nextDoc.getString(SingleLessonPlanSchema.ATTRIBUTE_VALUE).getValue
+
+        val groupIds = for {
+          groupValue <- nextDoc.getArray(SingleLessonPlanSchema.GROUP_IDS).getValues.asScala.toList
+        } yield groupValue.asString().getValue
+
+        val nextMap = currentMap + (attribute -> groupIds)
+        loop(remainingDocs.tail, nextMap)
+      }
+    }
+
+    val docs = for {
+      bsonValue <- bsonArray.getValues.asScala.toList
+    } yield bsonValue.asDocument()
+
+    loop(docs, Map())
+  }
+
+  private[dao] def convertDocumentToLessonPlan(doc: Document): LessonPlan = {
+    LessonPlan(
+      subject = doc.getString(SingleLessonPlanSchema.SUBJECT),
+      subjectAdditionalInfo = doc.getString(SingleLessonPlanSchema.SUBJECT_ADDITIONAL_INFO),
+      weekBeginningIsoDate = doc.getString(SingleLessonPlanSchema.WEEK_BEGINNING_ISO_DATE),
+      lessonDateIso = doc.getString(SingleLessonPlanSchema.LESSON_DATE),
+      startTimeIso = doc.getString(SingleLessonPlanSchema.LESSON_START_TIME),
+      endTimeIso = doc.getString(SingleLessonPlanSchema.LESSON_END_TIME),
+
+      activitiesPerGroup = attrGroupBsonArrayToMapStringToListString(
+        doc.get[BsonArray](SingleLessonPlanSchema.ACTIVITIES_PER_GROUP).getOrElse(BsonArray())
+      ),
+      resources = stringBsonArrayToList(
+        doc.get[BsonArray](SingleLessonPlanSchema.RESOURCES).getOrElse(BsonArray())
+      ),
+      learningIntentionsPerGroup = attrGroupBsonArrayToMapStringToListString(
+        doc.get[BsonArray](SingleLessonPlanSchema.LEARNING_INTENTIONS_PER_GROUP).getOrElse(BsonArray())
+      ),
+      successCriteriaPerGroup = attrGroupBsonArrayToMapStringToListString(
+        doc.get[BsonArray](SingleLessonPlanSchema.SUCCESS_CRITERIA_PER_GROUP).getOrElse(BsonArray())
+      ),
+      plenary = stringBsonArrayToList(
+        doc.get[BsonArray](SingleLessonPlanSchema.PLENARIES).getOrElse(BsonArray())
+      ),
+      formativeAssessmentPerGroup = attrGroupBsonArrayToMapStringToListString(
+        doc.get[BsonArray](SingleLessonPlanSchema.FORMATIVE_ASSESSMENT_PER_GROUP).getOrElse(BsonArray())
+      ),
+      notesBefore = stringBsonArrayToList(
+        doc.get[BsonArray](SingleLessonPlanSchema.NOTES_BEFORE).getOrElse(BsonArray())
+      ),
+      notesAfter = stringBsonArrayToList(
+        doc.get[BsonArray](SingleLessonPlanSchema.NOTES_AFTER).getOrElse(BsonArray())
+      )
+
+    )
+  }
+
+  private[dao] def convertLessonPlansForTheWeekToModel(allLessonPlansAsDocs: List[Document]): List[LessonPlan] = {
+    Nil
+  }
 
   private[dao] def buildSubjectToLatestLessonsForTheWeekMap(
                                                              allLessonPlans: List[LessonPlan]
@@ -106,9 +179,9 @@ trait RetrieveFullWeekOfLessonsDaoHelper {
                                                    classId: ClassId,
                                                    mondayDateOfWeekIso: String): Future[Seq[Document]] = {
     val findMatcher = BsonDocument(
-      WeeklyPlanningSchema.TTT_USER_ID -> tttUserId.value,
-      WeeklyPlanningSchema.CLASS_ID -> classId.value,
-      WeeklyPlanningSchema.WEEK_BEGINNING_ISO_DATE -> mondayDateOfWeekIso
+      SingleLessonPlanSchema.TTT_USER_ID -> tttUserId.value,
+      SingleLessonPlanSchema.CLASS_ID -> classId.value,
+      SingleLessonPlanSchema.WEEK_BEGINNING_ISO_DATE -> mondayDateOfWeekIso
     )
 
     getDbConnection.getWeeklyPlanningCollection.find(findMatcher).toFuture()

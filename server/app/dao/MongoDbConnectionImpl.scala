@@ -145,7 +145,6 @@ class MongoDbConnectionImpl extends MongoDbConnection with MiniKubeHelper {
     val mainIndex = BsonDocument(
       WeeklyPlanningSchema.TTT_USER_ID -> 1,
       WeeklyPlanningSchema.CLASS_ID -> 1,
-      WeeklyPlanningSchema.SUBJECT -> 1,
       WeeklyPlanningSchema.WEEK_BEGINNING_ISO_DATE -> 1
     )
 
@@ -174,7 +173,6 @@ class MongoDbConnectionImpl extends MongoDbConnection with MiniKubeHelper {
     val mainIndex = BsonDocument(
       SingleLessonPlanSchema.TTT_USER_ID -> 1,
       SingleLessonPlanSchema.CLASS_ID -> 1,
-      SingleLessonPlanSchema.SUBJECT -> 1,
       SingleLessonPlanSchema.WEEK_BEGINNING_ISO_DATE -> 1
     )
 
@@ -189,7 +187,6 @@ class MongoDbConnectionImpl extends MongoDbConnection with MiniKubeHelper {
     val secondIndex = BsonDocument(
       SingleLessonPlanSchema.TTT_USER_ID -> 1,
       SingleLessonPlanSchema.CLASS_ID -> 1,
-      SingleLessonPlanSchema.SUBJECT -> 1,
       SingleLessonPlanSchema.LESSON_DATE -> 1
     )
 

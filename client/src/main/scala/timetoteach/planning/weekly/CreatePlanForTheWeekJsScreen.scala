@@ -747,6 +747,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
       lessonPlansForTheWeek += LessonPlan(
         subject,
         subjectAdditionalInfo,
+        weekBeginningIsoDate,
         lessonDateIso,
         startTime,
         endTime,

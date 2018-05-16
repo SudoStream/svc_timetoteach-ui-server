@@ -4,10 +4,197 @@ import duplicate.model.FirstLevel
 import duplicate.model.esandos._
 import org.mongodb.scala.bson.collection.immutable.Document
 import org.mongodb.scala.bson.{BsonArray, BsonDocument}
-import potentialmicroservice.planning.sharedschema.WeeklyPlanningSchema
+import potentialmicroservice.planning.sharedschema.{SingleLessonPlanSchema, WeeklyPlanningSchema}
 import potentialmicroservice.planning.writer.dao.PlanWriterDaoTermlyCurriculumSelectionHelper
 
 trait RetrieveFullWeekOfLessonsDaoHelperTestCanned extends PlanWriterDaoTermlyCurriculumSelectionHelper {
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  private[dao] val TEST_USER1 = "user1111"
+  private[dao] val TEST_CLASS1 = "class1111"
+  private[dao] val TEST_SUBJECT_MATHS = "MATHEMATICS"
+  private[dao] val TEST_SUBJECT_ART = "EXPRESSIVE_ARTS__ART"
+  private[dao] val TEST_SUBJECT_DRAMA = "EXPRESSIVE_ARTS__DRAMA"
+  private[dao] val TEST_SUBJECT_MUSIC = "EXPRESSIVE_ARTS__MUSIC"
+  private[dao] val TEST_SUBJECT_PE = "HEALTH_AND_WELLBEING__PHYSICAL_EDUCATION"
+  private[dao] val TEST_SUBJECT_WRITING = "LITERACY__WRITING"
+  private[dao] val TEST_SUBJECT_READING = "LITERACY__READING"
+  private[dao] val TEST_SUBJECT_SCIENCE = "SCIENCE"
+  private[dao] val TEST_SUBJECT_TECHNOLOGY = "TECHNOLOGIES"
+
+  private[dao] val TEST_WEEK1 = "2018-04-30"
+  private[dao] val TEST_WEEK2 = "2018-05-07"
+  private[dao] val TEST_WEEK3 = "2018-05-14"
+
+  private[dao] val TEST_LESSON_DATE1_OF_WEEK1 = "2018-04-30"
+  private[dao] val TEST_LESSON_DATE2_OF_WEEK1 = "2018-05-01"
+  private[dao] val TEST_LESSON_DATE3_OF_WEEK1 = "2018-05-02"
+  private[dao] val TEST_LESSON_DATE4_OF_WEEK1 = "2018-05-03"
+  private[dao] val TEST_LESSON_DATE5_OF_WEEK1 = "2018-05-04"
+
+  private[dao] val TEST_TIMESTAMP_WEEK1_A = "2018-04-27 14:24:36.185"
+  private[dao] val TEST_TIMESTAMP_WEEK1_B = "2018-04-27 14:33:13.222"
+  private[dao] val TEST_TIMESTAMP_WEEK1_C = "2018-04-27 15:54:56.886"
+  private[dao] val TEST_TIMESTAMP_WEEK1_D = "2018-04-28 09:11:39.982"
+  private[dao] val TEST_TIMESTAMP_WEEK1_E = "2018-04-29 11:02:08.495"
+
+  private[dao] val TEST_TIMESTAMP_WEEK2_A = "2018-05-04 10:22:14.599"
+  private[dao] val TEST_TIMESTAMP_WEEK2_B = "2018-05-04 14:33:13.222"
+  private[dao] val TEST_TIMESTAMP_WEEK2_C = "2018-05-05 09:54:56.886"
+  private[dao] val TEST_TIMESTAMP_WEEK2_D = "2018-05-05 10:11:39.982"
+  private[dao] val TEST_TIMESTAMP_WEEK2_E = "2018-05-05 17:02:08.495"
+
+  private[dao] val TEST_TIMESTAMP_WEEK3_A = "2018-05-11 10:22:14.599"
+  private[dao] val TEST_TIMESTAMP_WEEK3_B = "2018-05-11 14:33:13.222"
+  private[dao] val TEST_TIMESTAMP_WEEK3_C = "2018-05-12 09:54:56.886"
+  private[dao] val TEST_TIMESTAMP_WEEK3_D = "2018-05-12 10:11:39.982"
+  private[dao] val TEST_TIMESTAMP_WEEK3_E = "2018-05-12 17:02:08.495"
+
+  private[dao] val TEST_ART_SECTION_NAME = "Art and design"
+  private[dao] val TEST_ART_SUBSECTION_NAME = "NO_SUBSECTION_NAME"
+
+  private[dao] val TEST_MATHS_SECTION_NAME = "Mathematics"
+  private[dao] val TEST_MATHS_SUBSECTION_NAME = "Shapes"
+
+  private[dao] val TEST_ISO_TIME_0900 = "09:00"
+  private[dao] val TEST_ISO_TIME_0915 = "09:15"
+  private[dao] val TEST_ISO_TIME_0930 = "09:30"
+  private[dao] val TEST_ISO_TIME_0945 = "09:45"
+  private[dao] val TEST_ISO_TIME_1000 = "10:00"
+  private[dao] val TEST_ISO_TIME_1015 = "10:15"
+  private[dao] val TEST_ISO_TIME_1030 = "10:30"
+
+  private[dao] val TEST_ACTIVITIES_PER_GROUP = BsonArray(
+    BsonDocument(
+      SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "Some activity ONE",
+      SingleLessonPlanSchema.GROUP_IDS -> BsonArray("group1", "group2")
+    )
+  )
+
+  private[dao] val TEST_RESOURCES = BsonArray("resourceA", "resourceB")
+
+  private[dao] val TEST_LEARNING_INTENTIONS_PER_GROUP = BsonArray(
+    BsonDocument(
+      SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "Some Learning Intention ONE",
+      SingleLessonPlanSchema.GROUP_IDS -> BsonArray("group1", "group2")
+    ),
+    BsonDocument(
+      SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "Some Learning Intention TWO",
+      SingleLessonPlanSchema.GROUP_IDS -> BsonArray("group1", "group2")
+    ),
+    BsonDocument(
+      SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "Some Learning Intention THREE",
+      SingleLessonPlanSchema.GROUP_IDS -> BsonArray("group1", "group2")
+    )
+  )
+
+  private[dao] val TEST_SUCCESS_CRITERIA_PER_GROUP = BsonArray(
+    BsonDocument(
+      SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "Some Success Criteria ONE",
+      SingleLessonPlanSchema.GROUP_IDS -> BsonArray("group1", "group2")
+    ),
+    BsonDocument(
+      SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "Some Success Criteria TWO",
+      SingleLessonPlanSchema.GROUP_IDS -> BsonArray("group1", "group2")
+    ),
+    BsonDocument(
+      SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "Some Success Criteria THREE",
+      SingleLessonPlanSchema.GROUP_IDS -> BsonArray("group1", "group2")
+    ),
+    BsonDocument(
+      SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "Some Success Criteria FOUR",
+      SingleLessonPlanSchema.GROUP_IDS -> BsonArray("group1", "group2")
+    )
+  )
+
+  private[dao] val TEST_PLENARIES = BsonArray("plenary ONE", "plenary TWO", "plenary THREE", "plenary FOUR", "plenary FIVE")
+
+  private[dao] val TEST_FORMATIVE_ASSESSMENT_PER_GROUP = BsonArray(
+    BsonDocument(
+      SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "Some Formative Assessment ONE",
+      SingleLessonPlanSchema.GROUP_IDS -> BsonArray("group1", "group2")
+    ), BsonDocument(
+      SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "Some Formative Assessment TWO",
+      SingleLessonPlanSchema.GROUP_IDS -> BsonArray("group1", "group2")
+    ), BsonDocument(
+      SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "Some Formative Assessment THREE",
+      SingleLessonPlanSchema.GROUP_IDS -> BsonArray("group1", "group2")
+    ), BsonDocument(
+      SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "Some Formative Assessment FOUR",
+      SingleLessonPlanSchema.GROUP_IDS -> BsonArray("group1", "group2")
+    ), BsonDocument(
+      SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "Some Formative Assessment FIVE",
+      SingleLessonPlanSchema.GROUP_IDS -> BsonArray("group1", "group2")
+    ), BsonDocument(
+      SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "Some Formative Assessment SIX",
+      SingleLessonPlanSchema.GROUP_IDS -> BsonArray("group1", "group2")
+    )
+  )
+
+  private[dao] val TEST_NOTES_BEFORE = BsonArray("NoteB ONE", "NoteB TWO", "NoteB THREE", "NoteB FOUR",
+    "NoteB FIVE", "NoteB SIX", "NoteB SEVEN")
+
+  private[dao] val TEST_NOTES_AFTER = BsonArray("NoteA ONE", "NoteA TWO", "NoteA THREE", "NoteA FOUR",
+    "NoteA FIVE", "NoteA SIX", "NoteA SEVEN", "NoteA EIGHT")
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+  def createSingleMathsLessonPlanDocument(): Document = {
+    createLessonPlanDocument(
+      TEST_SUBJECT_MATHS,
+      TEST_WEEK1,
+      TEST_LESSON_DATE2_OF_WEEK1,
+      TEST_TIMESTAMP_WEEK1_A,
+      TEST_ISO_TIME_0900,
+      TEST_ISO_TIME_1000,
+      TEST_ACTIVITIES_PER_GROUP,
+      TEST_RESOURCES,
+      TEST_LEARNING_INTENTIONS_PER_GROUP,
+      TEST_SUCCESS_CRITERIA_PER_GROUP,
+      TEST_PLENARIES,
+      TEST_FORMATIVE_ASSESSMENT_PER_GROUP,
+      TEST_NOTES_BEFORE,
+      TEST_NOTES_AFTER
+    )
+  }
+
+  def createLessonPlanDocument(subject: String,
+                               weekBeginning: String,
+                               lessonDate: String,
+                               createdTimestamp: String,
+                               lessonStartTime: String,
+                               lessonEndTime: String,
+                               activtiesPerGroup: BsonArray,
+                               resources: BsonArray,
+                               learningIntentions: BsonArray,
+                               successCriteria: BsonArray,
+                               plenaries: BsonArray,
+                               formativeAssessments: BsonArray,
+                               notesBefore: BsonArray,
+                               notesAfter: BsonArray
+                              ): Document = {
+    Document(
+      SingleLessonPlanSchema.TTT_USER_ID -> TEST_USER1,
+      SingleLessonPlanSchema.CLASS_ID -> TEST_CLASS1,
+      SingleLessonPlanSchema.SUBJECT -> subject,
+      SingleLessonPlanSchema.SUBJECT_ADDITIONAL_INFO -> "",
+      SingleLessonPlanSchema.WEEK_BEGINNING_ISO_DATE -> weekBeginning,
+      SingleLessonPlanSchema.LESSON_DATE -> lessonDate,
+      SingleLessonPlanSchema.CREATED_TIMESTAMP -> createdTimestamp,
+      SingleLessonPlanSchema.LESSON_START_TIME -> lessonStartTime,
+      SingleLessonPlanSchema.LESSON_END_TIME -> lessonEndTime,
+
+      SingleLessonPlanSchema.ACTIVITIES_PER_GROUP -> activtiesPerGroup,
+      SingleLessonPlanSchema.RESOURCES -> resources,
+      SingleLessonPlanSchema.LEARNING_INTENTIONS_PER_GROUP -> learningIntentions,
+      SingleLessonPlanSchema.SUCCESS_CRITERIA_PER_GROUP -> successCriteria,
+      SingleLessonPlanSchema.PLENARIES -> plenaries,
+      SingleLessonPlanSchema.FORMATIVE_ASSESSMENT_PER_GROUP -> formativeAssessments,
+      SingleLessonPlanSchema.NOTES_BEFORE -> notesBefore,
+      SingleLessonPlanSchema.NOTES_AFTER -> notesAfter
+    )
+  }
 
   def createSomeLowLevelSectionNameToSubSectionsEsAndOsBsonDocs(): List[BsonDocument] = {
     BsonDocument(
@@ -50,7 +237,7 @@ trait RetrieveFullWeekOfLessonsDaoHelperTestCanned extends PlanWriterDaoTermlyCu
     ) :: BsonDocument(
       WeeklyPlanningSchema.SELECTED_SECTION_NAME -> "Information handling",
       WeeklyPlanningSchema.SELECTED_SUBSECTION_NAME -> "Data and analysis",
-      WeeklyPlanningSchema.SELECTED_ES_AND_OS -> BsonArray("MNU 0-20a","MNU 0-20b","MNU 0-20c"),
+      WeeklyPlanningSchema.SELECTED_ES_AND_OS -> BsonArray("MNU 0-20a", "MNU 0-20b", "MNU 0-20c"),
       WeeklyPlanningSchema.SELECTED_BENCHMARKS -> BsonArray(
         "Asks simple questions to collect data for a specific purpose",
         "Collects and organises objects for a specific purpose."
@@ -96,49 +283,6 @@ trait RetrieveFullWeekOfLessonsDaoHelperTestCanned extends PlanWriterDaoTermlyCu
     )
   }
 
-
-  /////////////////////////////
-
-
-  private[dao] val TEST_USER1 = "user1111"
-  private[dao] val TEST_CLASS1 = "class1111"
-  private[dao] val TEST_SUBJECT_MATHS = "MATHEMATICS"
-  private[dao] val TEST_SUBJECT_ART = "EXPRESSIVE_ARTS__ART"
-  private[dao] val TEST_SUBJECT_DRAMA = "EXPRESSIVE_ARTS__DRAMA"
-  private[dao] val TEST_SUBJECT_MUSIC = "EXPRESSIVE_ARTS__MUSIC"
-  private[dao] val TEST_SUBJECT_PE = "HEALTH_AND_WELLBEING__PHYSICAL_EDUCATION"
-  private[dao] val TEST_SUBJECT_WRITING = "LITERACY__WRITING"
-  private[dao] val TEST_SUBJECT_READING = "LITERACY__READING"
-  private[dao] val TEST_SUBJECT_SCIENCE = "SCIENCE"
-  private[dao] val TEST_SUBJECT_TECHNOLOGY = "TECHNOLOGIES"
-
-  private[dao] val TEST_WEEK1 = "2018-04-30"
-  private[dao] val TEST_WEEK2 = "2018-05-07"
-  private[dao] val TEST_WEEK3 = "2018-05-14"
-
-  private[dao] val TEST_TIMESTAMP_WEEK1_A = "2018-04-27 14:24:36.185"
-  private[dao] val TEST_TIMESTAMP_WEEK1_B = "2018-04-27 14:33:13.222"
-  private[dao] val TEST_TIMESTAMP_WEEK1_C = "2018-04-27 15:54:56.886"
-  private[dao] val TEST_TIMESTAMP_WEEK1_D = "2018-04-28 09:11:39.982"
-  private[dao] val TEST_TIMESTAMP_WEEK1_E = "2018-04-29 11:02:08.495"
-
-  private[dao] val TEST_TIMESTAMP_WEEK2_A = "2018-05-04 10:22:14.599"
-  private[dao] val TEST_TIMESTAMP_WEEK2_B = "2018-05-04 14:33:13.222"
-  private[dao] val TEST_TIMESTAMP_WEEK2_C = "2018-05-05 09:54:56.886"
-  private[dao] val TEST_TIMESTAMP_WEEK2_D = "2018-05-05 10:11:39.982"
-  private[dao] val TEST_TIMESTAMP_WEEK2_E = "2018-05-05 17:02:08.495"
-
-  private[dao] val TEST_TIMESTAMP_WEEK3_A = "2018-05-11 10:22:14.599"
-  private[dao] val TEST_TIMESTAMP_WEEK3_B = "2018-05-11 14:33:13.222"
-  private[dao] val TEST_TIMESTAMP_WEEK3_C = "2018-05-12 09:54:56.886"
-  private[dao] val TEST_TIMESTAMP_WEEK3_D = "2018-05-12 10:11:39.982"
-  private[dao] val TEST_TIMESTAMP_WEEK3_E = "2018-05-12 17:02:08.495"
-
-  private[dao] val TEST_ART_SECTION_NAME = "Art and design"
-  private[dao] val TEST_ART_SUBSECTION_NAME = "NO_SUBSECTION_NAME"
-
-  private[dao] val TEST_MATHS_SECTION_NAME = "Mathematics"
-  private[dao] val TEST_MATHS_SUBSECTION_NAME = "Shapes"
 
   private[dao] val TEST_ART_ES_AND_OS_1: Map[String, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel] = Map(
     "CLASS_LEVEL" -> EsAndOsPlusBenchmarksForCurriculumAreaAndLevel(
