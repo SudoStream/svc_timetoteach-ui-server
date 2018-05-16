@@ -69,11 +69,11 @@ trait RetrieveFullWeekOfLessonsDaoHelper {
                                                    classId: ClassId,
                                                    mondayDateOfWeekIso: String):
   Future[Map[ScottishCurriculumPlanningAreaWrapper, List[LessonPlan]]] = {
-    val allLessonPlansForTheWeekAsDocs: Future[List[Document]] = readAllLessonPlansForTheWeek(tttUserId, classId, mondayDateOfWeekIso)
+    val allLessonPlansForTheWeekAsDocs = readAllLessonPlansForTheWeek(tttUserId, classId, mondayDateOfWeekIso)
 
     for {
       allLessonPlansAsDocs <- allLessonPlansForTheWeekAsDocs
-      allLessonPlans = convertLessonPlansForTheWeekToModel(allLessonPlansAsDocs)
+      allLessonPlans = convertLessonPlansForTheWeekToModel(allLessonPlansAsDocs.toList)
       subjectToLatestLessonsForTheWeek = buildSubjectToLatestLessonsForTheWeekMap(allLessonPlans)
     } yield subjectToLatestLessonsForTheWeek
   }
@@ -85,7 +85,7 @@ trait RetrieveFullWeekOfLessonsDaoHelper {
   private def readAllLessonPlansForTheWeek(tttUserId: TimeToTeachUserId,
                                            classId: ClassId,
                                            mondayDateOfWeekIso: String
-                                          ): Future[List[Document]] = {
+                                          ): Future[Seq[Document]] = {
     val findMatcher = BsonDocument(
       WeeklyPlanningSchema.TTT_USER_ID -> tttUserId.value,
       WeeklyPlanningSchema.CLASS_ID -> classId.value,
@@ -96,9 +96,7 @@ trait RetrieveFullWeekOfLessonsDaoHelper {
 
   }
 
-  private[dao] def convertLessonPlansForTheWeekToModel(alllessonPlansAsDocs: List[Document]): List[LessonPlan] = {
-
-  }
+  private[dao] def convertLessonPlansForTheWeekToModel(alllessonPlansAsDocs: List[Document]): List[LessonPlan] = ???
 
   private[dao] def buildSubjectToLatestLessonsForTheWeekMap(
                                                              allLessonPlans: List[LessonPlan]
