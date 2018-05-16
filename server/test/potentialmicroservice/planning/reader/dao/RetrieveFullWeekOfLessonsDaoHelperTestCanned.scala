@@ -2,6 +2,8 @@ package potentialmicroservice.planning.reader.dao
 
 import duplicate.model.FirstLevel
 import duplicate.model.esandos._
+import duplicate.model.planning.LessonPlan
+import models.timetoteach.planning.ScottishCurriculumPlanningAreaWrapper
 import org.mongodb.scala.bson.collection.immutable.Document
 import org.mongodb.scala.bson.{BsonArray, BsonDocument}
 import potentialmicroservice.planning.sharedschema.{SingleLessonPlanSchema, WeeklyPlanningSchema}

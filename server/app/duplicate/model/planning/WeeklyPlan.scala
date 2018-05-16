@@ -23,6 +23,7 @@ case class LessonPlan(
                        lessonDateIso: String,
                        startTimeIso: String,
                        endTimeIso: String,
+                       createdTimestamp: String,
 
                        activitiesPerGroup: Map[String, List[String]],
                        resources: List[String],

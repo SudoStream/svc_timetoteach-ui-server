@@ -751,6 +751,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
         lessonDateIso,
         startTime,
         endTime,
+        "",
         activitiesPerGroup,
         resources,
         learningIntentionsPerGroup,

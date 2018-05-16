@@ -30,13 +30,9 @@ trait RetrieveFullWeekOfLessonsDaoHelper {
     logger.info(s"Retrieve full week of lessons: $tttUserId|$classId|$mondayDateOfWeekIso")
 
     val latestHighLevelPlansForAllSubjects = readLatestHighLevelPlansForTheWeek(tttUserId, classId, mondayDateOfWeekIso)
-
-    // TODO: 3) Read all the Single Lesson Plans  for the "class" and "week" in question
-    // TODO: 4) Get the latest version of each separate lesson plan .... for each subject
     val latestLessonPlansForAllSubjects = readLatestLessonPlansForTheWeek(tttUserId, classId, mondayDateOfWeekIso)
 
     // TODO: 5) Stitch together into appropriate "WeeklyPlanOfOneSubject"s
-
     // TODO: 6) Create a "FullWeeklyPlanOfLessons"
     // TODO: 7) Done!
 
@@ -138,6 +134,7 @@ trait RetrieveFullWeekOfLessonsDaoHelper {
       lessonDateIso = doc.getString(SingleLessonPlanSchema.LESSON_DATE),
       startTimeIso = doc.getString(SingleLessonPlanSchema.LESSON_START_TIME),
       endTimeIso = doc.getString(SingleLessonPlanSchema.LESSON_END_TIME),
+      createdTimestamp = doc.getString(SingleLessonPlanSchema.CREATED_TIMESTAMP),
 
       activitiesPerGroup = attrGroupBsonArrayToMapStringToListString(
         doc.get[BsonArray](SingleLessonPlanSchema.ACTIVITIES_PER_GROUP).getOrElse(BsonArray())
@@ -168,15 +165,72 @@ trait RetrieveFullWeekOfLessonsDaoHelper {
   }
 
   private[dao] def convertLessonPlansForTheWeekToModel(allLessonPlansAsDocs: List[Document]): List[LessonPlan] = {
-   for {
-     lessonPlanDoc <- allLessonPlansAsDocs
-   } yield convertDocumentToLessonPlan(lessonPlanDoc)
+    for {
+      lessonPlanDoc <- allLessonPlansAsDocs
+    } yield convertDocumentToLessonPlan(lessonPlanDoc)
+  }
+
+  private[dao] def decomposeMap(
+                                 originalMap: Map[ScottishCurriculumPlanningAreaWrapper, Map[String, LessonPlan]]
+                               ): Map[ScottishCurriculumPlanningAreaWrapper, List[LessonPlan]] = {
+    @tailrec
+    def loop(remainingKeys: List[ScottishCurriculumPlanningAreaWrapper],
+             currentMap: Map[ScottishCurriculumPlanningAreaWrapper, List[LessonPlan]])
+    : Map[ScottishCurriculumPlanningAreaWrapper, List[LessonPlan]] = {
+      if (remainingKeys.isEmpty) {
+        currentMap
+      } else {
+        val subjectKey = remainingKeys.head
+        val timeToLessonPlans = originalMap(subjectKey)
+        val lessonPlansForSubject = timeToLessonPlans.values.toList
+        val nextMap = currentMap + (subjectKey -> lessonPlansForSubject)
+        loop(remainingKeys.tail, nextMap)
+      }
+    }
+
+    loop(originalMap.keys.toList, Map())
   }
 
   private[dao] def buildSubjectToLatestLessonsForTheWeekMap(
                                                              allLessonPlans: List[LessonPlan]
                                                            ): Map[ScottishCurriculumPlanningAreaWrapper, List[LessonPlan]] = {
-    Map()
+    @tailrec
+    def loop(
+              remainingLessons: List[LessonPlan],
+              currentMap: Map[ScottishCurriculumPlanningAreaWrapper, Map[String, LessonPlan]]
+            ): Map[ScottishCurriculumPlanningAreaWrapper, List[LessonPlan]] = {
+      if (remainingLessons.isEmpty) {
+        decomposeMap(currentMap)
+      } else {
+        val nextLesson = remainingLessons.head
+        val nextLessonStartTime = nextLesson.startTimeIso
+        val nextSubjectWrapper = CurriculumConverterUtil.
+          convertSubjectToScottishCurriculumPlanningAreaWrapper(nextLesson.subject)
+        val nextMap = if(currentMap.isDefinedAt(nextSubjectWrapper)) {
+          if (currentMap(nextSubjectWrapper).isDefinedAt(nextLessonStartTime)) {
+            val currentTimeLesson = currentMap(nextSubjectWrapper)(nextLessonStartTime)
+            val currentLessonTimestamp = MongoDbSafety.safelyParseTimestamp(currentTimeLesson.createdTimestamp)
+            val nextLessonTimestamp = MongoDbSafety.safelyParseTimestamp(nextLesson.createdTimestamp)
+            if (nextLessonTimestamp.isAfter(currentLessonTimestamp)) {
+              val nextTimeMap = currentMap(nextSubjectWrapper) + (nextLessonStartTime -> nextLesson)
+              currentMap + (nextSubjectWrapper -> nextTimeMap)
+            } else {
+              currentMap
+            }
+          } else {
+            val currentTimeMap = currentMap(nextSubjectWrapper)
+            val nextTimeMap = currentTimeMap + (nextLessonStartTime -> nextLesson)
+            currentMap + (nextSubjectWrapper -> nextTimeMap)
+          }
+        } else {
+          currentMap + (nextSubjectWrapper -> Map(nextLessonStartTime -> nextLesson))
+        }
+
+        loop(remainingLessons.tail, nextMap)
+      }
+    }
+
+    loop(allLessonPlans, Map())
   }
 
   private[dao] def readAllHighLevelPlansForTheWeek(tttUserId: TimeToTeachUserId,

@@ -242,5 +242,10 @@ class RetrieveFullWeekOfLessonsDaoHelperTest extends FunSpec with RetrieveFullWe
     it("should return a map with one key") {
       assert(latestLessonsForTheWeek.keys.size === 1)
     }
+
+    it("TEST THE SHIT OUT OF THIS NEXT ANDY") {
+      assert(1 === 2)
+    }
+
   }
 }
