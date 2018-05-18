@@ -55,6 +55,6 @@ trait PlanningReaderService
 
   ////
 
-  def retrieveFullWeekOfLessons(tttUserId: TimeToTeachUserId, classId: ClassId, mondayDateOfWeekIso: String): Future[Option[FullWeeklyPlanOfLessons]]
+  def retrieveFullWeekOfLessons(tttUserId: TimeToTeachUserId, classId: ClassId, mondayDateOfWeekIso: String): Future[FullWeeklyPlanOfLessons]
 
 }

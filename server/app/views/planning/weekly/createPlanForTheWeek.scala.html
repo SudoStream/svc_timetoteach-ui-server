@@ -428,10 +428,12 @@
                         <span data-subject-name="" id="create-weekly-plans-lesson-subject-name" class="text-success"></span>
                         lesson(s) for the week <span id="create-weekly-plans-lesson-modal-week-of"></span>
                     </h5>
+
+                    <div id="fullLessonsPickledDiv"></div>
+
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
-
                 </div>
                 <div class="modal-body">
 
@@ -452,6 +454,7 @@
             localStorage.setItem("classId", "@classDetails.id.id");
             localStorage.setItem("tttUserId", "@tttUserId.value");
             localStorage.setItem("lessonsThisWeekPickled", "@lessonsThisWeekPickled");
+            localStorage.setItem("fullWeeklyPlanOfLessonsPickled", "@fullWeeklyPlanOfLessonsPickled");
             @for(group <- classDetails.groups) {
                 localStorage.setItem("@group.groupId.id", "@group.groupName.name");
             }

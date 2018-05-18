@@ -156,7 +156,7 @@ class PlanningReaderServiceProxyImpl @Inject()(planningReaderService: PlanningRe
   def retrieveFullWeekOfLessons(
                                  tttUserId: TimeToTeachUserId,
                                  classId: ClassId,
-                                 mondayDateOfWeekIso: String): Future[Option[FullWeeklyPlanOfLessons]] = {
+                                 mondayDateOfWeekIso: String): Future[FullWeeklyPlanOfLessons] = {
     planningReaderService.retrieveFullWeekOfLessons(tttUserId, classId, mondayDateOfWeekIso)
   }
 

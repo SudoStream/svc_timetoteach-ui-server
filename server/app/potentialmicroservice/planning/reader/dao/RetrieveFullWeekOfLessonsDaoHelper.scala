@@ -4,7 +4,7 @@ import java.time.LocalDate
 
 import dao.MongoDbConnection
 import duplicate.model.esandos._
-import duplicate.model.planning.{FullWeeklyPlanOfLessons, LessonPlan}
+import duplicate.model.planning.{FullWeeklyPlanOfLessons, LessonPlan, WeeklyPlanOfOneSubject}
 import models.timetoteach.planning.ScottishCurriculumPlanningAreaWrapper
 import models.timetoteach.planning.weekly.WeeklyHighLevelPlanOfOneSubject
 import models.timetoteach.{ClassId, TimeToTeachUserId}
@@ -26,19 +26,70 @@ trait RetrieveFullWeekOfLessonsDaoHelper {
 
   def retrieveFullWeekOfLessonsImpl(tttUserId: TimeToTeachUserId,
                                     classId: ClassId,
-                                    mondayDateOfWeekIso: String): Future[Option[FullWeeklyPlanOfLessons]] = {
+                                    mondayDateOfWeekIso: String): Future[FullWeeklyPlanOfLessons] = {
     logger.info(s"Retrieve full week of lessons: $tttUserId|$classId|$mondayDateOfWeekIso")
 
-    val latestHighLevelPlansForAllSubjects = readLatestHighLevelPlansForTheWeek(tttUserId, classId, mondayDateOfWeekIso)
-    val latestLessonPlansForAllSubjects = readLatestLessonPlansForTheWeek(tttUserId, classId, mondayDateOfWeekIso)
+    val futureLatestHighLevelPlansForAllSubjects = readLatestHighLevelPlansForTheWeek(tttUserId, classId, mondayDateOfWeekIso)
+    val futureLessonPlansForAllSubjects = readLatestLessonPlansForTheWeek(tttUserId, classId, mondayDateOfWeekIso)
+    val futureLatestCombinedWeeklyPlans = combinePlans(futureLatestHighLevelPlansForAllSubjects, futureLessonPlansForAllSubjects)
 
-    // TODO: 5) Stitch together into appropriate "WeeklyPlanOfOneSubject"s
-    // TODO: 6) Create a "FullWeeklyPlanOfLessons"
-    // TODO: 7) Done!
+    createFullWeeklyPlanOfLessons(
+      tttUserId,
+      classId,
+      mondayDateOfWeekIso,
+      futureLatestCombinedWeeklyPlans
+    )
+  }
 
-    Future {
-      None
-    }
+  ////////////////
+
+  private def createFullWeeklyPlanOfLessons(
+                                             tttUserId: TimeToTeachUserId,
+                                             classId: ClassId,
+                                             mondayDateOfWeekIso: String,
+                                             futureLatestCombinedWeeklyPlans: Future[Map[String, WeeklyPlanOfOneSubject]]
+                                           ): Future[FullWeeklyPlanOfLessons] = {
+
+    for {
+      latestCombinedWeeklyPlans <- futureLatestCombinedWeeklyPlans
+    } yield FullWeeklyPlanOfLessons(
+      tttUserId.value,
+      classId.value,
+      mondayDateOfWeekIso,
+      latestCombinedWeeklyPlans
+    )
+  }
+
+  private def combinePlanLevels(highLevelPlans: List[WeeklyHighLevelPlanOfOneSubject],
+                                latestSubjects: Map[ScottishCurriculumPlanningAreaWrapper, List[LessonPlan]]
+                               ): Map[String, WeeklyPlanOfOneSubject] = {
+    {
+      for {
+        subjectHighLevelPlan <- highLevelPlans
+        subjectLessons = latestSubjects(subjectHighLevelPlan.subject)
+      } yield (
+        subjectHighLevelPlan.subject.value.toString,
+        WeeklyPlanOfOneSubject(
+          subjectHighLevelPlan.timeToTeachUserId.value,
+          subjectHighLevelPlan.classId.value,
+          subjectHighLevelPlan.subject.value.toString,
+          subjectHighLevelPlan.weekBeginning.toString,
+          subjectHighLevelPlan.selectedEsOsBenchmarksByGroup,
+          subjectLessons
+        )
+      )
+    }.toMap
+  }
+
+  private[dao] def combinePlans(
+                                 latestHighLevelPlansForAllSubjects: Future[List[WeeklyHighLevelPlanOfOneSubject]],
+                                 latestLessonPlansForAllSubjects: Future[Map[ScottishCurriculumPlanningAreaWrapper, List[LessonPlan]]]
+                               ): Future[Map[String, WeeklyPlanOfOneSubject]] = {
+    for {
+      highLevelPlans <- latestHighLevelPlansForAllSubjects
+      latestSubjects: Map[ScottishCurriculumPlanningAreaWrapper, List[LessonPlan]] <- latestLessonPlansForAllSubjects
+      plansCombinedMap = combinePlanLevels(highLevelPlans, latestSubjects)
+    } yield plansCombinedMap
   }
 
   private[dao] def readLatestHighLevelPlansForTheWeek(tttUserId: TimeToTeachUserId,
@@ -194,7 +245,7 @@ trait RetrieveFullWeekOfLessonsDaoHelper {
   private[dao] def buildSubjectToLatestLessonsForTheWeekMap(
                                                              allLessonPlans: List[LessonPlan]
                                                            ): Map[ScottishCurriculumPlanningAreaWrapper, List[LessonPlan]] = {
-    def getNextLessonKey(date: String, time: String) : String = {
+    def getNextLessonKey(date: String, time: String): String = {
       s"${date}_$time"
     }
 
@@ -211,7 +262,7 @@ trait RetrieveFullWeekOfLessonsDaoHelper {
         val nextSubjectWrapper = CurriculumConverterUtil.
           convertSubjectToScottishCurriculumPlanningAreaWrapper(nextLesson.subject)
 
-        val nextMap = if(currentMap.isDefinedAt(nextSubjectWrapper)) {
+        val nextMap = if (currentMap.isDefinedAt(nextSubjectWrapper)) {
           if (currentMap(nextSubjectWrapper).isDefinedAt(nextLessonKey)) {
             val currentTimeLesson = currentMap(nextSubjectWrapper)(nextLessonKey)
             val currentLessonTimestamp = MongoDbSafety.safelyParseTimestamp(currentTimeLesson.createdTimestamp)

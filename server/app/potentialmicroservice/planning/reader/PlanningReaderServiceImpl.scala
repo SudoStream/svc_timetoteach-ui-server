@@ -51,7 +51,7 @@ class PlanningReaderServiceImpl @Inject()(planningReaderDao: PlanReaderDao) exte
     planningReaderDao.curriculumPlanProgressForClasses(tttUserId, classes, classIdToPlanningSelection, term)
   }
 
-  override def retrieveFullWeekOfLessons(tttUserId: TimeToTeachUserId, classId: ClassId, mondayDateOfWeekIso: String): Future[Option[FullWeeklyPlanOfLessons]] = {
+  override def retrieveFullWeekOfLessons(tttUserId: TimeToTeachUserId, classId: ClassId, mondayDateOfWeekIso: String): Future[FullWeeklyPlanOfLessons] = {
     planningReaderDao.retrieveFullWeekOfLessons(tttUserId,classId, mondayDateOfWeekIso)
   }
 

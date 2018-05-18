@@ -2,7 +2,7 @@ package timetoteach.planning.weekly
 
 import duplicate.model.CurriculumLevel
 import duplicate.model.esandos._
-import duplicate.model.planning.{LessonPlan, LessonSummary, LessonsThisWeek, WeeklyPlanOfOneSubject}
+import duplicate.model.planning._
 import org.scalajs.dom
 import org.scalajs.dom.ext.Ajax
 import org.scalajs.dom.ext.Ajax.InputData
@@ -146,6 +146,15 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     dom.document.getElementById("create-weekly-plans-modal-body").appendChild(child)
   }
 
+  def createTestMessage() : Unit = {
+    val fullWeeklyPlanOfLessonsPickled = dom.window.localStorage.getItem("fullWeeklyPlanOfLessonsPickled")
+    import upickle.default._
+    val fullWeeklyPlanOfLessons: FullWeeklyPlanOfLessons = read[FullWeeklyPlanOfLessons](PlanningHelper.decodeAnyNonFriendlyCharacters(fullWeeklyPlanOfLessonsPickled))
+    val messageDiv = dom.document.getElementById("fullLessonsPickledDiv")
+    messageDiv.innerHTML = s"Howdy doodly do :- ${fullWeeklyPlanOfLessons.weekBeginningIsoDate} || " +
+      s"${fullWeeklyPlanOfLessons.subjectToWeeklyPlanOfSubject.keys.toString()}"
+  }
+
   private def planLessonsButton(): Unit = {
     val allPlanLessonsButtons = dom.document.getElementsByClassName("create-weekly-plans-plan-lessons-button")
     val nodeListSize = allPlanLessonsButtons.length
@@ -179,6 +188,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
           currentlySelectedLessonSummariesThisWeek = Some(lessonsThisWeek.subjectToLessons(planningArea))
         }
 
+        createTestMessage()
         setEsOsBenchmarksSummary()
         buildTabbedWeekOfPlanning(lessonsThisWeek, planningArea)
         cleanupModalAdds()

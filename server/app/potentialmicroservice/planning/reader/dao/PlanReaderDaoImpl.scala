@@ -198,7 +198,7 @@ class PlanReaderDaoImpl @Inject()(mongoDbConnection: MongoDbConnection) extends 
 
   override def retrieveFullWeekOfLessons(tttUserId: TimeToTeachUserId,
                                          classId: ClassId,
-                                         mondayDateOfWeekIso: String): Future[Option[FullWeeklyPlanOfLessons]] = {
+                                         mondayDateOfWeekIso: String): Future[FullWeeklyPlanOfLessons] = {
     retrieveFullWeekOfLessonsImpl(tttUserId, classId, mondayDateOfWeekIso)
   }
 
