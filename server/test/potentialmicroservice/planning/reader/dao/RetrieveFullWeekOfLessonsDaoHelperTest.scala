@@ -228,8 +228,8 @@ class RetrieveFullWeekOfLessonsDaoHelperTest extends FunSpec with RetrieveFullWe
     }
   }
 
-  describe("Given a list of one document, convertLessonPlansForTheWeekToModel()"){
-    it("should return a list of ONE lesson plan"){
+  describe("Given a list of one document, convertLessonPlansForTheWeekToModel()") {
+    it("should return a list of ONE lesson plan") {
       val lessonPlans = dao.convertLessonPlansForTheWeekToModel(createSingleMathsLessonPlanDocument() :: Nil)
       assert(lessonPlans.size === 1)
     }
@@ -242,10 +242,47 @@ class RetrieveFullWeekOfLessonsDaoHelperTest extends FunSpec with RetrieveFullWe
     it("should return a map with one key") {
       assert(latestLessonsForTheWeek.keys.size === 1)
     }
+  }
 
-    it("TEST THE SHIT OUT OF THIS NEXT ANDY") {
-      assert(1 === 2)
+  describe("Given A Week Of Lessons For 5 Subjects, buildSubjectToLatestLessonsForTheWeekMap()") {
+    val lessonPlans = dao.convertLessonPlansForTheWeekToModel(createABunchOfLessonsForVariousSubjects())
+    val latestLessonsForTheWeek = dao.buildSubjectToLatestLessonsForTheWeekMap(lessonPlans)
+
+    it("should return a non empty map") {
+      assert(latestLessonsForTheWeek.nonEmpty)
+    }
+    it("should return a map with five keys") {
+      assert(latestLessonsForTheWeek.keys.size === 5)
+    }
+    it("should contain 'EXPRESSIVE_ARTS__ART'"){
+      assert(latestLessonsForTheWeek.isDefinedAt(ScottishCurriculumPlanningAreaWrapper(ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__ART)))
+    }
+    it("should contain 'HEALTH_AND_WELLBEING__PHYSICAL_EDUCATION'"){
+      println(latestLessonsForTheWeek.keys.toString())
+      assert(latestLessonsForTheWeek.isDefinedAt(ScottishCurriculumPlanningAreaWrapper(ScottishCurriculumPlanningArea.HEALTH_AND_WELLBEING__PHYSICAL_EDUCATION)))
+    }
+    it("should contain 'LITERACY__WRITING'"){
+      assert(latestLessonsForTheWeek.isDefinedAt(ScottishCurriculumPlanningAreaWrapper(ScottishCurriculumPlanningArea.LITERACY__WRITING)))
+    }
+    it("should contain 'LITERACY__READING'"){
+      assert(latestLessonsForTheWeek.isDefinedAt(ScottishCurriculumPlanningAreaWrapper(ScottishCurriculumPlanningArea.LITERACY__READING)))
+    }
+    it("should contain 'MATHEMATICS'"){
+      assert(latestLessonsForTheWeek.isDefinedAt(ScottishCurriculumPlanningAreaWrapper(ScottishCurriculumPlanningArea.MATHEMATICS)))
     }
 
+    it("should return a map which has five values for every key") {
+      val numberOf5Lessons = latestLessonsForTheWeek.values.count { lessons =>
+        lessons.size == 5
+      }
+      assert(numberOf5Lessons === 5)
+    }
+    it(s"should have all 25 lessons in total") {
+       assert(latestLessonsForTheWeek.values.toList.flatten.size === 25)
+    }
+    it(s"should have all lesson values with a timestamp of $TEST_TIMESTAMP_WEEK1_E") {
+      val allLessons = latestLessonsForTheWeek.values.toList.flatten
+      assert(allLessons.count(elem => elem.createdTimestamp === TEST_TIMESTAMP_WEEK1_E) === 25)
+    }
   }
 }

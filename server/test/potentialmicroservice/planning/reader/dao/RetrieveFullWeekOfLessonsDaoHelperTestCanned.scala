@@ -1,9 +1,9 @@
 package potentialmicroservice.planning.reader.dao
 
+import java.time.{LocalDate, LocalTime}
+
 import duplicate.model.FirstLevel
 import duplicate.model.esandos._
-import duplicate.model.planning.LessonPlan
-import models.timetoteach.planning.ScottishCurriculumPlanningAreaWrapper
 import org.mongodb.scala.bson.collection.immutable.Document
 import org.mongodb.scala.bson.{BsonArray, BsonDocument}
 import potentialmicroservice.planning.sharedschema.{SingleLessonPlanSchema, WeeklyPlanningSchema}
@@ -142,6 +142,65 @@ trait RetrieveFullWeekOfLessonsDaoHelperTestCanned extends PlanWriterDaoTermlyCu
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+  def oneWeeksWorthOfLessonsForThisSubjectAndStartTime(subject: String, startTime: String, weekBeginning: String): List[Document] = {
+    val wkBeginning = LocalDate.parse(weekBeginning)
+    val startLocalTime = LocalTime.parse(startTime)
+    val endLocalTime = startLocalTime.plusHours(1)
+
+    {
+      for {
+        dayNumber <- List.range(0, 5)
+        lessonDate = wkBeginning.plusDays(dayNumber).toString
+        lesson1 = createLessonPlanDocument(subject, weekBeginning, lessonDate, TEST_TIMESTAMP_WEEK1_A, startTime,
+          endLocalTime.toString.replace("T", " "), TEST_ACTIVITIES_PER_GROUP, TEST_RESOURCES,
+          TEST_LEARNING_INTENTIONS_PER_GROUP, TEST_SUCCESS_CRITERIA_PER_GROUP, TEST_PLENARIES, TEST_FORMATIVE_ASSESSMENT_PER_GROUP,
+          TEST_NOTES_BEFORE, TEST_NOTES_AFTER
+        )
+        lesson2 = createLessonPlanDocument(subject, weekBeginning, lessonDate, TEST_TIMESTAMP_WEEK1_C, startTime,
+          endLocalTime.toString.replace("T", " "), TEST_ACTIVITIES_PER_GROUP, TEST_RESOURCES,
+          TEST_LEARNING_INTENTIONS_PER_GROUP, TEST_SUCCESS_CRITERIA_PER_GROUP, TEST_PLENARIES, TEST_FORMATIVE_ASSESSMENT_PER_GROUP,
+          TEST_NOTES_BEFORE, TEST_NOTES_AFTER
+        )
+        lesson3 = createLessonPlanDocument(subject, weekBeginning, lessonDate, TEST_TIMESTAMP_WEEK1_E, startTime,
+          endLocalTime.toString.replace("T", " "), TEST_ACTIVITIES_PER_GROUP, TEST_RESOURCES,
+          TEST_LEARNING_INTENTIONS_PER_GROUP, TEST_SUCCESS_CRITERIA_PER_GROUP, TEST_PLENARIES, TEST_FORMATIVE_ASSESSMENT_PER_GROUP,
+          TEST_NOTES_BEFORE, TEST_NOTES_AFTER
+        )
+        lesson4 = createLessonPlanDocument(subject, weekBeginning, lessonDate, TEST_TIMESTAMP_WEEK1_D, startTime,
+          endLocalTime.toString.replace("T", " "), TEST_ACTIVITIES_PER_GROUP, TEST_RESOURCES,
+          TEST_LEARNING_INTENTIONS_PER_GROUP, TEST_SUCCESS_CRITERIA_PER_GROUP, TEST_PLENARIES, TEST_FORMATIVE_ASSESSMENT_PER_GROUP,
+          TEST_NOTES_BEFORE, TEST_NOTES_AFTER
+        )
+        lesson5 = createLessonPlanDocument(subject, weekBeginning, lessonDate, TEST_TIMESTAMP_WEEK1_B, startTime,
+          endLocalTime.toString.replace("T", " "), TEST_ACTIVITIES_PER_GROUP, TEST_RESOURCES,
+          TEST_LEARNING_INTENTIONS_PER_GROUP, TEST_SUCCESS_CRITERIA_PER_GROUP, TEST_PLENARIES, TEST_FORMATIVE_ASSESSMENT_PER_GROUP,
+          TEST_NOTES_BEFORE, TEST_NOTES_AFTER
+        )
+      } yield List(lesson1, lesson2, lesson3, lesson4, lesson5)
+    }.flatten
+  }
+
+  def oneWeeksWorthOfLessonsForTheseSubjectsAndStartTime(subjects: List[(String, String)], weekBeginning: String): List[Document] = {
+    {
+      for {
+        subject <- subjects
+      } yield oneWeeksWorthOfLessonsForThisSubjectAndStartTime(subject._1, subject._2, weekBeginning)
+    }.flatten
+  }
+
+  def createABunchOfLessonsForVariousSubjects(): List[Document] = {
+    val subjectsAndStartTimes = List(
+      ("EXPRESSIVE_ARTS__ART", "09:00"),
+      ("HEALTH_AND_WELLBEING__PHYSICAL_EDUCATION", "10:00"),
+      ("LITERACY__WRITING", "11:00"),
+      ("LITERACY__READING", "13:00"),
+      ("MATHEMATICS", "14:00")
+    )
+
+    oneWeeksWorthOfLessonsForTheseSubjectsAndStartTime(subjectsAndStartTimes, TEST_WEEK1)
+  }
+
+
   def createSingleMathsLessonPlanDocument(): Document = {
     createLessonPlanDocument(
       TEST_SUBJECT_MATHS,
@@ -167,7 +226,7 @@ trait RetrieveFullWeekOfLessonsDaoHelperTestCanned extends PlanWriterDaoTermlyCu
                                createdTimestamp: String,
                                lessonStartTime: String,
                                lessonEndTime: String,
-                               activtiesPerGroup: BsonArray,
+                               activitiesPerGroup: BsonArray,
                                resources: BsonArray,
                                learningIntentions: BsonArray,
                                successCriteria: BsonArray,
@@ -187,7 +246,7 @@ trait RetrieveFullWeekOfLessonsDaoHelperTestCanned extends PlanWriterDaoTermlyCu
       SingleLessonPlanSchema.LESSON_START_TIME -> lessonStartTime,
       SingleLessonPlanSchema.LESSON_END_TIME -> lessonEndTime,
 
-      SingleLessonPlanSchema.ACTIVITIES_PER_GROUP -> activtiesPerGroup,
+      SingleLessonPlanSchema.ACTIVITIES_PER_GROUP -> activitiesPerGroup,
       SingleLessonPlanSchema.RESOURCES -> resources,
       SingleLessonPlanSchema.LEARNING_INTENTIONS_PER_GROUP -> learningIntentions,
       SingleLessonPlanSchema.SUCCESS_CRITERIA_PER_GROUP -> successCriteria,
@@ -208,7 +267,7 @@ trait RetrieveFullWeekOfLessonsDaoHelperTestCanned extends PlanWriterDaoTermlyCu
           "estimate the number of objects in other groups",
         "Checks estimates by counting.",
         "Demonstrates skills of estimation in the contexts of number and measure using relevant vocabulary, " +
-          "including less than, longer than, more than and the same."
+          "including less than, longeroneWeeksWorthOfLessonsForTheseSubjectsAndStartTime than, more than and the same."
       )
     ) :: BsonDocument(
       WeeklyPlanningSchema.SELECTED_SECTION_NAME -> "Number, money and measure",

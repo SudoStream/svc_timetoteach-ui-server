@@ -47,7 +47,7 @@ object MongoDbSafety
         logger.warn(s"Failed to parse assumed fomat. ${formatter.toString}, trying ${formatter2.toString}")
         LocalDateTime.parse(nextTimestampIso, formatter2)
     }
-    logger.debug(s"Time parsed = '${time.toString}'")
+//    logger.debug(s"Time parsed = '${time.toString}'")
     time
   }
 

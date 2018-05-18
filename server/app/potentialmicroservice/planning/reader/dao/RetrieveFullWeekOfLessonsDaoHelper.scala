@@ -194,6 +194,10 @@ trait RetrieveFullWeekOfLessonsDaoHelper {
   private[dao] def buildSubjectToLatestLessonsForTheWeekMap(
                                                              allLessonPlans: List[LessonPlan]
                                                            ): Map[ScottishCurriculumPlanningAreaWrapper, List[LessonPlan]] = {
+    def getNextLessonKey(date: String, time: String) : String = {
+      s"${date}_$time"
+    }
+
     @tailrec
     def loop(
               remainingLessons: List[LessonPlan],
@@ -203,27 +207,28 @@ trait RetrieveFullWeekOfLessonsDaoHelper {
         decomposeMap(currentMap)
       } else {
         val nextLesson = remainingLessons.head
-        val nextLessonStartTime = nextLesson.startTimeIso
+        val nextLessonKey = getNextLessonKey(nextLesson.lessonDateIso, nextLesson.startTimeIso)
         val nextSubjectWrapper = CurriculumConverterUtil.
           convertSubjectToScottishCurriculumPlanningAreaWrapper(nextLesson.subject)
+
         val nextMap = if(currentMap.isDefinedAt(nextSubjectWrapper)) {
-          if (currentMap(nextSubjectWrapper).isDefinedAt(nextLessonStartTime)) {
-            val currentTimeLesson = currentMap(nextSubjectWrapper)(nextLessonStartTime)
+          if (currentMap(nextSubjectWrapper).isDefinedAt(nextLessonKey)) {
+            val currentTimeLesson = currentMap(nextSubjectWrapper)(nextLessonKey)
             val currentLessonTimestamp = MongoDbSafety.safelyParseTimestamp(currentTimeLesson.createdTimestamp)
             val nextLessonTimestamp = MongoDbSafety.safelyParseTimestamp(nextLesson.createdTimestamp)
             if (nextLessonTimestamp.isAfter(currentLessonTimestamp)) {
-              val nextTimeMap = currentMap(nextSubjectWrapper) + (nextLessonStartTime -> nextLesson)
+              val nextTimeMap = currentMap(nextSubjectWrapper) + (nextLessonKey -> nextLesson)
               currentMap + (nextSubjectWrapper -> nextTimeMap)
             } else {
               currentMap
             }
           } else {
             val currentTimeMap = currentMap(nextSubjectWrapper)
-            val nextTimeMap = currentTimeMap + (nextLessonStartTime -> nextLesson)
+            val nextTimeMap = currentTimeMap + (nextLessonKey -> nextLesson)
             currentMap + (nextSubjectWrapper -> nextTimeMap)
           }
         } else {
-          currentMap + (nextSubjectWrapper -> Map(nextLessonStartTime -> nextLesson))
+          currentMap + (nextSubjectWrapper -> Map(nextLessonKey -> nextLesson))
         }
 
         loop(remainingLessons.tail, nextMap)

@@ -48,7 +48,7 @@ object CurriculumConverterUtil
       case "EXPRESSIVE_ARTS__DANCE" => ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__DANCE
       case "EXPRESSIVE_ARTS__MUSIC" => ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__MUSIC
       case "HEALTH_AND_WELLBEING" => ScottishCurriculumPlanningArea.HEALTH_AND_WELLBEING
-      case "HEALTH_AND_WELLBEING__PHYSICAL_EDUCATION" => ScottishCurriculumPlanningArea.HEALTH_AND_WELLBEING
+      case "HEALTH_AND_WELLBEING__PHYSICAL_EDUCATION" => ScottishCurriculumPlanningArea.HEALTH_AND_WELLBEING__PHYSICAL_EDUCATION
       case "WRITING" | "LITERACY__WRITING" => ScottishCurriculumPlanningArea.LITERACY__WRITING
       case "READING" | "LITERACY__READING" => ScottishCurriculumPlanningArea.LITERACY__READING
       case "LITERACY__LISTENING_AND_TALKING" => ScottishCurriculumPlanningArea.LITERACY__LISTENING_AND_TALKING

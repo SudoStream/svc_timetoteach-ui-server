@@ -83,14 +83,20 @@ trait PlanWriterDaoTermlyCurriculumSelectionHelper {
   }
 
   private def convertGroupAttributesToBsonArray(attributeMap: Map[String, List[String]]): BsonArray = {
-    BsonArray(
-      for {
+    val bsonArrayToreturn = BsonArray()
+
+    val docsToAdd = for {
         attributeKeyValue <- attributeMap.keys.toList
       } yield Document(
         SingleLessonPlanSchema.ATTRIBUTE_VALUE -> attributeKeyValue,
         SingleLessonPlanSchema.GROUP_IDS -> convertListStringsToBsonArray(attributeMap(attributeKeyValue))
       )
-    )
+
+    for(doc <- docsToAdd) {
+      bsonArrayToreturn.add(doc.toBsonDocument)
+    }
+
+    bsonArrayToreturn
   }
 
   private def convertListStringsToBsonArray(listOfStrings: List[String]): BsonArray = {
