@@ -6,14 +6,14 @@ import duplicate.model.planning._
 import org.scalajs.dom
 import org.scalajs.dom.ext.Ajax
 import org.scalajs.dom.ext.Ajax.InputData
-import org.scalajs.dom.html.{Div, LI, UList}
+import org.scalajs.dom.html.{Div, LI, Span, UList}
 import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement, HTMLElement, HTMLInputElement}
 import scalatags.JsDom
 import scalatags.JsDom.all.{`class`, attr, div, _}
 import shared.util.PlanningHelper
 import upickle.default.write
 
-import scala.collection.mutable
+import scala.collection.{immutable, mutable}
 import scala.collection.mutable.ListBuffer
 import scala.scalajs.js
 import scala.scalajs.js.Dynamic.global
@@ -63,8 +63,48 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
 
   }
 
+  private def getDateOfWeekAsNumber(date: String) : Int = {
+    new js.Date(date).getDay()
+  }
+
+  private def getDayOfWeekAsNumber(day: String) : Int = {
+    day.toUpperCase match {
+      case "MONDAY" => 1
+      case "TUESDAY" => 2
+      case "WEDNESDAY" => 3
+      case "THURSDAY" => 4
+      case "FRIDAY" => 5
+      case _ => 0
+    }
+  }
+
+  private def createLessonStatus(lessonSummary: LessonSummary): JsDom.TypedTag[Span] = {
+    val fullWeeklyPlanOfLessonsPickled = dom.window.localStorage.getItem("fullWeeklyPlanOfLessonsPickled")
+    import upickle.default._
+    val fullWeeklyPlanOfLessons: FullWeeklyPlanOfLessons = read[FullWeeklyPlanOfLessons](PlanningHelper.decodeAnyNonFriendlyCharacters(fullWeeklyPlanOfLessonsPickled))
+
+    val jsDate = new js.Date("2018-03-08")
+    jsDate.getDay()
+    val status = if (fullWeeklyPlanOfLessons.subjectToWeeklyPlanOfSubject.isDefinedAt(lessonSummary.subject)) {
+      val theLessons: immutable.Seq[LessonPlan] = fullWeeklyPlanOfLessons.subjectToWeeklyPlanOfSubject(lessonSummary.subject).lessons
+      val numberLessons = theLessons.count { elem =>
+        elem.startTimeIso == lessonSummary.startTimeIso &&
+          getDateOfWeekAsNumber(elem.lessonDateIso) == getDayOfWeekAsNumber(lessonSummary.dayOfWeek)
+      }
+      if (numberLessons == 1) s"  ^" else s"  ?"
+    } else {
+      "  X"
+    }
+
+    span(
+      status
+    )
+  }
+
   def createTabbedWeeklyPlan(lessonSummary: LessonSummary, index: Int): JsDom.TypedTag[LI] = {
     val anchorClasses = if (index == 0) "nav-link active" else "nav-link"
+
+    val lessonStatus = createLessonStatus(lessonSummary)
 
     li(`class` := "nav-item")(
       a(`class` := anchorClasses,
@@ -74,6 +114,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
         attr("role") := "tab"
       )(
         lessonSummary.dayOfWeek.toLowerCase.capitalize,
+        lessonStatus,
         br,
         span(`class` := "text-muted")(
           small(s"(${lessonSummary.startTimeIso}-${lessonSummary.endTimeIso})"))
@@ -146,7 +187,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     dom.document.getElementById("create-weekly-plans-modal-body").appendChild(child)
   }
 
-  def createTestMessage() : Unit = {
+  def createTestMessage(): Unit = {
     val fullWeeklyPlanOfLessonsPickled = dom.window.localStorage.getItem("fullWeeklyPlanOfLessonsPickled")
     import upickle.default._
     val fullWeeklyPlanOfLessons: FullWeeklyPlanOfLessons = read[FullWeeklyPlanOfLessons](PlanningHelper.decodeAnyNonFriendlyCharacters(fullWeeklyPlanOfLessonsPickled))
