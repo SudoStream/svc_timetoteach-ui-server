@@ -40,7 +40,7 @@
 @buildEsAndOsSection(plan: models.timetoteach.planning.pdf.CurriculumAreaTermlyPlanForPdf) = {
     <div class="create-weekly-plans-es-os-and-benchmarks-window">
 
-        <h5 class="text-center create-weekly-plans-sub-header text-info">
+        <h5 class="text-center create-weekly-plans-sub-header text-danger">
             Select the Es & Os / Benchmarks you'll be covering this week for @ScottishCurriculumPlanningAreaWrapper(plan.planningArea).niceSubjectLevelValue()</h5>
 
         @for(esOsWithBenchmarks <- plan.eAndOsWithBenchmarks) {
@@ -230,7 +230,11 @@
                                             href="#v-pills-content-@termlyPlanForArea.planningArea.toString"
                                             aria-controls="v-pills-content-@termlyPlanForArea.planningArea.toString">
                                             @{
-                                                ScottishCurriculumPlanningAreaWrapper(termlyPlanForArea.planningArea).niceSubjectLevelValue()
+                                                if (termlyPlanForArea.maybeGroup.isDefined) {
+                                                    ScottishCurriculumPlanningAreaWrapper(termlyPlanForArea.planningArea).niceSubjectLevelValue()
+                                                } else {
+                                                    "Class Plan"
+                                                }
                                             }
                                             </a>
                                         } else {
@@ -239,7 +243,11 @@
                                             href="#v-pills-content-@termlyPlanForArea.planningArea.toString"
                                             aria-controls="v-pills-content-@termlyPlanForArea.planningArea.toString" >
                                             @{
-                                                ScottishCurriculumPlanningAreaWrapper(termlyPlanForArea.planningArea).niceSubjectLevelValue()
+                                                if (termlyPlanForArea.maybeGroup.isDefined) {
+                                                    ScottishCurriculumPlanningAreaWrapper(termlyPlanForArea.planningArea).niceSubjectLevelValue()
+                                                } else {
+                                                    "Class Plan"
+                                                }
                                             }
                                             </a>
 
@@ -326,9 +334,7 @@
                                                 id="v-pills-tab-@termlyPlanForArea.planningArea.toString"
                                                 href="#v-pills-content-@termlyPlanForArea.planningArea.toString"
                                                 aria-controls="v-pills-content-@termlyPlanForArea.planningArea.toString">
-                                                @{
-                                                    ScottishCurriculumPlanningAreaWrapper(termlyPlanForArea.planningArea).niceSubjectLevelValue()
-                                                }
+                                                Class Plan
                                                 </a>
                                             }
                                         } else {
@@ -358,9 +364,7 @@
                                                 id="v-pills-tab-@termlyPlanForArea.planningArea.toString"
                                                 href="#v-pills-content-@termlyPlanForArea.planningArea.toString"
                                                 aria-controls="v-pills-content-@termlyPlanForArea.planningArea.toString" >
-                                                @{
-                                                    ScottishCurriculumPlanningAreaWrapper(termlyPlanForArea.planningArea).niceSubjectLevelValue()
-                                                }
+                                                    Class Plan
                                                 </a>
                                             }
 
