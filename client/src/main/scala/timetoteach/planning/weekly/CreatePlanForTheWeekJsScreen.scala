@@ -6,18 +6,17 @@ import duplicate.model.planning._
 import org.scalajs.dom
 import org.scalajs.dom.ext.Ajax
 import org.scalajs.dom.ext.Ajax.InputData
-import org.scalajs.dom.html.{Div, LI, Span, UList}
+import org.scalajs.dom.html.{Div, LI, UList}
 import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement, HTMLElement, HTMLInputElement}
 import org.scalajs.dom.svg.SVG
 import scalatags.JsDom
 import scalatags.JsDom.TypedTag
 import scalatags.JsDom.all.{`class`, attr, div, _}
 import shared.util.PlanningHelper
-import timetoteach.planning.weekly.WeeklyPlanningJsScreen.currentlySelectMondayStartOfWeekDate
 import upickle.default.write
 
+import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
-import scala.collection.{immutable, mutable}
 import scala.scalajs.js
 import scala.scalajs.js.Dynamic.global
 import scala.util.{Failure, Success}
@@ -201,15 +200,14 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     }
   }
 
-  def addLessonPlanDetailsFromSavedStatus() : Unit = {
+  def addLessonPlanDetailsFromSavedStatus(): Unit = {
     val fullWeeklyPlanOfLessonsPickled = dom.window.localStorage.getItem("fullWeeklyPlanOfLessonsPickled")
     import upickle.default._
     val fullWeeklyPlanOfLessons: FullWeeklyPlanOfLessons = read[FullWeeklyPlanOfLessons](PlanningHelper.decodeAnyNonFriendlyCharacters(fullWeeklyPlanOfLessonsPickled))
 
-//    andy
+    //    andy
     // find the click buttons
     //addButtonClickBehaviour("create-weekly-plans-add-to-lesson-button-add-activity", "Activity", true)
-
   }
 
   private def planLessonsButton(): Unit = {
