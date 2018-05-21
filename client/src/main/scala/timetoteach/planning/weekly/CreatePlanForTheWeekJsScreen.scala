@@ -8,13 +8,16 @@ import org.scalajs.dom.ext.Ajax
 import org.scalajs.dom.ext.Ajax.InputData
 import org.scalajs.dom.html.{Div, LI, Span, UList}
 import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement, HTMLElement, HTMLInputElement}
+import org.scalajs.dom.svg.SVG
 import scalatags.JsDom
+import scalatags.JsDom.TypedTag
 import scalatags.JsDom.all.{`class`, attr, div, _}
 import shared.util.PlanningHelper
+import timetoteach.planning.weekly.WeeklyPlanningJsScreen.currentlySelectMondayStartOfWeekDate
 import upickle.default.write
 
-import scala.collection.{immutable, mutable}
 import scala.collection.mutable.ListBuffer
+import scala.collection.{immutable, mutable}
 import scala.scalajs.js
 import scala.scalajs.js.Dynamic.global
 import scala.util.{Failure, Success}
@@ -43,6 +46,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     deleteSingleRowFromClassPlan()
     resetValuesOnTabClick()
     saveSubjectWeeksPlanButton()
+    addTickToSavedLessons()
   }
 
   private def setEsOsBenchmarksSummary(): Unit = {
@@ -63,11 +67,11 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
 
   }
 
-  private def getDateOfWeekAsNumber(date: String) : Int = {
+  private def getDateOfWeekAsNumber(date: String): Int = {
     new js.Date(date).getDay()
   }
 
-  private def getDayOfWeekAsNumber(day: String) : Int = {
+  private def getDayOfWeekAsNumber(day: String): Int = {
     day.toUpperCase match {
       case "MONDAY" => 1
       case "TUESDAY" => 2
@@ -78,33 +82,9 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     }
   }
 
-  private def createLessonStatus(lessonSummary: LessonSummary): JsDom.TypedTag[Span] = {
-    val fullWeeklyPlanOfLessonsPickled = dom.window.localStorage.getItem("fullWeeklyPlanOfLessonsPickled")
-    import upickle.default._
-    val fullWeeklyPlanOfLessons: FullWeeklyPlanOfLessons = read[FullWeeklyPlanOfLessons](PlanningHelper.decodeAnyNonFriendlyCharacters(fullWeeklyPlanOfLessonsPickled))
-
-    val jsDate = new js.Date("2018-03-08")
-    jsDate.getDay()
-    val status = if (fullWeeklyPlanOfLessons.subjectToWeeklyPlanOfSubject.isDefinedAt(lessonSummary.subject)) {
-      val theLessons: immutable.Seq[LessonPlan] = fullWeeklyPlanOfLessons.subjectToWeeklyPlanOfSubject(lessonSummary.subject).lessons
-      val numberLessons = theLessons.count { elem =>
-        elem.startTimeIso == lessonSummary.startTimeIso &&
-          getDateOfWeekAsNumber(elem.lessonDateIso) == getDayOfWeekAsNumber(lessonSummary.dayOfWeek)
-      }
-      if (numberLessons == 1) s"  ^" else s"  ?"
-    } else {
-      "  X"
-    }
-
-    span(
-      status
-    )
-  }
 
   def createTabbedWeeklyPlan(lessonSummary: LessonSummary, index: Int): JsDom.TypedTag[LI] = {
     val anchorClasses = if (index == 0) "nav-link active" else "nav-link"
-
-    val lessonStatus = createLessonStatus(lessonSummary)
 
     li(`class` := "nav-item")(
       a(`class` := anchorClasses,
@@ -114,7 +94,6 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
         attr("role") := "tab"
       )(
         lessonSummary.dayOfWeek.toLowerCase.capitalize,
-        lessonStatus,
         br,
         span(`class` := "text-muted")(
           small(s"(${lessonSummary.startTimeIso}-${lessonSummary.endTimeIso})"))
@@ -187,13 +166,50 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     dom.document.getElementById("create-weekly-plans-modal-body").appendChild(child)
   }
 
-  def createTestMessage(): Unit = {
+  def createSvgTick(): TypedTag[SVG] = {
+    import scalatags.JsDom.TypedTag
+    import scalatags.JsDom.svgTags.{svg, use}
+
+    val tick: TypedTag[SVG] = svg(attr("version") := "1.1", `width` := "16", attr("viewbox") := "0 0 12 16",
+      attr("class") := "octicon octicon-check float-right the-lesson-tick-done")(use(attr("xlink:href") := "#check")
+    )
+
+    tick
+  }
+
+  def subjectHasLessonsSaved(subjectName: String): Boolean = {
     val fullWeeklyPlanOfLessonsPickled = dom.window.localStorage.getItem("fullWeeklyPlanOfLessonsPickled")
     import upickle.default._
     val fullWeeklyPlanOfLessons: FullWeeklyPlanOfLessons = read[FullWeeklyPlanOfLessons](PlanningHelper.decodeAnyNonFriendlyCharacters(fullWeeklyPlanOfLessonsPickled))
-    val messageDiv = dom.document.getElementById("fullLessonsPickledDiv")
-    messageDiv.innerHTML = s"Howdy doodly do :- ${fullWeeklyPlanOfLessons.weekBeginningIsoDate} || " +
-      s"${fullWeeklyPlanOfLessons.subjectToWeeklyPlanOfSubject.keys.toString()}"
+    if (fullWeeklyPlanOfLessons.subjectToWeeklyPlanOfSubject.isDefinedAt(subjectName)) true else false
+  }
+
+  def addTickToSavedLessons(): Unit = {
+    val weeklyTopLevelTabs = dom.document.getElementsByClassName("weekly-plans-top-level-tab")
+    val nodeListSize = weeklyTopLevelTabs.length
+    var index = 0
+    while (index < nodeListSize) {
+      val tabElement = weeklyTopLevelTabs(index).asInstanceOf[HTMLElement]
+      val subjectName = tabElement.getAttribute("data-subject-area")
+      if (subjectHasLessonsSaved(subjectName)) {
+        val child = dom.document.createElement("span")
+        child.innerHTML = span(`class` := "create-weekly-plans-subject-done-check-green")(createSvgTick()).toString()
+        tabElement.appendChild(child)
+      }
+
+      index = index + 1
+    }
+  }
+
+  def addLessonPlanDetailsFromSavedStatus() : Unit = {
+    val fullWeeklyPlanOfLessonsPickled = dom.window.localStorage.getItem("fullWeeklyPlanOfLessonsPickled")
+    import upickle.default._
+    val fullWeeklyPlanOfLessons: FullWeeklyPlanOfLessons = read[FullWeeklyPlanOfLessons](PlanningHelper.decodeAnyNonFriendlyCharacters(fullWeeklyPlanOfLessonsPickled))
+
+//    andy
+    // find the click buttons
+    //addButtonClickBehaviour("create-weekly-plans-add-to-lesson-button-add-activity", "Activity", true)
+
   }
 
   private def planLessonsButton(): Unit = {
@@ -229,12 +245,11 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
           currentlySelectedLessonSummariesThisWeek = Some(lessonsThisWeek.subjectToLessons(planningArea))
         }
 
-        createTestMessage()
         setEsOsBenchmarksSummary()
         buildTabbedWeekOfPlanning(lessonsThisWeek, planningArea)
         cleanupModalAdds()
         clickingOnAddToLessonsButtons()
-
+        addLessonPlanDetailsFromSavedStatus()
         val $ = js.Dynamic.global.$
         $("#create-weekly-plans-lesson-modal").modal("show", "backdrop: static", "keyboard : false")
       })
@@ -879,6 +894,12 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
         dom.window.setTimeout(() => {
           val $ = js.Dynamic.global.$
           $("#create-weekly-plans-lesson-modal").modal("hide")
+          currentlySelectMondayStartOfWeekDate match {
+            case Some(mondayIsoDate) =>
+              dom.window.location.href = s"/createPlanForTheWeek/$classId/$mondayIsoDate"
+            case None =>
+              dom.window.location.href = s"/createPlanForTheWeek/$classId"
+          }
 
         }, 10)
       case Failure(ex) =>

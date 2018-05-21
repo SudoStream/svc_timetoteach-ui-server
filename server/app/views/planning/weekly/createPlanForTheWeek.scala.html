@@ -189,20 +189,22 @@
                 @for((planningArea, indexPlanningArea) <- currentTermlyPlan.plansAtSubjectLevel.keys.toList.sortBy(elem => elem.orderNumber).zipWithIndex) {
                     @if(indexPlanningArea == 0) {
                         <li class="nav-item">
-                            <a class="nav-link active"
+                            <a class="nav-link active weekly-plans-top-level-tab"
                             id="weekly-plans-tab_@planningArea.value.toString"
                             aria-controls="weekly-plans-tab_content_@planningArea.value.toString"
                             href="#weekly-plans-tab-content_@planningArea.value.toString"
+                            data-subject-area="@planningArea.value.toString"
                             data-toggle="tab" role="tab" aria-selected="true">
                             @planningArea.niceSubjectLevelValue()
                             </a>
                         </li>
                     } else {
                         <li class="nav-item">
-                            <a class="nav-link"
+                            <a class="nav-link weekly-plans-top-level-tab"
                             id="weekly-plans-tab_@planningArea.value.toString"
                             aria-controls="weekly-plans-tab_content_@planningArea.value.toString"
                             href="#weekly-plans-tab-content_@planningArea.value.toString"
+                            data-subject-area="@planningArea.value.toString"
                             data-toggle="tab" role="tab" aria-selected="false">
                             @planningArea.niceSubjectLevelValue()
                             </a>
@@ -443,7 +445,8 @@
 
                 </div>
                 <div class="modal-footer">
-                    <button id="create-weekly-plans-save-subject-plan" type="button" class="btn btn-primary">Save Plan(s)</button>
+                    <button id="create-weekly-plans-save-subject-plan" type="button" class="btn btn-primary">
+                        Save Plan(s)</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -451,13 +454,13 @@
     </div>
 
     <script>
-            localStorage.setItem("classId", "@classDetails.id.id");
-            localStorage.setItem("tttUserId", "@tttUserId.value");
-            localStorage.setItem("lessonsThisWeekPickled", "@lessonsThisWeekPickled");
-            localStorage.setItem("fullWeeklyPlanOfLessonsPickled", "@fullWeeklyPlanOfLessonsPickled");
-            @for(group <- classDetails.groups) {
-                localStorage.setItem("@group.groupId.id", "@group.groupName.name");
-            }
+    localStorage.setItem("classId", "@classDetails.id.id");
+    localStorage.setItem("tttUserId", "@tttUserId.value");
+    localStorage.setItem("lessonsThisWeekPickled", "@lessonsThisWeekPickled");
+    localStorage.setItem("fullWeeklyPlanOfLessonsPickled", "@fullWeeklyPlanOfLessonsPickled");
+    @for(group <- classDetails.groups) {
+    localStorage.setItem("@group.groupId.id", "@group.groupName.name");
+    }
     </script>
 
 

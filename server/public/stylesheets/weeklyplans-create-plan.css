@@ -177,3 +177,16 @@
     margin-top: 2rem;
     margin-bottom: 1rem;
 }
+
+.create-weekly-plans-subject-done-check-green  {
+    color: green;
+}
+
+.weekly-plans-top-level-tab {
+    padding-right: 0.5rem;
+    margin-right: 0.5rem;
+}
+
+.the-lesson-tick-done {
+    margin-left: 0.3rem;
+}
