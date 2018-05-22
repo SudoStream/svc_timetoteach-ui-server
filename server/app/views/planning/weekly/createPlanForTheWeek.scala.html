@@ -1,13 +1,11 @@
 @import curriculum.scotland.EsOsAndBenchmarksBuilderImpl
 @import duplicate.model.ClassDetails
+@import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.ClassTimetable
+@import models.timetoteach.TimeToTeachUserId
 @import models.timetoteach.planning.ScottishCurriculumPlanningAreaWrapper
 @import models.timetoteach.planning.pdf.CurriculumAreaTermlyPlanForPdfWrapper
-@import models.timetoteach.ui._
-@import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.ClassTimetable
 @import models.timetoteach.term.SchoolTerm
-@import duplicate.model.planning.LessonsThisWeek
-@import models.timetoteach.TimeToTeachUserId
-@import duplicate.model.planning.FullWeeklyPlanOfLessons
+@import models.timetoteach.ui._
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler,
         userPictureUri: Option[String],
         userFirstName: Option[String],
@@ -230,7 +228,7 @@
                                             href="#v-pills-content-@termlyPlanForArea.planningArea.toString"
                                             aria-controls="v-pills-content-@termlyPlanForArea.planningArea.toString">
                                             @{
-                                                if (termlyPlanForArea.maybeGroup.isDefined) {
+                                                if(termlyPlanForArea.maybeGroup.isDefined) {
                                                     ScottishCurriculumPlanningAreaWrapper(termlyPlanForArea.planningArea).niceSubjectLevelValue()
                                                 } else {
                                                     "Class Plan"
@@ -243,7 +241,7 @@
                                             href="#v-pills-content-@termlyPlanForArea.planningArea.toString"
                                             aria-controls="v-pills-content-@termlyPlanForArea.planningArea.toString" >
                                             @{
-                                                if (termlyPlanForArea.maybeGroup.isDefined) {
+                                                if(termlyPlanForArea.maybeGroup.isDefined) {
                                                     ScottishCurriculumPlanningAreaWrapper(termlyPlanForArea.planningArea).niceSubjectLevelValue()
                                                 } else {
                                                     "Class Plan"
@@ -309,10 +307,14 @@
                                     @for((termlyPlanForArea, indexTermlyPlanForArea) <- currentTermlyPlan.plansAtSubjectLevel(planningArea).sortBy(elem => elem.orderNumber).zipWithIndex) {
                                         @if(indexTermlyPlanForArea == 0) {
                                             @if(ScottishCurriculumPlanningAreaWrapper(termlyPlanForArea.planningArea).planAtGroupLevel) {
-                                                <a class="nav-link active" data-toggle="pill" role="tab" aria-selected="false"
+                                                <a class="nav-link active tab-with-group-id" data-toggle="pill" role="tab" aria-selected="false"
                                                 id="v-pills-tab-@termlyPlanForArea.planningArea.toString-@termlyPlanForArea.maybeGroup.get.groupName.name"
                                                 href="#v-pills-content-@termlyPlanForArea.planningArea.toString-@termlyPlanForArea.maybeGroup.get.groupName.name"
-                                                aria-controls="v-pills-content-@termlyPlanForArea.planningArea.toString-@termlyPlanForArea.maybeGroup.get.groupName.name">
+                                                aria-controls="v-pills-content-@termlyPlanForArea.planningArea.toString-@termlyPlanForArea.maybeGroup.get.groupName.name"
+                                                data-tab-is-from-subject="@termlyPlanForArea.planningArea.toString"
+                                                data-group-id="@termlyPlanForArea.maybeGroup.get.groupId.id"
+                                                data-group-name="@termlyPlanForArea.maybeGroup.get.groupName.name"
+                                                >
                                                     @{
                                                         termlyPlanForArea.maybeGroup match {
                                                             case Some(group) => s"${group.groupName.name}"
@@ -334,15 +336,19 @@
                                                 id="v-pills-tab-@termlyPlanForArea.planningArea.toString"
                                                 href="#v-pills-content-@termlyPlanForArea.planningArea.toString"
                                                 aria-controls="v-pills-content-@termlyPlanForArea.planningArea.toString">
-                                                Class Plan
+                                                    Class Plan
                                                 </a>
                                             }
                                         } else {
                                             @if(ScottishCurriculumPlanningAreaWrapper(termlyPlanForArea.planningArea).planAtGroupLevel) {
-                                                <a class="nav-link" data-toggle="pill" role="tab" aria-selected="false"
+                                                <a class="nav-link tab-with-group-id" data-toggle="pill" role="tab" aria-selected="false"
                                                 id="v-pills-tab-@termlyPlanForArea.planningArea.toString-@termlyPlanForArea.maybeGroup.get.groupName.name"
                                                 href="#v-pills-content-@termlyPlanForArea.planningArea.toString-@termlyPlanForArea.maybeGroup.get.groupName.name"
-                                                aria-controls="v-pills-content-@termlyPlanForArea.planningArea.toString-@termlyPlanForArea.maybeGroup.get.groupName.name" >
+                                                aria-controls="v-pills-content-@termlyPlanForArea.planningArea.toString-@termlyPlanForArea.maybeGroup.get.groupName.name"
+                                                data-tab-is-from-subject="@termlyPlanForArea.planningArea.toString"
+                                                data-group-id="@termlyPlanForArea.maybeGroup.get.groupId.id"
+                                                data-group-name="@termlyPlanForArea.maybeGroup.get.groupName.name"
+                                                >
                                                     @{
                                                         termlyPlanForArea.maybeGroup match {
                                                             case Some(group) => s"${group.groupName.name}"

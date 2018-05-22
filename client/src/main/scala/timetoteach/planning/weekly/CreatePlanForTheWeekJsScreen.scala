@@ -6,7 +6,7 @@ import duplicate.model.planning._
 import org.scalajs.dom
 import org.scalajs.dom.ext.Ajax
 import org.scalajs.dom.ext.Ajax.InputData
-import org.scalajs.dom.html.{Div, LI, UList}
+import org.scalajs.dom.html.{Div, Input, LI, UList}
 import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement, HTMLElement, HTMLInputElement}
 import org.scalajs.dom.svg.SVG
 import scalatags.JsDom
@@ -33,6 +33,8 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
   private var currentlySelectedPlanningArea: Option[String] = None
   private var currentlySelectedPlanningAreaNice: Option[String] = None
   private var currentlySelectedLessonSummariesThisWeek: Option[List[LessonSummary]] = None
+
+  private var groupIdsToName: scala.collection.mutable.Map[String, String] = scala.collection.mutable.Map.empty
 
   def loadJavascript(): Unit = {
     global.console.log("Loading Create Plan For The Week Javascript")
@@ -243,6 +245,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
       val dataAttributeType = buttonElement.getAttribute("data-attribute-type")
       val jsLessonDate = new js.Date(lessonDate)
 
+      global.console.log(s"attributesPerGroup ${attributesPerGroup.toString()}")
 
       if (dataSubject == subject &&
         dataLessonStartTime == lessonStartTime &&
@@ -252,7 +255,14 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
       ) {
         for (attrValue <- attributesPerGroup.keys) {
           val tabIndex = buttonElement.getAttribute("data-tab-index")
-          addAttributeRow(buttonElementClassType(dataAttributeType), dataAttributeType, true, tabIndex, Some(attrValue))
+          addAttributeRow(
+            buttonElementClassType(dataAttributeType),
+            dataAttributeType,
+            true,
+            tabIndex,
+            Some(attrValue),
+            Some(attributesPerGroup(attrValue))
+          )
         }
       }
 
@@ -280,7 +290,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
       ) {
         for (attrValue <- attributeValues) {
           val tabIndex = buttonElement.getAttribute("data-tab-index")
-          addAttributeRow(buttonElementClassType(dataAttributeType), dataAttributeType, true, tabIndex, Some(attrValue))
+          addAttributeRow(buttonElementClassType(dataAttributeType), dataAttributeType, false, tabIndex, Some(attrValue), None)
         }
       }
 
@@ -295,7 +305,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     if (fullWeeklyPlanOfLessons.subjectToWeeklyPlanOfSubject.isDefinedAt(currentlySelectedPlanningArea.getOrElse("Nope"))) {
       val weeklyPlanOfSubject = fullWeeklyPlanOfLessons.subjectToWeeklyPlanOfSubject(currentlySelectedPlanningArea.getOrElse("Nope"))
       for (lesson <- weeklyPlanOfSubject.lessons) {
-        addAttributeDetailsForGroup(lesson.subject, lesson.lessonDateIso, lesson.startTimeIso, "Activity", lesson.activitiesPerGroup)
+        addAttributeDetailsForGroup(lesson.subject, lesson.lessonDateIso, lesson.startTimeIso, "Activity", lesson.activitiesPerGroup )
         addAttributeDetails(lesson.subject, lesson.lessonDateIso, lesson.startTimeIso, "Resource", lesson.resources)
         addAttributeDetailsForGroup(lesson.subject, lesson.lessonDateIso, lesson.startTimeIso, "Learning Intention", lesson.learningIntentionsPerGroup)
         addAttributeDetailsForGroup(lesson.subject, lesson.lessonDateIso, lesson.startTimeIso, "Success Criteria", lesson.successCriteriaPerGroup)
@@ -585,33 +595,40 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
 
       addActivityButton.addEventListener("click", (e: dom.Event) => {
         global.console.log(s"groups: ${
-          groupToSelectedEsOsAndBenchmarks.keys.toString()
+          groupIdsToName.keys.toString()
         }")
 
         val tabIndex = addActivityButton.getAttribute("data-tab-index")
-
-        addAttributeRow(buttonElementId, buttonNameType, applyToGroups, tabIndex, None)
+        addAttributeRow(buttonElementId, buttonNameType, applyToGroups, tabIndex, None, None)
       })
-
 
       index = index + 1
     }
   }
 
-  private def addAttributeRow(buttonElementId: String, buttonNameType: String, applyToGroups: Boolean, tabIndex: String, attributeText: Option[String]): Unit = {
+  private def addAttributeRow(buttonElementId: String,
+                              buttonNameType: String,
+                              applyToGroups: Boolean,
+                              tabIndex: String,
+                              attributeText: Option[String],
+                              maybeGroupIds: Option[List[String]]
+                             ): Unit = {
+
+
     val groupNamesToGroupIds = for {
-      group <- groupToSelectedEsOsAndBenchmarks.keys
-      subjectAndGroupId = group.split("___")
-      groupId = subjectAndGroupId(1)
-      groupName = dom.window.localStorage.getItem(s"$groupId")
+      groupId <- groupIdsToName.keys
+      groupName = groupIdsToName(groupId)
       if groupName != null
       uniqIdForRow = java.util.UUID.randomUUID().toString
     } yield (groupName, groupId, uniqIdForRow)
 
-    val groupsAsCheckboxes: Seq[TypedTag[Div]] = {
-      for (groupNameToGroupId <- groupNamesToGroupIds) yield div(`class` :=
-        "custom-control custom-checkbox create-weekly-plans-lesson-modal-select-groups")(
 
+    def createGroupInputDiv(groupNameToGroupId: (String, String, String)): TypedTag[Div] = {
+      val groupId = groupNameToGroupId._2
+
+      global.console.log(s"createGroupInputDiv1 : ${maybeGroupIds.toString}")
+      global.console.log(s"createGroupInputDiv2 : ${groupId}")
+      val realInput: TypedTag[Input] = if (maybeGroupIds.isDefined && maybeGroupIds.get.contains(groupId)) {
         input(`id` := s"group-checkbox-${
           groupNameToGroupId._2
         }-${
@@ -623,7 +640,25 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
         }",
           `type` := "checkbox",
           attr("data-group-id") := groupNameToGroupId._2,
-          `class` := "custom-control-input group-on-off", `value` := "On"),
+          `class` := "custom-control-input group-on-off", `value` := "On", checked := true)
+      } else {
+        input(`id` := s"group-checkbox-${
+          groupNameToGroupId._2
+        }-${
+          groupNameToGroupId._3
+        }", `name` := s"group-checkbox-${
+          groupNameToGroupId._2
+        }-${
+          groupNameToGroupId._3
+        }",
+          `type` := "checkbox",
+          attr("data-group-id") := groupNameToGroupId._2,
+          `class` := "custom-control-input group-on-off", `value` := "On")
+      }
+
+      div(`class` :=
+        "custom-control custom-checkbox create-weekly-plans-lesson-modal-select-groups")(
+        realInput,
 
         input(`name` := s"group-checkbox-${
           groupNameToGroupId._2
@@ -641,6 +676,11 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
           groupNameToGroupId._1
         }")
       )
+
+    }
+
+    val groupsAsCheckboxes: Seq[TypedTag[Div]] = {
+      for (groupNameToGroupId <- groupNamesToGroupIds) yield createGroupInputDiv(groupNameToGroupId)
     }.toSeq
 
     val groupsAsCheckboxesInContainer = if (groupNamesToGroupIds.nonEmpty && applyToGroups) {
@@ -698,13 +738,53 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
 
   }
 
+  private def isActive(element: HTMLElement): Boolean = element.classList.contains("active")
+
   private def resetValuesOnTabClick(): Unit = {
     val $ = js.Dynamic.global.$
     $("a[data-toggle=\"tab\"]").on("shown.bs.tab", (e: dom.Event) => {
       groupToSelectedEsOsAndBenchmarks.clear()
       repaintTheEsAndOs("create-weekly-plans-es-and-os-row")
       repaintTheEsAndOs("create-weekly-plans-eobenchmark-row")
+
+
+      groupIdsToName.clear()
+      val weeklyTopLevelTabs = dom.document.getElementsByClassName("weekly-plans-top-level-tab")
+      val nodeListSize = weeklyTopLevelTabs.length
+      var index = 0
+      while (index < nodeListSize) {
+        val tabElement = weeklyTopLevelTabs(index).asInstanceOf[HTMLElement]
+
+        if (isActive(tabElement)) {
+          // TODO: andy - add group ids to the map()
+          val subject = tabElement.getAttribute("data-subject-area")
+
+
+          val tabsWithGroupIds = dom.document.getElementsByClassName("tab-with-group-id")
+          val theNodeListSize = tabsWithGroupIds.length
+          var tabIndex = 0
+          while (tabIndex < theNodeListSize) {
+            val tabWithGroupIds = tabsWithGroupIds(tabIndex).asInstanceOf[HTMLElement]
+            val tabSubject = tabWithGroupIds.getAttribute("data-tab-is-from-subject")
+            if (subject == tabSubject) {
+              val groupId = tabWithGroupIds.getAttribute("data-group-id")
+              val groupName = tabWithGroupIds.getAttribute("data-group-name")
+              groupIdsToName = groupIdsToName + (groupId -> groupName)
+            }
+            tabIndex = tabIndex + 1
+          }
+
+          // 2 Set the Group Ids Map to Group Name
+        }
+
+        index = index + 1
+      }
+
+      global.console.log(s"The groups are ... ${groupIdsToName.toString()}")
+
     })
+
+
   }
 
 
