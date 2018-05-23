@@ -245,7 +245,6 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
       val dataAttributeType = buttonElement.getAttribute("data-attribute-type")
       val jsLessonDate = new js.Date(lessonDate)
 
-      global.console.log(s"attributesPerGroup ${attributesPerGroup.toString()}")
 
       if (dataSubject == subject &&
         dataLessonStartTime == lessonStartTime &&
@@ -395,43 +394,83 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
           groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection)(curriculumSubSection)._1.remove(eAndOCode)
           setButtonDefaults(theDiv)
         } else {
-          if (!groupToSelectedEsOsAndBenchmarks.isDefinedAt(groupIdOrNot)) {
-            groupToSelectedEsOsAndBenchmarks = groupToSelectedEsOsAndBenchmarks + (groupIdOrNot -> mutable.Map.empty)
-          }
-          if (!groupToSelectedEsOsAndBenchmarks(groupIdOrNot).isDefinedAt(curriculumSection)) {
-            groupToSelectedEsOsAndBenchmarks(groupIdOrNot) = groupToSelectedEsOsAndBenchmarks(groupIdOrNot) + (curriculumSection -> mutable.Map.empty)
-          }
-          if (!groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection).isDefinedAt(curriculumSubSection)) {
-            groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection)(curriculumSubSection) = (scala.collection.mutable.Set.empty, scala.collection.mutable.Set.empty)
-          }
-
-          groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection)(curriculumSubSection)._1.add(eAndOCode)
-          global.console.log(s"Should be now .. values of Es and Os are ... ${
-            groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection)(curriculumSubSection)._1.toString()
-          }")
+          selectEAndOCode(groupIdOrNot, eAndOCode, curriculumSection, curriculumSubSection)
           theDiv.style.backgroundColor = "#016ecd"
           theDiv.style.color = "white"
           theDiv.style.borderRadius = "7px"
         }
       })
 
-
       index = index + 1
     }
   }
 
+  private def selectEAndOCode(groupIdOrNot: String, eAndOCode: String, curriculumSection: String, curriculumSubSection: String): Unit = {
+    if (!groupToSelectedEsOsAndBenchmarks.isDefinedAt(groupIdOrNot)) {
+      groupToSelectedEsOsAndBenchmarks = groupToSelectedEsOsAndBenchmarks + (groupIdOrNot -> mutable.Map.empty)
+    }
+    if (!groupToSelectedEsOsAndBenchmarks(groupIdOrNot).isDefinedAt(curriculumSection)) {
+      groupToSelectedEsOsAndBenchmarks(groupIdOrNot) = groupToSelectedEsOsAndBenchmarks(groupIdOrNot) + (curriculumSection -> mutable.Map.empty)
+    }
+    if (!groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection).isDefinedAt(curriculumSubSection)) {
+      groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection)(curriculumSubSection) = (scala.collection.mutable.Set.empty, scala.collection.mutable.Set.empty)
+    }
+
+    groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection)(curriculumSubSection)._1.add(eAndOCode)
+  }
+
   private def repaintTheEsAndOs(className: String): Unit = {
+    repaintSelectedEsOsAndBenchies(className, true)
+  }
+
+  private def repaintTheBenchmarks(className: String): Unit = {
+    repaintSelectedEsOsAndBenchies(className, false)
+  }
+
+  private def repaintSelectedEsOsAndBenchies(className: String, isEsAndOs: Boolean): Unit = {
+
+    def checkCode(groupIdOrNot: String,
+                  curriculumSection: String,
+                  curriculumSubSection: String,
+                  code: String
+                 ): Boolean = {
+      if(code == null || code == "" || code == "null") {
+        false
+      }
+      if (isEsAndOs) {
+        groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection)(curriculumSubSection)._1.contains(code)
+      } else {
+        groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection)(curriculumSubSection)._2.contains(code)
+      }
+    }
+
     val allEAndOAndBenchmarksRows = dom.document.getElementsByClassName(className)
     val nodeListSize = allEAndOAndBenchmarksRows.length
     var index = 0
     while (index < nodeListSize) {
       val theDiv = allEAndOAndBenchmarksRows(index).asInstanceOf[HTMLDivElement]
-      theDiv.style.backgroundColor = eAndORowBackgroundNormalColor.getOrElse("f6f6f6")
-      theDiv.style.color = eAndORowForegroundNormalColor.getOrElse("grey")
-      theDiv.style.borderRadius = eAndORowBorderRadius.getOrElse("0")
+
+      val groupIdOrNot = theDiv.getAttribute("data-group-id-or-not")
+      val codeToCheck = if (isEsAndOs) theDiv.getAttribute("data-eando-code") else theDiv.getAttribute("data-benchmark")
+      val curriculumSection = theDiv.getAttribute("data-curriculum-section")
+      val curriculumSubSection = theDiv.getAttribute("data-curriculum-subsection")
+
+      if (groupToSelectedEsOsAndBenchmarks.isDefinedAt(groupIdOrNot) &&
+        groupToSelectedEsOsAndBenchmarks(groupIdOrNot).isDefinedAt(curriculumSection) &&
+        groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection).isDefinedAt(curriculumSubSection) &&
+        checkCode(groupIdOrNot, curriculumSection, curriculumSubSection, codeToCheck)
+      ) {
+        theDiv.style.backgroundColor = "#016ecd"
+        theDiv.style.color = "white"
+        theDiv.style.borderRadius = "7px"
+      } else {
+        theDiv.style.backgroundColor = eAndORowBackgroundNormalColor.getOrElse("f6f6f6")
+        theDiv.style.color = eAndORowForegroundNormalColor.getOrElse("grey")
+        theDiv.style.borderRadius = eAndORowBorderRadius.getOrElse("0")
+      }
+
       index = index + 1
     }
-
 
   }
 
@@ -537,17 +576,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
           groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection)(curriculumSubSection)._2.remove(benchmarkValue)
           setButtonDefaults(theDiv)
         } else {
-          if (!groupToSelectedEsOsAndBenchmarks.isDefinedAt(groupIdOrNot)) {
-            groupToSelectedEsOsAndBenchmarks = groupToSelectedEsOsAndBenchmarks + (groupIdOrNot -> mutable.Map.empty)
-          }
-          if (!groupToSelectedEsOsAndBenchmarks(groupIdOrNot).isDefinedAt(curriculumSection)) {
-            groupToSelectedEsOsAndBenchmarks(groupIdOrNot) = groupToSelectedEsOsAndBenchmarks(groupIdOrNot) + (curriculumSection -> mutable.Map.empty)
-          }
-          if (!groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection).isDefinedAt(curriculumSubSection)) {
-            groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection)(curriculumSubSection) = (scala.collection.mutable.Set.empty, scala.collection.mutable.Set.empty)
-          }
-
-          groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection)(curriculumSubSection)._2.add(benchmarkValue)
+          selectBenchmark(groupIdOrNot, benchmarkValue, curriculumSection, curriculumSubSection)
           theDiv.style.backgroundColor = "#016ecd"
           theDiv.style.color = "white"
           theDiv.style.borderRadius = "7px"
@@ -556,6 +585,20 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
 
       index = index + 1
     }
+  }
+
+  private def selectBenchmark(groupIdOrNot: String, benchmarkValue: String, curriculumSection: String, curriculumSubSection: String): Boolean = {
+    if (!groupToSelectedEsOsAndBenchmarks.isDefinedAt(groupIdOrNot)) {
+      groupToSelectedEsOsAndBenchmarks = groupToSelectedEsOsAndBenchmarks + (groupIdOrNot -> mutable.Map.empty)
+    }
+    if (!groupToSelectedEsOsAndBenchmarks(groupIdOrNot).isDefinedAt(curriculumSection)) {
+      groupToSelectedEsOsAndBenchmarks(groupIdOrNot) = groupToSelectedEsOsAndBenchmarks(groupIdOrNot) + (curriculumSection -> mutable.Map.empty)
+    }
+    if (!groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection).isDefinedAt(curriculumSubSection)) {
+      groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection)(curriculumSubSection) = (scala.collection.mutable.Set.empty, scala.collection.mutable.Set.empty)
+    }
+
+    groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection)(curriculumSubSection)._2.add(benchmarkValue)
   }
 
   private def clickingOnAddToLessonsButtons(): Unit = {
@@ -752,6 +795,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
 
     deleteSingleRowFromClassPlan()
   }
+
   private def deleteSingleRowFromClassPlan(): Unit = {
     val deleteThisGroupButton = dom.document.getElementsByClassName("create-weekly-plans-lesson-modal-delete-this-row")
     val nodeListSize = deleteThisGroupButton.length
@@ -801,12 +845,49 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     }
   }
 
+  private def populateSelectedEsOsAndBenchmarksFromSaved(): Unit = {
+    val fullWeeklyPlanOfLessonsPickled = dom.window.localStorage.getItem("fullWeeklyPlanOfLessonsPickled")
+    import upickle.default._
+    val fullWeeklyPlanOfLessons: FullWeeklyPlanOfLessons = read[FullWeeklyPlanOfLessons](PlanningHelper.decodeAnyNonFriendlyCharacters(fullWeeklyPlanOfLessonsPickled))
+
+    val weeklyTopLevelTabs = dom.document.getElementsByClassName("weekly-plans-top-level-tab")
+    val nodeListSize = weeklyTopLevelTabs.length
+    var index = 0
+    while (index < nodeListSize) {
+      val tabElement = weeklyTopLevelTabs(index).asInstanceOf[HTMLElement]
+      val subjectName = tabElement.getAttribute("data-subject-area")
+      if (fullWeeklyPlanOfLessons.subjectToWeeklyPlanOfSubject.isDefinedAt(subjectName)) {
+        val weeklyPlanOfSubject = fullWeeklyPlanOfLessons.subjectToWeeklyPlanOfSubject(subjectName)
+        for (groupId <- weeklyPlanOfSubject.groupToEsOsBenchmarks.keys) {
+          val groupIdWithSubject = s"${subjectName}___$groupId"
+          global.console.log(s"populateSelectedEsOsAndBenchmarksFromSaved -> groupId: $groupIdWithSubject")
+          val esOsAndBenchies = weeklyPlanOfSubject.groupToEsOsBenchmarks(groupId)
+          for (section <- esOsAndBenchies.setSectionNameToSubSections.keys) {
+            val subSectionToEsOsBenchies = esOsAndBenchies.setSectionNameToSubSections(section)
+            for (subsection <- subSectionToEsOsBenchies.keys) {
+              val eAndOSecSubection = subSectionToEsOsBenchies(subsection)
+              for (eAndO <- eAndOSecSubection.eAndOs) {
+                selectEAndOCode(groupIdWithSubject, eAndO.code, section, subsection)
+              }
+              for (benchmark <- eAndOSecSubection.benchmarks) {
+                selectBenchmark(groupIdWithSubject, benchmark.value, section, subsection)
+              }
+            }
+          }
+        }
+      }
+
+      index = index + 1
+    }
+  }
+
   private def resetValuesOnTabClick(): Unit = {
     val $ = js.Dynamic.global.$
     $("a[data-toggle=\"tab\"]").on("shown.bs.tab", (e: dom.Event) => {
       groupToSelectedEsOsAndBenchmarks.clear()
+      populateSelectedEsOsAndBenchmarksFromSaved()
       repaintTheEsAndOs("create-weekly-plans-es-and-os-row")
-      repaintTheEsAndOs("create-weekly-plans-eobenchmark-row")
+      repaintTheBenchmarks("create-weekly-plans-benchmark-row")
       buildGroupsMapForTabSelected()
 
       global.console.log(s"The groups are ... ${groupIdsToName.toString()}")
