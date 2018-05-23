@@ -48,6 +48,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     resetValuesOnTabClick()
     saveSubjectWeeksPlanButton()
     addTickToSavedLessons()
+    resetAllValuesToSaved()
   }
 
   private def setEsOsBenchmarksSummary(): Unit = {
@@ -884,18 +885,20 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
   private def resetValuesOnTabClick(): Unit = {
     val $ = js.Dynamic.global.$
     $("a[data-toggle=\"tab\"]").on("shown.bs.tab", (e: dom.Event) => {
-      groupToSelectedEsOsAndBenchmarks.clear()
-      populateSelectedEsOsAndBenchmarksFromSaved()
-      repaintTheEsAndOs("create-weekly-plans-es-and-os-row")
-      repaintTheBenchmarks("create-weekly-plans-benchmark-row")
-      buildGroupsMapForTabSelected()
-
+      resetAllValuesToSaved()
       global.console.log(s"The groups are ... ${groupIdsToName.toString()}")
     })
 
 
   }
 
+  private def resetAllValuesToSaved(): Unit = {
+    groupToSelectedEsOsAndBenchmarks.clear()
+    populateSelectedEsOsAndBenchmarksFromSaved()
+    repaintTheEsAndOs("create-weekly-plans-es-and-os-row")
+    repaintTheBenchmarks("create-weekly-plans-benchmark-row")
+    buildGroupsMapForTabSelected()
+  }
 
   private def createEandOSetSubSection(esAndOsPlusBenchmarksForSubsection: (mutable.Set[String], mutable.Set[String])): EandOSetSubSection = {
     val esAndOs: List[EandO] = {
