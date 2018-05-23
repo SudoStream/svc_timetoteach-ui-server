@@ -233,7 +233,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
   }
 
   def addAttributeDetailsForGroup(subject: String, lessonDate: String, lessonStartTime: String, attributeType: String,
-                                  attributesPerGroup: Map[String, List[String]]): Unit = {
+                                  attributesPerGroup: Map[AttributeRowKey, List[String]]): Unit = {
     val allPlanLessonsButtons = dom.document.getElementsByClassName("create-weekly-plans-add-to-lesson-button")
     val nodeListSize = allPlanLessonsButtons.length
     var index = 0
@@ -253,15 +253,16 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
         dataAttributeType == attributeType &&
         attributesPerGroup.nonEmpty
       ) {
-        for (attrValue <- attributesPerGroup.keys) {
+        for (attrValue <- attributesPerGroup.keys.toList.sortBy(elem => elem.attributeOrderNumber)) {
           val tabIndex = buttonElement.getAttribute("data-tab-index")
           addAttributeRow(
             buttonElementClassType(dataAttributeType),
             dataAttributeType,
             true,
             tabIndex,
-            Some(attrValue),
-            Some(attributesPerGroup(attrValue))
+            Some(attrValue.attributeValue),
+            Some(attributesPerGroup(attrValue)),
+            Some(attrValue.attributeOrderNumber)
           )
         }
       }
@@ -270,7 +271,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     }
   }
 
-  def addAttributeDetails(subject: String, lessonDate: String, lessonStartTime: String, attributeType: String, attributeValues: List[String]): Unit = {
+  def addAttributeDetails(subject: String, lessonDate: String, lessonStartTime: String, attributeType: String, attributeValues: List[AttributeRowKey]): Unit = {
     val allPlanLessonsButtons = dom.document.getElementsByClassName("create-weekly-plans-add-to-lesson-button")
     val nodeListSize = allPlanLessonsButtons.length
     var index = 0
@@ -288,9 +289,9 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
         dataAttributeType == attributeType &&
         attributeValues.nonEmpty
       ) {
-        for (attrValue <- attributeValues) {
+        for (attrValue <- attributeValues.sortBy(elem => elem.attributeOrderNumber)) {
           val tabIndex = buttonElement.getAttribute("data-tab-index")
-          addAttributeRow(buttonElementClassType(dataAttributeType), dataAttributeType, false, tabIndex, Some(attrValue), None)
+          addAttributeRow(buttonElementClassType(dataAttributeType), dataAttributeType, false, tabIndex, Some(attrValue.attributeValue), None, Some(attrValue.attributeOrderNumber))
         }
       }
 
@@ -304,8 +305,8 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     val fullWeeklyPlanOfLessons: FullWeeklyPlanOfLessons = read[FullWeeklyPlanOfLessons](PlanningHelper.decodeAnyNonFriendlyCharacters(fullWeeklyPlanOfLessonsPickled))
     if (fullWeeklyPlanOfLessons.subjectToWeeklyPlanOfSubject.isDefinedAt(currentlySelectedPlanningArea.getOrElse("Nope"))) {
       val weeklyPlanOfSubject = fullWeeklyPlanOfLessons.subjectToWeeklyPlanOfSubject(currentlySelectedPlanningArea.getOrElse("Nope"))
-      for (lesson <- weeklyPlanOfSubject.lessons) {
-        addAttributeDetailsForGroup(lesson.subject, lesson.lessonDateIso, lesson.startTimeIso, "Activity", lesson.activitiesPerGroup )
+      for (lesson: LessonPlan <- weeklyPlanOfSubject.lessons) {
+        addAttributeDetailsForGroup(lesson.subject, lesson.lessonDateIso, lesson.startTimeIso, "Activity", lesson.activitiesPerGroup)
         addAttributeDetails(lesson.subject, lesson.lessonDateIso, lesson.startTimeIso, "Resource", lesson.resources)
         addAttributeDetailsForGroup(lesson.subject, lesson.lessonDateIso, lesson.startTimeIso, "Learning Intention", lesson.learningIntentionsPerGroup)
         addAttributeDetailsForGroup(lesson.subject, lesson.lessonDateIso, lesson.startTimeIso, "Success Criteria", lesson.successCriteriaPerGroup)
@@ -599,10 +600,42 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
         }")
 
         val tabIndex = addActivityButton.getAttribute("data-tab-index")
-        addAttributeRow(buttonElementId, buttonNameType, applyToGroups, tabIndex, None, None)
+        addAttributeRow(buttonElementId, buttonNameType, applyToGroups, tabIndex, None, None, None)
       })
 
       index = index + 1
+    }
+  }
+
+  def generateOrderNumber(tabIndexToSearch: Int,
+                          inputAttributeClass: String): Int = {
+    val attributeClassInputs = dom.document.getElementsByClassName(inputAttributeClass)
+    val nodeListSize = attributeClassInputs.length
+
+    var currentOrderNumMax = 0
+    var index = 0
+    while (index < nodeListSize) {
+      val element = attributeClassInputs(index).asInstanceOf[HTMLElement]
+      val tabIndexOnElement = element.getAttribute("data-tab-index").toInt
+      if (tabIndexOnElement == tabIndexToSearch) {
+        val orderNum = element.getAttribute("data-attribute-order-value").toInt
+        if (orderNum > currentOrderNumMax) {
+          currentOrderNumMax = orderNum
+        }
+      }
+      index = index + 1
+    }
+
+    currentOrderNumMax + 1
+  }
+
+  private def getOrderNumber(maybeOrderNumber: Option[Int],
+                             tabIndex: Int,
+                             inputAttributeClass: String
+                            ): Int = {
+    maybeOrderNumber match {
+      case Some(orderNumber) => orderNumber
+      case None => generateOrderNumber(tabIndex, inputAttributeClass)
     }
   }
 
@@ -611,9 +644,9 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
                               applyToGroups: Boolean,
                               tabIndex: String,
                               attributeText: Option[String],
-                              maybeGroupIds: Option[List[String]]
+                              maybeGroupIds: Option[List[String]],
+                              maybeOrderNumber: Option[Int]
                              ): Unit = {
-
 
     val groupNamesToGroupIds = for {
       groupId <- groupIdsToName.keys
@@ -626,8 +659,6 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     def createGroupInputDiv(groupNameToGroupId: (String, String, String)): TypedTag[Div] = {
       val groupId = groupNameToGroupId._2
 
-      global.console.log(s"createGroupInputDiv1 : ${maybeGroupIds.toString}")
-      global.console.log(s"createGroupInputDiv2 : ${groupId}")
       val realInput: TypedTag[Input] = if (maybeGroupIds.isDefined && maybeGroupIds.get.contains(groupId)) {
         input(`id` := s"group-checkbox-${
           groupNameToGroupId._2
@@ -692,11 +723,14 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
       div()
     }
 
+    val inputAttributeClass = s"input-attribute-${buttonNameType.replace(" ", "")}"
     val theInput = attributeText match {
-      case Some(inputText) => input(`type` := "text", `class` := s"form-control form-control-sm input-attribute-${buttonNameType.replace(" ", "")}",
-        attr("data-tab-index") := tabIndex, placeholder := s"Enter $buttonNameType", value := s"${attributeText.getOrElse("")}")
-      case None => input(`type` := "text", `class` := s"form-control form-control-sm input-attribute-${buttonNameType.replace(" ", "")}",
-        attr("data-tab-index") := tabIndex, placeholder := s"Enter $buttonNameType")
+      case Some(inputText) => input(`type` := "text", `class` := s"form-control form-control-sm $inputAttributeClass",
+        attr("data-tab-index") := tabIndex, attr("data-attribute-order-value") := getOrderNumber(maybeOrderNumber, tabIndex.toInt, inputAttributeClass),
+        placeholder := s"Enter $buttonNameType", value := s"${attributeText.getOrElse("")}")
+      case None => input(`type` := "text", `class` := s"form-control form-control-sm $inputAttributeClass",
+        attr("data-tab-index") := tabIndex, attr("data-attribute-order-value") := getOrderNumber(maybeOrderNumber, tabIndex.toInt, inputAttributeClass),
+        placeholder := s"Enter $buttonNameType")
     }
 
     val newAttributeRow = form()(
@@ -826,7 +860,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
   }
 
   private def extractCurriculumLevel(setSectionNameToSubSectionsMap: Map[String, Map[String, EandOSetSubSection]]): CurriculumLevel = {
-    global.console.log(s"setSectionNameToSubSectionsMap = ${setSectionNameToSubSectionsMap}")
+    global.console.log(s"setSectionNameToSubSectionsMap = ${setSectionNameToSubSectionsMap.toString()}")
     val levels = for {
       sectionName <- setSectionNameToSubSectionsMap.keys
       subsectionName <- setSectionNameToSubSectionsMap(sectionName).keys
@@ -891,8 +925,8 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     groupIds.toList
   }
 
-  private def extractLessonAttributes(attributeType: String, tabIndexToLookFor: Int): List[String] = {
-    var lessonAttributes = new ListBuffer[String]()
+  private def extractLessonAttributes(attributeType: String, tabIndexToLookFor: Int): List[AttributeRowKey] = {
+    var lessonAttributes = new ListBuffer[AttributeRowKey]()
 
     val inputAttributes = dom.document.getElementsByClassName(s"input-attribute-${attributeType.replace(" ", "")}")
     val nodeListSize = inputAttributes.length
@@ -902,7 +936,8 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
       val tabIndex = inputLessonAttributes.getAttribute("data-tab-index").toInt
       if (tabIndex == tabIndexToLookFor) {
         val attributeText = inputLessonAttributes.value
-        lessonAttributes += attributeText
+        val attributeOrderValue = inputLessonAttributes.getAttribute("data-attribute-order-value").toInt
+        lessonAttributes += AttributeRowKey(attributeText, attributeOrderValue)
       }
       nodeIndex = nodeIndex + 1
     }
@@ -910,8 +945,8 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     lessonAttributes.toList
   }
 
-  private def extractLessonAttributesWithGroups(attributeType: String, tabIndexToLookFor: Int): Map[String, List[String]] = {
-    var activityToGroups = scala.collection.mutable.Map[String, List[String]]()
+  private def extractLessonAttributesWithGroups(attributeType: String, tabIndexToLookFor: Int): Map[AttributeRowKey, List[String]] = {
+    var activityToGroups = scala.collection.mutable.Map[AttributeRowKey, List[String]]()
 
     val inputAttributes = dom.document.getElementsByClassName(s"input-attribute-${attributeType.replace(" ", "")}")
     val nodeListSize = inputAttributes.length
@@ -921,6 +956,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
       val tabIndex = inputLessonAttributes.getAttribute("data-tab-index").toInt
       if (tabIndex == tabIndexToLookFor) {
         val activityText = inputLessonAttributes.value
+        val attributeOrderValue = inputLessonAttributes.getAttribute("data-attribute-order-value").toInt
 
         val peerNodes = inputLessonAttributes.parentNode.childNodes
         val peerNodeSize = peerNodes.length
@@ -929,9 +965,11 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
           val peerNode = peerNodes(peerNodeIndex).asInstanceOf[HTMLElement]
           if (peerNode != null && peerNode.toString != "undefined" && peerNode.className.contains("form-row")) {
             val groupIds: List[String] = extractGroupIds(peerNode)
-            activityToGroups += (activityText -> groupIds)
+            activityToGroups += (
+              AttributeRowKey(activityText, attributeOrderValue) ->
+                groupIds)
           } else {
-            activityToGroups += (activityText -> Nil)
+            activityToGroups += (AttributeRowKey(activityText, attributeOrderValue) -> Nil)
           }
           peerNodeIndex = peerNodeIndex + 1
         }
@@ -980,14 +1018,14 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
       val startTime = lessonSummaryDiv.getAttribute("data-lesson-summary-start-time")
       val endTime = lessonSummaryDiv.getAttribute("data-lesson-summary-end-time")
 
-      val activitiesPerGroup: Map[String, List[String]] = extractLessonAttributesWithGroups("Activity", index)
-      val resources: List[String] = extractLessonAttributes("Resource", index)
-      val learningIntentionsPerGroup: Map[String, List[String]] = extractLessonAttributesWithGroups("LearningIntention", index)
-      val successCriteriaPerGroup: Map[String, List[String]] = extractLessonAttributesWithGroups("SuccessCriteria", index)
-      val plenary: List[String] = extractLessonAttributes("Plenary", index)
-      val formativeAssessmentPerGroup: Map[String, List[String]] = extractLessonAttributesWithGroups("FormativeAssessment", index)
-      val notesBefore: List[String] = extractLessonAttributes("Note", index)
-      val notesAfter: List[String] = Nil
+      val activitiesPerGroup: Map[AttributeRowKey, List[String]] = extractLessonAttributesWithGroups("Activity", index)
+      val resources: List[AttributeRowKey] = extractLessonAttributes("Resource", index)
+      val learningIntentionsPerGroup: Map[AttributeRowKey, List[String]] = extractLessonAttributesWithGroups("LearningIntention", index)
+      val successCriteriaPerGroup: Map[AttributeRowKey, List[String]] = extractLessonAttributesWithGroups("SuccessCriteria", index)
+      val plenary: List[AttributeRowKey] = extractLessonAttributes("Plenary", index)
+      val formativeAssessmentPerGroup: Map[AttributeRowKey, List[String]] = extractLessonAttributesWithGroups("FormativeAssessment", index)
+      val notesBefore: List[AttributeRowKey] = extractLessonAttributes("Note", index)
+      val notesAfter: List[AttributeRowKey] = Nil
 
       lessonPlansForTheWeek += LessonPlan(
         subject,

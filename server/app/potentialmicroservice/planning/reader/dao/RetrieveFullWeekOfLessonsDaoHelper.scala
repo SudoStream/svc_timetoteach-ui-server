@@ -4,7 +4,7 @@ import java.time.LocalDate
 
 import dao.MongoDbConnection
 import duplicate.model.esandos._
-import duplicate.model.planning.{FullWeeklyPlanOfLessons, LessonPlan, WeeklyPlanOfOneSubject}
+import duplicate.model.planning.{AttributeRowKey, FullWeeklyPlanOfLessons, LessonPlan, WeeklyPlanOfOneSubject}
 import models.timetoteach.planning.ScottishCurriculumPlanningAreaWrapper
 import models.timetoteach.planning.weekly.WeeklyHighLevelPlanOfOneSubject
 import models.timetoteach.{ClassId, TimeToTeachUserId}
@@ -142,30 +142,47 @@ trait RetrieveFullWeekOfLessonsDaoHelper {
     getDbConnection.getLessonPlanningCollection.find(findMatcher).toFuture()
   }
 
-  private def stringBsonArrayToList(bsonArray: BsonArray): List[String] = {
-    import scala.collection.JavaConverters._
-
-    for {
-      bsonValue <- bsonArray.getValues.asScala.toList
-    } yield bsonValue.asString().getValue
-  }
-
-  private[dao] def attrGroupBsonArrayToMapStringToListString(bsonArray: BsonArray): Map[String, List[String]] = {
+  private def stringBsonArrayToList(bsonArray: BsonArray): List[AttributeRowKey] = {
     import scala.collection.JavaConverters._
 
     @tailrec
-    def loop(remainingDocs: List[BsonDocument], currentMap: Map[String, List[String]]): Map[String, List[String]] = {
+    def loop(remainingDocs: List[BsonDocument], currentList: List[AttributeRowKey]): List[AttributeRowKey] = {
+      if (remainingDocs.isEmpty) {
+        currentList
+      } else {
+        val nextDoc = remainingDocs.head
+        val attribute = nextDoc.getString(SingleLessonPlanSchema.ATTRIBUTE_VALUE).getValue
+        val attributeOrderNumber = nextDoc.getInt32(SingleLessonPlanSchema.ATTRIBUTE_ORDER_NUMBER).getValue
+
+        val nextList = AttributeRowKey(attribute, attributeOrderNumber) :: currentList
+        loop(remainingDocs.tail, nextList)
+      }
+    }
+
+    val docs = for {
+      bsonValue <- bsonArray.getValues.asScala.toList
+    } yield bsonValue.asDocument()
+
+    loop(docs, Nil)
+  }
+
+  private[dao] def attrGroupBsonArrayToMapStringToListString(bsonArray: BsonArray): Map[AttributeRowKey, List[String]] = {
+    import scala.collection.JavaConverters._
+
+    @tailrec
+    def loop(remainingDocs: List[BsonDocument], currentMap: Map[AttributeRowKey, List[String]]): Map[AttributeRowKey, List[String]] = {
       if (remainingDocs.isEmpty) {
         currentMap
       } else {
         val nextDoc = remainingDocs.head
         val attribute = nextDoc.getString(SingleLessonPlanSchema.ATTRIBUTE_VALUE).getValue
+        val attributeOrderNumber = nextDoc.getInt32(SingleLessonPlanSchema.ATTRIBUTE_ORDER_NUMBER).getValue
 
         val groupIds = for {
           groupValue <- nextDoc.getArray(SingleLessonPlanSchema.GROUP_IDS).getValues.asScala.toList
         } yield groupValue.asString().getValue
 
-        val nextMap = currentMap + (attribute -> groupIds)
+        val nextMap = currentMap + (AttributeRowKey(attribute, attributeOrderNumber) -> groupIds)
         loop(remainingDocs.tail, nextMap)
       }
     }

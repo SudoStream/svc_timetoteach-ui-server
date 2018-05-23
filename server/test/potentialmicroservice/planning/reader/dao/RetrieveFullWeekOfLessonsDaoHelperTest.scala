@@ -1,6 +1,7 @@
 package potentialmicroservice.planning.reader.dao
 
 import dao.MongoDbConnection
+import duplicate.model.planning.AttributeRowKey
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
 import models.timetoteach.planning.ScottishCurriculumPlanningAreaWrapper
 import org.scalatest.FunSpec
@@ -174,54 +175,54 @@ class RetrieveFullWeekOfLessonsDaoHelperTest extends FunSpec with RetrieveFullWe
     }
 
     it(s"should return a lesson plan with an activities group which contains 'Some activity ONE'") {
-      assert(lessonPlan.activitiesPerGroup.isDefinedAt("Some activity ONE"))
+      assert(lessonPlan.activitiesPerGroup.isDefinedAt(AttributeRowKey("Some activity ONE",1)))
     }
     it(s"should return a lesson plan with an activities group which contains 'Some activity ONE' with 2 groups") {
-      assert(lessonPlan.activitiesPerGroup("Some activity ONE").size === 2)
+      assert(lessonPlan.activitiesPerGroup(AttributeRowKey("Some activity ONE",1)).size === 2)
     }
 
     it(s"should return a lesson plan with resources called resourceA") {
-      assert(lessonPlan.resources.contains("resourceA"))
+      assert(lessonPlan.resources.contains(AttributeRowKey("resourceA",1)))
     }
     it(s"should return a lesson plan with resources called resourceB") {
-      assert(lessonPlan.resources.contains("resourceB"))
+      assert(lessonPlan.resources.contains(AttributeRowKey("resourceB",2)))
     }
     it(s"should return a lesson plan with resources size == 2") {
       assert(lessonPlan.resources.size === 2)
     }
 
     it(s"should return a lesson plan with learning intentions group which contains 'Some Learning Intention ONE'") {
-      assert(lessonPlan.learningIntentionsPerGroup.isDefinedAt("Some Learning Intention ONE"))
+      assert(lessonPlan.learningIntentionsPerGroup.isDefinedAt(AttributeRowKey("Some Learning Intention ONE",1)))
     }
     it(s"should return a lesson plan with learning intentions size 3") {
       assert(lessonPlan.learningIntentionsPerGroup.size === 3)
     }
     it(s"should return a lesson plan with success criteria which contains 'Some Success Criteria FOUR'") {
-      assert(lessonPlan.successCriteriaPerGroup.isDefinedAt("Some Success Criteria FOUR"))
+      assert(lessonPlan.successCriteriaPerGroup.isDefinedAt(AttributeRowKey("Some Success Criteria FOUR",4)))
     }
     it(s"should return a lesson plan with success criteria size 4") {
       assert(lessonPlan.successCriteriaPerGroup.size === 4)
     }
     it(s"should return a lesson plan with plenary called 'plenary FIVE'") {
-      assert(lessonPlan.plenary.contains("plenary FIVE"))
+      assert(lessonPlan.plenary.contains(AttributeRowKey("plenary FIVE",5)))
     }
     it(s"should return a lesson plan with plenary size == 5") {
       assert(lessonPlan.plenary.size === 5)
     }
     it(s"should return a lesson plan with formativeAssessments which contains 'Some Formative Assessment SIX'") {
-      assert(lessonPlan.formativeAssessmentPerGroup.isDefinedAt("Some Formative Assessment SIX"))
+      assert(lessonPlan.formativeAssessmentPerGroup.isDefinedAt(AttributeRowKey("Some Formative Assessment SIX",6)))
     }
     it(s"should return a lesson plan with formativeAssessmentPerGroup size 4") {
       assert(lessonPlan.formativeAssessmentPerGroup.size === 6)
     }
     it(s"should return a lesson plan with notes before called 'NoteB SEVEN'") {
-      assert(lessonPlan.notesBefore.contains("NoteB SEVEN"))
+      assert(lessonPlan.notesBefore.contains(AttributeRowKey("NoteB SEVEN",7)))
     }
     it(s"should return a lesson plan with notes before size == 7") {
       assert(lessonPlan.notesBefore.size === 7)
     }
     it(s"should return a lesson plan with notes after called 'NoteA EIGHT'") {
-      assert(lessonPlan.notesAfter.contains("NoteA EIGHT"))
+      assert(lessonPlan.notesAfter.contains(AttributeRowKey("NoteA EIGHT",8)))
     }
     it(s"should return a lesson plan with notes after size == 8") {
       assert(lessonPlan.notesAfter.size === 8)

@@ -17,6 +17,7 @@ object SingleLessonPlanSchema {
   val GROUP_ID = "groupId"
   val GROUP_IDS = "groupIds"
   val ATTRIBUTE_VALUE = "attributeValue"
+  val ATTRIBUTE_ORDER_NUMBER = "attributeOrderNumber"
 
   val ACTIVITIES_PER_GROUP = "activitiesPerGroup"
   val ACTIVITY = "activity"

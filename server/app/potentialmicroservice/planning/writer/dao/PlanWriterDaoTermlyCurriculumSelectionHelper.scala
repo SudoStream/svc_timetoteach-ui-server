@@ -1,7 +1,7 @@
 package potentialmicroservice.planning.writer.dao
 
 import duplicate.model.esandos.{EandOSetSubSection, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel}
-import duplicate.model.planning.{LessonPlan, WeeklyPlanOfOneSubject}
+import duplicate.model.planning.{AttributeRowKey, LessonPlan, WeeklyPlanOfOneSubject}
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
 import models.timetoteach.planning.TermlyCurriculumSelection
 import org.mongodb.scala.bson.collection.immutable.Document
@@ -72,58 +72,82 @@ trait PlanWriterDaoTermlyCurriculumSelectionHelper {
       SingleLessonPlanSchema.LESSON_END_TIME -> lessonPlan.endTimeIso,
 
       SingleLessonPlanSchema.ACTIVITIES_PER_GROUP -> convertGroupAttributesToBsonArray(lessonPlan.activitiesPerGroup),
-      SingleLessonPlanSchema.RESOURCES -> convertListStringsToBsonArray(lessonPlan.resources),
+      SingleLessonPlanSchema.RESOURCES -> convertListAttributeRowKeyToBsonArray(lessonPlan.resources),
       SingleLessonPlanSchema.LEARNING_INTENTIONS_PER_GROUP -> convertGroupAttributesToBsonArray(lessonPlan.learningIntentionsPerGroup),
       SingleLessonPlanSchema.SUCCESS_CRITERIA_PER_GROUP -> convertGroupAttributesToBsonArray(lessonPlan.successCriteriaPerGroup),
-      SingleLessonPlanSchema.PLENARIES -> convertListStringsToBsonArray(lessonPlan.plenary),
+      SingleLessonPlanSchema.PLENARIES -> convertListAttributeRowKeyToBsonArray(lessonPlan.plenary),
       SingleLessonPlanSchema.FORMATIVE_ASSESSMENT_PER_GROUP -> convertGroupAttributesToBsonArray(lessonPlan.formativeAssessmentPerGroup),
-      SingleLessonPlanSchema.NOTES_BEFORE -> convertListStringsToBsonArray(lessonPlan.notesBefore),
-      SingleLessonPlanSchema.NOTES_AFTER -> convertListStringsToBsonArray(lessonPlan.notesAfter)
+      SingleLessonPlanSchema.NOTES_BEFORE -> convertListAttributeRowKeyToBsonArray(lessonPlan.notesBefore),
+      SingleLessonPlanSchema.NOTES_AFTER -> convertListAttributeRowKeyToBsonArray(lessonPlan.notesAfter)
     )
   }
 
-  private def convertGroupAttributesToBsonArray(attributeMap: Map[String, List[String]]): BsonArray = {
+  private def convertGroupAttributesToBsonArray(attributeMap: Map[AttributeRowKey, List[String]]): BsonArray = {
     val bsonArrayToreturn = BsonArray()
 
     val docsToAdd = for {
-        attributeKeyValue <- attributeMap.keys.toList
-      } yield Document(
-        SingleLessonPlanSchema.ATTRIBUTE_VALUE -> attributeKeyValue,
-        SingleLessonPlanSchema.GROUP_IDS -> convertListStringsToBsonArray(attributeMap(attributeKeyValue))
-      )
+      attributeKeyValue <- attributeMap.keys.toList
+    } yield Document(
+      SingleLessonPlanSchema.ATTRIBUTE_VALUE -> attributeKeyValue.attributeValue,
+      SingleLessonPlanSchema.ATTRIBUTE_ORDER_NUMBER -> attributeKeyValue.attributeOrderNumber,
+      SingleLessonPlanSchema.GROUP_IDS -> convertListStringsToBsonArray(attributeMap(attributeKeyValue))
+    )
 
-    for(doc <- docsToAdd) {
+    for (doc <- docsToAdd) {
       bsonArrayToreturn.add(doc.toBsonDocument)
     }
 
     bsonArrayToreturn
   }
 
-  private def convertListStringsToBsonArray(listOfStrings: List[String]): BsonArray = {
-    BsonArray {
-      for {
-        elem <- listOfStrings
-      } yield BsonString(elem)
+  private def convertListAttributeRowKeyToBsonArray(attributeRowKeys: List[AttributeRowKey]): BsonArray = {
+    val bsonArrayToreturn = BsonArray()
+
+    val docsToAdd = for {
+      key <- attributeRowKeys
+    } yield Document(
+      SingleLessonPlanSchema.ATTRIBUTE_VALUE -> key.attributeValue,
+      SingleLessonPlanSchema.ATTRIBUTE_ORDER_NUMBER -> key.attributeOrderNumber
+    )
+
+    for (doc <- docsToAdd) {
+      bsonArrayToreturn.add(doc.toBsonDocument)
     }
+
+    bsonArrayToreturn
+  }
+
+  private def convertListStringsToBsonArray (listOfStrings: List[String]): BsonArray = {
+    val bsonArrayToreturn = BsonArray()
+
+    val docsToAdd = for {
+      key <- listOfStrings
+    } yield BsonString(key)
+
+    for (doc <- docsToAdd) {
+      bsonArrayToreturn.add(doc)
+    }
+
+    bsonArrayToreturn
   }
 
   private def createBsonArrayOfSelectedEsOsAndBenchmarks(esOsBenchmarks: EsAndOsPlusBenchmarksForCurriculumAreaAndLevel): BsonArray = {
     val bsonArrayToreturn = BsonArray()
 
     val docsToAdd = for {
-        sectionName <- esOsBenchmarks.setSectionNameToSubSections.keys.toList
-        subSectionName <- esOsBenchmarks.setSectionNameToSubSections(sectionName).keys.toList
-        esOsBenchies: EandOSetSubSection = esOsBenchmarks.setSectionNameToSubSections(sectionName)(subSectionName)
-        esAndOs = esOsBenchies.eAndOs.map(elem => elem.code)
-        benchies = esOsBenchies.benchmarks.map(elem => elem.value)
-      } yield Document(
-        WeeklyPlanningSchema.SELECTED_SECTION_NAME -> sectionName,
-        WeeklyPlanningSchema.SELECTED_SUBSECTION_NAME -> subSectionName,
-        WeeklyPlanningSchema.SELECTED_ES_AND_OS -> convertListStringsToBsonArray(esAndOs),
-        WeeklyPlanningSchema.SELECTED_BENCHMARKS -> convertListStringsToBsonArray(benchies)
-      )
+      sectionName <- esOsBenchmarks.setSectionNameToSubSections.keys.toList
+      subSectionName <- esOsBenchmarks.setSectionNameToSubSections(sectionName).keys.toList
+      esOsBenchies: EandOSetSubSection = esOsBenchmarks.setSectionNameToSubSections(sectionName)(subSectionName)
+      esAndOs = esOsBenchies.eAndOs.map(elem => elem.code)
+      benchies = esOsBenchies.benchmarks.map(elem => elem.value)
+    } yield Document(
+      WeeklyPlanningSchema.SELECTED_SECTION_NAME -> sectionName,
+      WeeklyPlanningSchema.SELECTED_SUBSECTION_NAME -> subSectionName,
+      WeeklyPlanningSchema.SELECTED_ES_AND_OS -> convertListStringsToBsonArray(esAndOs),
+      WeeklyPlanningSchema.SELECTED_BENCHMARKS -> convertListStringsToBsonArray(benchies)
+    )
 
-    for(doc <- docsToAdd) {
+    for (doc <- docsToAdd) {
       bsonArrayToreturn.add(doc.toBsonDocument)
     }
 

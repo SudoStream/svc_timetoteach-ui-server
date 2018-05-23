@@ -69,23 +69,36 @@ trait RetrieveFullWeekOfLessonsDaoHelperTestCanned extends PlanWriterDaoTermlyCu
   private[dao] val TEST_ACTIVITIES_PER_GROUP = BsonArray(
     BsonDocument(
       SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "Some activity ONE",
+      SingleLessonPlanSchema.ATTRIBUTE_ORDER_NUMBER -> 1,
       SingleLessonPlanSchema.GROUP_IDS -> BsonArray("group1", "group2")
     )
   )
 
-  private[dao] val TEST_RESOURCES = BsonArray("resourceA", "resourceB")
+  private[dao] val TEST_RESOURCES = BsonArray(
+    Document(
+      SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "resourceA",
+      SingleLessonPlanSchema.ATTRIBUTE_ORDER_NUMBER -> 1
+    ),
+    Document(
+      SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "resourceB",
+      SingleLessonPlanSchema.ATTRIBUTE_ORDER_NUMBER -> 2
+    )
+  )
 
   private[dao] val TEST_LEARNING_INTENTIONS_PER_GROUP = BsonArray(
     BsonDocument(
       SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "Some Learning Intention ONE",
+      SingleLessonPlanSchema.ATTRIBUTE_ORDER_NUMBER -> 1,
       SingleLessonPlanSchema.GROUP_IDS -> BsonArray("group1", "group2")
     ),
     BsonDocument(
       SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "Some Learning Intention TWO",
+      SingleLessonPlanSchema.ATTRIBUTE_ORDER_NUMBER -> 2,
       SingleLessonPlanSchema.GROUP_IDS -> BsonArray("group1", "group2")
     ),
     BsonDocument(
       SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "Some Learning Intention THREE",
+      SingleLessonPlanSchema.ATTRIBUTE_ORDER_NUMBER -> 3,
       SingleLessonPlanSchema.GROUP_IDS -> BsonArray("group1", "group2")
     )
   )
@@ -93,51 +106,135 @@ trait RetrieveFullWeekOfLessonsDaoHelperTestCanned extends PlanWriterDaoTermlyCu
   private[dao] val TEST_SUCCESS_CRITERIA_PER_GROUP = BsonArray(
     BsonDocument(
       SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "Some Success Criteria ONE",
+      SingleLessonPlanSchema.ATTRIBUTE_ORDER_NUMBER -> 1,
       SingleLessonPlanSchema.GROUP_IDS -> BsonArray("group1", "group2")
     ),
     BsonDocument(
       SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "Some Success Criteria TWO",
+      SingleLessonPlanSchema.ATTRIBUTE_ORDER_NUMBER -> 2,
       SingleLessonPlanSchema.GROUP_IDS -> BsonArray("group1", "group2")
     ),
     BsonDocument(
       SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "Some Success Criteria THREE",
+      SingleLessonPlanSchema.ATTRIBUTE_ORDER_NUMBER -> 3,
       SingleLessonPlanSchema.GROUP_IDS -> BsonArray("group1", "group2")
     ),
     BsonDocument(
       SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "Some Success Criteria FOUR",
+      SingleLessonPlanSchema.ATTRIBUTE_ORDER_NUMBER -> 4,
       SingleLessonPlanSchema.GROUP_IDS -> BsonArray("group1", "group2")
     )
   )
 
-  private[dao] val TEST_PLENARIES = BsonArray("plenary ONE", "plenary TWO", "plenary THREE", "plenary FOUR", "plenary FIVE")
+  private[dao] val TEST_PLENARIES = BsonArray(
+    Document(
+      SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "plenary ONE",
+      SingleLessonPlanSchema.ATTRIBUTE_ORDER_NUMBER -> 1
+    ),
+    Document(
+      SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "plenary TWO",
+      SingleLessonPlanSchema.ATTRIBUTE_ORDER_NUMBER -> 2
+    ),
+    Document(
+      SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "plenary THREE",
+      SingleLessonPlanSchema.ATTRIBUTE_ORDER_NUMBER -> 3
+    ),
+    Document(
+      SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "plenary FOUR",
+      SingleLessonPlanSchema.ATTRIBUTE_ORDER_NUMBER -> 4
+    ),
+    Document(
+      SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "plenary FIVE",
+      SingleLessonPlanSchema.ATTRIBUTE_ORDER_NUMBER -> 5
+    )
+  )
 
   private[dao] val TEST_FORMATIVE_ASSESSMENT_PER_GROUP = BsonArray(
     BsonDocument(
       SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "Some Formative Assessment ONE",
+      SingleLessonPlanSchema.ATTRIBUTE_ORDER_NUMBER -> 1,
       SingleLessonPlanSchema.GROUP_IDS -> BsonArray("group1", "group2")
     ), BsonDocument(
       SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "Some Formative Assessment TWO",
+      SingleLessonPlanSchema.ATTRIBUTE_ORDER_NUMBER -> 2,
       SingleLessonPlanSchema.GROUP_IDS -> BsonArray("group1", "group2")
     ), BsonDocument(
       SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "Some Formative Assessment THREE",
+      SingleLessonPlanSchema.ATTRIBUTE_ORDER_NUMBER -> 3,
       SingleLessonPlanSchema.GROUP_IDS -> BsonArray("group1", "group2")
     ), BsonDocument(
       SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "Some Formative Assessment FOUR",
+      SingleLessonPlanSchema.ATTRIBUTE_ORDER_NUMBER -> 4,
       SingleLessonPlanSchema.GROUP_IDS -> BsonArray("group1", "group2")
     ), BsonDocument(
       SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "Some Formative Assessment FIVE",
+      SingleLessonPlanSchema.ATTRIBUTE_ORDER_NUMBER -> 5,
       SingleLessonPlanSchema.GROUP_IDS -> BsonArray("group1", "group2")
     ), BsonDocument(
       SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "Some Formative Assessment SIX",
+      SingleLessonPlanSchema.ATTRIBUTE_ORDER_NUMBER -> 6,
       SingleLessonPlanSchema.GROUP_IDS -> BsonArray("group1", "group2")
     )
   )
 
-  private[dao] val TEST_NOTES_BEFORE = BsonArray("NoteB ONE", "NoteB TWO", "NoteB THREE", "NoteB FOUR",
-    "NoteB FIVE", "NoteB SIX", "NoteB SEVEN")
+  private[dao] val TEST_NOTES_BEFORE = BsonArray(
+    Document(
+      SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "NoteB ONE",
+      SingleLessonPlanSchema.ATTRIBUTE_ORDER_NUMBER -> 1
+    ),
+    Document(
+      SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "NoteB TWO",
+      SingleLessonPlanSchema.ATTRIBUTE_ORDER_NUMBER -> 2
+    ), Document(
+      SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "NoteB THREE",
+      SingleLessonPlanSchema.ATTRIBUTE_ORDER_NUMBER -> 3
+    ), Document(
+      SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "NoteB FOUR",
+      SingleLessonPlanSchema.ATTRIBUTE_ORDER_NUMBER -> 4
+    ), Document(
+      SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "NoteB FIVE",
+      SingleLessonPlanSchema.ATTRIBUTE_ORDER_NUMBER -> 5
+    ), Document(
+      SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "NoteB SIX",
+      SingleLessonPlanSchema.ATTRIBUTE_ORDER_NUMBER -> 6
+    ), Document(
+      SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "NoteB SEVEN",
+      SingleLessonPlanSchema.ATTRIBUTE_ORDER_NUMBER -> 7
+    ))
 
-  private[dao] val TEST_NOTES_AFTER = BsonArray("NoteA ONE", "NoteA TWO", "NoteA THREE", "NoteA FOUR",
-    "NoteA FIVE", "NoteA SIX", "NoteA SEVEN", "NoteA EIGHT")
+  private[dao] val TEST_NOTES_AFTER = BsonArray(
+    Document(
+      SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "NoteA ONE",
+      SingleLessonPlanSchema.ATTRIBUTE_ORDER_NUMBER -> 1
+    ),
+    Document(
+      SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "NoteA TWO",
+      SingleLessonPlanSchema.ATTRIBUTE_ORDER_NUMBER -> 2
+    ),
+    Document(
+      SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "NoteA THREE",
+      SingleLessonPlanSchema.ATTRIBUTE_ORDER_NUMBER -> 3
+    ),
+    Document(
+      SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "NoteA FOUR",
+      SingleLessonPlanSchema.ATTRIBUTE_ORDER_NUMBER -> 4
+    ),
+    Document(
+      SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "NoteA FIVE",
+      SingleLessonPlanSchema.ATTRIBUTE_ORDER_NUMBER -> 5
+    ),
+    Document(
+      SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "NoteA SIX",
+      SingleLessonPlanSchema.ATTRIBUTE_ORDER_NUMBER -> 6
+    ),
+    Document(
+      SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "NoteA SEVEN",
+      SingleLessonPlanSchema.ATTRIBUTE_ORDER_NUMBER -> 7
+    ),
+    Document(
+      SingleLessonPlanSchema.ATTRIBUTE_VALUE -> "NoteA EIGHT",
+      SingleLessonPlanSchema.ATTRIBUTE_ORDER_NUMBER -> 8
+    ))
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

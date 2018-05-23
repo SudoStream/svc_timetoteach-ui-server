@@ -25,17 +25,25 @@ case class LessonPlan(
                        endTimeIso: String,
                        createdTimestamp: String,
 
-                       activitiesPerGroup: Map[String, List[String]],
-                       resources: List[String],
-                       learningIntentionsPerGroup: Map[String, List[String]],
-                       successCriteriaPerGroup: Map[String, List[String]],
-                       plenary: List[String],
-                       formativeAssessmentPerGroup: Map[String, List[String]],
-                       notesBefore: List[String],
-                       notesAfter: List[String]
+                       activitiesPerGroup: Map[AttributeRowKey , List[String]],
+                       resources: List[AttributeRowKey ],
+                       learningIntentionsPerGroup: Map[AttributeRowKey , List[String]],
+                       successCriteriaPerGroup: Map[AttributeRowKey , List[String]],
+                       plenary: List[AttributeRowKey ],
+                       formativeAssessmentPerGroup: Map[AttributeRowKey , List[String]],
+                       notesBefore: List[AttributeRowKey ],
+                       notesAfter: List[AttributeRowKey ]
                      )
 
 object LessonPlan {
   implicit def rw: RW[LessonPlan] = macroRW
 }
 
+case class AttributeRowKey (
+                             attributeValue: String,
+                             attributeOrderNumber: Int
+                           )
+
+object AttributeRowKey {
+  implicit def rw: RW[AttributeRowKey] = macroRW
+}
