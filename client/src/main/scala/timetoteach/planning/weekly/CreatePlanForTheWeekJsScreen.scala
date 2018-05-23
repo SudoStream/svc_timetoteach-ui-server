@@ -774,48 +774,42 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
 
   private def isActive(element: HTMLElement): Boolean = element.classList.contains("active")
 
+  private def buildGroupsMapForTabSelected = {
+    groupIdsToName.clear()
+    val weeklyTopLevelTabs = dom.document.getElementsByClassName("weekly-plans-top-level-tab")
+    val nodeListSize = weeklyTopLevelTabs.length
+    var index = 0
+    while (index < nodeListSize) {
+      val tabElement = weeklyTopLevelTabs(index).asInstanceOf[HTMLElement]
+      if (isActive(tabElement)) {
+        val subject = tabElement.getAttribute("data-subject-area")
+        val tabsWithGroupIds = dom.document.getElementsByClassName("tab-with-group-id")
+        val theNodeListSize = tabsWithGroupIds.length
+        var tabIndex = 0
+        while (tabIndex < theNodeListSize) {
+          val tabWithGroupIds = tabsWithGroupIds(tabIndex).asInstanceOf[HTMLElement]
+          val tabSubject = tabWithGroupIds.getAttribute("data-tab-is-from-subject")
+          if (subject == tabSubject) {
+            val groupId = tabWithGroupIds.getAttribute("data-group-id")
+            val groupName = tabWithGroupIds.getAttribute("data-group-name")
+            groupIdsToName = groupIdsToName + (groupId -> groupName)
+          }
+          tabIndex = tabIndex + 1
+        }
+      }
+      index = index + 1
+    }
+  }
+
   private def resetValuesOnTabClick(): Unit = {
     val $ = js.Dynamic.global.$
     $("a[data-toggle=\"tab\"]").on("shown.bs.tab", (e: dom.Event) => {
       groupToSelectedEsOsAndBenchmarks.clear()
       repaintTheEsAndOs("create-weekly-plans-es-and-os-row")
       repaintTheEsAndOs("create-weekly-plans-eobenchmark-row")
-
-
-      groupIdsToName.clear()
-      val weeklyTopLevelTabs = dom.document.getElementsByClassName("weekly-plans-top-level-tab")
-      val nodeListSize = weeklyTopLevelTabs.length
-      var index = 0
-      while (index < nodeListSize) {
-        val tabElement = weeklyTopLevelTabs(index).asInstanceOf[HTMLElement]
-
-        if (isActive(tabElement)) {
-          // TODO: andy - add group ids to the map()
-          val subject = tabElement.getAttribute("data-subject-area")
-
-
-          val tabsWithGroupIds = dom.document.getElementsByClassName("tab-with-group-id")
-          val theNodeListSize = tabsWithGroupIds.length
-          var tabIndex = 0
-          while (tabIndex < theNodeListSize) {
-            val tabWithGroupIds = tabsWithGroupIds(tabIndex).asInstanceOf[HTMLElement]
-            val tabSubject = tabWithGroupIds.getAttribute("data-tab-is-from-subject")
-            if (subject == tabSubject) {
-              val groupId = tabWithGroupIds.getAttribute("data-group-id")
-              val groupName = tabWithGroupIds.getAttribute("data-group-name")
-              groupIdsToName = groupIdsToName + (groupId -> groupName)
-            }
-            tabIndex = tabIndex + 1
-          }
-
-          // 2 Set the Group Ids Map to Group Name
-        }
-
-        index = index + 1
-      }
+      buildGroupsMapForTabSelected
 
       global.console.log(s"The groups are ... ${groupIdsToName.toString()}")
-
     })
 
 
