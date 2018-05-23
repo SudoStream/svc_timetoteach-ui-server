@@ -774,7 +774,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
 
   private def isActive(element: HTMLElement): Boolean = element.classList.contains("active")
 
-  private def buildGroupsMapForTabSelected = {
+  private def buildGroupsMapForTabSelected(): Unit = {
     groupIdsToName.clear()
     val weeklyTopLevelTabs = dom.document.getElementsByClassName("weekly-plans-top-level-tab")
     val nodeListSize = weeklyTopLevelTabs.length
@@ -807,7 +807,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
       groupToSelectedEsOsAndBenchmarks.clear()
       repaintTheEsAndOs("create-weekly-plans-es-and-os-row")
       repaintTheEsAndOs("create-weekly-plans-eobenchmark-row")
-      buildGroupsMapForTabSelected
+      buildGroupsMapForTabSelected()
 
       global.console.log(s"The groups are ... ${groupIdsToName.toString()}")
     })
