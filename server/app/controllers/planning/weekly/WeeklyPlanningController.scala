@@ -3,6 +3,7 @@ package controllers.planning.weekly
 import java.time.{LocalDate, LocalTime}
 
 import be.objectify.deadbolt.scala.DeadboltActions
+import controllers.planning.termly.routes
 import controllers.serviceproxies._
 import controllers.time.SystemTime
 import curriculum.scotland.EsOsAndBenchmarksBuilderImpl
@@ -20,6 +21,7 @@ import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponent
 import security.MyDeadboltHandler
 import shared.model.classtimetable.WwwClassId
 import shared.util.{LocalTimeUtil, PlanningHelper}
+import upickle.default.write
 import utils.SchoolConverter
 import utils.TemplateUtils.getCookieStringFromRequest
 
@@ -62,7 +64,27 @@ class WeeklyPlanningController @Inject()(
                                      )
 
 
-  def weeklyViewOfWeeklyPlanning(classId: String, weekNumberRequested: Int): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest =>
+  def weeklyViewOfWeeklyPlanningWithNoMondayDate(classId: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest =>
+    val tttUserId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO ID")
+    val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
+
+    val route = for {
+      classes <- eventualClasses
+      classDetailsList = classes.filter(theClass => theClass.id.id == classId)
+      maybeClassDetails: Option[ClassDetails] = classDetailsList.headOption
+      log1 = logger.debug(s"maybeClassDetails : ${maybeClassDetails.toString}")
+      if maybeClassDetails.isDefined
+      classDetails = maybeClassDetails.get
+      futureMaybeSchoolTerm = termService.currentSchoolTerm(SchoolConverter.convertLocalAuthorityStringToAvroVersion(classDetails.schoolDetails.localAuthority))
+      maybeSchoolTerm <- futureMaybeSchoolTerm
+      if maybeSchoolTerm.isDefined
+      schoolTerm = maybeSchoolTerm.get
+    } yield Redirect(routes.WeeklyPlanningController.weeklyViewOfWeeklyPlanning(classId, schoolTerm.termFirstDay.toString))
+
+    route
+  }
+
+  def weeklyViewOfWeeklyPlanning(classId: String, mondayDateOfWeekIso: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest =>
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
     val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
@@ -91,7 +113,14 @@ class WeeklyPlanningController @Inject()(
       if maybeSchoolTerm.isDefined
       schoolTerm = maybeSchoolTerm.get
       todaysDate <- eventualTodaysDate
-      weekNumber = if (weekNumberRequested == 0) schoolTerm.weekNumberForGivenDate(todaysDate) else weekNumberRequested
+
+      futureMaybefullWeeklyPlanOfLessons = planningReaderService.retrieveFullWeekOfLessons(
+        TimeToTeachUserId(tttUserId),
+        ClassId(classId),
+        mondayDateOfWeekIso
+      )
+      fullWeeklyPlanOfLessons <- futureMaybefullWeeklyPlanOfLessons
+      fullWeeklyPlanOfLessonsPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[FullWeeklyPlanOfLessons](fullWeeklyPlanOfLessons))
     } yield Ok(views.html.planning.weekly.weeklyView(
       new MyDeadboltHandler(userReader),
       userPictureUri,
@@ -101,7 +130,7 @@ class WeeklyPlanningController @Inject()(
       schoolDayTimes,
       maybeAvroClassTimetable.get,
       maybeSchoolTerm.get,
-      weekNumber,
+      maybeSchoolTerm.get.weekNumberForGivenDate(LocalDate.parse(mondayDateOfWeekIso)),
       todaysDate
     ))
   }

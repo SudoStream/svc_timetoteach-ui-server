@@ -39,7 +39,8 @@ GET           /termlyoverviewforcurriculumareaatclasslevel/:classId/:curriculumA
 GET           /termlyPlansOverviewNoGroupsError/:classId/:curriculumArea                            controllers.planning.termly.TermlyPlansController.termlyPlansOverviewNoGroupsError(classId,curriculumArea)
 GET           /termlyplanningdownloadclassplan/:classId                                             controllers.planning.termly.DownloadPdfController.downloadClassPdf(classId)
 
-GET           /weeklyViewOfWeeklyPlanning/:classId/:weekNumber                                      controllers.planning.weekly.WeeklyPlanningController.weeklyViewOfWeeklyPlanning(classId, weekNumber :Int)
+GET           /weeklyViewOfWeeklyPlanning/:classId/                                                 controllers.planning.weekly.WeeklyPlanningController.weeklyViewOfWeeklyPlanningWithNoMondayDate(classId)
+GET           /weeklyViewOfWeeklyPlanning/:classId/:mondayDateOfWeekIso                             controllers.planning.weekly.WeeklyPlanningController.weeklyViewOfWeeklyPlanning(classId, mondayDateOfWeekIso)
 GET           /createPlanForTheWeek/:classId/:mondayDateOfWeekIso                                   controllers.planning.weekly.WeeklyPlanningController.createPlanForTheWeek(classId, mondayDateOfWeekIso)
 POST          /savePlanForTheWeek/:classId                                                          controllers.planning.weekly.WeeklyPlanningController.savePlanForTheWeek(classId)
 

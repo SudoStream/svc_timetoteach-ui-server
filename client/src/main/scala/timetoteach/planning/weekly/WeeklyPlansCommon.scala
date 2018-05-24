@@ -140,16 +140,16 @@ trait WeeklyPlansCommon {
         setMondayDateToCurrentlySelectedWeek()
         toShowOrNotShowPlanThisWeekButtonGivenTheWeekSelected()
 
-//        val currentPathname = dom.document.location.pathname.toString
-//        currentlySelectMondayStartOfWeekDate match {
-//          case Some(mondaydate) =>
-//            val classId = dom.window.localStorage.getItem("classId")
-//            if (currentPathname.contains("createPlanForTheWeek")) {
-//              dom.window.location.href = s"/createPlanForTheWeek/$classId/$mondaydate"
-//            } else {
-//              dom.window.location.href = s"/weeklyViewOfWeeklyPlanning/$classId/$mondaydate"
-//            }
-//        }
+        val currentPathname = dom.document.location.pathname.toString
+        currentlySelectMondayStartOfWeekDate match {
+          case Some(mondaydate) =>
+            val classId = dom.window.localStorage.getItem("classId")
+            if (currentPathname.contains("createPlanForTheWeek")) {
+              dom.window.location.href = s"/createPlanForTheWeek/$classId/$mondaydate"
+            } else {
+              dom.window.location.href = s"/weeklyViewOfWeeklyPlanning/$classId/$mondaydate"
+            }
+        }
 
       })
       index = index + 1
