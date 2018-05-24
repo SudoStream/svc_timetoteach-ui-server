@@ -1,7 +1,7 @@
 package timetoteach.planning.weekly
 
 import org.scalajs.dom
-import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement}
+import org.scalajs.dom.raw.HTMLButtonElement
 
 import scala.scalajs.js
 import scala.scalajs.js.Dynamic.global

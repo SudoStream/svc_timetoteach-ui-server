@@ -38,7 +38,7 @@
 @buildEsAndOsSection(plan: models.timetoteach.planning.pdf.CurriculumAreaTermlyPlanForPdf) = {
     <div class="create-weekly-plans-es-os-and-benchmarks-window">
 
-        <h5 class="text-center create-weekly-plans-sub-header text-danger">
+        <h5 class="text-center create-weekly-plans-sub-header text-primary">
             Select the Es & Os / Benchmarks you'll be covering this week for @ScottishCurriculumPlanningAreaWrapper(plan.planningArea).niceSubjectLevelValue()</h5>
 
         @for(esOsWithBenchmarks <- plan.eAndOsWithBenchmarks) {
@@ -57,7 +57,7 @@
                     <div class="create-weekly-plans-es-and-os-section-header text-info text-center">
                 Es & Os
                     </div>
-                    @for(code <- esOsWithBenchmarks.eAndOCodes) {
+                    @for(code <- esOsWithBenchmarks.eAndOCodes.sortBy(elem => elem)) {
                         <div class="create-weekly-plans-es-and-os-line">
                             <div class="row">
                                 <div class="col-md-1 col-lg-1 col-xl-1"></div>
@@ -101,7 +101,7 @@
                                         }
                                         </div>
                                         <div class="col-md-1 col-lg-1 col-xl-1">
-                                            <span class="badge badge-danger">Not Started</span>
+                                            <span class="badge badge-danger e-and-o-or-benchmark-status">Not Started</span>
                                         </div>
                                     </div>
                                 </div>
@@ -147,7 +147,7 @@
                                         @benchmark</div>
                                     </div>
                                     <div class="col-md-1 col-lg-1 col-xl-1">
-                                        <span class="badge badge-danger">Not Started</span>
+                                        <span class="badge badge-danger e-and-o-or-benchmark-status">Not Started</span>
                                     </div>
                                 </div>
                             </div>
@@ -159,7 +159,16 @@
         }
 
 
-        <div class="d-flex justify-content-center">
+        <div class="d-flex justify-content-around">
+
+            <button class="btn btn-success create-weekly-plans-save-esosbenchies-button"
+            data-planning-area="@plan.planningArea.toString"
+            data-planning-area-nice="@ScottishCurriculumPlanningAreaWrapper(plan.planningArea).niceSubjectLevelValue()" >
+                Save Selection of
+                    <br>
+                    <strong>Es & Os / Benchmarks</strong>
+                </button>
+
             <button class="btn btn-success create-weekly-plans-plan-lessons-button"
             data-planning-area="@plan.planningArea.toString"
             data-planning-area-nice="@ScottishCurriculumPlanningAreaWrapper(plan.planningArea).niceSubjectLevelValue()" >
@@ -169,6 +178,7 @@
                 }
                 </strong>
                 lessons</button>
+
         </div>
 
 
@@ -184,6 +194,9 @@
         </button>
     </div>
 
+    <div id="weekly-planning-plan-status">
+        Plan Status: <span class="badge badge-pill badge-danger">Not Started</span>
+    </div>
 
     <div class="container-fluid">
 

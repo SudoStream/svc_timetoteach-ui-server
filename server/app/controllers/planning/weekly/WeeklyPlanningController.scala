@@ -260,4 +260,29 @@ class WeeklyPlanningController @Inject()(
       theFutures <- savedPlanFutures
     } yield Ok("Saved Weekly Plan Ok")
   }
+
+
+  def saveEsOsBenchiesForTheWeek(classId: String): Action[AnyContent] = Action.async { implicit request =>
+    val subjectWeeklyPlans = subjectWeeklyPlansToSaveForm.bindFromRequest.get
+
+    import upickle.default._
+    val weeklyPlansToSave: WeeklyPlanOfOneSubject = read[WeeklyPlanOfOneSubject](
+      PlanningHelper.decodeAnyNonFriendlyCharacters(subjectWeeklyPlans.subjectWeeklyPlansPickled))
+    logger.debug(s"Subject Weekly plans Unpickled = ${weeklyPlansToSave.toString}")
+
+    val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(weeklyPlansToSave.tttUserId))
+
+    for {
+      classes <- eventualClasses
+      classDetailsList = classes.filter(theClass => theClass.id.id == classId)
+      maybeClassDetails: Option[ClassDetails] = classDetailsList.headOption
+      if maybeClassDetails.isDefined
+      classDetails = maybeClassDetails.get
+
+      savedPlanFutures = planningWriterService.saveWeeklyPlanForSingleSubject(weeklyPlansToSave)
+      theFutures <- savedPlanFutures
+    } yield Ok("Saved Weekly Plan Ok")
+  }
+
+
 }

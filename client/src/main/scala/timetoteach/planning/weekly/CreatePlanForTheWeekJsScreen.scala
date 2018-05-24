@@ -7,7 +7,7 @@ import org.scalajs.dom
 import org.scalajs.dom.ext.Ajax
 import org.scalajs.dom.ext.Ajax.InputData
 import org.scalajs.dom.html.{Div, Input, LI, UList}
-import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement, HTMLElement, HTMLInputElement}
+import org.scalajs.dom.raw._
 import org.scalajs.dom.svg.SVG
 import scalatags.JsDom
 import scalatags.JsDom.TypedTag
@@ -47,6 +47,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     deleteSingleRowFromClassPlan()
     resetValuesOnTabClick()
     saveSubjectWeeksPlanButton()
+    saveEsOsBenchiesButton()
     addTickToSavedLessons()
     resetAllValuesToSaved()
     backToWeeklyViewButton()
@@ -318,6 +319,43 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     }
   }
 
+  private def saveEsOsBenchiesButton(): Unit = {
+    val saveEsOsBenchiesBtn = dom.document.getElementsByClassName("create-weekly-plans-save-esosbenchies-button")
+    val nodeListSize = saveEsOsBenchiesBtn.length
+    var index = 0
+    while (index < nodeListSize) {
+      val buttonElement = saveEsOsBenchiesBtn(index).asInstanceOf[HTMLButtonElement]
+
+      buttonElement.addEventListener("click", (e: dom.Event) => {
+        val subject = currentlySelectedPlanningArea.getOrElse("NO_SUBJECT")
+        val classId = dom.window.localStorage.getItem("classId")
+        val tttUserId = dom.window.localStorage.getItem("tttUserId")
+        val weekBeginningIsoDate = currentlySelectMondayStartOfWeekDate.getOrElse("1970-01-01")
+        global.console.log(s"Subject == $subject")
+        global.console.log(s"classId == $classId")
+        global.console.log(s"tttUserId == $tttUserId")
+        global.console.log(s"weekBeginningIsoDate == $weekBeginningIsoDate")
+        global.console.log(s"groupToSelectedEsOsAndBenchmarks == ${groupToSelectedEsOsAndBenchmarks.toString}")
+
+        val groupToEsOsBenchmarks: Map[String, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel] = populateGroupToEsOsBenchmarks()
+        global.console.log(s"groupToEsOsBenchmarks == ${groupToEsOsBenchmarks.toString}")
+        postSaveEsOsBenchies(
+          WeeklyPlanOfOneSubject(
+            tttUserId,
+            classId,
+            subject,
+            weekBeginningIsoDate,
+            groupToEsOsBenchmarks,
+            Nil
+          ),
+          classId
+        )
+      })
+
+      index = index + 1
+    }
+  }
+
   private def planLessonsButton(): Unit = {
     val allPlanLessonsButtons = dom.document.getElementsByClassName("create-weekly-plans-plan-lessons-button")
     val nodeListSize = allPlanLessonsButtons.length
@@ -364,11 +402,48 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     }
   }
 
+  private def setButtonComplete(theDiv: HTMLDivElement): Unit = {
+    theDiv.style.backgroundColor = "#e0dcff"
+    theDiv.style.color = "#5060b0"
+    theDiv.style.borderRadius = "7px"
+  }
+
   private def setButtonDefaults(theDiv: HTMLDivElement): Unit = {
     global.console.log(s"eAndORowBackgroundNormalColor = $eAndORowBackgroundNormalColor.toString")
     theDiv.style.backgroundColor = eAndORowBackgroundNormalColor.getOrElse("f6f6f6")
     theDiv.style.color = eAndORowForegroundNormalColor.getOrElse("grey")
     theDiv.style.borderRadius = eAndORowBorderRadius.getOrElse("0")
+  }
+
+  def statusIs(theDiv: Div, statusCheck: String): Boolean = {
+    val statusSpans = theDiv.getElementsByClassName("e-and-o-or-benchmark-status")
+    val nodeListSize = statusSpans.length
+
+    if (nodeListSize != 1) {
+      false
+    } else {
+      val statusSpan = statusSpans(0).asInstanceOf[HTMLSpanElement]
+      val status = statusSpan.innerHTML
+      if (status == statusCheck) {
+        true
+      } else {
+        false
+      }
+    }
+  }
+
+  def setStatus(theDiv: Div, status: String, badge: String): Unit = {
+    val statusSpans = theDiv.getElementsByClassName("e-and-o-or-benchmark-status")
+    val nodeListSize = statusSpans.length
+    if (nodeListSize == 1) {
+      val statusSpan = statusSpans(0).asInstanceOf[HTMLSpanElement]
+      global.console.log(s"status: $status, badge: $badge, currentval = '${statusSpan.innerHTML}'")
+      statusSpan.classList.remove("badge-danger")
+      statusSpan.classList.remove("badge-warning")
+      statusSpan.classList.remove("badge-success")
+      statusSpan.classList.add(badge)
+      statusSpan.innerHTML = status
+    }
   }
 
   private def clickOnEandO(): Unit = {
@@ -393,11 +468,21 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
             groupToSelectedEsOsAndBenchmarks(groupIdOrNot).isDefinedAt(curriculumSection) &&
             groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection).isDefinedAt(curriculumSubSection)) &&
           groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection)(curriculumSubSection)._1.contains(eAndOCode)) {
-          groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection)(curriculumSubSection)._1.remove(eAndOCode)
-          setButtonDefaults(theDiv)
+
+          if (statusIs(theDiv, "Started")) {
+            setButtonComplete(theDiv)
+            setStatus(theDiv, "Complete", "badge-success")
+          } else if (statusIs(theDiv, "Complete")) {
+            setButtonDefaults(theDiv)
+            setStatus(theDiv, "Not Started", "badge-danger")
+            groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection)(curriculumSubSection)._1.remove(eAndOCode)
+          } else {
+            global.console.log(s"Unknown status.")
+          }
         } else {
           selectEAndOCode(groupIdOrNot, eAndOCode, curriculumSection, curriculumSubSection)
-          theDiv.style.backgroundColor = "#016ecd"
+          setStatus(theDiv, "Started", "badge-warning")
+          theDiv.style.backgroundColor = "#016dad"
           theDiv.style.color = "white"
           theDiv.style.borderRadius = "7px"
         }
@@ -436,7 +521,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
                   curriculumSubSection: String,
                   code: String
                  ): Boolean = {
-      if(code == null || code == "" || code == "null") {
+      if (code == null || code == "" || code == "null") {
         false
       }
       if (isEsAndOs) {
@@ -820,6 +905,20 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
 
   private def isActive(element: HTMLElement): Boolean = element.classList.contains("active")
 
+  private def getSelectedTab: Option[HTMLElement] = {
+    val weeklyTopLevelTabs = dom.document.getElementsByClassName("weekly-plans-top-level-tab")
+    val nodeListSize = weeklyTopLevelTabs.length
+    var index = 0
+    while (index < nodeListSize) {
+      val tabElement: HTMLElement = weeklyTopLevelTabs(index).asInstanceOf[HTMLElement]
+      if (isActive(tabElement)) {
+        return Some(tabElement)
+      }
+      index = index + 1
+    }
+    None
+  }
+
   private def buildGroupsMapForTabSelected(): Unit = {
     groupIdsToName.clear()
     val weeklyTopLevelTabs = dom.document.getElementsByClassName("weekly-plans-top-level-tab")
@@ -889,8 +988,6 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
       resetAllValuesToSaved()
       global.console.log(s"The groups are ... ${groupIdsToName.toString()}")
     })
-
-
   }
 
   private def resetAllValuesToSaved(): Unit = {
@@ -899,6 +996,19 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     repaintTheEsAndOs("create-weekly-plans-es-and-os-row")
     repaintTheBenchmarks("create-weekly-plans-benchmark-row")
     buildGroupsMapForTabSelected()
+    currentlySelectedPlanningArea = None
+    currentlySelectedPlanningAreaNice = None
+    currentlySelectedLessonSummariesThisWeek = None
+
+    val maybeSelectedTab = getSelectedTab
+    global.console.log(s"Selected tab = ${maybeSelectedTab.toString}")
+    maybeSelectedTab match {
+      case Some(element) =>
+        currentlySelectedPlanningArea = Some(element.getAttribute("data-subject-area"))
+      case None =>
+    }
+
+    setEsOsBenchmarksSummary()
   }
 
   private def createEandOSetSubSection(esAndOsPlusBenchmarksForSubsection: (mutable.Set[String], mutable.Set[String])): EandOSetSubSection = {
@@ -1206,6 +1316,45 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     }
 
   }
+
+  private def postSaveEsOsBenchies(subjectWeeklyPlan: WeeklyPlanOfOneSubject, classId: String): Unit = {
+    val subjectWeeklyPlansPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[WeeklyPlanOfOneSubject](subjectWeeklyPlan))
+    global.console.log(s"Pickled, this == $subjectWeeklyPlansPickled")
+
+    import scala.concurrent.ExecutionContext.Implicits.global
+    val theUrl = s"/saveEsOsBenchiesForTheWeek/$classId"
+    val theHeaders = Map(
+      "Content-Type" -> "application/x-www-form-urlencoded",
+      "X-Requested-With" -> "Accept"
+    )
+    val theData = InputData.str2ajax(s"subjectWeeklyPlansPickled=$subjectWeeklyPlansPickled")
+
+    Ajax.post(
+      url = theUrl,
+      headers = theHeaders,
+      data = theData
+    ).onComplete {
+      case Success(xhr) =>
+        val responseText = xhr.responseText
+        println(s"response = '$responseText'")
+        dom.window.setTimeout(() => {
+          val $ = js.Dynamic.global.$
+          $("#create-weekly-plans-lesson-modal").modal("hide")
+          currentlySelectMondayStartOfWeekDate match {
+            case Some(mondayIsoDate) =>
+              dom.window.location.href = s"/createPlanForTheWeek/$classId/$mondayIsoDate"
+            case None =>
+              dom.window.location.href = s"/createPlanForTheWeek/$classId"
+          }
+
+        }, 10)
+      case Failure(ex) =>
+        dom.window.alert("Something went wrong with saving group termly plans. Specifically : -" +
+          s"\n\n${ex.toString}")
+    }
+
+  }
+
 
   private def backToWeeklyViewButton(): Unit = {
     val planThisWeekButton = dom.document.getElementById("back-to-weekly-view-button").asInstanceOf[HTMLButtonElement]

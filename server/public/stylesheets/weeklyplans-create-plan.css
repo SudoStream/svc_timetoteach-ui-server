@@ -1,9 +1,11 @@
 .create-weekly-plans-section{
+    padding-top: 1.5rem;
     padding-bottom: 10rem;
 }
 
 .create-weekly-plans-header {
     font-size: 1.9rem;
+    color : #5060b0;
 }
 
 .create-weekly-plans-sub-header {
@@ -110,6 +112,11 @@
 }
 
 .create-weekly-plans-plan-lessons-button {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.create-weekly-plans-save-esosbenchies-button{
     margin-top: 1.5rem;
     margin-bottom: 1.5rem;
 }

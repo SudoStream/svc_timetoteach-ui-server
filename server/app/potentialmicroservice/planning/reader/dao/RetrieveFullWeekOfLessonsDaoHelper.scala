@@ -66,7 +66,7 @@ trait RetrieveFullWeekOfLessonsDaoHelper {
     {
       for {
         subjectHighLevelPlan <- highLevelPlans
-        subjectLessons = latestSubjects(subjectHighLevelPlan.subject)
+        subjectLessons = if (latestSubjects.isDefinedAt(subjectHighLevelPlan.subject)) latestSubjects(subjectHighLevelPlan.subject) else Nil
       } yield (
         subjectHighLevelPlan.subject.value.toString,
         WeeklyPlanOfOneSubject(
