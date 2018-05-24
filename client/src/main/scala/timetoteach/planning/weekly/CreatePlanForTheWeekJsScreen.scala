@@ -49,6 +49,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     saveSubjectWeeksPlanButton()
     addTickToSavedLessons()
     resetAllValuesToSaved()
+    backToWeeklyViewButton()
   }
 
   private def setEsOsBenchmarksSummary(): Unit = {
@@ -1205,6 +1206,24 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     }
 
   }
+
+  private def backToWeeklyViewButton(): Unit = {
+    val planThisWeekButton = dom.document.getElementById("back-to-weekly-view-button").asInstanceOf[HTMLButtonElement]
+    if (planThisWeekButton != null) {
+      planThisWeekButton.addEventListener("click", (e: dom.Event) => {
+        val classId = dom.window.localStorage.getItem("classId")
+
+        currentlySelectMondayStartOfWeekDate match {
+          case Some(mondayIsoDate) =>
+            dom.window.location.href = s"/weeklyViewOfWeeklyPlanning/$classId/$mondayIsoDate"
+          case None =>
+            dom.window.location.href = s"/weeklyViewOfWeeklyPlanning/$classId"
+        }
+
+      })
+    }
+  }
+
 
 }
 
