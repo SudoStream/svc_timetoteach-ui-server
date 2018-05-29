@@ -542,7 +542,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
         groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection).isDefinedAt(curriculumSubSection) &&
         checkCode(groupIdOrNot, curriculumSection, curriculumSubSection, codeToCheck)
       ) {
-        theDiv.style.backgroundColor = "#016ecd"
+        theDiv.style.backgroundColor = "#016dad"
         theDiv.style.color = "white"
         theDiv.style.borderRadius = "7px"
         setStatus(theDiv, "Started", "badge-warning")
@@ -619,7 +619,6 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
         }
       })
 
-
       index = index + 1
     }
   }
@@ -649,7 +648,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
           setButtonDefaults(theDiv)
         } else {
           selectBenchmark(groupIdOrNot, benchmarkValue, curriculumSection, curriculumSubSection)
-          theDiv.style.backgroundColor = "#016ecd"
+          theDiv.style.backgroundColor = "#016dad"
           theDiv.style.color = "white"
           theDiv.style.borderRadius = "7px"
         }
