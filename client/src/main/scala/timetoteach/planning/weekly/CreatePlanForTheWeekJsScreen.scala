@@ -26,10 +26,6 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
   private var groupToSelectedEsOsAndBenchmarks: scala.collection.mutable.Map[String, scala.collection.mutable.Map[String, scala.collection.mutable.Map[String,
     (scala.collection.mutable.Set[String], scala.collection.mutable.Set[String])]]] = scala.collection.mutable.Map.empty
 
-  private var eAndORowBackgroundNormalColor: Option[String] = None
-  private var eAndORowForegroundNormalColor: Option[String] = None
-  private var eAndORowBorderRadius: Option[String] = None
-
   private var currentlySelectedPlanningArea: Option[String] = None
   private var currentlySelectedPlanningAreaNice: Option[String] = None
   private var currentlySelectedLessonSummariesThisWeek: Option[List[LessonSummary]] = None
@@ -409,10 +405,9 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
   }
 
   private def setButtonDefaults(theDiv: HTMLDivElement): Unit = {
-    global.console.log(s"eAndORowBackgroundNormalColor = $eAndORowBackgroundNormalColor.toString")
-    theDiv.style.backgroundColor = eAndORowBackgroundNormalColor.getOrElse("f6f6f6")
-    theDiv.style.color = eAndORowForegroundNormalColor.getOrElse("grey")
-    theDiv.style.borderRadius = eAndORowBorderRadius.getOrElse("0")
+    theDiv.style.backgroundColor = ""
+    theDiv.style.color = "grey"
+    theDiv.style.borderRadius = "0px"
   }
 
   def statusIs(theDiv: Div, statusCheck: String): Boolean = {
@@ -550,10 +545,11 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
         theDiv.style.backgroundColor = "#016ecd"
         theDiv.style.color = "white"
         theDiv.style.borderRadius = "7px"
+        setStatus(theDiv, "Started", "badge-warning")
       } else {
-        theDiv.style.backgroundColor = eAndORowBackgroundNormalColor.getOrElse("f6f6f6")
-        theDiv.style.color = eAndORowForegroundNormalColor.getOrElse("grey")
-        theDiv.style.borderRadius = eAndORowBorderRadius.getOrElse("0")
+        theDiv.style.backgroundColor = ""
+        theDiv.style.color = "grey"
+        theDiv.style.borderRadius = "0px"
       }
 
       index = index + 1
@@ -569,16 +565,6 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
       val theDiv = allEAndOAndBenchmarkRows(index).asInstanceOf[HTMLDivElement]
 
       theDiv.addEventListener("mouseover", (e: dom.Event) => {
-        if (eAndORowBackgroundNormalColor.isEmpty) {
-          eAndORowBackgroundNormalColor = Some(theDiv.style.backgroundColor)
-        }
-        if (eAndORowForegroundNormalColor.isEmpty) {
-          eAndORowForegroundNormalColor = Some(theDiv.style.color)
-        }
-        if (eAndORowBorderRadius.isEmpty) {
-          eAndORowBorderRadius = Some(theDiv.style.borderRadius)
-        }
-
         val groupIdOrNot = theDiv.getAttribute("data-group-id-or-not")
         val eAndOCode = theDiv.getAttribute("data-eando-code")
         val benchmarkValue = theDiv.getAttribute("data-benchmark")
@@ -628,9 +614,8 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
               !groupToSelectedEsOsAndBenchmarks(groupIdOrNot).isDefinedAt(curriculumSection) ||
               !groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection).isDefinedAt(curriculumSubSection) ||
               !groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection)(curriculumSubSection)._2.contains(benchmarkValue)))) {
-          theDiv.style.backgroundColor = eAndORowBackgroundNormalColor.getOrElse("f6f6f6")
-          theDiv.style.color = eAndORowForegroundNormalColor.getOrElse("grey")
-          theDiv.style.borderRadius = eAndORowBorderRadius.getOrElse("0")
+
+          setButtonDefaults(theDiv)
         }
       })
 
