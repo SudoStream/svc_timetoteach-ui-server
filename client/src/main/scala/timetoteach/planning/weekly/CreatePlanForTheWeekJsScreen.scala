@@ -1,6 +1,6 @@
 package timetoteach.planning.weekly
 
-import duplicate.model.CurriculumLevel
+import duplicate.model.{CurriculumLevel, EarlyLevel}
 import duplicate.model.esandos._
 import duplicate.model.planning._
 import org.scalajs.dom
@@ -11,8 +11,9 @@ import org.scalajs.dom.raw._
 import org.scalajs.dom.svg.SVG
 import scalatags.JsDom
 import scalatags.JsDom.TypedTag
-import scalatags.JsDom.all.{`class`, attr, div, _}
+import scalatags.JsDom.all.{`class`, attr, div, s, _}
 import shared.util.PlanningHelper
+import timetoteach.planning.weekly.CreatePlanForTheWeekJsScreen.groupToSelectedEsOsAndBenchmarks
 import upickle.default.write
 
 import scala.collection.mutable
@@ -24,6 +25,10 @@ import scala.util.{Failure, Success}
 object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
 
   private var groupToSelectedEsOsAndBenchmarks: scala.collection.mutable.Map[String, scala.collection.mutable.Map[String, scala.collection.mutable.Map[String,
+    (scala.collection.mutable.Set[String], scala.collection.mutable.Set[String])]]] = scala.collection.mutable.Map.empty
+  private var groupToCompletedEsOsAndBenchmarks: scala.collection.mutable.Map[String, scala.collection.mutable.Map[String, scala.collection.mutable.Map[String,
+    (scala.collection.mutable.Set[String], scala.collection.mutable.Set[String])]]] = scala.collection.mutable.Map.empty
+  private var groupToNotStartedEsOsAndBenchmarks: scala.collection.mutable.Map[String, scala.collection.mutable.Map[String, scala.collection.mutable.Map[String,
     (scala.collection.mutable.Set[String], scala.collection.mutable.Set[String])]]] = scala.collection.mutable.Map.empty
 
   private var currentlySelectedPlanningArea: Option[String] = None
@@ -334,6 +339,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
         global.console.log(s"groupToSelectedEsOsAndBenchmarks == ${groupToSelectedEsOsAndBenchmarks.toString}")
 
         val groupToEsOsBenchmarks: Map[String, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel] = populateGroupToEsOsBenchmarks()
+        global.console.log(s"groupToEsOsBenchmarks ... sonn")
         global.console.log(s"groupToEsOsBenchmarks == ${groupToEsOsBenchmarks.toString}")
         postSaveEsOsBenchies(
           WeeklyPlanOfOneSubject(
@@ -441,6 +447,101 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     }
   }
 
+  private def safelyRemoveCodeFromGroup(
+                                         group: scala.collection.mutable.Map[String, scala.collection.mutable.Map[String, scala.collection.mutable.Map[String,
+                                           (scala.collection.mutable.Set[String], scala.collection.mutable.Set[String])]]],
+                                         groupIdOrNot: String,
+                                         curriculumSection: String,
+                                         curriculumSubSection: String,
+                                         code: String,
+                                         eAndOs: Boolean
+                                       ): Unit = {
+    if (eAndOs) {
+      if ((
+        group.nonEmpty &&
+          group.isDefinedAt(groupIdOrNot) &&
+          group(groupIdOrNot).nonEmpty &&
+          group(groupIdOrNot).isDefinedAt(curriculumSection) &&
+          group(groupIdOrNot)(curriculumSection).isDefinedAt(curriculumSubSection)) &&
+        group(groupIdOrNot)(curriculumSection)(curriculumSubSection)._1.contains(code)) {
+
+        group(groupIdOrNot)(curriculumSection)(curriculumSubSection)._1.remove(code)
+      }
+    } else {
+      if ((
+        group.nonEmpty &&
+          group.isDefinedAt(groupIdOrNot) &&
+          group(groupIdOrNot).nonEmpty &&
+          group(groupIdOrNot).isDefinedAt(curriculumSection) &&
+          group(groupIdOrNot)(curriculumSection).isDefinedAt(curriculumSubSection)) &&
+        group(groupIdOrNot)(curriculumSection)(curriculumSubSection)._2.contains(code)) {
+
+        group(groupIdOrNot)(curriculumSection)(curriculumSubSection)._2.remove(code)
+      }
+    }
+  }
+
+
+  private def safelyAddCodeToGroup(
+                                    group: scala.collection.mutable.Map[String, scala.collection.mutable.Map[String, scala.collection.mutable.Map[String,
+                                      (scala.collection.mutable.Set[String], scala.collection.mutable.Set[String])]]],
+                                    groupIdOrNot: String,
+                                    curriculumSection: String,
+                                    curriculumSubSection: String,
+                                    code: String,
+                                    eAndOs: Boolean
+                                  ): scala.collection.mutable.Map[String, scala.collection.mutable.Map[String, scala.collection.mutable.Map[String,
+    (scala.collection.mutable.Set[String], scala.collection.mutable.Set[String])]]] = {
+
+    var newGroup: scala.collection.mutable.Map[String, scala.collection.mutable.Map[String, scala.collection.mutable.Map[String,
+      (scala.collection.mutable.Set[String], scala.collection.mutable.Set[String])]]] = if (!group.isDefinedAt(groupIdOrNot)) {
+      group + (groupIdOrNot -> mutable.Map.empty)
+    } else group
+
+    if (!newGroup(groupIdOrNot).isDefinedAt(curriculumSection)) {
+      newGroup(groupIdOrNot) = newGroup(groupIdOrNot) + (curriculumSection -> mutable.Map.empty)
+    }
+    if (!newGroup(groupIdOrNot)(curriculumSection).isDefinedAt(curriculumSubSection)) {
+      newGroup(groupIdOrNot)(curriculumSection)(curriculumSubSection) = (scala.collection.mutable.Set.empty, scala.collection.mutable.Set.empty)
+    }
+
+    if (eAndOs) {
+      newGroup(groupIdOrNot)(curriculumSection)(curriculumSubSection)._1.remove(code)
+      newGroup(groupIdOrNot)(curriculumSection)(curriculumSubSection)._1.add(code)
+    } else {
+      newGroup(groupIdOrNot)(curriculumSection)(curriculumSubSection)._2.remove(code)
+      newGroup(groupIdOrNot)(curriculumSection)(curriculumSubSection)._2.add(code)
+    }
+
+    newGroup
+  }
+
+  def safelyCheckCode(
+                       group: scala.collection.mutable.Map[String, scala.collection.mutable.Map[String, scala.collection.mutable.Map[String,
+                         (scala.collection.mutable.Set[String], scala.collection.mutable.Set[String])]]],
+                       groupIdOrNot: String,
+                       curriculumSection: String,
+                       curriculumSubSection: String,
+                       code: String,
+                       eAndOs: Boolean
+                     ): Boolean = {
+
+    if (group.nonEmpty &&
+      group.isDefinedAt(groupIdOrNot) &&
+      group(groupIdOrNot).nonEmpty &&
+      group(groupIdOrNot).isDefinedAt(curriculumSection) &&
+      group(groupIdOrNot)(curriculumSection).isDefinedAt(curriculumSubSection)) {
+
+      if (eAndOs) {
+        group(groupIdOrNot)(curriculumSection)(curriculumSubSection)._1.contains(code)
+      } else {
+        group(groupIdOrNot)(curriculumSection)(curriculumSubSection)._2.contains(code)
+      }
+    } else {
+      false
+    }
+  }
+
   private def clickOnEandO(): Unit = {
     val allEAndORows = dom.document.getElementsByClassName("create-weekly-plans-es-and-os-row")
     val nodeListSize = allEAndORows.length
@@ -456,31 +557,28 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
 
         global.console.log(s"Selected E and O code '$eAndOCode'")
 
-        if ((
-          groupToSelectedEsOsAndBenchmarks.nonEmpty &&
-            groupToSelectedEsOsAndBenchmarks.isDefinedAt(groupIdOrNot) &&
-            groupToSelectedEsOsAndBenchmarks(groupIdOrNot).nonEmpty &&
-            groupToSelectedEsOsAndBenchmarks(groupIdOrNot).isDefinedAt(curriculumSection) &&
-            groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection).isDefinedAt(curriculumSubSection)) &&
-          groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection)(curriculumSubSection)._1.contains(eAndOCode)) {
-
-          if (statusIs(theDiv, "Started")) {
-            setButtonComplete(theDiv)
-            setStatus(theDiv, "Complete", "badge-success")
-          } else if (statusIs(theDiv, "Complete")) {
-            setButtonDefaults(theDiv)
-            setStatus(theDiv, "Not Started", "badge-danger")
-            groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection)(curriculumSubSection)._1.remove(eAndOCode)
-          } else {
-            global.console.log(s"Unknown status.")
-          }
-        } else {
+        if (statusIs(theDiv, "Started")) {
+          setButtonComplete(theDiv)
+          setStatus(theDiv, "Complete", "badge-success")
+          safelyRemoveCodeFromGroup(groupToSelectedEsOsAndBenchmarks, groupIdOrNot, curriculumSection, curriculumSubSection, eAndOCode, true)
+          safelyRemoveCodeFromGroup(groupToNotStartedEsOsAndBenchmarks, groupIdOrNot, curriculumSection, curriculumSubSection, eAndOCode, true)
+          groupToCompletedEsOsAndBenchmarks = safelyAddCodeToGroup(groupToCompletedEsOsAndBenchmarks, groupIdOrNot, curriculumSection, curriculumSubSection, eAndOCode, true)
+        } else if (statusIs(theDiv, "Complete")) {
+          setButtonDefaults(theDiv)
+          setStatus(theDiv, "Not Started", "badge-danger")
+          safelyRemoveCodeFromGroup(groupToSelectedEsOsAndBenchmarks, groupIdOrNot, curriculumSection, curriculumSubSection, eAndOCode, true)
+          safelyRemoveCodeFromGroup(groupToCompletedEsOsAndBenchmarks, groupIdOrNot, curriculumSection, curriculumSubSection, eAndOCode, true)
+          groupToNotStartedEsOsAndBenchmarks = safelyAddCodeToGroup(groupToNotStartedEsOsAndBenchmarks, groupIdOrNot, curriculumSection, curriculumSubSection, eAndOCode, true)
+        } else if (statusIs(theDiv, "Not Started")) {
           selectEAndOCode(groupIdOrNot, eAndOCode, curriculumSection, curriculumSubSection)
           setStatus(theDiv, "Started", "badge-warning")
           theDiv.style.backgroundColor = "#016dad"
           theDiv.style.color = "white"
           theDiv.style.borderRadius = "7px"
+        } else {
+          global.console.log(s"Unknown status.")
         }
+
       })
 
       index = index + 1
@@ -488,6 +586,9 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
   }
 
   private def selectEAndOCode(groupIdOrNot: String, eAndOCode: String, curriculumSection: String, curriculumSubSection: String): Unit = {
+    safelyRemoveCodeFromGroup(groupToNotStartedEsOsAndBenchmarks, groupIdOrNot, curriculumSection, curriculumSubSection, eAndOCode, true)
+    safelyRemoveCodeFromGroup(groupToCompletedEsOsAndBenchmarks, groupIdOrNot, curriculumSection, curriculumSubSection, eAndOCode, true)
+
     if (!groupToSelectedEsOsAndBenchmarks.isDefinedAt(groupIdOrNot)) {
       groupToSelectedEsOsAndBenchmarks = groupToSelectedEsOsAndBenchmarks + (groupIdOrNot -> mutable.Map.empty)
     }
@@ -976,6 +1077,8 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
 
   private def resetAllValuesToSaved(): Unit = {
     groupToSelectedEsOsAndBenchmarks.clear()
+    groupToCompletedEsOsAndBenchmarks.clear()
+    groupToNotStartedEsOsAndBenchmarks.clear()
     populateSelectedEsOsAndBenchmarksFromSaved()
     repaintTheEsAndOs("create-weekly-plans-es-and-os-row")
     repaintTheBenchmarks("create-weekly-plans-benchmark-row")
@@ -996,13 +1099,13 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
   }
 
   private def createEandOSetSubSection(esAndOsPlusBenchmarksForSubsection: (mutable.Set[String], mutable.Set[String])): EandOSetSubSection = {
-    val esAndOs: List[EandO] = {
+    val esAndOs: List[EandO] = if (esAndOsPlusBenchmarksForSubsection._1.isEmpty) Nil else {
       for {
         esAndOsCode <- esAndOsPlusBenchmarksForSubsection._1
       } yield EandO(esAndOsCode, Nil)
     }.toList
 
-    val benchmarks: List[Benchmark] = {
+    val benchmarks: List[Benchmark] = if (esAndOsPlusBenchmarksForSubsection._2.isEmpty) Nil else {
       for {
         benchmark <- esAndOsPlusBenchmarksForSubsection._2
       } yield Benchmark(benchmark)
@@ -1019,13 +1122,19 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
   mutable.Map[String, (mutable.Set[String], mutable.Set[String])]): Map[String, Map[String, EandOSetSubSection]] = {
     val mutableMap: mutable.Map[String, EandOSetSubSection] = mutable.Map.empty
 
-    for (subsectionName <- subsectionToEsAndOs.keys) {
-      val esAndOsPlusBenchmarksForSubsection = subsectionToEsAndOs(subsectionName)
-      val esOsSetSubSection: EandOSetSubSection = createEandOSetSubSection(esAndOsPlusBenchmarksForSubsection)
-      mutableMap += (subsectionName -> esOsSetSubSection)
+    if (subsectionToEsAndOs.isEmpty) Map() else {
+
+      for (subsectionName <- subsectionToEsAndOs.keys) {
+        if (subsectionToEsAndOs.isDefinedAt(subsectionName)) {
+          val esAndOsPlusBenchmarksForSubsection = subsectionToEsAndOs(subsectionName)
+          val esOsSetSubSection: EandOSetSubSection = createEandOSetSubSection(esAndOsPlusBenchmarksForSubsection)
+          mutableMap += (subsectionName -> esOsSetSubSection)
+        }
+      }
+
+      if (mutableMap.isEmpty) Map() else Map(sectionName -> mutableMap.toMap)
     }
 
-    Map(sectionName -> mutableMap.toMap)
   }
 
   private def extractCurriculumLevel(eAndO: EandO): CurriculumLevel = {
@@ -1033,34 +1142,37 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
   }
 
   private def extractCurriculumLevel(setSectionNameToSubSectionsMap: Map[String, Map[String, EandOSetSubSection]]): CurriculumLevel = {
-    global.console.log(s"setSectionNameToSubSectionsMap = ${setSectionNameToSubSectionsMap.toString()}")
-    val levels = for {
-      sectionName <- setSectionNameToSubSectionsMap.keys
-      subsectionName <- setSectionNameToSubSectionsMap(sectionName).keys
-      eAndOCodes = setSectionNameToSubSectionsMap(sectionName)(subsectionName).eAndOs
-      log1 = global.console.log(s"eAndOCodes = ${eAndOCodes.toString}")
-      if eAndOCodes.nonEmpty
-      level = extractCurriculumLevel(eAndOCodes.head)
-    } yield level
+    if (setSectionNameToSubSectionsMap.isEmpty) EarlyLevel else {
+      val levels = for {
+        sectionName <- setSectionNameToSubSectionsMap.keys
+        subsectionName <- setSectionNameToSubSectionsMap(sectionName).keys
+        eAndOCodes = setSectionNameToSubSectionsMap(sectionName)(subsectionName).eAndOs
+        headCode = if (eAndOCodes.nonEmpty) eAndOCodes.head else EandO("NOPE", Nil)
+        level = extractCurriculumLevel(headCode)
+      } yield level
 
-    levels.head
+      levels.head
+    }
   }
 
   private def populateGroupToEsOsBenchmarks(): Map[String, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel] = {
-    {
-      for {
-        planningAreaAndGroupIdKey <- groupToSelectedEsOsAndBenchmarks.keys
-        groupId = planningAreaAndGroupIdKey.split("___")(1)
+    if (groupToSelectedEsOsAndBenchmarks.isEmpty) Map() else {
+      {
+        for {
+          planningAreaAndGroupIdKey <- groupToSelectedEsOsAndBenchmarks.keys
+          groupId = planningAreaAndGroupIdKey.split("___")(1)
 
-        sectionName <- groupToSelectedEsOsAndBenchmarks(planningAreaAndGroupIdKey).keys
-        setSectionNameToSubSectionsMap = createSetSectionNameToSubSectionsMap(sectionName, groupToSelectedEsOsAndBenchmarks(planningAreaAndGroupIdKey)(sectionName))
-        curriculumLevel: CurriculumLevel = extractCurriculumLevel(setSectionNameToSubSectionsMap)
-      } yield (groupId, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel(
-        curriculumLevel,
-        CurriculumArea.createCurriculumAreaFromString(currentlySelectedPlanningArea.getOrElse("NO_SUBJECT")),
-        setSectionNameToSubSectionsMap
-      ))
-    }.toMap
+          if groupToSelectedEsOsAndBenchmarks.isDefinedAt(planningAreaAndGroupIdKey)
+          sectionName <- groupToSelectedEsOsAndBenchmarks(planningAreaAndGroupIdKey).keys
+          setSectionNameToSubSectionsMap = createSetSectionNameToSubSectionsMap(sectionName, groupToSelectedEsOsAndBenchmarks(planningAreaAndGroupIdKey)(sectionName))
+          curriculumLevel: CurriculumLevel = extractCurriculumLevel(setSectionNameToSubSectionsMap)
+        } yield (groupId, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel(
+          curriculumLevel,
+          CurriculumArea.createCurriculumAreaFromString(currentlySelectedPlanningArea.getOrElse("NO_SUBJECT")),
+          setSectionNameToSubSectionsMap
+        ))
+      }.toMap
+    }
   }
 
   private def extractGroupIds(peerNode: HTMLElement): List[String] = {
@@ -1303,6 +1415,12 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
 
   private def postSaveEsOsBenchies(subjectWeeklyPlan: WeeklyPlanOfOneSubject, classId: String): Unit = {
     val subjectWeeklyPlansPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[WeeklyPlanOfOneSubject](subjectWeeklyPlan))
+    val notStartedEsOsBenchiesPickled = createPickledNotStartedEsOsBenchies()
+    val completedEsOsBenchiesPickled = createPickledCompletedEsOsBenchies()
+
+    global.console.log(s"Not Started: ${groupToNotStartedEsOsAndBenchmarks.toString()}")
+    global.console.log(s"Selected: ${groupToSelectedEsOsAndBenchmarks.toString()}")
+    global.console.log(s"Completed: ${groupToCompletedEsOsAndBenchmarks.toString()}")
     global.console.log(s"Pickled, this == $subjectWeeklyPlansPickled")
 
     import scala.concurrent.ExecutionContext.Implicits.global
@@ -1311,7 +1429,8 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
       "Content-Type" -> "application/x-www-form-urlencoded",
       "X-Requested-With" -> "Accept"
     )
-    val theData = InputData.str2ajax(s"subjectWeeklyPlansPickled=$subjectWeeklyPlansPickled")
+    val theData = InputData.str2ajax(s"subjectWeeklyPlansPickled=$subjectWeeklyPlansPickled," +
+      s"notStarted=${notStartedEsOsBenchiesPickled},completed=${completedEsOsBenchiesPickled}")
 
     Ajax.post(
       url = theUrl,

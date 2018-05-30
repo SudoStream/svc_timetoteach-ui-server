@@ -139,15 +139,17 @@ object CurriculumLevel {
   implicit def rw: RW[CurriculumLevel] = macroRW
 
   def createCurriculumLevelFromEAndOCode(eAndOCode: String): CurriculumLevel = {
-    val code2ndPart = eAndOCode.split(" ")(1)
-    val levelAsString = code2ndPart.split("-")(0)
-    levelAsString match {
-      case "0" => EarlyLevel
-      case "1" => FirstLevel
-      case "2" => SecondLevel
-      case "3" => ThirdLevel
-      case "4" => FourthLevel
-      case _ => EarlyLevel
+    if (!eAndOCode.contains(" ") && !eAndOCode.contains("-")) EarlyLevel else {
+      val code2ndPart = eAndOCode.split(" ")(1)
+      val levelAsString = code2ndPart.split("-")(0)
+      levelAsString match {
+        case "0" => EarlyLevel
+        case "1" => FirstLevel
+        case "2" => SecondLevel
+        case "3" => ThirdLevel
+        case "4" => FourthLevel
+        case _ => EarlyLevel
+      }
     }
   }
 }
