@@ -1,5 +1,6 @@
 package controllers.serviceproxies
 
+import duplicate.model.esandos.{CompletedEsAndOsByGroup, NotStartedEsAndOsByGroup}
 import duplicate.model.planning.WeeklyPlanOfOneSubject
 import javax.inject.{Inject, Singleton}
 import models.timetoteach.planning.{CurriculumAreaTermlyPlan, TermlyCurriculumSelection}
@@ -9,21 +10,26 @@ import potentialmicroservice.planning.writer.PlanningWriterService
 import scala.concurrent.Future
 
 @Singleton
-class PlanningWriterServiceProxyImpl @Inject()(planningWriterService: PlanningWriterService) extends PlanningWriterServiceProxy
-{
+class PlanningWriterServiceProxyImpl @Inject()(planningWriterService: PlanningWriterService) extends PlanningWriterServiceProxy {
 
-  override def saveSubjectTermlyPlan(planToSave: CurriculumAreaTermlyPlan): Future[Completed] =
-  {
+  override def saveSubjectTermlyPlan(planToSave: CurriculumAreaTermlyPlan): Future[Completed] = {
     planningWriterService.saveSubjectTermlyPlan(planToSave)
   }
 
-  override def saveTermlyCurriculumSelection(termlyCurriculumSelection: TermlyCurriculumSelection): Future[Completed] =
-  {
+  override def saveTermlyCurriculumSelection(termlyCurriculumSelection: TermlyCurriculumSelection): Future[Completed] = {
     planningWriterService.saveTermlyCurriculumSelection(termlyCurriculumSelection)
   }
 
-  override def saveWeeklyPlanForSingleSubject(weeklyPlansToSave: WeeklyPlanOfOneSubject): Future[List[Completed]] = {
-    planningWriterService.saveWeeklyPlanForSingleSubject(weeklyPlansToSave)
+  override def saveWeeklyPlanForSingleSubject(
+                                               weeklyPlansToSave: WeeklyPlanOfOneSubject,
+                                               completedEsAndOsByGroup: CompletedEsAndOsByGroup,
+                                               notStartedEsOsBenchies: NotStartedEsAndOsByGroup
+                                             ): Future[List[Completed]] = {
+    planningWriterService.saveWeeklyPlanForSingleSubject(
+      weeklyPlansToSave,
+      completedEsAndOsByGroup,
+      notStartedEsOsBenchies
+    )
   }
 
 }

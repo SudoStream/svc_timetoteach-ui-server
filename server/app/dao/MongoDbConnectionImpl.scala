@@ -9,7 +9,7 @@ import org.mongodb.scala.bson.BsonDocument
 import org.mongodb.scala.connection.{NettyStreamFactoryFactory, SslSettings}
 import org.mongodb.scala.{Document, MongoClient, MongoClientSettings, MongoCollection, ServerAddress}
 import play.api.Logger
-import potentialmicroservice.planning.sharedschema.{SingleLessonPlanSchema, TermlyCurriculumSelectionSchema, TermlyPlanningSchema, WeeklyPlanningSchema}
+import potentialmicroservice.planning.sharedschema._
 
 import scala.collection.JavaConverters._
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -28,6 +28,7 @@ class MongoDbConnectionImpl extends MongoDbConnection with MiniKubeHelper {
   private val termlyCurriculumSelectionCollectionName = config.getString("mongodb.termly-curriculum-selection-collection-name")
   private val lessonPlansCollectionName = config.getString("mongodb.lesson-plans-collection-name")
   private val weeklyPlansCollectionName = config.getString("mongodb.weekly-plans-collection-name")
+  private val eAndOBenchmarkStatusCollectionName = config.getString("mongodb.eando-benchmark-status-collection-name")
 
   private val calendarDatabaseName = config.getString("mongodb.calendar-database-name")
   private val schoolTermsCollectionName = config.getString("mongodb.school-terms-collection-name")
@@ -102,6 +103,11 @@ class MongoDbConnectionImpl extends MongoDbConnection with MiniKubeHelper {
   override def getLessonPlanningCollection: MongoCollection[Document] = {
     val planningDatabase = mongoDbClient.getDatabase(planningDatabaseName)
     planningDatabase.getCollection(lessonPlansCollectionName)
+  }
+
+  override def getEAndOBenchmarkStatusCollection: MongoCollection[Document] = {
+    val eAndOStatusDatabase = mongoDbClient.getDatabase(planningDatabaseName)
+    eAndOStatusDatabase.getCollection(eAndOBenchmarkStatusCollectionName)
   }
 
   override def getSchoolTermsCollection: MongoCollection[Document] = {
@@ -208,6 +214,19 @@ class MongoDbConnectionImpl extends MongoDbConnection with MiniKubeHelper {
     obs.toFuture().onComplete {
       case Success(msg) => logger.info(s"Ensure termly curriculum selection index attempt completed with msg : $msg")
       case Failure(ex) => logger.info(s"Ensure termly curriculum selection index failed to complete: ${ex.getMessage}")
+    }
+  }
+
+  override def ensureEandOBenchmarkStatusIndexes(): Unit = {
+    val mainIndex = BsonDocument(
+      EsAndOsStatusSchema.TTT_USER_ID -> 1,
+      EsAndOsStatusSchema.CLASS_ID -> 1
+    )
+    logger.info(s"Ensuring index created on e and o benchmark status collection: ${mainIndex.toString}")
+    val obs = getEAndOBenchmarkStatusCollection.createIndex(mainIndex)
+    obs.toFuture().onComplete {
+      case Success(msg) => logger.info(s"Ensure e and o benchmark status index attempt completed with msg : $msg")
+      case Failure(ex) => logger.info(s"Ensure e and o benchmark status index failed to complete: ${ex.getMessage}")
     }
   }
 }

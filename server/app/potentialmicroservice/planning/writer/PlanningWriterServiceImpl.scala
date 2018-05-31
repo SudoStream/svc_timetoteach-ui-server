@@ -1,5 +1,6 @@
 package potentialmicroservice.planning.writer
 
+import duplicate.model.esandos.{CompletedEsAndOsByGroup, NotStartedEsAndOsByGroup}
 import duplicate.model.planning.WeeklyPlanOfOneSubject
 import javax.inject.{Inject, Singleton}
 import models.timetoteach.planning.{CurriculumAreaTermlyPlan, TermlyCurriculumSelection}
@@ -19,8 +20,16 @@ class PlanningWriterServiceImpl @Inject()(planningWriterDao: PlanWriterDao) exte
     planningWriterDao.saveTermlyCurriculumSelection(termlyCurriculumSelection)
   }
 
-  override def saveWeeklyPlanForSingleSubject(weeklyPlansToSave: WeeklyPlanOfOneSubject): Future[List[Completed]] = {
-    planningWriterDao.saveWeeklyPlanForSingleSubject(weeklyPlansToSave)
+  override def saveWeeklyPlanForSingleSubject(
+                                               weeklyPlansToSave: WeeklyPlanOfOneSubject,
+                                               completedEsAndOsByGroup: CompletedEsAndOsByGroup,
+                                               notStartedEsOsBenchies: NotStartedEsAndOsByGroup
+                                             ): Future[List[Completed]] = {
+    planningWriterDao.saveWeeklyPlanForSingleSubject(
+      weeklyPlansToSave,
+      completedEsAndOsByGroup,
+      notStartedEsOsBenchies
+    )
   }
 
 }

@@ -1,8 +1,8 @@
 package timetoteach.planning.weekly
 
-import duplicate.model.{CurriculumLevel, EarlyLevel}
 import duplicate.model.esandos._
 import duplicate.model.planning._
+import duplicate.model.{CurriculumLevel, EarlyLevel}
 import org.scalajs.dom
 import org.scalajs.dom.ext.Ajax
 import org.scalajs.dom.ext.Ajax.InputData
@@ -11,9 +11,8 @@ import org.scalajs.dom.raw._
 import org.scalajs.dom.svg.SVG
 import scalatags.JsDom
 import scalatags.JsDom.TypedTag
-import scalatags.JsDom.all.{`class`, attr, div, s, _}
+import scalatags.JsDom.all.{`class`, attr, div, _}
 import shared.util.PlanningHelper
-import timetoteach.planning.weekly.CreatePlanForTheWeekJsScreen.groupToSelectedEsOsAndBenchmarks
 import upickle.default.write
 
 import scala.collection.mutable
@@ -1413,24 +1412,70 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
 
   }
 
+  private def createCompletedEsAndOsByGroup(): CompletedEsAndOsByGroup = {
+    val innerMap: Map[String, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel] = if (groupToCompletedEsOsAndBenchmarks.isEmpty) Map() else {
+      {
+        for {
+          planningAreaAndGroupIdKey <- groupToCompletedEsOsAndBenchmarks.keys
+          groupId = planningAreaAndGroupIdKey.split("___")(1)
+
+          if groupToCompletedEsOsAndBenchmarks.isDefinedAt(planningAreaAndGroupIdKey)
+          sectionName <- groupToCompletedEsOsAndBenchmarks(planningAreaAndGroupIdKey).keys
+          setSectionNameToSubSectionsMap = createSetSectionNameToSubSectionsMap(sectionName, groupToCompletedEsOsAndBenchmarks(planningAreaAndGroupIdKey)(sectionName))
+          curriculumLevel: CurriculumLevel = extractCurriculumLevel(setSectionNameToSubSectionsMap)
+        } yield (groupId, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel(
+          curriculumLevel,
+          CurriculumArea.createCurriculumAreaFromString(currentlySelectedPlanningArea.getOrElse("NO_SUBJECT")),
+          setSectionNameToSubSectionsMap
+        ))
+      }.toMap
+    }
+    CompletedEsAndOsByGroup(innerMap)
+  }
+
+  private def createNotStartedEsAndOsByGroup(): NotStartedEsAndOsByGroup = {
+    val innerMap: Map[String, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel] = if (groupToCompletedEsOsAndBenchmarks.isEmpty) Map() else {
+      {
+        for {
+          planningAreaAndGroupIdKey <- groupToNotStartedEsOsAndBenchmarks.keys
+          groupId = planningAreaAndGroupIdKey.split("___")(1)
+
+          if groupToNotStartedEsOsAndBenchmarks.isDefinedAt(planningAreaAndGroupIdKey)
+          sectionName <- groupToNotStartedEsOsAndBenchmarks(planningAreaAndGroupIdKey).keys
+          setSectionNameToSubSectionsMap = createSetSectionNameToSubSectionsMap(sectionName, groupToNotStartedEsOsAndBenchmarks(planningAreaAndGroupIdKey)(sectionName))
+          curriculumLevel: CurriculumLevel = extractCurriculumLevel(setSectionNameToSubSectionsMap)
+        } yield (groupId, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel(
+          curriculumLevel,
+          CurriculumArea.createCurriculumAreaFromString(currentlySelectedPlanningArea.getOrElse("NO_SUBJECT")),
+          setSectionNameToSubSectionsMap
+        ))
+      }.toMap
+    }
+    NotStartedEsAndOsByGroup(innerMap)
+  }
+
+
   private def postSaveEsOsBenchies(subjectWeeklyPlan: WeeklyPlanOfOneSubject, classId: String): Unit = {
     val subjectWeeklyPlansPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[WeeklyPlanOfOneSubject](subjectWeeklyPlan))
-    val notStartedEsOsBenchiesPickled = createPickledNotStartedEsOsBenchies()
-    val completedEsOsBenchiesPickled = createPickledCompletedEsOsBenchies()
+    val completedEsOsBenchiesPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[CompletedEsAndOsByGroup](createCompletedEsAndOsByGroup()))
+    val notStartedEsOsBenchiesPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[NotStartedEsAndOsByGroup](createNotStartedEsAndOsByGroup()))
 
     global.console.log(s"Not Started: ${groupToNotStartedEsOsAndBenchmarks.toString()}")
     global.console.log(s"Selected: ${groupToSelectedEsOsAndBenchmarks.toString()}")
     global.console.log(s"Completed: ${groupToCompletedEsOsAndBenchmarks.toString()}")
     global.console.log(s"Pickled, this == $subjectWeeklyPlansPickled")
+    global.console.log(s"Pickled Completed, this == $completedEsOsBenchiesPickled")
+    global.console.log(s"Pickled NotStarted, this == $notStartedEsOsBenchiesPickled")
 
-    import scala.concurrent.ExecutionContext.Implicits.global
     val theUrl = s"/saveEsOsBenchiesForTheWeek/$classId"
     val theHeaders = Map(
       "Content-Type" -> "application/x-www-form-urlencoded",
       "X-Requested-With" -> "Accept"
     )
-    val theData = InputData.str2ajax(s"subjectWeeklyPlansPickled=$subjectWeeklyPlansPickled," +
-      s"notStarted=${notStartedEsOsBenchiesPickled},completed=${completedEsOsBenchiesPickled}")
+    val theData = InputData.str2ajax(s"subjectWeeklyPlansPickled=$subjectWeeklyPlansPickled&" +
+      s"notStarted=$notStartedEsOsBenchiesPickled&completed=$completedEsOsBenchiesPickled")
+
+    import scala.concurrent.ExecutionContext.Implicits.global
 
     Ajax.post(
       url = theUrl,

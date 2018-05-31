@@ -1,13 +1,15 @@
 package potentialmicroservice.planning.writer.dao
 
-import duplicate.model.esandos.{EandOSetSubSection, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel}
+import duplicate.model.esandos.{CompletedEsAndOsByGroup, EandOSetSubSection, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel, NotStartedEsAndOsByGroup}
 import duplicate.model.planning.{AttributeRowKey, LessonPlan, WeeklyPlanOfOneSubject}
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
 import models.timetoteach.planning.TermlyCurriculumSelection
 import org.mongodb.scala.bson.collection.immutable.Document
 import org.mongodb.scala.bson.{BsonArray, BsonDocument, BsonString}
 import potentialmicroservice.planning.sharedschema.TermlyCurriculumSelectionSchema._
-import potentialmicroservice.planning.sharedschema.{SingleLessonPlanSchema, WeeklyPlanningSchema}
+import potentialmicroservice.planning.sharedschema.{EsAndOsStatusSchema, SingleLessonPlanSchema, WeeklyPlanningSchema}
+
+import scala.annotation.tailrec
 
 trait PlanWriterDaoTermlyCurriculumSelectionHelper {
   def convertTermlyCurriculumSelectionToMongoDbDocument(termlyCurriculumSelection: TermlyCurriculumSelection): Document = {
@@ -31,6 +33,75 @@ trait PlanWriterDaoTermlyCurriculumSelectionHelper {
         SCHOOL_TERM_LAST_DAY -> termlyCurriculumSelection.schoolTerm.termLastDay.toString
       )
     )
+  }
+
+
+  private def createEsOsBenchiesAsDocumentsImpl(
+                                                 weeklyPlansToSave: WeeklyPlanOfOneSubject,
+                                                 status: String,
+                                                 valueType: String,
+                                                 groupId: String,
+                                                 section: String,
+                                                 subsection: String,
+                                                 codes: List[String]
+                                               ): List[Document] = {
+    @tailrec
+    def loop(remainingCodes: List[String], currentDocs: List[Document]): List[Document] = {
+      if (remainingCodes.isEmpty) currentDocs
+      else {
+        val newDoc = Document(
+          EsAndOsStatusSchema.TTT_USER_ID -> weeklyPlansToSave.tttUserId,
+          EsAndOsStatusSchema.CLASS_ID -> weeklyPlansToSave.classId,
+          EsAndOsStatusSchema.SUBJECT -> weeklyPlansToSave.subject,
+          EsAndOsStatusSchema.CREATED_TIMESTAMP -> java.time.LocalDateTime.now().toString.replace("T", " "),
+
+          EsAndOsStatusSchema.VALUE_TYPE -> valueType,
+          EsAndOsStatusSchema.STATUS -> status,
+          EsAndOsStatusSchema.GROUP_ID -> groupId,
+          EsAndOsStatusSchema.SECTION -> section,
+          EsAndOsStatusSchema.SUBSECTION -> subsection,
+
+          EsAndOsStatusSchema.VALUE -> remainingCodes.head
+        )
+        loop(remainingCodes.tail, newDoc :: currentDocs)
+      }
+    }
+
+    loop(codes, Nil)
+  }
+
+  private def createEsOsBenchiesAsDocuments(
+                                             weeklyPlansToSave: WeeklyPlanOfOneSubject,
+                                             status: String,
+                                             groupsToEsOsBenchiesMap: Map[String, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel]
+                                           ): List[Document] = {
+    {
+      {
+        for {
+          groupId <- groupsToEsOsBenchiesMap.keys
+          sectionToSubsectionToValues = groupsToEsOsBenchiesMap(groupId).setSectionNameToSubSections
+          section <- sectionToSubsectionToValues.keys
+          subsection <- sectionToSubsectionToValues(section).keys
+
+          esAndOs = sectionToSubsectionToValues(section)(subsection).eAndOs.map(elem => elem.code)
+          esAndOsAsDocs = createEsOsBenchiesAsDocumentsImpl(weeklyPlansToSave, status, "EANDO", groupId, section, subsection, esAndOs)
+
+          benchmarks = sectionToSubsectionToValues(section)(subsection).benchmarks.map(elem => elem.value)
+          benchmarksAsDocs = createEsOsBenchiesAsDocumentsImpl(weeklyPlansToSave, status, "BENCHMARK", groupId, section, subsection, benchmarks)
+        } yield esAndOsAsDocs ::: benchmarksAsDocs
+      }.toList
+    }.flatten
+  }
+
+  def extractEsOsBenchiesAsDocuments(
+                                      groupsToEsOsBenchies: Either[CompletedEsAndOsByGroup, NotStartedEsAndOsByGroup],
+                                      weeklyPlansToSave: WeeklyPlanOfOneSubject
+                                    ): List[Document] = {
+    val groupsToEsOsBenchiesMap: Map[String, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel] = if (groupsToEsOsBenchies.isLeft) groupsToEsOsBenchies.left.get.completedEsAndOsByGroup else
+      groupsToEsOsBenchies.right.get.completedEsAndOsByGroup
+
+    val status = if (groupsToEsOsBenchies.isLeft) "COMPLETE" else "NOT_STARTED"
+    createEsOsBenchiesAsDocuments(weeklyPlansToSave, status, groupsToEsOsBenchiesMap)
   }
 
   def extractWeeklyPlanHighLevelAsMongoDbDocument(weeklyPlansToSave: WeeklyPlanOfOneSubject): Document = {
@@ -117,7 +188,7 @@ trait PlanWriterDaoTermlyCurriculumSelectionHelper {
     bsonArrayToreturn
   }
 
-  private def convertListStringsToBsonArray (listOfStrings: List[String]): BsonArray = {
+  private def convertListStringsToBsonArray(listOfStrings: List[String]): BsonArray = {
     val bsonArrayToreturn = BsonArray()
 
     val docsToAdd = for {

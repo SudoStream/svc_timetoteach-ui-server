@@ -3,12 +3,12 @@ package controllers.planning.weekly
 import java.time.{LocalDate, LocalTime}
 
 import be.objectify.deadbolt.scala.DeadboltActions
-import controllers.planning.termly.routes
 import controllers.serviceproxies._
 import controllers.time.SystemTime
 import curriculum.scotland.EsOsAndBenchmarksBuilderImpl
+import duplicate.model.ClassDetails
+import duplicate.model.esandos.{CompletedEsAndOsByGroup, NotStartedEsAndOsByGroup}
 import duplicate.model.planning.{FullWeeklyPlanOfLessons, LessonsThisWeek, WeeklyPlanOfOneSubject}
-import duplicate.model.{ClassDetails, TermlyPlansToSave}
 import io.sudostream.timetoteach.messages.systemwide.model.UserPreferences
 import javax.inject.{Inject, Singleton}
 import models.timetoteach.classtimetable.SchoolDayTimes
@@ -55,13 +55,17 @@ class WeeklyPlanningController @Inject()(
 
   val subjectWeeklyPlansToSaveForm = Form(
     mapping(
-      "subjectWeeklyPlansPickled" -> text
-    )(OneSubectWeeklyPlansJson.apply)(OneSubectWeeklyPlansJson.unapply)
+      "subjectWeeklyPlansPickled" -> text,
+      "notStarted" -> text,
+      "completed" -> text
+    )(OneSubjectWeeklyPlansJson.apply)(OneSubjectWeeklyPlansJson.unapply)
   )
 
-  case class OneSubectWeeklyPlansJson(
-                                       subjectWeeklyPlansPickled: String
-                                     )
+  case class OneSubjectWeeklyPlansJson(
+                                        subjectWeeklyPlansPickled: String,
+                                        notStarted: String,
+                                        completed: String
+                                      )
 
 
   def weeklyViewOfWeeklyPlanningWithNoMondayDate(classId: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest =>
@@ -247,6 +251,14 @@ class WeeklyPlanningController @Inject()(
       PlanningHelper.decodeAnyNonFriendlyCharacters(subjectWeeklyPlans.subjectWeeklyPlansPickled))
     logger.debug(s"Subject Weekly plans Unpickled = ${weeklyPlansToSave.toString}")
 
+    val notStartedEsOsBenchies: NotStartedEsAndOsByGroup = read[NotStartedEsAndOsByGroup](
+      PlanningHelper.decodeAnyNonFriendlyCharacters(subjectWeeklyPlans.notStarted))
+    logger.debug(s"Not Started Es&Os/Benchmarks Unpickled = ${notStartedEsOsBenchies.toString}")
+
+    val completedEsOsBenchies: CompletedEsAndOsByGroup = read[CompletedEsAndOsByGroup](
+      PlanningHelper.decodeAnyNonFriendlyCharacters(subjectWeeklyPlans.completed))
+    logger.debug(s"Completed Es&Os/Benchmarks Unpickled = ${completedEsOsBenchies.toString}")
+
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(weeklyPlansToSave.tttUserId))
 
     for {
@@ -256,19 +268,33 @@ class WeeklyPlanningController @Inject()(
       if maybeClassDetails.isDefined
       classDetails = maybeClassDetails.get
 
-      savedPlanFutures = planningWriterService.saveWeeklyPlanForSingleSubject(weeklyPlansToSave)
+      savedPlanFutures = planningWriterService.saveWeeklyPlanForSingleSubject(
+        weeklyPlansToSave,
+        completedEsOsBenchies,
+        notStartedEsOsBenchies
+      )
       theFutures <- savedPlanFutures
     } yield Ok("Saved Weekly Plan Ok")
   }
 
 
   def saveEsOsBenchiesForTheWeek(classId: String): Action[AnyContent] = Action.async { implicit request =>
+    logger.debug("saveEsOsBenchiesForTheWeek 1")
     val subjectWeeklyPlans = subjectWeeklyPlansToSaveForm.bindFromRequest.get
+    logger.debug("saveEsOsBenchiesForTheWeek 2")
 
     import upickle.default._
     val weeklyPlansToSave: WeeklyPlanOfOneSubject = read[WeeklyPlanOfOneSubject](
       PlanningHelper.decodeAnyNonFriendlyCharacters(subjectWeeklyPlans.subjectWeeklyPlansPickled))
     logger.debug(s"Subject Weekly plans Unpickled = ${weeklyPlansToSave.toString}")
+
+    val notStartedEsOsBenchies: NotStartedEsAndOsByGroup = read[NotStartedEsAndOsByGroup](
+      PlanningHelper.decodeAnyNonFriendlyCharacters(subjectWeeklyPlans.notStarted))
+    logger.debug(s"Not Started Es&Os/Benchmarks Unpickled = ${notStartedEsOsBenchies.toString}")
+
+    val completedEsOsBenchies: CompletedEsAndOsByGroup = read[CompletedEsAndOsByGroup](
+      PlanningHelper.decodeAnyNonFriendlyCharacters(subjectWeeklyPlans.completed))
+    logger.debug(s"Completed Es&Os/Benchmarks Unpickled = ${completedEsOsBenchies.toString}")
 
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(weeklyPlansToSave.tttUserId))
 
@@ -279,7 +305,10 @@ class WeeklyPlanningController @Inject()(
       if maybeClassDetails.isDefined
       classDetails = maybeClassDetails.get
 
-      savedPlanFutures = planningWriterService.saveWeeklyPlanForSingleSubject(weeklyPlansToSave)
+      savedPlanFutures = planningWriterService.saveWeeklyPlanForSingleSubject(
+        weeklyPlansToSave,
+        completedEsOsBenchies,
+        notStartedEsOsBenchies)
       theFutures <- savedPlanFutures
     } yield Ok("Saved Weekly Plan Ok")
   }
