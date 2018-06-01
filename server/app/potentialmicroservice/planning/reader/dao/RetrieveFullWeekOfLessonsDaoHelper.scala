@@ -5,6 +5,7 @@ import java.time.LocalDate
 import dao.MongoDbConnection
 import duplicate.model.esandos._
 import duplicate.model.planning.{AttributeRowKey, FullWeeklyPlanOfLessons, LessonPlan, WeeklyPlanOfOneSubject}
+import javax.swing.event.DocumentEvent
 import models.timetoteach.planning.ScottishCurriculumPlanningAreaWrapper
 import models.timetoteach.planning.weekly.WeeklyHighLevelPlanOfOneSubject
 import models.timetoteach.{ClassId, TimeToTeachUserId}
@@ -48,11 +49,13 @@ trait RetrieveFullWeekOfLessonsDaoHelper {
     logger.info(s"Retrieve COMPLETE E&Os/Benchmarks: $tttUserId|$classId")
 
     val futureAllEAndOsBenchmarksStatuses = readAllEAndOsBenchmarksStatuses(tttUserId, classId)
-    val futureLatestVersionOfEachEandOBenchmark: Future[List[Document]] = latestVersionOfEachEandOBenchmark(futureAllEAndOsBenchmarksStatuses)
-    val futureCompletedEAndOBenchmarks: Future[List[Document]] = filterForCompleted(futureLatestVersionOfEachEandOBenchmark)
-    val futureCompletedEsAndOsByGroup: Future[Map[String, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel]] =
-      buildMapOfEAndOsBenchmarks(futureCompletedEAndOBenchmarks)
-    createCompletedEsAndOsByGroup(futureCompletedEsAndOsByGroup)
+
+    for {
+      allEAndOsBenchmarksStatuses <- futureAllEAndOsBenchmarksStatuses
+      latestVersionsOfEachEandOBenchmark = latestVersionOfEachEandOBenchmark(allEAndOsBenchmarksStatuses.toList)
+      completedEAndOBenchmarks = filterForCompleted(latestVersionsOfEachEandOBenchmark)
+      completedEsAndOsByGroup = buildMapOfEAndOsBenchmarks(completedEAndOBenchmarks)
+    } yield createCompletedEsAndOsByGroup(completedEsAndOsByGroup)
   }
 
   ////////////////
@@ -75,19 +78,61 @@ trait RetrieveFullWeekOfLessonsDaoHelper {
   }
 
   private[dao] def buildMapOfEAndOsBenchmarks(
-                                               futureLatestVersionOfEachEandOBenchmark: Future[List[Document]]
-                                             ): Future[Map[String, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel]] = ???
+                                               latestVersionOfEachEandOBenchmark: List[Document]
+                                             ): Map[String, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel] = ???
 
 
   private[dao] def latestVersionOfEachEandOBenchmark(
-                                                      futureAllEAndOsBenchmarksStatuses: Future[Seq[Document]]
-                                                    ): Future[List[Document]] = ???
+                                                      allEAndOsBenchmarksStatuses: List[Document]
+                                                    ): List[Document] = {
+    def loop(remainingElems: List[Document], currentMap: Map[String, Document]): List[Document] = {
+      if (remainingElems.isEmpty) currentMap.values.toList
+      else {
+        val nextDoc = remainingElems.head
+        val nextDocKey = nextDoc.getString(EsAndOsStatusSchema.TTT_USER_ID) +
+          nextDoc.getString(EsAndOsStatusSchema.CLASS_ID) +
+          nextDoc.getString(EsAndOsStatusSchema.SUBJECT) +
+          nextDoc.getString(EsAndOsStatusSchema.VALUE_TYPE) +
+          nextDoc.getString(EsAndOsStatusSchema.GROUP_ID) +
+          nextDoc.getString(EsAndOsStatusSchema.SECTION) +
+          nextDoc.getString(EsAndOsStatusSchema.SUBSECTION) +
+          nextDoc.getString(EsAndOsStatusSchema.VALUE)
+        val nextMap = if (currentMap.isDefinedAt(nextDocKey)) {
+          val currentDoc = currentMap(nextDocKey)
+          val currentDocTimestamp = MongoDbSafety.safelyParseTimestamp(currentDoc.getString(EsAndOsStatusSchema.CREATED_TIMESTAMP))
+          val nextDocTimestamp = MongoDbSafety.safelyParseTimestamp(nextDoc.getString(EsAndOsStatusSchema.CREATED_TIMESTAMP))
+          if (nextDocTimestamp.isAfter(currentDocTimestamp)) {
+            currentMap + (nextDocKey -> nextDoc)
+          } else currentMap
+        } else {
+          currentMap + (nextDocKey -> nextDoc)
+        }
+        loop(remainingElems.tail, nextMap)
+      }
+    }
+
+    loop(allEAndOsBenchmarksStatuses, Map())
+  }
 
   private[dao] def createCompletedEsAndOsByGroup(
-                                                  futureCompletedEsAndOsByGroup: Future[Map[String, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel]]
-                                                ): Future[CompletedEsAndOsByGroup] = ???
+                                                  completedEsAndOsByGroup: Map[String, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel]
+                                                ): CompletedEsAndOsByGroup = ???
 
-  private[dao] def filterForCompleted(futureLatestVersionOfEachEandOBenchmark: Future[List[Document]]): Future[List[Document]] = ???
+  private[dao] def filterForCompleted(latestVersionOfEachEandOBenchmark: List[Document]): List[Document] = {
+    @tailrec
+    def loop(remainingElems: List[Document], currentFiltered: List[Document]): List[Document] = {
+      if (remainingElems.isEmpty) currentFiltered
+      else {
+        val nextDoc = remainingElems.head
+        val nextFiltered = if (nextDoc.getString(EsAndOsStatusSchema.STATUS) == "COMPLETE") {
+          nextDoc :: currentFiltered
+        } else currentFiltered
+        loop(remainingElems.tail, nextFiltered)
+      }
+    }
+
+    loop(latestVersionOfEachEandOBenchmark, Nil)
+  }
 
   private def createFullWeeklyPlanOfLessons(
                                              tttUserId: TimeToTeachUserId,
