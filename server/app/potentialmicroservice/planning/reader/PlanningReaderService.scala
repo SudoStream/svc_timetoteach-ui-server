@@ -2,6 +2,7 @@ package potentialmicroservice.planning.reader
 
 import com.google.inject.ImplementedBy
 import duplicate.model.ClassDetails
+import duplicate.model.esandos.CompletedEsAndOsByGroup
 import duplicate.model.planning.FullWeeklyPlanOfLessons
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
 import models.timetoteach.planning.{CurriculumAreaTermlyPlan, CurriculumPlanProgressForClass, GroupId, TermlyCurriculumSelection}
@@ -11,8 +12,7 @@ import models.timetoteach.{ClassId, TimeToTeachUserId}
 import scala.concurrent.Future
 
 @ImplementedBy(classOf[PlanningReaderServiceImpl])
-trait PlanningReaderService
-{
+trait PlanningReaderService {
 
   def currentTermlyCurriculumSelection(
                                         tttUserId: TimeToTeachUserId,
@@ -55,6 +55,14 @@ trait PlanningReaderService
 
   ////
 
-  def retrieveFullWeekOfLessons(tttUserId: TimeToTeachUserId, classId: ClassId, mondayDateOfWeekIso: String): Future[FullWeeklyPlanOfLessons]
+  def retrieveFullWeekOfLessons(
+                                 tttUserId: TimeToTeachUserId,
+                                 classId: ClassId,
+                                 mondayDateOfWeekIso: String
+                               ): Future[FullWeeklyPlanOfLessons]
 
+  def completedEsOsBenchmarks(
+                               tttUserId: TimeToTeachUserId,
+                               classId: ClassId
+                             ): Future[CompletedEsAndOsByGroup]
 }

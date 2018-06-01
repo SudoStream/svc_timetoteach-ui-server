@@ -11,7 +11,7 @@ import models.timetoteach.{ClassId, TimeToTeachUserId}
 import org.mongodb.scala.Document
 import org.mongodb.scala.bson.{BsonArray, BsonDocument}
 import play.api.Logger
-import potentialmicroservice.planning.sharedschema.{SingleLessonPlanSchema, WeeklyPlanningSchema}
+import potentialmicroservice.planning.sharedschema.{EsAndOsStatusSchema, SingleLessonPlanSchema, WeeklyPlanningSchema}
 import utils.CurriculumConverterUtil
 import utils.mongodb.MongoDbSafety
 
@@ -41,7 +41,53 @@ trait RetrieveFullWeekOfLessonsDaoHelper {
     )
   }
 
+  def completedEsOsBenchmarksImpl(
+                                   tttUserId: TimeToTeachUserId,
+                                   classId: ClassId
+                                 ): Future[CompletedEsAndOsByGroup] = {
+    logger.info(s"Retrieve COMPLETE E&Os/Benchmarks: $tttUserId|$classId")
+
+    val futureAllEAndOsBenchmarksStatuses = readAllEAndOsBenchmarksStatuses(tttUserId, classId)
+    val futureLatestVersionOfEachEandOBenchmark: Future[List[Document]] = latestVersionOfEachEandOBenchmark(futureAllEAndOsBenchmarksStatuses)
+    val futureCompletedEAndOBenchmarks: Future[List[Document]] = filterForCompleted(futureLatestVersionOfEachEandOBenchmark)
+    val futureCompletedEsAndOsByGroup: Future[Map[String, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel]] =
+      buildMapOfEAndOsBenchmarks(futureCompletedEAndOBenchmarks)
+    createCompletedEsAndOsByGroup(futureCompletedEsAndOsByGroup)
+  }
+
   ////////////////
+
+  private[dao] def readAllEAndOsBenchmarksStatuses(
+                                                    tttUserId: TimeToTeachUserId,
+                                                    classId: ClassId
+                                                  ): Future[Seq[Document]] = {
+    if (tttUserId != null && classId != null) {
+      val findMatcher = BsonDocument(
+        EsAndOsStatusSchema.TTT_USER_ID -> tttUserId.value,
+        EsAndOsStatusSchema.CLASS_ID -> classId.value
+      )
+      getDbConnection.getEAndOBenchmarkStatusCollection.find(findMatcher).toFuture()
+    } else {
+      Future {
+        Nil
+      }
+    }
+  }
+
+  private[dao] def buildMapOfEAndOsBenchmarks(
+                                               futureLatestVersionOfEachEandOBenchmark: Future[List[Document]]
+                                             ): Future[Map[String, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel]] = ???
+
+
+  private[dao] def latestVersionOfEachEandOBenchmark(
+                                                      futureAllEAndOsBenchmarksStatuses: Future[Seq[Document]]
+                                                    ): Future[List[Document]] = ???
+
+  private[dao] def createCompletedEsAndOsByGroup(
+                                                  futureCompletedEsAndOsByGroup: Future[Map[String, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel]]
+                                                ): Future[CompletedEsAndOsByGroup] = ???
+
+  private[dao] def filterForCompleted(futureLatestVersionOfEachEandOBenchmark: Future[List[Document]]): Future[List[Document]] = ???
 
   private def createFullWeeklyPlanOfLessons(
                                              tttUserId: TimeToTeachUserId,

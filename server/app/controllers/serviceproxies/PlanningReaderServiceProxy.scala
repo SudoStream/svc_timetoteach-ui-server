@@ -2,6 +2,7 @@ package controllers.serviceproxies
 
 import com.google.inject.ImplementedBy
 import duplicate.model.ClassDetails
+import duplicate.model.esandos.CompletedEsAndOsByGroup
 import duplicate.model.planning.FullWeeklyPlanOfLessons
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
 import models.timetoteach.planning.{CurriculumAreaTermlyPlan, CurriculumPlanProgressForClass, GroupId, TermlyCurriculumSelection}
@@ -11,8 +12,7 @@ import models.timetoteach.{ClassId, TimeToTeachUserId}
 import scala.concurrent.Future
 
 @ImplementedBy(classOf[PlanningReaderServiceProxyImpl])
-trait PlanningReaderServiceProxy
-{
+trait PlanningReaderServiceProxy {
 
   def currentTermlyCurriculumSelection(
                                         tttUserId: TimeToTeachUserId,
@@ -46,14 +46,20 @@ trait PlanningReaderServiceProxy
                                                ): Future[Option[CurriculumAreaTermlyPlan]]
 
   def allClassTermlyPlans(
-                                                 tttUserId: TimeToTeachUserId,
-                                                 classDetails: ClassDetails,
-                                                 planningAreas: List[ScottishCurriculumPlanningArea]
-                                               ): Future[List[CurriculumAreaTermlyPlan]]
+                           tttUserId: TimeToTeachUserId,
+                           classDetails: ClassDetails,
+                           planningAreas: List[ScottishCurriculumPlanningArea]
+                         ): Future[List[CurriculumAreaTermlyPlan]]
 
   def retrieveFullWeekOfLessons(
                                  tttUserId: TimeToTeachUserId,
                                  classId: ClassId,
                                  mondayDateOfWeekIso: String): Future[FullWeeklyPlanOfLessons]
+
+  def completedEsOsBenchmarks(
+                               tttUserId: TimeToTeachUserId,
+                               classId: ClassId
+                             ): Future[CompletedEsAndOsByGroup]
+
 
 }

@@ -224,6 +224,10 @@ class WeeklyPlanningController @Inject()(
       futureMaybefullWeeklyPlanOfLessons = planningReaderService.retrieveFullWeekOfLessons(tttUserId, ClassId(classId), mondayDateOfWeekIso)
       fullWeeklyPlanOfLessons <- futureMaybefullWeeklyPlanOfLessons
       fullWeeklyPlanOfLessonsPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[FullWeeklyPlanOfLessons](fullWeeklyPlanOfLessons))
+
+      futureCompletedEsAndOsBenchmarks = planningReaderService.completedEsOsBenchmarks(tttUserId, ClassId(classId))
+      completedEsAndOsBenchmarks <- futureCompletedEsAndOsBenchmarks
+      completedEsAndOsBenchmarksPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[CompletedEsAndOsByGroup](completedEsAndOsBenchmarks))
     } yield Ok(views.html.planning.weekly.createPlanForTheWeek(
       new MyDeadboltHandler(userReader),
       userPictureUri,
@@ -238,7 +242,8 @@ class WeeklyPlanningController @Inject()(
       lessonsThisWeekPickled,
       fullWeeklyPlanOfLessonsPickled,
       maybeSchoolTerm.get.weekNumberForGivenDate(LocalDate.parse(mondayDateOfWeekIso)),
-      todaysDate
+      todaysDate,
+      completedEsAndOsBenchmarksPickled
     ))
   }
 
