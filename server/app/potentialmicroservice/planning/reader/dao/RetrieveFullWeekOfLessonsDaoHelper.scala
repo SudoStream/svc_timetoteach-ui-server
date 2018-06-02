@@ -46,7 +46,7 @@ trait RetrieveFullWeekOfLessonsDaoHelper {
                                    classId: ClassId,
                                    mondayDateOfWeekIso: String
                                  ): Future[CompletedEsAndOsByGroupBySubject] = {
-    logger.info(s"Retrieve COMPLETE E&Os/Benchmarks: $tttUserId|$classId")
+    logger.info(s"\n\n\n\n\n\n\n\n<><><><><><><><><><><><><><><><><><><> Retrieve COMPLETE E&Os/Benchmarks: $tttUserId|$classId \n\n\n\n\n\n\n\n")
 
     val futureAllEAndOsBenchmarksStatuses = readAllEAndOsBenchmarksStatuses(tttUserId, classId)
 
@@ -97,6 +97,8 @@ trait RetrieveFullWeekOfLessonsDaoHelper {
   private[dao] def buildMapOfEAndOsBenchmarks(
                                                latestVersionOfEachEandOBenchmark: List[Document]
                                              ): Map[String, Map[String, Map[String, Map[String, EandOSetSubSection]]]] = {
+    logger.debug(s"latestVersionOfEachEandOBenchmark : ${latestVersionOfEachEandOBenchmark.size}")
+
     @tailrec
     def loop(
               remainingDocs: List[Document],
@@ -177,6 +179,8 @@ trait RetrieveFullWeekOfLessonsDaoHelper {
                                                       mondayDateOfWeekIso: String
                                                     ): List[Document] = {
     val mondayDateOfWeek = LocalDate.parse(mondayDateOfWeekIso)
+
+    logger.debug(s"allEAndOsBenchmarksStatuses : ${allEAndOsBenchmarksStatuses.size}")
 
     def loop(remainingElems: List[Document], currentMap: Map[String, Document]): List[Document] = {
       if (remainingElems.isEmpty) currentMap.values.toList

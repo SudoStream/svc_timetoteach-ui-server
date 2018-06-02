@@ -227,6 +227,7 @@ class WeeklyPlanningController @Inject()(
 
       futureCompletedEsAndOsBenchmarks = planningReaderService.completedEsOsBenchmarks(tttUserId, ClassId(classId), mondayDateOfWeekIso)
       completedEsAndOsBenchmarks <- futureCompletedEsAndOsBenchmarks
+      log = logger.debug(s"completedEsAndOsBenchmarks : ${completedEsAndOsBenchmarks.toString}")
       completedEsAndOsBenchmarksPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[CompletedEsAndOsByGroupBySubject](completedEsAndOsBenchmarks))
     } yield Ok(views.html.planning.weekly.createPlanForTheWeek(
       new MyDeadboltHandler(userReader),

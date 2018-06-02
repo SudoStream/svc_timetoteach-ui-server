@@ -1,12 +1,15 @@
 package potentialmicroservice.planning.reader.dao
 
+import java.time.LocalDate
+
 import dao.MongoDbConnection
 import models.timetoteach.{ClassId, TimeToTeachUserId}
 import org.scalatest.FunSpec
 import potentialmicroservice.planning.sharedschema.EsAndOsStatusSchema
 
-import scala.concurrent.Await
+import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class RetrieveFullWeekOfLessonsDaoHelper2Test extends FunSpec with RetrieveFullWeekOfLessonsDaoHelper2TestCanned {
 
@@ -150,5 +153,9 @@ class RetrieveFullWeekOfLessonsDaoHelper2Test extends FunSpec with RetrieveFullW
     it(s"should create a map with 4 benchmarks for $TEST_SUBJECT_ART $GROUP_ID_CLASS $TEST_ART_SECTION_NAME $TEST_ART_SUBSECTION_NAME"){
       assert(completesMap(TEST_SUBJECT_ART)(GROUP_ID_CLASS)(TEST_ART_SECTION_NAME)(TEST_ART_SUBSECTION_NAME).benchmarks.size === 4)
     }
+  }
+
+  override def getSystemDate: Future[LocalDate] = Future{
+    LocalDate.of(2018,4,30)
   }
 }

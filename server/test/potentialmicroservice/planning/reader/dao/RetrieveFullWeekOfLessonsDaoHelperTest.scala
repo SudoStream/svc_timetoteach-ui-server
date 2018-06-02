@@ -1,5 +1,7 @@
 package potentialmicroservice.planning.reader.dao
 
+import java.time.LocalDate
+
 import dao.MongoDbConnection
 import duplicate.model.planning.AttributeRowKey
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
@@ -7,8 +9,13 @@ import models.timetoteach.planning.ScottishCurriculumPlanningAreaWrapper
 import org.scalatest.FunSpec
 import utils.mongodb.MongoDbSafety
 
-class RetrieveFullWeekOfLessonsDaoHelperTest extends FunSpec with RetrieveFullWeekOfLessonsDaoHelperTestCanned {
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
+class RetrieveFullWeekOfLessonsDaoHelperTest extends FunSpec with RetrieveFullWeekOfLessonsDaoHelperTestCanned {
+  override def getSystemDate: Future[LocalDate] = Future{
+    LocalDate.of(2018,4,30)
+  }
   val TEST_USER = "tttUser12345"
   val TEST_CLASS_ID = "classIdAbcde"
   val TEST_WEEK_BEGINNING = "2018-05-14"

@@ -611,11 +611,11 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
 
   private def repaintSelectedEsOsAndBenchies(className: String, isEsAndOs: Boolean): Unit = {
 
-    def checkCode(groupIdOrNot: String,
-                  curriculumSection: String,
-                  curriculumSubSection: String,
-                  code: String
-                 ): Boolean = {
+    def checkCodeIsSelected(groupIdOrNot: String,
+                            curriculumSection: String,
+                            curriculumSubSection: String,
+                            code: String
+                           ): Boolean = {
       if (code == null || code == "" || code == "null") {
         false
       }
@@ -640,7 +640,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
       if (groupToSelectedEsOsAndBenchmarks.isDefinedAt(groupIdOrNot) &&
         groupToSelectedEsOsAndBenchmarks(groupIdOrNot).isDefinedAt(curriculumSection) &&
         groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection).isDefinedAt(curriculumSubSection) &&
-        checkCode(groupIdOrNot, curriculumSection, curriculumSubSection, codeToCheck)
+        checkCodeIsSelected(groupIdOrNot, curriculumSection, curriculumSubSection, codeToCheck)
       ) {
         theDiv.style.backgroundColor = "#016dad"
         theDiv.style.color = "white"
@@ -1066,6 +1066,89 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     }
   }
 
+
+  private def populateCompletedEsOsFromSaved(): Unit = {
+    val completedEsAndOsBenchmarksPickled = dom.window.localStorage.getItem("completedEsAndOsBenchmarksPickled")
+    import upickle.default._
+    val completedEsOsBenchies: CompletedEsAndOsByGroupBySubject = read[CompletedEsAndOsByGroupBySubject](PlanningHelper.decodeAnyNonFriendlyCharacters(completedEsAndOsBenchmarksPickled))
+    val completedEsOsBenchiesMap = completedEsOsBenchies.completedEsAndOsByGroupBySubject
+
+    global.console.log(s"completedEsOsBenchiesMap : ${completedEsOsBenchiesMap.toString()}" )
+
+    val allEAndORows = dom.document.getElementsByClassName("create-weekly-plans-es-and-os-row")
+    val nodeListSize = allEAndORows.length
+    var index = 0
+    while (index < nodeListSize) {
+      val theDiv = allEAndORows(index).asInstanceOf[HTMLDivElement]
+
+      val divSubject = theDiv.getAttribute("data-group-id-or-not").split("___")(0)
+      val divGroupId = theDiv.getAttribute("data-group-id-or-not").split("___")(1)
+      val divSection = theDiv.getAttribute("data-curriculum-section")
+      val divSubsection = theDiv.getAttribute("data-curriculum-subsection")
+      val eAndOCode = theDiv.getAttribute("data-eando-code")
+
+      if (eAndOCode == "EXA 1-02a") {
+        global.console.log(s"completedEsOsBenchiesMap INSIDE for EXA 1-02a")
+        global.console.log(s"divSubject '${divSubject}'")
+        global.console.log(s"divGroupId '${divGroupId}'")
+        global.console.log(s"divSection '${divSection}'")
+        global.console.log(s"divSubsection '${divSubsection}'")
+        global.console.log(s"'${completedEsOsBenchiesMap.isDefinedAt(divSubject)}'")
+        global.console.log(s"'${completedEsOsBenchiesMap(divSubject).isDefinedAt(divGroupId)}'")
+        global.console.log(s"'${completedEsOsBenchiesMap(divSubject)(divGroupId).isDefinedAt(divSection)}'")
+        global.console.log(s"'${completedEsOsBenchiesMap(divSubject)(divGroupId)(divSection).isDefinedAt(divSubsection)}'")
+      }
+
+      if (completedEsOsBenchiesMap.isDefinedAt(divSubject) &&
+        completedEsOsBenchiesMap(divSubject).isDefinedAt(divGroupId) &&
+        completedEsOsBenchiesMap(divSubject)(divGroupId).isDefinedAt(divSection) &&
+        completedEsOsBenchiesMap(divSubject)(divGroupId)(divSection).isDefinedAt(divSubsection)
+      ) {
+        val completedEsAndOs = completedEsOsBenchiesMap(divSubject)(divGroupId)(divSection)(divSubsection).eAndOs.map(elem => elem.code)
+        global.console.log(s"WANT TO Setting status for ${eAndOCode}" )
+        if (completedEsAndOs.contains(eAndOCode)) {
+          global.console.log(s"Setting status for ${eAndOCode}" )
+          setStatus(theDiv, "Complete", "badge-success")
+        }
+      }
+      index = index + 1
+    }
+  }
+
+
+  private def populateCompletedBenchiesFromSaved(): Unit = {
+    val completedEsAndOsBenchmarksPickled = dom.window.localStorage.getItem("completedEsAndOsBenchmarksPickled")
+    import upickle.default._
+    val completedEsOsBenchies: CompletedEsAndOsByGroupBySubject = read[CompletedEsAndOsByGroupBySubject](PlanningHelper.decodeAnyNonFriendlyCharacters(completedEsAndOsBenchmarksPickled))
+    val completedEsOsBenchiesMap = completedEsOsBenchies.completedEsAndOsByGroupBySubject
+
+
+    val allEAndORows = dom.document.getElementsByClassName("create-weekly-plans-benchmark-row")
+    val nodeListSize = allEAndORows.length
+    var index = 0
+    while (index < nodeListSize) {
+      val theDiv = allEAndORows(index).asInstanceOf[HTMLDivElement]
+
+      val divSubject = theDiv.getAttribute("data-group-id-or-not").split("___")(0)
+      val divGroupId = theDiv.getAttribute("data-group-name")
+      val divSection = theDiv.getAttribute("data-curriculum-section")
+      val divSubsection = theDiv.getAttribute("data-curriculum-subsection")
+      val eAndOCode = theDiv.getAttribute("data-eando-code")
+
+      if (completedEsOsBenchiesMap.isDefinedAt(divSubject) &&
+        completedEsOsBenchiesMap(divSubject).isDefinedAt(divGroupId) &&
+        completedEsOsBenchiesMap(divSubject)(divGroupId).isDefinedAt(divSection) &&
+        completedEsOsBenchiesMap(divSubject)(divGroupId)(divSection).isDefinedAt(divSubsection)
+      ) {
+        val completedEsAndOs = completedEsOsBenchiesMap(divSubject)(divGroupId)(divSection)(divSubsection).benchmarks.map(elem => elem.value)
+        if (completedEsAndOs.contains(eAndOCode)) {
+          setStatus(theDiv, "Complete", "badge-success")
+        }
+      }
+      index = index + 1
+    }
+  }
+
   private def resetValuesOnTabClick(): Unit = {
     val $ = js.Dynamic.global.$
     $("a[data-toggle=\"tab\"]").on("shown.bs.tab", (e: dom.Event) => {
@@ -1079,6 +1162,8 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     groupToCompletedEsOsAndBenchmarks.clear()
     groupToNotStartedEsOsAndBenchmarks.clear()
     populateSelectedEsOsAndBenchmarksFromSaved()
+    populateCompletedEsOsFromSaved()
+    populateCompletedBenchiesFromSaved()
     repaintTheEsAndOs("create-weekly-plans-es-and-os-row")
     repaintTheBenchmarks("create-weekly-plans-benchmark-row")
     buildGroupsMapForTabSelected()
@@ -1476,7 +1561,6 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
       s"notStarted=$notStartedEsOsBenchiesPickled&completed=$completedEsOsBenchiesPickled")
 
     import scala.concurrent.ExecutionContext.Implicits.global
-
     Ajax.post(
       url = theUrl,
       headers = theHeaders,

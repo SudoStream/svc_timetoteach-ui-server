@@ -1,5 +1,7 @@
 package potentialmicroservice.planning.writer.dao
 
+import java.time.LocalDate
+
 import duplicate.model.esandos.{CompletedEsAndOsByGroup, EandOSetSubSection, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel, NotStartedEsAndOsByGroup}
 import duplicate.model.planning.{AttributeRowKey, LessonPlan, WeeklyPlanOfOneSubject}
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
@@ -10,8 +12,13 @@ import potentialmicroservice.planning.sharedschema.TermlyCurriculumSelectionSche
 import potentialmicroservice.planning.sharedschema.{EsAndOsStatusSchema, SingleLessonPlanSchema, WeeklyPlanningSchema}
 
 import scala.annotation.tailrec
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
 trait PlanWriterDaoTermlyCurriculumSelectionHelper {
+
+  def getSystemDate: Future[LocalDate]
+
   def convertTermlyCurriculumSelectionToMongoDbDocument(termlyCurriculumSelection: TermlyCurriculumSelection): Document = {
     val endYear = if (termlyCurriculumSelection.schoolTerm.schoolYear.maybeCalendarYearEnd.isDefined) {
       "-" + termlyCurriculumSelection.schoolTerm.schoolYear.maybeCalendarYearEnd.get
@@ -43,8 +50,11 @@ trait PlanWriterDaoTermlyCurriculumSelectionHelper {
                                                  groupId: String,
                                                  section: String,
                                                  subsection: String,
-                                                 codes: List[String]
+                                                 codes: List[String],
+                                                 today: LocalDate
                                                ): List[Document] = {
+    java.time.LocalDate.now().atStartOfDay()
+
     @tailrec
     def loop(remainingCodes: List[String], currentDocs: List[Document]): List[Document] = {
       if (remainingCodes.isEmpty) currentDocs
@@ -53,8 +63,7 @@ trait PlanWriterDaoTermlyCurriculumSelectionHelper {
           EsAndOsStatusSchema.TTT_USER_ID -> weeklyPlansToSave.tttUserId,
           EsAndOsStatusSchema.CLASS_ID -> weeklyPlansToSave.classId,
           EsAndOsStatusSchema.SUBJECT -> weeklyPlansToSave.subject,
-          EsAndOsStatusSchema.CREATED_TIMESTAMP -> java.time.LocalDateTime.now().toString.replace("T", " "),
-
+          EsAndOsStatusSchema.CREATED_TIMESTAMP -> today.atStartOfDay().plusSeconds(java.time.LocalDateTime.now().toLocalTime.toSecondOfDay).toString.replace("T", " "),
           EsAndOsStatusSchema.VALUE_TYPE -> valueType,
           EsAndOsStatusSchema.STATUS -> status,
           EsAndOsStatusSchema.GROUP_ID -> groupId,
@@ -73,7 +82,8 @@ trait PlanWriterDaoTermlyCurriculumSelectionHelper {
   private def createEsOsBenchiesAsDocuments(
                                              weeklyPlansToSave: WeeklyPlanOfOneSubject,
                                              status: String,
-                                             groupsToEsOsBenchiesMap: Map[String, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel]
+                                             groupsToEsOsBenchiesMap: Map[String, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel],
+                                             today: LocalDate
                                            ): List[Document] = {
     {
       {
@@ -84,10 +94,10 @@ trait PlanWriterDaoTermlyCurriculumSelectionHelper {
           subsection <- sectionToSubsectionToValues(section).keys
 
           esAndOs = sectionToSubsectionToValues(section)(subsection).eAndOs.map(elem => elem.code)
-          esAndOsAsDocs = createEsOsBenchiesAsDocumentsImpl(weeklyPlansToSave, status, EsAndOsStatusSchema.VALUE_TYPE_EANDO, groupId, section, subsection, esAndOs)
+          esAndOsAsDocs = createEsOsBenchiesAsDocumentsImpl(weeklyPlansToSave, status, EsAndOsStatusSchema.VALUE_TYPE_EANDO, groupId, section, subsection, esAndOs, today)
 
           benchmarks = sectionToSubsectionToValues(section)(subsection).benchmarks.map(elem => elem.value)
-          benchmarksAsDocs = createEsOsBenchiesAsDocumentsImpl(weeklyPlansToSave, status, EsAndOsStatusSchema.VALUE_TYPE_BENCHMARK, groupId, section, subsection, benchmarks)
+          benchmarksAsDocs = createEsOsBenchiesAsDocumentsImpl(weeklyPlansToSave, status, EsAndOsStatusSchema.VALUE_TYPE_BENCHMARK, groupId, section, subsection, benchmarks, today)
         } yield esAndOsAsDocs ::: benchmarksAsDocs
       }.toList
     }.flatten
@@ -95,34 +105,42 @@ trait PlanWriterDaoTermlyCurriculumSelectionHelper {
 
   def extractEsOsBenchiesAsDocuments(
                                       groupsToEsOsBenchies: Either[CompletedEsAndOsByGroup, NotStartedEsAndOsByGroup],
-                                      weeklyPlansToSave: WeeklyPlanOfOneSubject
+                                      weeklyPlansToSave: WeeklyPlanOfOneSubject,
+                                      today: LocalDate
                                     ): List[Document] = {
     val groupsToEsOsBenchiesMap: Map[String, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel] = if (groupsToEsOsBenchies.isLeft) groupsToEsOsBenchies.left.get.completedEsAndOsByGroup else
       groupsToEsOsBenchies.right.get.completedEsAndOsByGroup
 
     val status = if (groupsToEsOsBenchies.isLeft) "COMPLETE" else "NOT_STARTED"
-    createEsOsBenchiesAsDocuments(weeklyPlansToSave, status, groupsToEsOsBenchiesMap)
+    createEsOsBenchiesAsDocuments(weeklyPlansToSave, status, groupsToEsOsBenchiesMap, today)
   }
 
-  def extractWeeklyPlanHighLevelAsMongoDbDocument(weeklyPlansToSave: WeeklyPlanOfOneSubject): Document = {
+  def extractWeeklyPlanHighLevelAsMongoDbDocument(
+                                                   weeklyPlansToSave: WeeklyPlanOfOneSubject,
+                                                   today: LocalDate
+                                                 ): Document = {
     Document(
       WeeklyPlanningSchema.TTT_USER_ID -> weeklyPlansToSave.tttUserId,
       WeeklyPlanningSchema.CLASS_ID -> weeklyPlansToSave.classId,
       WeeklyPlanningSchema.SUBJECT -> weeklyPlansToSave.subject,
       WeeklyPlanningSchema.WEEK_BEGINNING_ISO_DATE -> weeklyPlansToSave.weekBeginningIsoDate,
-      WeeklyPlanningSchema.CREATED_TIMESTAMP -> java.time.LocalDateTime.now().toString.replace("T", " "),
+      WeeklyPlanningSchema.CREATED_TIMESTAMP -> today.atStartOfDay().plusSeconds(java.time.LocalDateTime.now().toLocalTime.toSecondOfDay).toString.replace("T", " "),
       WeeklyPlanningSchema.SELECTED_ES_OS_AND_BENCHMARKS_BY_GROUP -> convertGroupToEsAndOsBenchmarksToBsonArray(weeklyPlansToSave.groupToEsOsBenchmarks),
       WeeklyPlanningSchema.COMPLETED_ES_OS_AND_BENCHMARKS_BY_GROUP -> BsonArray()
     )
   }
 
-  def extractAllLessonPlansAsMongoDbDocuments(weeklyPlansToSave: WeeklyPlanOfOneSubject): List[Document] = {
+  def extractAllLessonPlansAsMongoDbDocuments(
+                                               weeklyPlansToSave: WeeklyPlanOfOneSubject,
+                                               today: LocalDate
+                                             ): List[Document] = {
     for {
       lessonPlan: LessonPlan <- weeklyPlansToSave.lessons
     } yield createDocumentFromLessonPlan(
       weeklyPlansToSave.tttUserId,
       weeklyPlansToSave.classId,
-      lessonPlan
+      lessonPlan,
+      today
     )
   }
 
@@ -130,7 +148,9 @@ trait PlanWriterDaoTermlyCurriculumSelectionHelper {
 
   private def createDocumentFromLessonPlan(tttUserId: String,
                                            classId: String,
-                                           lessonPlan: LessonPlan): Document = {
+                                           lessonPlan: LessonPlan,
+                                           today: LocalDate
+                                          ): Document = {
     Document(
       SingleLessonPlanSchema.TTT_USER_ID -> tttUserId,
       SingleLessonPlanSchema.CLASS_ID -> classId,
@@ -138,7 +158,7 @@ trait PlanWriterDaoTermlyCurriculumSelectionHelper {
       SingleLessonPlanSchema.SUBJECT_ADDITIONAL_INFO -> lessonPlan.subjectAdditionalInfo,
       SingleLessonPlanSchema.WEEK_BEGINNING_ISO_DATE -> lessonPlan.weekBeginningIsoDate,
       SingleLessonPlanSchema.LESSON_DATE -> lessonPlan.lessonDateIso,
-      SingleLessonPlanSchema.CREATED_TIMESTAMP -> java.time.LocalDateTime.now().toString.replace("T", " "),
+      SingleLessonPlanSchema.CREATED_TIMESTAMP -> today.atStartOfDay().plusSeconds(java.time.LocalDateTime.now().toLocalTime.toSecondOfDay).toString.replace("T", " "),
       SingleLessonPlanSchema.LESSON_START_TIME -> lessonPlan.startTimeIso,
       SingleLessonPlanSchema.LESSON_END_TIME -> lessonPlan.endTimeIso,
 
