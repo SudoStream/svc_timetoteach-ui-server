@@ -58,8 +58,9 @@ class PlanningReaderServiceImpl @Inject()(planningReaderDao: PlanReaderDao) exte
 
   override def completedEsOsBenchmarks(
                                         tttUserId: TimeToTeachUserId,
-                                        classId: ClassId
+                                        classId: ClassId,
+                                        mondayDateOfWeekIso: String
                                       ): Future[CompletedEsAndOsByGroupBySubject] = {
-    planningReaderDao.completedEsOsBenchmarks(tttUserId, classId)
+    planningReaderDao.completedEsOsBenchmarks(tttUserId, classId, mondayDateOfWeekIso)
   }
 }

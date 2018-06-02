@@ -43,7 +43,8 @@ trait RetrieveFullWeekOfLessonsDaoHelper {
 
   def completedEsOsBenchmarksImpl(
                                    tttUserId: TimeToTeachUserId,
-                                   classId: ClassId
+                                   classId: ClassId,
+                                   mondayDateOfWeekIso: String
                                  ): Future[CompletedEsAndOsByGroupBySubject] = {
     logger.info(s"Retrieve COMPLETE E&Os/Benchmarks: $tttUserId|$classId")
 
@@ -51,7 +52,7 @@ trait RetrieveFullWeekOfLessonsDaoHelper {
 
     for {
       allEAndOsBenchmarksStatuses <- futureAllEAndOsBenchmarksStatuses
-      latestVersionsOfEachEandOBenchmark = latestVersionOfEachEandOBenchmark(allEAndOsBenchmarksStatuses.toList)
+      latestVersionsOfEachEandOBenchmark = latestVersionOfEachEandOBenchmark(allEAndOsBenchmarksStatuses.toList, mondayDateOfWeekIso)
       completedEAndOBenchmarks = filterForCompleted(latestVersionsOfEachEandOBenchmark)
       completedEsAndOsByGroup = buildMapOfEAndOsBenchmarks(completedEAndOBenchmarks)
     } yield CompletedEsAndOsByGroupBySubject(completedEsAndOsByGroup)
@@ -172,12 +173,16 @@ trait RetrieveFullWeekOfLessonsDaoHelper {
   }
 
   private[dao] def latestVersionOfEachEandOBenchmark(
-                                                      allEAndOsBenchmarksStatuses: List[Document]
+                                                      allEAndOsBenchmarksStatuses: List[Document],
+                                                      mondayDateOfWeekIso: String
                                                     ): List[Document] = {
+    val mondayDateOfWeek = LocalDate.parse(mondayDateOfWeekIso)
+
     def loop(remainingElems: List[Document], currentMap: Map[String, Document]): List[Document] = {
       if (remainingElems.isEmpty) currentMap.values.toList
       else {
         val nextDoc = remainingElems.head
+        val nextDocTimestamp = MongoDbSafety.safelyParseTimestamp(nextDoc.getString(EsAndOsStatusSchema.CREATED_TIMESTAMP))
         val nextDocKey = nextDoc.getString(EsAndOsStatusSchema.TTT_USER_ID) +
           nextDoc.getString(EsAndOsStatusSchema.CLASS_ID) +
           nextDoc.getString(EsAndOsStatusSchema.SUBJECT) +
@@ -186,10 +191,12 @@ trait RetrieveFullWeekOfLessonsDaoHelper {
           nextDoc.getString(EsAndOsStatusSchema.SECTION) +
           nextDoc.getString(EsAndOsStatusSchema.SUBSECTION) +
           nextDoc.getString(EsAndOsStatusSchema.VALUE)
-        val nextMap = if (currentMap.isDefinedAt(nextDocKey)) {
+        val nextMap = if (nextDocTimestamp.toLocalDate.isAfter(mondayDateOfWeek.plusDays(6))) {
+          currentMap
+        } else if (currentMap.isDefinedAt(nextDocKey)) {
           val currentDoc = currentMap(nextDocKey)
           val currentDocTimestamp = MongoDbSafety.safelyParseTimestamp(currentDoc.getString(EsAndOsStatusSchema.CREATED_TIMESTAMP))
-          val nextDocTimestamp = MongoDbSafety.safelyParseTimestamp(nextDoc.getString(EsAndOsStatusSchema.CREATED_TIMESTAMP))
+
           if (nextDocTimestamp.isAfter(currentDocTimestamp)) {
             currentMap + (nextDocKey -> nextDoc)
           } else currentMap

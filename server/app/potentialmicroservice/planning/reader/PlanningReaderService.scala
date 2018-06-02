@@ -63,6 +63,7 @@ trait PlanningReaderService {
 
   def completedEsOsBenchmarks(
                                tttUserId: TimeToTeachUserId,
-                               classId: ClassId
+                               classId: ClassId,
+                               mondayDateOfWeekIso: String
                              ): Future[CompletedEsAndOsByGroupBySubject]
 }

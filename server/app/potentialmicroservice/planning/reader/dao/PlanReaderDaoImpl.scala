@@ -205,9 +205,10 @@ class PlanReaderDaoImpl @Inject()(mongoDbConnection: MongoDbConnection) extends 
 
   override def completedEsOsBenchmarks(
                                         tttUserId: TimeToTeachUserId,
-                                        classId: ClassId
+                                        classId: ClassId,
+                                        mondayDateOfWeekIso: String
                                       ): Future[CompletedEsAndOsByGroupBySubject] = {
-    completedEsOsBenchmarksImpl(tttUserId, classId)
+    completedEsOsBenchmarksImpl(tttUserId, classId, mondayDateOfWeekIso)
   }
 
   ////

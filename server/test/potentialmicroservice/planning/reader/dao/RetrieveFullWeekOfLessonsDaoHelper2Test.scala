@@ -22,8 +22,8 @@ class RetrieveFullWeekOfLessonsDaoHelper2Test extends FunSpec with RetrieveFullW
     }
   }
 
-  describe("When supplied with list of 5 versions of an art E and O, latestVersionOfEachEandOBenchmark()") {
-    val allEAndOBenchmarksStatuses = dao.latestVersionOfEachEandOBenchmark(create1ArtEAndOsWith5StatusesLatestComplete())
+  describe("When supplied with list of 1 versions of an art E and O, latestVersionOfEachEandOBenchmark()") {
+    val allEAndOBenchmarksStatuses = dao.latestVersionOfEachEandOBenchmark(create1ArtEAndOsWith5StatusesLatestComplete(), TEST_LOCALDATE_WEEK1)
 
     it("should return a list of 1 item") {
       assert(allEAndOBenchmarksStatuses.size === 1)
@@ -36,8 +36,31 @@ class RetrieveFullWeekOfLessonsDaoHelper2Test extends FunSpec with RetrieveFullW
     }
   }
 
+  describe(s"When supplied with list of 8 E and O, all eariler than $TEST_LOCALDATE_WEEK1 + 6, latestVersionOfEachEandOBenchmark()") {
+    val allEAndOBenchmarksStatuses = dao.latestVersionOfEachEandOBenchmark(create8ArtEAndOsAndBencmarks(), TEST_LOCALDATE_WEEK1)
+
+    it("should return a list of 8 item") {
+      assert(allEAndOBenchmarksStatuses.size === 8)
+    }
+    it("should have its 8 item marked COMPLETE") {
+      assert(allEAndOBenchmarksStatuses.count(elem => elem.getString(EsAndOsStatusSchema.STATUS) === "COMPLETE") === 8)
+    }
+  }
+
+  describe(s"When supplied with list of 8 E and O, 3 later than $TEST_LOCALDATE_WEEK0 + 6, latestVersionOfEachEandOBenchmark()") {
+    val allEAndOBenchmarksStatuses = dao.latestVersionOfEachEandOBenchmark(create8ArtEAndOsAndBencmarks(), TEST_LOCALDATE_WEEK0)
+
+    it("should return a list of 5 item") {
+      assert(allEAndOBenchmarksStatuses.size === 5)
+    }
+    it("should have its 5 item marked COMPLETE") {
+      assert(allEAndOBenchmarksStatuses.count(elem => elem.getString(EsAndOsStatusSchema.STATUS) === "COMPLETE") === 5)
+    }
+  }
+
+
   describe("When supplied with list of various versions of 3 art E and O, latestVersionOfEachEandOBenchmark()") {
-    val allEAndOBenchmarksStatuses = dao.latestVersionOfEachEandOBenchmark(create3ArtEAndOsStatusesWithVariousVersions())
+    val allEAndOBenchmarksStatuses = dao.latestVersionOfEachEandOBenchmark(create3ArtEAndOsStatusesWithVariousVersions(), TEST_LOCALDATE_WEEK1)
 
     it("should return a list of 3 item") {
       assert(allEAndOBenchmarksStatuses.size === 3)
@@ -58,7 +81,7 @@ class RetrieveFullWeekOfLessonsDaoHelper2Test extends FunSpec with RetrieveFullW
   }
 
   describe("Given a list of 3 items, with 2 COMPLETES in it, filterForCompleted()"){
-    val allEAndOBenchmarksStatuses = dao.latestVersionOfEachEandOBenchmark(create3ArtEAndOsStatusesWithVariousVersions())
+    val allEAndOBenchmarksStatuses = dao.latestVersionOfEachEandOBenchmark(create3ArtEAndOsStatusesWithVariousVersions(), TEST_LOCALDATE_WEEK1)
     val completes = dao.filterForCompleted(allEAndOBenchmarksStatuses)
 
     it("should have a list of 2 items"){

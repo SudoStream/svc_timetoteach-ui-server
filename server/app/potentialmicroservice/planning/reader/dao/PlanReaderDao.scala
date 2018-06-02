@@ -56,6 +56,10 @@ trait PlanReaderDao
 
   def retrieveFullWeekOfLessons(tttUserId: TimeToTeachUserId, classId: ClassId, mondayDateOfWeekIso: String): Future[FullWeeklyPlanOfLessons]
 
-  def completedEsOsBenchmarks(tttUserId: TimeToTeachUserId, classId: ClassId): Future[CompletedEsAndOsByGroupBySubject]
+  def completedEsOsBenchmarks(
+                               tttUserId: TimeToTeachUserId,
+                               classId: ClassId,
+                               mondayDateOfWeekIso: String
+                             ): Future[CompletedEsAndOsByGroupBySubject]
 
 }

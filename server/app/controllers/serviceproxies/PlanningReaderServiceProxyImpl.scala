@@ -163,9 +163,10 @@ class PlanningReaderServiceProxyImpl @Inject()(planningReaderService: PlanningRe
 
   override def completedEsOsBenchmarks(
                                         tttUserId: TimeToTeachUserId,
-                                        classId: ClassId
+                                        classId: ClassId,
+                                        mondayDateOfWeekIso: String
                                       ): Future[CompletedEsAndOsByGroupBySubject] = {
-    planningReaderService.completedEsOsBenchmarks(tttUserId, classId)
+    planningReaderService.completedEsOsBenchmarks(tttUserId, classId, mondayDateOfWeekIso)
   }
 
 }
