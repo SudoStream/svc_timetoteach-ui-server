@@ -7,7 +7,7 @@ import controllers.serviceproxies._
 import controllers.time.SystemTime
 import curriculum.scotland.EsOsAndBenchmarksBuilderImpl
 import duplicate.model.ClassDetails
-import duplicate.model.esandos.{CompletedEsAndOsByGroup, NotStartedEsAndOsByGroup}
+import duplicate.model.esandos.{CompletedEsAndOsByGroup, CompletedEsAndOsByGroupBySubject, NotStartedEsAndOsByGroup}
 import duplicate.model.planning.{FullWeeklyPlanOfLessons, LessonsThisWeek, WeeklyPlanOfOneSubject}
 import io.sudostream.timetoteach.messages.systemwide.model.UserPreferences
 import javax.inject.{Inject, Singleton}
@@ -227,7 +227,7 @@ class WeeklyPlanningController @Inject()(
 
       futureCompletedEsAndOsBenchmarks = planningReaderService.completedEsOsBenchmarks(tttUserId, ClassId(classId))
       completedEsAndOsBenchmarks <- futureCompletedEsAndOsBenchmarks
-      completedEsAndOsBenchmarksPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[CompletedEsAndOsByGroup](completedEsAndOsBenchmarks))
+      completedEsAndOsBenchmarksPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[CompletedEsAndOsByGroupBySubject](completedEsAndOsBenchmarks))
     } yield Ok(views.html.planning.weekly.createPlanForTheWeek(
       new MyDeadboltHandler(userReader),
       userPictureUri,

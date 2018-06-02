@@ -3,7 +3,7 @@ package potentialmicroservice.planning.reader.dao
 import dao.MongoDbConnection
 import duplicate.model
 import duplicate.model.ClassDetails
-import duplicate.model.esandos.CompletedEsAndOsByGroup
+import duplicate.model.esandos.{CompletedEsAndOsByGroup, CompletedEsAndOsByGroupBySubject}
 import duplicate.model.planning.FullWeeklyPlanOfLessons
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
 import javax.inject.{Inject, Singleton}
@@ -206,7 +206,7 @@ class PlanReaderDaoImpl @Inject()(mongoDbConnection: MongoDbConnection) extends 
   override def completedEsOsBenchmarks(
                                         tttUserId: TimeToTeachUserId,
                                         classId: ClassId
-                                      ): Future[CompletedEsAndOsByGroup] = {
+                                      ): Future[CompletedEsAndOsByGroupBySubject] = {
     completedEsOsBenchmarksImpl(tttUserId, classId)
   }
 

@@ -5,7 +5,6 @@ import java.time.LocalDate
 import dao.MongoDbConnection
 import duplicate.model.esandos._
 import duplicate.model.planning.{AttributeRowKey, FullWeeklyPlanOfLessons, LessonPlan, WeeklyPlanOfOneSubject}
-import javax.swing.event.DocumentEvent
 import models.timetoteach.planning.ScottishCurriculumPlanningAreaWrapper
 import models.timetoteach.planning.weekly.WeeklyHighLevelPlanOfOneSubject
 import models.timetoteach.{ClassId, TimeToTeachUserId}
@@ -45,7 +44,7 @@ trait RetrieveFullWeekOfLessonsDaoHelper {
   def completedEsOsBenchmarksImpl(
                                    tttUserId: TimeToTeachUserId,
                                    classId: ClassId
-                                 ): Future[CompletedEsAndOsByGroup] = {
+                                 ): Future[CompletedEsAndOsByGroupBySubject] = {
     logger.info(s"Retrieve COMPLETE E&Os/Benchmarks: $tttUserId|$classId")
 
     val futureAllEAndOsBenchmarksStatuses = readAllEAndOsBenchmarksStatuses(tttUserId, classId)
@@ -55,7 +54,7 @@ trait RetrieveFullWeekOfLessonsDaoHelper {
       latestVersionsOfEachEandOBenchmark = latestVersionOfEachEandOBenchmark(allEAndOsBenchmarksStatuses.toList)
       completedEAndOBenchmarks = filterForCompleted(latestVersionsOfEachEandOBenchmark)
       completedEsAndOsByGroup = buildMapOfEAndOsBenchmarks(completedEAndOBenchmarks)
-    } yield createCompletedEsAndOsByGroup(completedEsAndOsByGroup)
+    } yield CompletedEsAndOsByGroupBySubject(completedEsAndOsByGroup)
   }
 
   ////////////////
@@ -77,10 +76,100 @@ trait RetrieveFullWeekOfLessonsDaoHelper {
     }
   }
 
+  private[dao] def addToEandOSetSubSection(current: EandOSetSubSection, eitherEandOorBenchmark: Either[EandO, Benchmark]): EandOSetSubSection = {
+    eitherEandOorBenchmark match {
+      case Left(newEAndO) =>
+        EandOSetSubSection(current.auxiliaryText, newEAndO :: current.eAndOs, current.benchmarks)
+      case Right(newBenchmark) =>
+        EandOSetSubSection(current.auxiliaryText, current.eAndOs, newBenchmark :: current.benchmarks)
+    }
+  }
+
+  def createNewEAndOorBenchmark(nextDoc: Document): Either[EandO, Benchmark] = {
+    if (nextDoc.getString(EsAndOsStatusSchema.VALUE_TYPE) == EsAndOsStatusSchema.VALUE_TYPE_EANDO) {
+      Left(EandO(nextDoc.getString(EsAndOsStatusSchema.VALUE), Nil))
+    } else {
+      Right(Benchmark(nextDoc.getString(EsAndOsStatusSchema.VALUE)))
+    }
+  }
+
   private[dao] def buildMapOfEAndOsBenchmarks(
                                                latestVersionOfEachEandOBenchmark: List[Document]
-                                             ): Map[String, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel] = ???
+                                             ): Map[String, Map[String, Map[String, Map[String, EandOSetSubSection]]]] = {
+    @tailrec
+    def loop(
+              remainingDocs: List[Document],
+              currentHighLevelMap: Map[String, Map[String, Map[String, Map[String, EandOSetSubSection]]]]
+            ): Map[String, Map[String, Map[String, Map[String, EandOSetSubSection]]]] = {
+      if (remainingDocs.isEmpty) currentHighLevelMap
+      else {
+        val nextDoc = remainingDocs.head
 
+        val subject = nextDoc.getString(EsAndOsStatusSchema.SUBJECT)
+        val groupId = nextDoc.getString(EsAndOsStatusSchema.GROUP_ID)
+        val section = nextDoc.getString(EsAndOsStatusSchema.SECTION)
+        val subsection = nextDoc.getString(EsAndOsStatusSchema.SUBSECTION)
+
+        val eitherEandOorBenchmark = createNewEAndOorBenchmark(nextDoc)
+
+        logger.debug(s"Adding ... ${eitherEandOorBenchmark.toString}")
+
+        val nextMap: Map[String, Map[String, Map[String, Map[String, EandOSetSubSection]]]] =
+          if (!currentHighLevelMap.isDefinedAt(subject)) {
+            logger.debug(s"1")
+            currentHighLevelMap + (subject -> Map(groupId -> Map(section -> Map(subsection -> addToEandOSetSubSection(
+              EandOSetSubSection("", Nil, Nil), eitherEandOorBenchmark)))))
+          } else {
+            logger.debug(s"2")
+            val currentSubjectMap: Map[String, Map[String, Map[String, EandOSetSubSection]]] = currentHighLevelMap(subject)
+
+            if (!currentSubjectMap.isDefinedAt(groupId)) {
+              logger.debug(s"3")
+              val nextSubjectMap = currentSubjectMap + (groupId -> Map(section -> Map(subsection -> addToEandOSetSubSection(
+                EandOSetSubSection("", Nil, Nil), eitherEandOorBenchmark))))
+              currentHighLevelMap + (subject -> nextSubjectMap)
+
+            } else {
+              logger.debug(s"4")
+              val currentGroupMap: Map[String, Map[String, EandOSetSubSection]] = currentSubjectMap(groupId)
+
+              if (!currentGroupMap.isDefinedAt(section)) {
+                logger.debug(s"5")
+                val nextGroupMap = currentGroupMap + (section -> Map(subsection -> addToEandOSetSubSection(
+                  EandOSetSubSection("", Nil, Nil), eitherEandOorBenchmark)))
+                val nextSubjectMap = currentSubjectMap + (groupId -> nextGroupMap)
+                currentHighLevelMap + (subject -> nextSubjectMap)
+              } else {
+                logger.debug(s"6")
+                val currentSectionMap: Map[String, EandOSetSubSection] = currentGroupMap(section)
+
+                if (!currentSectionMap.isDefinedAt(subsection)) {
+                  logger.debug(s"7")
+                  val nextSectionMap: Map[String, EandOSetSubSection] = currentSectionMap +
+                    (subsection -> addToEandOSetSubSection(EandOSetSubSection("", Nil, Nil), eitherEandOorBenchmark))
+                  val nextGroupMap = currentGroupMap + (section -> nextSectionMap)
+                  val nextSubjectMap = currentSubjectMap + (groupId -> nextGroupMap)
+                  currentHighLevelMap + (subject -> nextSubjectMap)
+                } else {
+
+                  logger.debug(s"8")
+                  val currentEAndOSetSubsection: EandOSetSubSection = currentSectionMap(subsection)
+                  val nextEAndOSetSubsection = addToEandOSetSubSection(currentEAndOSetSubsection, eitherEandOorBenchmark)
+                  val nextSectionMap: Map[String, EandOSetSubSection] = currentSectionMap + (subsection -> nextEAndOSetSubsection)
+                  val nextGroupMap = currentGroupMap + (section -> nextSectionMap)
+                  val nextSubjectMap = currentSubjectMap + (groupId -> nextGroupMap)
+                  currentHighLevelMap + (subject -> nextSubjectMap)
+                }
+              }
+            }
+          }
+
+        loop(remainingDocs.tail, nextMap)
+      }
+    }
+
+    loop(latestVersionOfEachEandOBenchmark, Map())
+  }
 
   private[dao] def latestVersionOfEachEandOBenchmark(
                                                       allEAndOsBenchmarksStatuses: List[Document]
@@ -113,10 +202,6 @@ trait RetrieveFullWeekOfLessonsDaoHelper {
 
     loop(allEAndOsBenchmarksStatuses, Map())
   }
-
-  private[dao] def createCompletedEsAndOsByGroup(
-                                                  completedEsAndOsByGroup: Map[String, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel]
-                                                ): CompletedEsAndOsByGroup = ???
 
   private[dao] def filterForCompleted(latestVersionOfEachEandOBenchmark: List[Document]): List[Document] = {
     @tailrec

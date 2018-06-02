@@ -2,7 +2,7 @@ package potentialmicroservice.planning.reader
 
 import duplicate.model
 import duplicate.model.ClassDetails
-import duplicate.model.esandos.CompletedEsAndOsByGroup
+import duplicate.model.esandos.{CompletedEsAndOsByGroup, CompletedEsAndOsByGroupBySubject}
 import duplicate.model.planning.FullWeeklyPlanOfLessons
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
 import javax.inject.{Inject, Singleton}
@@ -59,7 +59,7 @@ class PlanningReaderServiceImpl @Inject()(planningReaderDao: PlanReaderDao) exte
   override def completedEsOsBenchmarks(
                                         tttUserId: TimeToTeachUserId,
                                         classId: ClassId
-                                      ): Future[CompletedEsAndOsByGroup] = {
+                                      ): Future[CompletedEsAndOsByGroupBySubject] = {
     planningReaderDao.completedEsOsBenchmarks(tttUserId, classId)
   }
 }

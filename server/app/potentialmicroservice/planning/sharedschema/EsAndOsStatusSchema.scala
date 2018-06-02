@@ -15,4 +15,10 @@ object EsAndOsStatusSchema {
   val SUBSECTION = "subsection"
 
   val VALUE = "value"
+
+  ///////////////////////
+
+  val VALUE_TYPE_EANDO = "EANDO"
+  val VALUE_TYPE_BENCHMARK = "BENCHMARK"
+
 }

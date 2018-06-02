@@ -84,10 +84,10 @@ trait PlanWriterDaoTermlyCurriculumSelectionHelper {
           subsection <- sectionToSubsectionToValues(section).keys
 
           esAndOs = sectionToSubsectionToValues(section)(subsection).eAndOs.map(elem => elem.code)
-          esAndOsAsDocs = createEsOsBenchiesAsDocumentsImpl(weeklyPlansToSave, status, "EANDO", groupId, section, subsection, esAndOs)
+          esAndOsAsDocs = createEsOsBenchiesAsDocumentsImpl(weeklyPlansToSave, status, EsAndOsStatusSchema.VALUE_TYPE_EANDO, groupId, section, subsection, esAndOs)
 
           benchmarks = sectionToSubsectionToValues(section)(subsection).benchmarks.map(elem => elem.value)
-          benchmarksAsDocs = createEsOsBenchiesAsDocumentsImpl(weeklyPlansToSave, status, "BENCHMARK", groupId, section, subsection, benchmarks)
+          benchmarksAsDocs = createEsOsBenchiesAsDocumentsImpl(weeklyPlansToSave, status, EsAndOsStatusSchema.VALUE_TYPE_BENCHMARK, groupId, section, subsection, benchmarks)
         } yield esAndOsAsDocs ::: benchmarksAsDocs
       }.toList
     }.flatten
