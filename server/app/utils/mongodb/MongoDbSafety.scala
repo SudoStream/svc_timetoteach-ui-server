@@ -39,13 +39,20 @@ object MongoDbSafety
   {
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
     val formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+    val formatter3 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
 
     val time = try {
       LocalDateTime.parse(nextTimestampIso, formatter)
     } catch {
       case e: Throwable =>
         logger.warn(s"Failed to parse assumed fomat. ${formatter.toString}, trying ${formatter2.toString}")
-        LocalDateTime.parse(nextTimestampIso, formatter2)
+        try {
+          LocalDateTime.parse(nextTimestampIso, formatter2)
+        } catch {
+          case e2: Throwable =>
+            logger.warn(s"Failed to parse assumed fomat. ${formatter.toString}, trying ${formatter3.toString}")
+            LocalDateTime.parse(nextTimestampIso, formatter3)
+        }
     }
 //    logger.debug(s"Time parsed = '${time.toString}'")
     time

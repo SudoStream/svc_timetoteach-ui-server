@@ -13,8 +13,10 @@ import scalatags.JsDom
 import scalatags.JsDom.TypedTag
 import scalatags.JsDom.all.{`class`, attr, div, _}
 import shared.util.PlanningHelper
+import timetoteach.planning.weekly.CreatePlanForTheWeekJsScreen.groupToSelectedEsOsAndBenchmarks
 import upickle.default.write
 
+import scala.annotation.tailrec
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.scalajs.js
@@ -331,14 +333,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
         val classId = dom.window.localStorage.getItem("classId")
         val tttUserId = dom.window.localStorage.getItem("tttUserId")
         val weekBeginningIsoDate = currentlySelectMondayStartOfWeekDate.getOrElse("1970-01-01")
-        global.console.log(s"Subject == $subject")
-        global.console.log(s"classId == $classId")
-        global.console.log(s"tttUserId == $tttUserId")
-        global.console.log(s"weekBeginningIsoDate == $weekBeginningIsoDate")
-        global.console.log(s"groupToSelectedEsOsAndBenchmarks == ${groupToSelectedEsOsAndBenchmarks.toString}")
-
         val groupToEsOsBenchmarks: Map[String, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel] = populateGroupToEsOsBenchmarks()
-        global.console.log(s"groupToEsOsBenchmarks ... sonn")
         global.console.log(s"groupToEsOsBenchmarks == ${groupToEsOsBenchmarks.toString}")
         postSaveEsOsBenchies(
           WeeklyPlanOfOneSubject(
@@ -406,6 +401,12 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
   private def setButtonComplete(theDiv: HTMLDivElement): Unit = {
     theDiv.style.backgroundColor = "#e0dcff"
     theDiv.style.color = "#5060b0"
+    theDiv.style.borderRadius = "7px"
+  }
+
+  private def setButtonStarted(theDiv: HTMLDivElement): Unit = {
+    theDiv.style.backgroundColor = "#016dad"
+    theDiv.style.color = "white"
     theDiv.style.borderRadius = "7px"
   }
 
@@ -541,8 +542,9 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     }
   }
 
-  private def clickOnEandO(): Unit = {
-    val allEAndORows = dom.document.getElementsByClassName("create-weekly-plans-es-and-os-row")
+  private def clickOnEandO_or_Benchmark(isEAndO: Boolean): Unit = {
+    val className = if (isEAndO) "create-weekly-plans-es-and-os-row" else "create-weekly-plans-benchmark-row"
+    val allEAndORows = dom.document.getElementsByClassName(className)
     val nodeListSize = allEAndORows.length
     var index = 0
     while (index < nodeListSize) {
@@ -550,34 +552,37 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
 
       theDiv.addEventListener("click", (e: dom.Event) => {
         val groupIdOrNot = theDiv.getAttribute("data-group-id-or-not")
-        val eAndOCode = theDiv.getAttribute("data-eando-code")
+        val eAndOCode_or_Benchmark = if (isEAndO) theDiv.getAttribute("data-eando-code") else theDiv.getAttribute("data-benchmark")
         val curriculumSection = theDiv.getAttribute("data-curriculum-section")
         val curriculumSubSection = theDiv.getAttribute("data-curriculum-subsection")
 
-        global.console.log(s"Selected E and O code '$eAndOCode'")
+        global.console.log(s"Selected E and O code '$eAndOCode_or_Benchmark'")
 
         if (statusIs(theDiv, "Started")) {
           setButtonComplete(theDiv)
           setStatus(theDiv, "Complete", "badge-success")
-          safelyRemoveCodeFromGroup(groupToSelectedEsOsAndBenchmarks, groupIdOrNot, curriculumSection, curriculumSubSection, eAndOCode, true)
-          safelyRemoveCodeFromGroup(groupToNotStartedEsOsAndBenchmarks, groupIdOrNot, curriculumSection, curriculumSubSection, eAndOCode, true)
-          groupToCompletedEsOsAndBenchmarks = safelyAddCodeToGroup(groupToCompletedEsOsAndBenchmarks, groupIdOrNot, curriculumSection, curriculumSubSection, eAndOCode, true)
+          safelyRemoveCodeFromGroup(groupToSelectedEsOsAndBenchmarks, groupIdOrNot, curriculumSection, curriculumSubSection, eAndOCode_or_Benchmark, isEAndO)
+          safelyRemoveCodeFromGroup(groupToNotStartedEsOsAndBenchmarks, groupIdOrNot, curriculumSection, curriculumSubSection, eAndOCode_or_Benchmark, isEAndO)
+          groupToCompletedEsOsAndBenchmarks = safelyAddCodeToGroup(groupToCompletedEsOsAndBenchmarks, groupIdOrNot, curriculumSection, curriculumSubSection, eAndOCode_or_Benchmark, isEAndO)
         } else if (statusIs(theDiv, "Complete")) {
           setButtonDefaults(theDiv)
           setStatus(theDiv, "Not Started", "badge-danger")
-          safelyRemoveCodeFromGroup(groupToSelectedEsOsAndBenchmarks, groupIdOrNot, curriculumSection, curriculumSubSection, eAndOCode, true)
-          safelyRemoveCodeFromGroup(groupToCompletedEsOsAndBenchmarks, groupIdOrNot, curriculumSection, curriculumSubSection, eAndOCode, true)
-          groupToNotStartedEsOsAndBenchmarks = safelyAddCodeToGroup(groupToNotStartedEsOsAndBenchmarks, groupIdOrNot, curriculumSection, curriculumSubSection, eAndOCode, true)
+          safelyRemoveCodeFromGroup(groupToSelectedEsOsAndBenchmarks, groupIdOrNot, curriculumSection, curriculumSubSection, eAndOCode_or_Benchmark, isEAndO)
+          safelyRemoveCodeFromGroup(groupToCompletedEsOsAndBenchmarks, groupIdOrNot, curriculumSection, curriculumSubSection, eAndOCode_or_Benchmark, isEAndO)
+          groupToNotStartedEsOsAndBenchmarks = safelyAddCodeToGroup(groupToNotStartedEsOsAndBenchmarks, groupIdOrNot, curriculumSection, curriculumSubSection, eAndOCode_or_Benchmark, isEAndO)
         } else if (statusIs(theDiv, "Not Started")) {
-          selectEAndOCode(groupIdOrNot, eAndOCode, curriculumSection, curriculumSubSection)
+          if (isEAndO) {
+            selectEAndOCode(groupIdOrNot, eAndOCode_or_Benchmark, curriculumSection, curriculumSubSection)
+          } else {
+            selectBenchmark(groupIdOrNot, eAndOCode_or_Benchmark, curriculumSection, curriculumSubSection)
+          }
           setStatus(theDiv, "Started", "badge-warning")
-          theDiv.style.backgroundColor = "#016dad"
-          theDiv.style.color = "white"
-          theDiv.style.borderRadius = "7px"
+          setButtonStarted(theDiv)
         } else {
           global.console.log(s"Unknown status.")
         }
 
+        global.console.log(s"[][][][][][][] Current selected ${groupToSelectedEsOsAndBenchmarks.toString()}")
       })
 
       index = index + 1
@@ -637,6 +642,19 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
       val curriculumSection = theDiv.getAttribute("data-curriculum-section")
       val curriculumSubSection = theDiv.getAttribute("data-curriculum-subsection")
 
+      if (codeToCheck == "EXA 1-01a") {
+        global.console.log(s"Looking at ${codeToCheck}")
+        global.console.log(s"groupIdOrNot : ${groupIdOrNot}")
+        global.console.log(s"Lets see the map 1.... ${groupToSelectedEsOsAndBenchmarks.toString}")
+        //        global.console.log(s"Lets see the map 2.... ${groupToSelectedEsOsAndBenchmarks(groupIdOrNot).toString}")
+        //        global.console.log(s"curriculumSection : ${curriculumSection}")
+        //        global.console.log(s"curriculumSubSection : ${curriculumSubSection}")
+        //
+        //        global.console.log(s"${groupToSelectedEsOsAndBenchmarks.isDefinedAt(groupIdOrNot)}")
+        //        global.console.log(s"${groupToSelectedEsOsAndBenchmarks(groupIdOrNot).isDefinedAt(curriculumSection)}")
+        //        global.console.log(s"${groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection).isDefinedAt(curriculumSubSection)}")
+      }
+
       if (groupToSelectedEsOsAndBenchmarks.isDefinedAt(groupIdOrNot) &&
         groupToSelectedEsOsAndBenchmarks(groupIdOrNot).isDefinedAt(curriculumSection) &&
         groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection).isDefinedAt(curriculumSubSection) &&
@@ -665,57 +683,23 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
       val theDiv = allEAndOAndBenchmarkRows(index).asInstanceOf[HTMLDivElement]
 
       theDiv.addEventListener("mouseover", (e: dom.Event) => {
-        val groupIdOrNot = theDiv.getAttribute("data-group-id-or-not")
-        val eAndOCode = theDiv.getAttribute("data-eando-code")
-        val benchmarkValue = theDiv.getAttribute("data-benchmark")
-        val curriculumSection = theDiv.getAttribute("data-curriculum-section")
-        val curriculumSubSection = theDiv.getAttribute("data-curriculum-subsection")
-
-        if ((eAndOCode != null && eAndOCode.nonEmpty &&
-          (
-            groupToSelectedEsOsAndBenchmarks.isEmpty ||
-              !groupToSelectedEsOsAndBenchmarks.isDefinedAt(groupIdOrNot) ||
-              groupToSelectedEsOsAndBenchmarks(groupIdOrNot).isEmpty ||
-              !groupToSelectedEsOsAndBenchmarks(groupIdOrNot).isDefinedAt(curriculumSection) ||
-              !groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection).isDefinedAt(curriculumSubSection) ||
-              !groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection)(curriculumSubSection)._1.contains(eAndOCode))) ||
-          (benchmarkValue != null && benchmarkValue.nonEmpty &&
-            (
-              groupToSelectedEsOsAndBenchmarks.isEmpty ||
-                !groupToSelectedEsOsAndBenchmarks.isDefinedAt(groupIdOrNot) ||
-                groupToSelectedEsOsAndBenchmarks(groupIdOrNot).isEmpty ||
-                !groupToSelectedEsOsAndBenchmarks(groupIdOrNot).isDefinedAt(curriculumSection) ||
-                !groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection).isDefinedAt(curriculumSubSection) ||
-                !groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection)(curriculumSubSection)._2.contains(benchmarkValue)))) {
-          theDiv.style.backgroundColor = "grey"
-          theDiv.style.color = "white"
-          theDiv.style.borderRadius = "7px"
-        }
+        theDiv.style.backgroundColor = "grey"
+        theDiv.style.color = "white"
+        theDiv.style.borderRadius = "7px"
       })
 
       theDiv.addEventListener("mouseleave", (e: dom.Event) => {
-        val groupIdOrNot = theDiv.getAttribute("data-group-id-or-not")
-        val eAndOCode = theDiv.getAttribute("data-eando-code")
-        val benchmarkValue = theDiv.getAttribute("data-benchmark")
-        val curriculumSection = theDiv.getAttribute("data-curriculum-section")
-        val curriculumSubSection = theDiv.getAttribute("data-curriculum-subsection")
-        if ((eAndOCode != null && eAndOCode.nonEmpty &&
-          (
-            groupToSelectedEsOsAndBenchmarks.isEmpty ||
-              !groupToSelectedEsOsAndBenchmarks.isDefinedAt(groupIdOrNot) ||
-              groupToSelectedEsOsAndBenchmarks(groupIdOrNot).isEmpty ||
-              !groupToSelectedEsOsAndBenchmarks(groupIdOrNot).isDefinedAt(curriculumSection) ||
-              !groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection).isDefinedAt(curriculumSubSection) ||
-              !groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection)(curriculumSubSection)._1.contains(eAndOCode))) ||
-          (benchmarkValue != null && benchmarkValue.nonEmpty &&
-            (groupToSelectedEsOsAndBenchmarks.isEmpty ||
-              !groupToSelectedEsOsAndBenchmarks.isDefinedAt(groupIdOrNot) ||
-              groupToSelectedEsOsAndBenchmarks(groupIdOrNot).isEmpty ||
-              !groupToSelectedEsOsAndBenchmarks(groupIdOrNot).isDefinedAt(curriculumSection) ||
-              !groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection).isDefinedAt(curriculumSubSection) ||
-              !groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection)(curriculumSubSection)._2.contains(benchmarkValue)))) {
-
-          setButtonDefaults(theDiv)
+        val statusSpans = theDiv.getElementsByClassName("e-and-o-or-benchmark-status")
+        val nodeListSize = statusSpans.length
+        if (nodeListSize == 1) {
+          val statusSpan = statusSpans(0).asInstanceOf[HTMLSpanElement]
+          if (statusSpan.innerHTML == "Complete") {
+            setButtonComplete(theDiv)
+          } else if (statusSpan.innerHTML == "Started") {
+            setButtonStarted(theDiv)
+          } else {
+            setButtonDefaults(theDiv)
+          }
         }
       })
 
@@ -723,39 +707,12 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     }
   }
 
+  private def clickOnEandO(): Unit = {
+    clickOnEandO_or_Benchmark(true)
+  }
+
   private def clickOnBenchmark(): Unit = {
-    val allBenchmarkRows = dom.document.getElementsByClassName("create-weekly-plans-benchmark-row")
-    val nodeListSize = allBenchmarkRows.length
-    var index = 0
-    while (index < nodeListSize) {
-      val theDiv = allBenchmarkRows(index).asInstanceOf[HTMLDivElement]
-
-      theDiv.addEventListener("click", (e: dom.Event) => {
-        val groupIdOrNot = theDiv.getAttribute("data-group-id-or-not")
-        val benchmarkValue = theDiv.getAttribute("data-benchmark")
-        val curriculumSection = theDiv.getAttribute("data-curriculum-section")
-        val curriculumSubSection = theDiv.getAttribute("data-curriculum-subsection")
-
-        global.console.log(s"Selected the Benchmark '$benchmarkValue'||$curriculumSection||$curriculumSubSection")
-        if ((
-          groupToSelectedEsOsAndBenchmarks.nonEmpty &&
-            groupToSelectedEsOsAndBenchmarks.isDefinedAt(groupIdOrNot) &&
-            groupToSelectedEsOsAndBenchmarks(groupIdOrNot).nonEmpty &&
-            groupToSelectedEsOsAndBenchmarks(groupIdOrNot).isDefinedAt(curriculumSection) &&
-            groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection).isDefinedAt(curriculumSubSection)) &&
-          groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection)(curriculumSubSection)._2.contains(benchmarkValue)) {
-          groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection)(curriculumSubSection)._2.remove(benchmarkValue)
-          setButtonDefaults(theDiv)
-        } else {
-          selectBenchmark(groupIdOrNot, benchmarkValue, curriculumSection, curriculumSubSection)
-          theDiv.style.backgroundColor = "#016dad"
-          theDiv.style.color = "white"
-          theDiv.style.borderRadius = "7px"
-        }
-      })
-
-      index = index + 1
-    }
+    clickOnEandO_or_Benchmark(false)
   }
 
   private def selectBenchmark(groupIdOrNot: String, benchmarkValue: String, curriculumSection: String, curriculumSubSection: String): Boolean = {
@@ -1052,6 +1009,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
             for (subsection <- subSectionToEsOsBenchies.keys) {
               val eAndOSecSubection = subSectionToEsOsBenchies(subsection)
               for (eAndO <- eAndOSecSubection.eAndOs) {
+                global.console.log(s"populateSelectedEsOsAndBenchmarksFromSaved() Adding ${eAndO.code}")
                 selectEAndOCode(groupIdWithSubject, eAndO.code, section, subsection)
               }
               for (benchmark <- eAndOSecSubection.benchmarks) {
@@ -1073,7 +1031,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     val completedEsOsBenchies: CompletedEsAndOsByGroupBySubject = read[CompletedEsAndOsByGroupBySubject](PlanningHelper.decodeAnyNonFriendlyCharacters(completedEsAndOsBenchmarksPickled))
     val completedEsOsBenchiesMap = completedEsOsBenchies.completedEsAndOsByGroupBySubject
 
-    global.console.log(s"completedEsOsBenchiesMap : ${completedEsOsBenchiesMap.toString()}" )
+    global.console.log(s"completedEsOsBenchiesMap : ${completedEsOsBenchiesMap.toString()}")
 
     val allEAndORows = dom.document.getElementsByClassName("create-weekly-plans-es-and-os-row")
     val nodeListSize = allEAndORows.length
@@ -1087,28 +1045,15 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
       val divSubsection = theDiv.getAttribute("data-curriculum-subsection")
       val eAndOCode = theDiv.getAttribute("data-eando-code")
 
-      if (eAndOCode == "EXA 1-02a") {
-        global.console.log(s"completedEsOsBenchiesMap INSIDE for EXA 1-02a")
-        global.console.log(s"divSubject '${divSubject}'")
-        global.console.log(s"divGroupId '${divGroupId}'")
-        global.console.log(s"divSection '${divSection}'")
-        global.console.log(s"divSubsection '${divSubsection}'")
-        global.console.log(s"'${completedEsOsBenchiesMap.isDefinedAt(divSubject)}'")
-        global.console.log(s"'${completedEsOsBenchiesMap(divSubject).isDefinedAt(divGroupId)}'")
-        global.console.log(s"'${completedEsOsBenchiesMap(divSubject)(divGroupId).isDefinedAt(divSection)}'")
-        global.console.log(s"'${completedEsOsBenchiesMap(divSubject)(divGroupId)(divSection).isDefinedAt(divSubsection)}'")
-      }
-
       if (completedEsOsBenchiesMap.isDefinedAt(divSubject) &&
         completedEsOsBenchiesMap(divSubject).isDefinedAt(divGroupId) &&
         completedEsOsBenchiesMap(divSubject)(divGroupId).isDefinedAt(divSection) &&
         completedEsOsBenchiesMap(divSubject)(divGroupId)(divSection).isDefinedAt(divSubsection)
       ) {
         val completedEsAndOs = completedEsOsBenchiesMap(divSubject)(divGroupId)(divSection)(divSubsection).eAndOs.map(elem => elem.code)
-        global.console.log(s"WANT TO Setting status for ${eAndOCode}" )
         if (completedEsAndOs.contains(eAndOCode)) {
-          global.console.log(s"Setting status for ${eAndOCode}" )
           setStatus(theDiv, "Complete", "badge-success")
+          setButtonComplete(theDiv)
         }
       }
       index = index + 1
@@ -1122,7 +1067,6 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     val completedEsOsBenchies: CompletedEsAndOsByGroupBySubject = read[CompletedEsAndOsByGroupBySubject](PlanningHelper.decodeAnyNonFriendlyCharacters(completedEsAndOsBenchmarksPickled))
     val completedEsOsBenchiesMap = completedEsOsBenchies.completedEsAndOsByGroupBySubject
 
-
     val allEAndORows = dom.document.getElementsByClassName("create-weekly-plans-benchmark-row")
     val nodeListSize = allEAndORows.length
     var index = 0
@@ -1130,10 +1074,10 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
       val theDiv = allEAndORows(index).asInstanceOf[HTMLDivElement]
 
       val divSubject = theDiv.getAttribute("data-group-id-or-not").split("___")(0)
-      val divGroupId = theDiv.getAttribute("data-group-name")
+      val divGroupId = theDiv.getAttribute("data-group-id-or-not").split("___")(1)
       val divSection = theDiv.getAttribute("data-curriculum-section")
       val divSubsection = theDiv.getAttribute("data-curriculum-subsection")
-      val eAndOCode = theDiv.getAttribute("data-eando-code")
+      val benchy = theDiv.getAttribute("data-benchmark")
 
       if (completedEsOsBenchiesMap.isDefinedAt(divSubject) &&
         completedEsOsBenchiesMap(divSubject).isDefinedAt(divGroupId) &&
@@ -1141,8 +1085,14 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
         completedEsOsBenchiesMap(divSubject)(divGroupId)(divSection).isDefinedAt(divSubsection)
       ) {
         val completedEsAndOs = completedEsOsBenchiesMap(divSubject)(divGroupId)(divSection)(divSubsection).benchmarks.map(elem => elem.value)
-        if (completedEsAndOs.contains(eAndOCode)) {
+
+        if (benchy.startsWith("Records directly - WE ARE IN")) {
+          global.console.log(s"completedEsAndOs : ${completedEsAndOs.toString()}")
+        }
+
+        if (completedEsAndOs.contains(benchy)) {
           setStatus(theDiv, "Complete", "badge-success")
+          setButtonComplete(theDiv)
         }
       }
       index = index + 1
@@ -1162,10 +1112,10 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     groupToCompletedEsOsAndBenchmarks.clear()
     groupToNotStartedEsOsAndBenchmarks.clear()
     populateSelectedEsOsAndBenchmarksFromSaved()
-    populateCompletedEsOsFromSaved()
-    populateCompletedBenchiesFromSaved()
     repaintTheEsAndOs("create-weekly-plans-es-and-os-row")
     repaintTheBenchmarks("create-weekly-plans-benchmark-row")
+    populateCompletedEsOsFromSaved()
+    populateCompletedBenchiesFromSaved()
     buildGroupsMapForTabSelected()
     currentlySelectedPlanningArea = None
     currentlySelectedPlanningAreaNice = None
@@ -1239,24 +1189,76 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     }
   }
 
-  private def populateGroupToEsOsBenchmarks(): Map[String, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel] = {
-    if (groupToSelectedEsOsAndBenchmarks.isEmpty) Map() else {
-      {
-        for {
-          planningAreaAndGroupIdKey <- groupToSelectedEsOsAndBenchmarks.keys
-          groupId = planningAreaAndGroupIdKey.split("___")(1)
+  private def convertStringsToListEandO(strings: List[String]): List[EandO] = {
+    strings.map(elem => EandO(elem, Nil))
+  }
 
-          if groupToSelectedEsOsAndBenchmarks.isDefinedAt(planningAreaAndGroupIdKey)
-          sectionName <- groupToSelectedEsOsAndBenchmarks(planningAreaAndGroupIdKey).keys
-          setSectionNameToSubSectionsMap = createSetSectionNameToSubSectionsMap(sectionName, groupToSelectedEsOsAndBenchmarks(planningAreaAndGroupIdKey)(sectionName))
-          curriculumLevel: CurriculumLevel = extractCurriculumLevel(setSectionNameToSubSectionsMap)
-        } yield (groupId, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel(
-          curriculumLevel,
-          CurriculumArea.createCurriculumAreaFromString(currentlySelectedPlanningArea.getOrElse("NO_SUBJECT")),
-          setSectionNameToSubSectionsMap
-        ))
-      }.toMap
+  private def convertStringsToListBenchmark(strings: List[String]): List[Benchmark] = {
+    strings.map(elem => Benchmark(elem))
+  }
+
+  private def convertToImmutableMapEsOsBenchies(
+                                                 mutableMap: mutable.Map[String, (mutable.Set[String], mutable.Set[String])]
+                                               ): Map[String, EandOSetSubSection] = {
+    @tailrec
+    def loop(remainingKeys: List[String],
+             currentMap: Map[String, EandOSetSubSection]
+            ): Map[String, EandOSetSubSection] = {
+      if (remainingKeys.isEmpty) currentMap
+      else {
+        loop(
+          remainingKeys.tail,
+          currentMap + (remainingKeys.head ->
+            EandOSetSubSection(
+              "",
+              convertStringsToListEandO(mutableMap(remainingKeys.head)._1.toSet.toList),
+              convertStringsToListBenchmark(mutableMap(remainingKeys.head)._2.toSet.toList)
+            ))
+        )
+      }
     }
+
+    loop(mutableMap.keys.toList, Map())
+  }
+
+  private def buildSectionToSubsectionMap(
+                                           sectionToSubsectionToEsOsAndBenchies: mutable.Map[String, mutable.Map[String, (mutable.Set[String], mutable.Set[String])]],
+                                           sections: List[String]
+                                         ): Map[String, Map[String, EandOSetSubSection]] = {
+    @tailrec
+    def loop(remainingSections: List[String],
+             currentMap: Map[String, Map[String, EandOSetSubSection]]): Map[String, Map[String, EandOSetSubSection]] = {
+      if (remainingSections.isEmpty) currentMap
+      else {
+        val nextSection = remainingSections.head
+        val mutableSubSectionToEsOsBenchies = sectionToSubsectionToEsOsAndBenchies(nextSection)
+        val immutableSubSectionToEsOsBenchies = convertToImmutableMapEsOsBenchies(mutableSubSectionToEsOsBenchies)
+        loop(remainingSections.tail, currentMap + (nextSection -> immutableSubSectionToEsOsBenchies))
+      }
+    }
+
+    loop(sections, Map())
+  }
+
+  private def populateGroupToEsOsBenchmarks(): Map[String, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel] = {
+
+    {
+      for {
+        planningAreaAndGroupIdKey <- groupToSelectedEsOsAndBenchmarks.keys
+        groupId = planningAreaAndGroupIdKey.split("___")(1)
+        if groupToSelectedEsOsAndBenchmarks.isDefinedAt(planningAreaAndGroupIdKey)
+        sectionToSubsectionMap = buildSectionToSubsectionMap(
+          groupToSelectedEsOsAndBenchmarks(planningAreaAndGroupIdKey),
+          groupToSelectedEsOsAndBenchmarks(planningAreaAndGroupIdKey).keys.toList
+        )
+        curriculumLevel: CurriculumLevel = extractCurriculumLevel(sectionToSubsectionMap)
+      } yield (groupId, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel(
+        curriculumLevel,
+        CurriculumArea.createCurriculumAreaFromString(currentlySelectedPlanningArea.getOrElse("NO_SUBJECT")),
+        sectionToSubsectionMap
+      ))
+    }.toMap
+
   }
 
   private def extractGroupIds(peerNode: HTMLElement): List[String] = {
@@ -1542,6 +1544,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
 
   private def postSaveEsOsBenchies(subjectWeeklyPlan: WeeklyPlanOfOneSubject, classId: String): Unit = {
     val subjectWeeklyPlansPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[WeeklyPlanOfOneSubject](subjectWeeklyPlan))
+    global.console.log(s">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>. We are going to save these es and os: ${subjectWeeklyPlan.toString}")
     val completedEsOsBenchiesPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[CompletedEsAndOsByGroup](createCompletedEsAndOsByGroup()))
     val notStartedEsOsBenchiesPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[NotStartedEsAndOsByGroup](createNotStartedEsAndOsByGroup()))
 

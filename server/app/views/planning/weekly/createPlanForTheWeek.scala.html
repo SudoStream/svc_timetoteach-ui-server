@@ -205,7 +205,7 @@
 
             <div class="create-weekly-plans-main-section">
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
-                @for((planningArea, indexPlanningArea) <- currentTermlyPlan.plansAtSubjectLevel.keys.toList.sortBy(elem => elem.orderNumber).zipWithIndex) {
+                @for((planningArea, indexPlanningArea) <- currentTermlyPlan.plansAtSubjectLevel.keys.toList.sortBy(elem => elem.niceSubjectLevelValue()).zipWithIndex) {
                     @if(indexPlanningArea == 0) {
                         <li class="nav-item">
                             <a class="nav-link active weekly-plans-top-level-tab"
