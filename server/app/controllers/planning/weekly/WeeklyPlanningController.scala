@@ -227,7 +227,6 @@ class WeeklyPlanningController @Inject()(
 
       futureCompletedEsAndOsBenchmarks = planningReaderService.completedEsOsBenchmarks(tttUserId, ClassId(classId), mondayDateOfWeekIso)
       completedEsAndOsBenchmarks <- futureCompletedEsAndOsBenchmarks
-      log = logger.debug(s"completedEsAndOsBenchmarks : ${completedEsAndOsBenchmarks.toString}")
       completedEsAndOsBenchmarksPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[CompletedEsAndOsByGroupBySubject](completedEsAndOsBenchmarks))
     } yield Ok(views.html.planning.weekly.createPlanForTheWeek(
       new MyDeadboltHandler(userReader),
@@ -285,7 +284,8 @@ class WeeklyPlanningController @Inject()(
 
 
   def saveEsOsBenchiesForTheWeek(classId: String): Action[AnyContent] = Action.async { implicit request =>
-    logger.debug("saveEsOsBenchiesForTheWeek 1")
+    logger.debug("\n\n\n ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ " +
+      s"saveEsOsBenchiesForTheWeek 1 : ${subjectWeeklyPlansToSaveForm.toString}")
     val subjectWeeklyPlans = subjectWeeklyPlansToSaveForm.bindFromRequest.get
     logger.debug("saveEsOsBenchiesForTheWeek 2")
 

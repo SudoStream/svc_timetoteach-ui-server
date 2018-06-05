@@ -47,23 +47,23 @@ case class CurriculumAreaTermlyPlanForPdfWrapper(
         {
           for {
             key <- fullTermlyPlan.keys
-            hmm = println(s"The Key is $key")
+//            hmm = println(s"The Key is $key")
             curriculumAreaTermlyPlans: List[CurriculumAreaTermlyPlanForPdf] = fullTermlyPlan(key)
             tuplesOfPlans = buildSubjectLevelPlans(curriculumAreaTermlyPlans)
           } yield tuplesOfPlans
         }.flatten
       }.toMap
 
-      println(" ------------- ------------- ------------- ------------- -------------")
-      for {
-        key <- retVal.keys
-        groupPlan <-  retVal(key)
-        hmm = println(s" key($key) : ${retVal(key).size}")
-        hmm2 = println(s" group(${groupPlan.maybeGroup.toString})")
-        hmm3 = println(s" ++ ")
-      }
-      println(" ------------- ------------- ------------- ------------- -------------")
-      println(" ------------- ------------- ------------- ------------- -------------\n")
+//      println(" ------------- ------------- ------------- ------------- -------------")
+//      for {
+//        key <- retVal.keys
+//        groupPlan <-  retVal(key)
+//        hmm = println(s" key($key) : ${retVal(key).size}")
+//        hmm2 = println(s" group(${groupPlan.maybeGroup.toString})")
+//        hmm3 = println(s" ++ ")
+//      }
+//      println(" ------------- ------------- ------------- ------------- -------------")
+//      println(" ------------- ------------- ------------- ------------- -------------\n")
       retVal
     }
   }

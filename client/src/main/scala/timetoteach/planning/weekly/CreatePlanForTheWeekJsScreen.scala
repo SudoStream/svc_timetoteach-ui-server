@@ -582,7 +582,9 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
           global.console.log(s"Unknown status.")
         }
 
-        global.console.log(s"[][][][][][][] Current selected ${groupToSelectedEsOsAndBenchmarks.toString()}")
+        global.console.log(s"[][][][][][][] Current Not started ${groupToNotStartedEsOsAndBenchmarks.toString()}")
+        global.console.log(s"[][][][][][][] Current Selected ${groupToSelectedEsOsAndBenchmarks.toString()}")
+        global.console.log(s"[][][][][][][] Current Complete ${groupToCompletedEsOsAndBenchmarks.toString()}")
       })
 
       index = index + 1
@@ -642,19 +644,6 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
       val curriculumSection = theDiv.getAttribute("data-curriculum-section")
       val curriculumSubSection = theDiv.getAttribute("data-curriculum-subsection")
 
-      if (codeToCheck == "EXA 1-01a") {
-        global.console.log(s"Looking at ${codeToCheck}")
-        global.console.log(s"groupIdOrNot : ${groupIdOrNot}")
-        global.console.log(s"Lets see the map 1.... ${groupToSelectedEsOsAndBenchmarks.toString}")
-        //        global.console.log(s"Lets see the map 2.... ${groupToSelectedEsOsAndBenchmarks(groupIdOrNot).toString}")
-        //        global.console.log(s"curriculumSection : ${curriculumSection}")
-        //        global.console.log(s"curriculumSubSection : ${curriculumSubSection}")
-        //
-        //        global.console.log(s"${groupToSelectedEsOsAndBenchmarks.isDefinedAt(groupIdOrNot)}")
-        //        global.console.log(s"${groupToSelectedEsOsAndBenchmarks(groupIdOrNot).isDefinedAt(curriculumSection)}")
-        //        global.console.log(s"${groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection).isDefinedAt(curriculumSubSection)}")
-      }
-
       if (groupToSelectedEsOsAndBenchmarks.isDefinedAt(groupIdOrNot) &&
         groupToSelectedEsOsAndBenchmarks(groupIdOrNot).isDefinedAt(curriculumSection) &&
         groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection).isDefinedAt(curriculumSubSection) &&
@@ -664,10 +653,10 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
         theDiv.style.color = "white"
         theDiv.style.borderRadius = "7px"
         setStatus(theDiv, "Started", "badge-warning")
+      } else if (statusIs(theDiv, "Complete")) {
+        setButtonComplete(theDiv)
       } else {
-        theDiv.style.backgroundColor = ""
-        theDiv.style.color = "grey"
-        theDiv.style.borderRadius = "0px"
+        setButtonDefaults(theDiv)
       }
 
       index = index + 1
@@ -1112,10 +1101,11 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     groupToCompletedEsOsAndBenchmarks.clear()
     groupToNotStartedEsOsAndBenchmarks.clear()
     populateSelectedEsOsAndBenchmarksFromSaved()
-    repaintTheEsAndOs("create-weekly-plans-es-and-os-row")
-    repaintTheBenchmarks("create-weekly-plans-benchmark-row")
     populateCompletedEsOsFromSaved()
     populateCompletedBenchiesFromSaved()
+    repaintTheEsAndOs("create-weekly-plans-es-and-os-row")
+    repaintTheBenchmarks("create-weekly-plans-benchmark-row")
+
     buildGroupsMapForTabSelected()
     currentlySelectedPlanningArea = None
     currentlySelectedPlanningAreaNice = None
@@ -1521,7 +1511,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
   }
 
   private def createNotStartedEsAndOsByGroup(): NotStartedEsAndOsByGroup = {
-    val innerMap: Map[String, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel] = if (groupToCompletedEsOsAndBenchmarks.isEmpty) Map() else {
+    val innerMap: Map[String, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel] = if (groupToNotStartedEsOsAndBenchmarks.isEmpty) Map() else {
       {
         for {
           planningAreaAndGroupIdKey <- groupToNotStartedEsOsAndBenchmarks.keys

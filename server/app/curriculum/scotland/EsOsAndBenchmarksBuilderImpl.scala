@@ -131,14 +131,14 @@ class EsOsAndBenchmarksBuilderImpl @Inject()(esAndOsReader: EsAndOsReaderService
               for (esAndOsSetSubSection <- setSectionToEsAndOsMap.values) {
                 for (eAndO <- esAndOsSetSubSection.eAndOs) {
                   counter = counter + 1
-                  logger.info(s"Building Es,Os Code to Detail map for ${eAndO.code} : counter = $counter")
+//                  logger.debug(s"Building Es,Os Code to Detail map for ${eAndO.code} : counter = $counter")
                   mutableEAndOCodeTodetailMap += (eAndO.code -> eAndO)
                 }
               }
             }
           }
         }
-        logger.info(s"Returning map : ${mutableEAndOCodeTodetailMap.toString()}")
+//        logger.debug(s"Returning map : ${mutableEAndOCodeTodetailMap.toString()}")
         mutableEAndOCodeTodetailMap.toMap
       case None => Map()
     }
