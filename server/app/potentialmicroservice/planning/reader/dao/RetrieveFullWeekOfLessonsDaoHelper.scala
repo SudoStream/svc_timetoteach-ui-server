@@ -62,11 +62,11 @@ trait RetrieveFullWeekOfLessonsDaoHelper {
                                              classId: ClassId,
                                              mondayDateOfWeekIso: String
                                            ): Future[(CompletedEsAndOsByGroupBySubject, StartedEsAndOsByGroupBySubject)] = {
-    logger.info(s"\n\n\n\n\n\n\n\n<><><><><><><><><><><><><><><><><><><> Retrieve COMPLETE E&Os/Benchmarks: $tttUserId|$classId \n\n\n\n\n\n\n\n")
+    logger.info(s"\nRetrieve COMPLETE E&Os/Benchmarks: $tttUserId|$classId")
 
     val futureAllEAndOsBenchmarksStatuses = readAllEAndOsBenchmarksStatuses(tttUserId, classId)
 
-    for {
+    val eventualCompleteAndStarted  = for {
       allEAndOsBenchmarksStatuses <- futureAllEAndOsBenchmarksStatuses
       latestVersionsOfEachEandOBenchmark = latestVersionOfEachEandOBenchmark(allEAndOsBenchmarksStatuses.toList, mondayDateOfWeekIso)
       completedEAndOBenchmarks = filterEsAndOs(latestVersionsOfEachEandOBenchmark, List("COMPLETE", "STARTED"))
@@ -74,6 +74,9 @@ trait RetrieveFullWeekOfLessonsDaoHelper {
       completedEsAndOsByGroup = buildMapOfEAndOsBenchmarks(completedEsAndOsByGroupDoc)
       startedEsAndOsByGroup = buildMapOfEAndOsBenchmarks(startedEsAndOsByGroupDoc)
     } yield (CompletedEsAndOsByGroupBySubject(completedEsAndOsByGroup), StartedEsAndOsByGroupBySubject(startedEsAndOsByGroup))
+
+    logger.debug("Got the eventualCompleteAndStarted\n")
+    eventualCompleteAndStarted
   }
 
   ////////////////

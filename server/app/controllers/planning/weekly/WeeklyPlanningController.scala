@@ -214,11 +214,15 @@ class WeeklyPlanningController @Inject()(
       futureMaybefullWeeklyPlanOfLessons = planningReaderService.retrieveFullWeekOfLessons(tttUserId, ClassId(classId), mondayDateOfWeekIso)
       fullWeeklyPlanOfLessons <- futureMaybefullWeeklyPlanOfLessons
       fullWeeklyPlanOfLessonsPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[FullWeeklyPlanOfLessons](fullWeeklyPlanOfLessons))
-
+      log0 = logger("Here 0")
       futureCompletedAndStartedEsAndOsBenchmarks = planningReaderService.completedAndStartedEsOsBenchmarks(tttUserId, ClassId(classId), mondayDateOfWeekIso)
+      log1 = logger("Here 1")
       completedAndStartedEsAndOsBenchmarks <- futureCompletedAndStartedEsAndOsBenchmarks
+      log2 = logger("Here 2")
       completedEsAndOsBenchmarksPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[CompletedEsAndOsByGroupBySubject](completedAndStartedEsAndOsBenchmarks._1))
+      log3 = logger("Here 3")
       startedEsAndOsBenchmarksPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[StartedEsAndOsByGroupBySubject](completedAndStartedEsAndOsBenchmarks._2))
+      log4 = logger("Here 4")
     } yield Ok(views.html.planning.weekly.createPlanForTheWeek(
       new MyDeadboltHandler(userReader),
       userPictureUri,
@@ -241,7 +245,9 @@ class WeeklyPlanningController @Inject()(
 
 
   def savePlanForTheWeek(classId: String): Action[AnyContent] = Action.async { implicit request =>
+    logger.debug(s"savePlanForTheWeek1 : ${subjectWeeklyPlansToSaveForm.bindFromRequest.toString}")
     val subjectWeeklyPlans = subjectWeeklyPlansToSaveForm.bindFromRequest.get
+    logger.debug("savePlanForTheWeek2")
 
     import upickle.default._
     val weeklyPlansToSave: WeeklyPlanOfOneSubject = read[WeeklyPlanOfOneSubject](

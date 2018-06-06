@@ -885,12 +885,26 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
 
     val inputAttributeClass = s"input-attribute-${buttonNameType.replace(" ", "")}"
     val theInput = attributeText match {
-      case Some(inputText) => input(`type` := "text", `class` := s"form-control form-control-sm $inputAttributeClass",
-        attr("data-tab-index") := tabIndex, attr("data-attribute-order-value") := getOrderNumber(maybeOrderNumber, tabIndex.toInt, inputAttributeClass),
-        placeholder := s"Enter $buttonNameType", value := s"${attributeText.getOrElse("")}")
-      case None => input(`type` := "text", `class` := s"form-control form-control-sm $inputAttributeClass",
-        attr("data-tab-index") := tabIndex, attr("data-attribute-order-value") := getOrderNumber(maybeOrderNumber, tabIndex.toInt, inputAttributeClass),
-        placeholder := s"Enter $buttonNameType")
+      case Some(inputText) =>
+        if (buttonNameType == "Activity") {
+          textarea(`type` := "text", `class` := s"form-control form-control-sm $inputAttributeClass", rows := "5",
+            attr("data-tab-index") := tabIndex, attr("data-attribute-order-value") := getOrderNumber(maybeOrderNumber, tabIndex.toInt, inputAttributeClass),
+            placeholder := s"Enter $buttonNameType - '${attributeText.toString}' ", value := s"${attributeText.getOrElse("")}")(s"${attributeText.getOrElse(s"Enter $buttonNameType")}")
+        } else {
+          input(`type` := "text", `class` := s"form-control form-control-sm $inputAttributeClass",
+            attr("data-tab-index") := tabIndex, attr("data-attribute-order-value") := getOrderNumber(maybeOrderNumber, tabIndex.toInt, inputAttributeClass),
+            placeholder := s"Enter $buttonNameType", value := s"${attributeText.getOrElse("")}")
+        }
+      case None =>
+        if (buttonNameType == "Activity") {
+          textarea(`type` := "text", `class` := s"form-control form-control-sm $inputAttributeClass", rows := "5",
+            attr("data-tab-index") := tabIndex, attr("data-attribute-order-value") := getOrderNumber(maybeOrderNumber, tabIndex.toInt, inputAttributeClass),
+            placeholder := s"Enter $buttonNameType")
+        } else {
+          input(`type` := "text", `class` := s"form-control form-control-sm $inputAttributeClass",
+            attr("data-tab-index") := tabIndex, attr("data-attribute-order-value") := getOrderNumber(maybeOrderNumber, tabIndex.toInt, inputAttributeClass),
+            placeholder := s"Enter $buttonNameType")
+        }
     }
 
     val newAttributeRow = form()(
@@ -1478,7 +1492,15 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
 
   private def postSave(subjectWeeklyPlan: WeeklyPlanOfOneSubject, classId: String): Unit = {
     val subjectWeeklyPlansPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[WeeklyPlanOfOneSubject](subjectWeeklyPlan))
+    val completedEsOsBenchiesPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[CompletedEsAndOsByGroup](createCompletedEsAndOsByGroup()))
+    val notStartedEsOsBenchiesPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[NotStartedEsAndOsByGroup](createNotStartedEsAndOsByGroup()))
+
+    global.console.log(s"Not Started: ${groupToNotStartedEsOsAndBenchmarks.toString()}")
+    global.console.log(s"Selected: ${groupToSelectedEsOsAndBenchmarks.toString()}")
+    global.console.log(s"Completed: ${groupToCompletedEsOsAndBenchmarks.toString()}")
     global.console.log(s"Pickled, this == $subjectWeeklyPlansPickled")
+    global.console.log(s"Pickled Completed, this == $completedEsOsBenchiesPickled")
+    global.console.log(s"Pickled NotStarted, this == $notStartedEsOsBenchiesPickled")
 
     import scala.concurrent.ExecutionContext.Implicits.global
     val theUrl = s"/savePlanForTheWeek/$classId"
@@ -1486,7 +1508,8 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
       "Content-Type" -> "application/x-www-form-urlencoded",
       "X-Requested-With" -> "Accept"
     )
-    val theData = InputData.str2ajax(s"subjectWeeklyPlansPickled=$subjectWeeklyPlansPickled")
+    val theData = InputData.str2ajax(s"subjectWeeklyPlansPickled=$subjectWeeklyPlansPickled&" +
+      s"notStarted=$notStartedEsOsBenchiesPickled&completed=$completedEsOsBenchiesPickled")
 
     Ajax.post(
       url = theUrl,
@@ -1561,7 +1584,6 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
 
   private def postSaveEsOsBenchies(subjectWeeklyPlan: WeeklyPlanOfOneSubject, classId: String): Unit = {
     val subjectWeeklyPlansPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[WeeklyPlanOfOneSubject](subjectWeeklyPlan))
-    global.console.log(s">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>. We are going to save these es and os: ${subjectWeeklyPlan.toString}")
     val completedEsOsBenchiesPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[CompletedEsAndOsByGroup](createCompletedEsAndOsByGroup()))
     val notStartedEsOsBenchiesPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[NotStartedEsAndOsByGroup](createNotStartedEsAndOsByGroup()))
 
