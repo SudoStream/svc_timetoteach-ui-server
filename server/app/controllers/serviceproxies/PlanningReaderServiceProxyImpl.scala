@@ -2,7 +2,7 @@ package controllers.serviceproxies
 
 import duplicate.model
 import duplicate.model.ClassDetails
-import duplicate.model.esandos.{CompletedEsAndOsByGroup, CompletedEsAndOsByGroupBySubject}
+import duplicate.model.esandos.{CompletedEsAndOsByGroup, CompletedEsAndOsByGroupBySubject, StartedEsAndOsByGroupBySubject}
 import duplicate.model.planning.FullWeeklyPlanOfLessons
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
 import javax.inject.{Inject, Singleton}
@@ -167,6 +167,14 @@ class PlanningReaderServiceProxyImpl @Inject()(planningReaderService: PlanningRe
                                         mondayDateOfWeekIso: String
                                       ): Future[CompletedEsAndOsByGroupBySubject] = {
     planningReaderService.completedEsOsBenchmarks(tttUserId, classId, mondayDateOfWeekIso)
+  }
+
+  override def completedAndStartedEsOsBenchmarks(
+                                         tttUserId: TimeToTeachUserId,
+                                         classId: ClassId,
+                                         mondayDateOfWeekIso: String
+                                       ): Future[(CompletedEsAndOsByGroupBySubject, StartedEsAndOsByGroupBySubject)] = {
+    planningReaderService.completedAndStartedEsOsBenchmarks(tttUserId, classId, mondayDateOfWeekIso)
   }
 
 }

@@ -7,7 +7,7 @@ import controllers.serviceproxies._
 import controllers.time.SystemTime
 import curriculum.scotland.EsOsAndBenchmarksBuilderImpl
 import duplicate.model.ClassDetails
-import duplicate.model.esandos.{CompletedEsAndOsByGroup, CompletedEsAndOsByGroupBySubject, NotStartedEsAndOsByGroup}
+import duplicate.model.esandos.{CompletedEsAndOsByGroup, CompletedEsAndOsByGroupBySubject, NotStartedEsAndOsByGroup, StartedEsAndOsByGroupBySubject}
 import duplicate.model.planning.{FullWeeklyPlanOfLessons, LessonsThisWeek, WeeklyPlanOfOneSubject}
 import io.sudostream.timetoteach.messages.systemwide.model.UserPreferences
 import javax.inject.{Inject, Singleton}
@@ -178,26 +178,19 @@ class WeeklyPlanningController @Inject()(
     import upickle.default._
     for {
       classes <- eventualClasses
-      nothing0 = logger.debug(s"+=+= we are underway 0 - ${classes.toString}")
-      nothing01 = logger.debug(s"+=+= we are underway 01 - filtering classId = ${classId}")
       classDetailsList = classes.filter(theClass => theClass.id.id == classId)
       maybeClassDetails: Option[ClassDetails] = classDetailsList.headOption
-      nothing1 = logger.debug(s"+=+= we are underway 1 - ${classDetailsList.toString}")
       if maybeClassDetails.isDefined
       classDetails = maybeClassDetails.get
-      nothing2 = logger.debug(s"+=+= we are underway 2")
       futureMaybeSchoolTerm = termService.currentSchoolTerm(SchoolConverter.convertLocalAuthorityStringToAvroVersion(classDetails.schoolDetails.localAuthority))
       maybeSchoolTerm <- futureMaybeSchoolTerm
       if maybeSchoolTerm.isDefined
-
-      nothing3 = logger.debug(s"+=+= we are underway 3")
 
       eventualMaybeCurriculumSelection = planningReaderService.
         currentTermlyCurriculumSelection(tttUserId, ClassId(classId), maybeSchoolTerm.get)
 
       maybeTermlyCurriculumSelection <- eventualMaybeCurriculumSelection
       if maybeTermlyCurriculumSelection.isDefined
-      nothing4 = logger.debug(s"+=+= we are underway 4")
       curriculumSelection = maybeTermlyCurriculumSelection.get
       eventualClassTermlyPlan = planningReaderService.allClassTermlyPlans(tttUserId, classDetails, curriculumSelection.planningAreas)
       classTermlyPlan <- eventualClassTermlyPlan
@@ -207,13 +200,10 @@ class WeeklyPlanningController @Inject()(
       avroClassTimetableFuture = classTimetableReaderProxy.readAvroClassTimetable(tttUserId, WwwClassId(classDetails.id.id))
       maybeAvroClassTimetable <- avroClassTimetableFuture
       if maybeAvroClassTimetable.isDefined
-      nothing5 = logger.debug(s"+=+= we are underway 5")
 
       futureMaybeSchoolTerm = termService.currentSchoolTerm(SchoolConverter.convertLocalAuthorityStringToAvroVersion(classDetails.schoolDetails.localAuthority))
       maybeSchoolTerm <- futureMaybeSchoolTerm
       if maybeSchoolTerm.isDefined
-
-      nothing = logger.debug(s"+=+= maybeSchoolTerm = ${maybeSchoolTerm.get}")
 
       futureMaybeLessonsThisWeek = classTimetableReaderProxy.getThisWeeksLessons(tttUserId, WwwClassId(classDetails.id.id))
       maybeLessonsThisWeek <- futureMaybeLessonsThisWeek
@@ -225,9 +215,10 @@ class WeeklyPlanningController @Inject()(
       fullWeeklyPlanOfLessons <- futureMaybefullWeeklyPlanOfLessons
       fullWeeklyPlanOfLessonsPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[FullWeeklyPlanOfLessons](fullWeeklyPlanOfLessons))
 
-      futureCompletedEsAndOsBenchmarks = planningReaderService.completedEsOsBenchmarks(tttUserId, ClassId(classId), mondayDateOfWeekIso)
-      completedEsAndOsBenchmarks <- futureCompletedEsAndOsBenchmarks
-      completedEsAndOsBenchmarksPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[CompletedEsAndOsByGroupBySubject](completedEsAndOsBenchmarks))
+      futureCompletedAndStartedEsAndOsBenchmarks = planningReaderService.completedAndStartedEsOsBenchmarks(tttUserId, ClassId(classId), mondayDateOfWeekIso)
+      completedAndStartedEsAndOsBenchmarks <- futureCompletedAndStartedEsAndOsBenchmarks
+      completedEsAndOsBenchmarksPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[CompletedEsAndOsByGroupBySubject](completedAndStartedEsAndOsBenchmarks._1))
+      startedEsAndOsBenchmarksPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[StartedEsAndOsByGroupBySubject](completedAndStartedEsAndOsBenchmarks._2))
     } yield Ok(views.html.planning.weekly.createPlanForTheWeek(
       new MyDeadboltHandler(userReader),
       userPictureUri,
@@ -243,7 +234,8 @@ class WeeklyPlanningController @Inject()(
       fullWeeklyPlanOfLessonsPickled,
       maybeSchoolTerm.get.weekNumberForGivenDate(LocalDate.parse(mondayDateOfWeekIso)),
       todaysDate,
-      completedEsAndOsBenchmarksPickled
+      completedEsAndOsBenchmarksPickled,
+      startedEsAndOsBenchmarksPickled
     ))
   }
 

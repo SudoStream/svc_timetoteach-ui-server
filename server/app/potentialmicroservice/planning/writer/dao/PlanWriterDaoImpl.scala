@@ -94,14 +94,17 @@ class PlanWriterDaoImpl @Inject()(
       today <- getSystemDate
       completedEsOsBenchiesAsDocument = extractEsOsBenchiesAsDocuments(Left(completedEsAndOsByGroup), weeklyPlansToSave, today)
       notStartedEsOsBenchiesAsDocument = extractEsOsBenchiesAsDocuments(Right(notStartedEsOsBenchies), weeklyPlansToSave, today)
+      selectedEsOsBenchiesAsDocument = createEsOsBenchiesAsDocuments(weeklyPlansToSave, "STARTED", weeklyPlansToSave.groupToEsOsBenchmarks, today)
       log1 = logger.info(s"Inserting completed/notStarted esOsBenchies to database: " +
-        s"${completedEsOsBenchiesAsDocument.toString()} :: ${notStartedEsOsBenchiesAsDocument.toString()}")
-    } yield (completedEsOsBenchiesAsDocument, notStartedEsOsBenchiesAsDocument)
+        s"${completedEsOsBenchiesAsDocument.toString()} :: " +
+        s"${notStartedEsOsBenchiesAsDocument.toString()} :: " +
+        s"${selectedEsOsBenchiesAsDocument.toString} ")
+    } yield (completedEsOsBenchiesAsDocument, notStartedEsOsBenchiesAsDocument, selectedEsOsBenchiesAsDocument )
 
     val futureCompletesAndNotStartedInserts = {
       for {
         tupleCompletedNotStarted <- eventualTupleCompletedNotStarted
-      } yield insertEandOBenchyStatuesDocs(tupleCompletedNotStarted._1 ::: tupleCompletedNotStarted._2)
+      } yield insertEandOBenchyStatuesDocs(tupleCompletedNotStarted._1 ::: tupleCompletedNotStarted._2 ::: tupleCompletedNotStarted._3)
     }.flatMap(res => res)
 
     for {

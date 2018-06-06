@@ -13,7 +13,6 @@ import scalatags.JsDom
 import scalatags.JsDom.TypedTag
 import scalatags.JsDom.all.{`class`, attr, div, _}
 import shared.util.PlanningHelper
-import timetoteach.planning.weekly.CreatePlanForTheWeekJsScreen.groupToSelectedEsOsAndBenchmarks
 import upickle.default.write
 
 import scala.annotation.tailrec
@@ -433,7 +432,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     }
   }
 
-  def setStatus(theDiv: Div, status: String, badge: String): Unit = {
+  def setStatusBadge(theDiv: Div, status: String, badge: String): Unit = {
     val statusSpans = theDiv.getElementsByClassName("e-and-o-or-benchmark-status")
     val nodeListSize = statusSpans.length
     if (nodeListSize == 1) {
@@ -560,13 +559,13 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
 
         if (statusIs(theDiv, "Started")) {
           setButtonComplete(theDiv)
-          setStatus(theDiv, "Complete", "badge-success")
+          setStatusBadge(theDiv, "Complete", "badge-success")
           safelyRemoveCodeFromGroup(groupToSelectedEsOsAndBenchmarks, groupIdOrNot, curriculumSection, curriculumSubSection, eAndOCode_or_Benchmark, isEAndO)
           safelyRemoveCodeFromGroup(groupToNotStartedEsOsAndBenchmarks, groupIdOrNot, curriculumSection, curriculumSubSection, eAndOCode_or_Benchmark, isEAndO)
           groupToCompletedEsOsAndBenchmarks = safelyAddCodeToGroup(groupToCompletedEsOsAndBenchmarks, groupIdOrNot, curriculumSection, curriculumSubSection, eAndOCode_or_Benchmark, isEAndO)
         } else if (statusIs(theDiv, "Complete")) {
           setButtonDefaults(theDiv)
-          setStatus(theDiv, "Not Started", "badge-danger")
+          setStatusBadge(theDiv, "Not Started", "badge-danger")
           safelyRemoveCodeFromGroup(groupToSelectedEsOsAndBenchmarks, groupIdOrNot, curriculumSection, curriculumSubSection, eAndOCode_or_Benchmark, isEAndO)
           safelyRemoveCodeFromGroup(groupToCompletedEsOsAndBenchmarks, groupIdOrNot, curriculumSection, curriculumSubSection, eAndOCode_or_Benchmark, isEAndO)
           groupToNotStartedEsOsAndBenchmarks = safelyAddCodeToGroup(groupToNotStartedEsOsAndBenchmarks, groupIdOrNot, curriculumSection, curriculumSubSection, eAndOCode_or_Benchmark, isEAndO)
@@ -576,7 +575,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
           } else {
             selectBenchmark(groupIdOrNot, eAndOCode_or_Benchmark, curriculumSection, curriculumSubSection)
           }
-          setStatus(theDiv, "Started", "badge-warning")
+          setStatusBadge(theDiv, "Started", "badge-warning")
           setButtonStarted(theDiv)
         } else {
           global.console.log(s"Unknown status.")
@@ -644,15 +643,16 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
       val curriculumSection = theDiv.getAttribute("data-curriculum-section")
       val curriculumSubSection = theDiv.getAttribute("data-curriculum-subsection")
 
-      if (groupToSelectedEsOsAndBenchmarks.isDefinedAt(groupIdOrNot) &&
-        groupToSelectedEsOsAndBenchmarks(groupIdOrNot).isDefinedAt(curriculumSection) &&
-        groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection).isDefinedAt(curriculumSubSection) &&
-        checkCodeIsSelected(groupIdOrNot, curriculumSection, curriculumSubSection, codeToCheck)
+      if (
+        (groupToSelectedEsOsAndBenchmarks.isDefinedAt(groupIdOrNot) &&
+          groupToSelectedEsOsAndBenchmarks(groupIdOrNot).isDefinedAt(curriculumSection) &&
+          groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection).isDefinedAt(curriculumSubSection) &&
+          checkCodeIsSelected(groupIdOrNot, curriculumSection, curriculumSubSection, codeToCheck)
+          ) ||
+          statusIs(theDiv, "Started")
       ) {
-        theDiv.style.backgroundColor = "#016dad"
-        theDiv.style.color = "white"
-        theDiv.style.borderRadius = "7px"
-        setStatus(theDiv, "Started", "badge-warning")
+        setButtonStarted(theDiv)
+        setStatusBadge(theDiv, "Started", "badge-warning")
       } else if (statusIs(theDiv, "Complete")) {
         setButtonComplete(theDiv)
       } else {
@@ -1020,7 +1020,12 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     val completedEsOsBenchies: CompletedEsAndOsByGroupBySubject = read[CompletedEsAndOsByGroupBySubject](PlanningHelper.decodeAnyNonFriendlyCharacters(completedEsAndOsBenchmarksPickled))
     val completedEsOsBenchiesMap = completedEsOsBenchies.completedEsAndOsByGroupBySubject
 
+    val startedEsAndOsBenchmarksPickled = dom.window.localStorage.getItem("startedEsAndOsBenchmarksPickled")
+    val startedEsOsBenchies: StartedEsAndOsByGroupBySubject = read[StartedEsAndOsByGroupBySubject](PlanningHelper.decodeAnyNonFriendlyCharacters(startedEsAndOsBenchmarksPickled))
+    val startedEsOsBenchiesMap = startedEsOsBenchies.startedEsAndOsByGroupBySubject
+
     global.console.log(s"completedEsOsBenchiesMap : ${completedEsOsBenchiesMap.toString()}")
+    global.console.log(s"startedEsOsBenchiesMap : ${startedEsOsBenchiesMap.toString()}")
 
     val allEAndORows = dom.document.getElementsByClassName("create-weekly-plans-es-and-os-row")
     val nodeListSize = allEAndORows.length
@@ -1041,8 +1046,19 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
       ) {
         val completedEsAndOs = completedEsOsBenchiesMap(divSubject)(divGroupId)(divSection)(divSubsection).eAndOs.map(elem => elem.code)
         if (completedEsAndOs.contains(eAndOCode)) {
-          setStatus(theDiv, "Complete", "badge-success")
+          setStatusBadge(theDiv, "Complete", "badge-success")
           setButtonComplete(theDiv)
+        }
+      }
+      if (startedEsOsBenchiesMap.isDefinedAt(divSubject) &&
+        startedEsOsBenchiesMap(divSubject).isDefinedAt(divGroupId) &&
+        startedEsOsBenchiesMap(divSubject)(divGroupId).isDefinedAt(divSection) &&
+        startedEsOsBenchiesMap(divSubject)(divGroupId)(divSection).isDefinedAt(divSubsection)
+      ) {
+        val startedEsAndOs = startedEsOsBenchiesMap(divSubject)(divGroupId)(divSection)(divSubsection).eAndOs.map(elem => elem.code)
+        if (startedEsAndOs.contains(eAndOCode)) {
+          setStatusBadge(theDiv, "Started", "badge-warning")
+          setButtonStarted(theDiv)
         }
       }
       index = index + 1
@@ -1055,6 +1071,10 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     import upickle.default._
     val completedEsOsBenchies: CompletedEsAndOsByGroupBySubject = read[CompletedEsAndOsByGroupBySubject](PlanningHelper.decodeAnyNonFriendlyCharacters(completedEsAndOsBenchmarksPickled))
     val completedEsOsBenchiesMap = completedEsOsBenchies.completedEsAndOsByGroupBySubject
+
+    val startedEsAndOsBenchmarksPickled = dom.window.localStorage.getItem("startedEsAndOsBenchmarksPickled")
+    val startedEsOsBenchies: StartedEsAndOsByGroupBySubject = read[StartedEsAndOsByGroupBySubject](PlanningHelper.decodeAnyNonFriendlyCharacters(startedEsAndOsBenchmarksPickled))
+    val startedEsOsBenchiesMap = startedEsOsBenchies.startedEsAndOsByGroupBySubject
 
     val allEAndORows = dom.document.getElementsByClassName("create-weekly-plans-benchmark-row")
     val nodeListSize = allEAndORows.length
@@ -1075,13 +1095,20 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
       ) {
         val completedEsAndOs = completedEsOsBenchiesMap(divSubject)(divGroupId)(divSection)(divSubsection).benchmarks.map(elem => elem.value)
 
-        if (benchy.startsWith("Records directly - WE ARE IN")) {
-          global.console.log(s"completedEsAndOs : ${completedEsAndOs.toString()}")
-        }
-
         if (completedEsAndOs.contains(benchy)) {
-          setStatus(theDiv, "Complete", "badge-success")
+          setStatusBadge(theDiv, "Complete", "badge-success")
           setButtonComplete(theDiv)
+        }
+      }
+      if (startedEsOsBenchiesMap.isDefinedAt(divSubject) &&
+        startedEsOsBenchiesMap(divSubject).isDefinedAt(divGroupId) &&
+        startedEsOsBenchiesMap(divSubject)(divGroupId).isDefinedAt(divSection) &&
+        startedEsOsBenchiesMap(divSubject)(divGroupId)(divSection).isDefinedAt(divSubsection)
+      ) {
+        val startedBenchmarks = startedEsOsBenchiesMap(divSubject)(divGroupId)(divSection)(divSubsection).benchmarks.map(elem => elem.value)
+        if (startedBenchmarks.contains(benchy)) {
+          setStatusBadge(theDiv, "Started", "badge-warning")
+          setButtonStarted(theDiv)
         }
       }
       index = index + 1

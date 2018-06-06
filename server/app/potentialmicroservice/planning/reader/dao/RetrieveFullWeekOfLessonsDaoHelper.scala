@@ -41,11 +41,27 @@ trait RetrieveFullWeekOfLessonsDaoHelper {
     )
   }
 
+
   def completedEsOsBenchmarksImpl(
                                    tttUserId: TimeToTeachUserId,
                                    classId: ClassId,
                                    mondayDateOfWeekIso: String
                                  ): Future[CompletedEsAndOsByGroupBySubject] = {
+    val futureAllEAndOsBenchmarksStatuses = readAllEAndOsBenchmarksStatuses(tttUserId, classId)
+
+    for {
+      allEAndOsBenchmarksStatuses <- futureAllEAndOsBenchmarksStatuses
+      latestVersionsOfEachEandOBenchmark = latestVersionOfEachEandOBenchmark(allEAndOsBenchmarksStatuses.toList, mondayDateOfWeekIso)
+      completedEAndOBenchmarks = filterEsAndOs(latestVersionsOfEachEandOBenchmark, List("COMPLETE"))
+      completedEsAndOsByGroup = buildMapOfEAndOsBenchmarks(completedEAndOBenchmarks)
+    } yield CompletedEsAndOsByGroupBySubject(completedEsAndOsByGroup)
+  }
+
+  def completedAndStartedEsOsBenchmarksImpl(
+                                             tttUserId: TimeToTeachUserId,
+                                             classId: ClassId,
+                                             mondayDateOfWeekIso: String
+                                           ): Future[(CompletedEsAndOsByGroupBySubject, StartedEsAndOsByGroupBySubject)] = {
     logger.info(s"\n\n\n\n\n\n\n\n<><><><><><><><><><><><><><><><><><><> Retrieve COMPLETE E&Os/Benchmarks: $tttUserId|$classId \n\n\n\n\n\n\n\n")
 
     val futureAllEAndOsBenchmarksStatuses = readAllEAndOsBenchmarksStatuses(tttUserId, classId)
@@ -53,9 +69,11 @@ trait RetrieveFullWeekOfLessonsDaoHelper {
     for {
       allEAndOsBenchmarksStatuses <- futureAllEAndOsBenchmarksStatuses
       latestVersionsOfEachEandOBenchmark = latestVersionOfEachEandOBenchmark(allEAndOsBenchmarksStatuses.toList, mondayDateOfWeekIso)
-      completedEAndOBenchmarks = filterForCompleted(latestVersionsOfEachEandOBenchmark)
-      completedEsAndOsByGroup = buildMapOfEAndOsBenchmarks(completedEAndOBenchmarks)
-    } yield CompletedEsAndOsByGroupBySubject(completedEsAndOsByGroup)
+      completedEAndOBenchmarks = filterEsAndOs(latestVersionsOfEachEandOBenchmark, List("COMPLETE", "STARTED"))
+      (completedEsAndOsByGroupDoc, startedEsAndOsByGroupDoc) = completedEAndOBenchmarks.partition(elem => elem.getString(EsAndOsStatusSchema.STATUS) == "COMPLETE")
+      completedEsAndOsByGroup = buildMapOfEAndOsBenchmarks(completedEsAndOsByGroupDoc)
+      startedEsAndOsByGroup = buildMapOfEAndOsBenchmarks(startedEsAndOsByGroupDoc)
+    } yield (CompletedEsAndOsByGroupBySubject(completedEsAndOsByGroup), StartedEsAndOsByGroupBySubject(startedEsAndOsByGroup))
   }
 
   ////////////////
@@ -214,13 +232,13 @@ trait RetrieveFullWeekOfLessonsDaoHelper {
     loop(allEAndOsBenchmarksStatuses, Map())
   }
 
-  private[dao] def filterForCompleted(latestVersionOfEachEandOBenchmark: List[Document]): List[Document] = {
+  private[dao] def filterEsAndOs(latestVersionOfEachEandOBenchmark: List[Document], filterAnd: List[String]): List[Document] = {
     @tailrec
     def loop(remainingElems: List[Document], currentFiltered: List[Document]): List[Document] = {
       if (remainingElems.isEmpty) currentFiltered
       else {
         val nextDoc = remainingElems.head
-        val nextFiltered = if (nextDoc.getString(EsAndOsStatusSchema.STATUS) == "COMPLETE") {
+        val nextFiltered = if (filterAnd.contains(nextDoc.getString(EsAndOsStatusSchema.STATUS))) {
           nextDoc :: currentFiltered
         } else currentFiltered
         loop(remainingElems.tail, nextFiltered)

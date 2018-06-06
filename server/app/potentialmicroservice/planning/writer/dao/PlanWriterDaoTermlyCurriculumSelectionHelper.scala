@@ -79,7 +79,7 @@ trait PlanWriterDaoTermlyCurriculumSelectionHelper {
     loop(codes, Nil)
   }
 
-  private def createEsOsBenchiesAsDocuments(
+  private[dao] def createEsOsBenchiesAsDocuments(
                                              weeklyPlansToSave: WeeklyPlanOfOneSubject,
                                              status: String,
                                              groupsToEsOsBenchiesMap: Map[String, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel],

@@ -2,7 +2,7 @@ package potentialmicroservice.planning.reader.dao
 
 import com.google.inject.ImplementedBy
 import duplicate.model.ClassDetails
-import duplicate.model.esandos.{CompletedEsAndOsByGroup, CompletedEsAndOsByGroupBySubject}
+import duplicate.model.esandos.{CompletedEsAndOsByGroup, CompletedEsAndOsByGroupBySubject, StartedEsAndOsByGroupBySubject}
 import duplicate.model.planning.FullWeeklyPlanOfLessons
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
 import models.timetoteach.planning.{CurriculumAreaTermlyPlan, CurriculumPlanProgressForClass, GroupId, TermlyCurriculumSelection}
@@ -61,5 +61,11 @@ trait PlanReaderDao
                                classId: ClassId,
                                mondayDateOfWeekIso: String
                              ): Future[CompletedEsAndOsByGroupBySubject]
+
+  def completedAndStartedEsOsBenchmarks(
+                               tttUserId: TimeToTeachUserId,
+                               classId: ClassId,
+                               mondayDateOfWeekIso: String
+                             ): Future[(CompletedEsAndOsByGroupBySubject, StartedEsAndOsByGroupBySubject)]
 
 }

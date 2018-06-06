@@ -20,7 +20,8 @@
         fullWeeklyPlanOfLessonsPickled: String,
         weekNumber: Int,
         todaysDate: java.time.LocalDate,
-        completedEsAndOsBenchmarksPickled: String
+        completedEsAndOsBenchmarksPickled: String,
+        startedEsAndOsBenchmarksPickled: String
 )
 
 @tabContentActiveOrNot(index: Int) = {
@@ -490,6 +491,7 @@
     localStorage.setItem("lessonsThisWeekPickled", "@lessonsThisWeekPickled");
     localStorage.setItem("fullWeeklyPlanOfLessonsPickled", "@fullWeeklyPlanOfLessonsPickled");
     localStorage.setItem("completedEsAndOsBenchmarksPickled", "@completedEsAndOsBenchmarksPickled");
+    localStorage.setItem("startedEsAndOsBenchmarksPickled", "@startedEsAndOsBenchmarksPickled");
     @for(group <- classDetails.groups) {
     localStorage.setItem("@group.groupId.id", "@group.groupName.name");
     }
