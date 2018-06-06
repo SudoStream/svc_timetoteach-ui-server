@@ -19,7 +19,7 @@ import scala.annotation.tailrec
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import scala.scalajs.js
-import scala.scalajs.js.Dynamic.global
+import scala.scalajs.js.Dynamic
 import scala.util.{Failure, Success}
 
 object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
@@ -38,7 +38,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
   private var groupIdsToName: scala.collection.mutable.Map[String, String] = scala.collection.mutable.Map.empty
 
   def loadJavascript(): Unit = {
-    global.console.log("Loading Create Plan For The Week Javascript")
+    Dynamic.global.console.log("Loading Create Plan For The Week Javascript")
     setMondayDateToCurrentlySelectedWeek()
     clickingAMondayWeekButtonUpdatesDates()
     mouseoverHighlightEandOsAndBenchmarks()
@@ -55,7 +55,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
   }
 
   private def setEsOsBenchmarksSummary(): Unit = {
-    global.console.log(s"setEsOsBenchmarksSummary ... ${currentlySelectedPlanningArea.getOrElse("NOTHING_THERE")}")
+    Dynamic.global.console.log(s"setEsOsBenchmarksSummary ... ${currentlySelectedPlanningArea.getOrElse("NOTHING_THERE")}")
 
     val esOsBenchSummariesDiv = dom.document.getElementById("es-and-os-and-benchmarks-summary").asInstanceOf[HTMLDivElement]
     while (esOsBenchSummariesDiv.firstChild != null) {
@@ -68,7 +68,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
         subjectAndGroupId(0) == currentlySelectedPlanningArea.getOrElse("NOTHING_THERE")
     }
 
-    global.console.log(s"subjectAndGroupkeys  : $subjectAndGroupKeys")
+    Dynamic.global.console.log(s"subjectAndGroupkeys  : $subjectAndGroupKeys")
 
   }
 
@@ -333,7 +333,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
         val tttUserId = dom.window.localStorage.getItem("tttUserId")
         val weekBeginningIsoDate = currentlySelectMondayStartOfWeekDate.getOrElse("1970-01-01")
         val groupToEsOsBenchmarks: Map[String, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel] = populateGroupToEsOsBenchmarks()
-        global.console.log(s"groupToEsOsBenchmarks == ${groupToEsOsBenchmarks.toString}")
+        Dynamic.global.console.log(s"groupToEsOsBenchmarks == ${groupToEsOsBenchmarks.toString}")
         postSaveEsOsBenchies(
           WeeklyPlanOfOneSubject(
             tttUserId,
@@ -437,7 +437,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     val nodeListSize = statusSpans.length
     if (nodeListSize == 1) {
       val statusSpan = statusSpans(0).asInstanceOf[HTMLSpanElement]
-      global.console.log(s"status: $status, badge: $badge, currentval = '${statusSpan.innerHTML}'")
+      Dynamic.global.console.log(s"status: $status, badge: $badge, currentval = '${statusSpan.innerHTML}'")
       statusSpan.classList.remove("badge-danger")
       statusSpan.classList.remove("badge-warning")
       statusSpan.classList.remove("badge-success")
@@ -555,7 +555,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
         val curriculumSection = theDiv.getAttribute("data-curriculum-section")
         val curriculumSubSection = theDiv.getAttribute("data-curriculum-subsection")
 
-        global.console.log(s"Selected E and O code '$eAndOCode_or_Benchmark'")
+        Dynamic.global.console.log(s"Selected E and O code '$eAndOCode_or_Benchmark'")
 
         if (statusIs(theDiv, "Started")) {
           setButtonComplete(theDiv)
@@ -578,12 +578,12 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
           setStatusBadge(theDiv, "Started", "badge-warning")
           setButtonStarted(theDiv)
         } else {
-          global.console.log(s"Unknown status.")
+          Dynamic.global.console.log(s"Unknown status.")
         }
 
-        global.console.log(s"[][][][][][][] Current Not started ${groupToNotStartedEsOsAndBenchmarks.toString()}")
-        global.console.log(s"[][][][][][][] Current Selected ${groupToSelectedEsOsAndBenchmarks.toString()}")
-        global.console.log(s"[][][][][][][] Current Complete ${groupToCompletedEsOsAndBenchmarks.toString()}")
+        Dynamic.global.console.log(s"[][][][][][][] Current Not started ${groupToNotStartedEsOsAndBenchmarks.toString()}")
+        Dynamic.global.console.log(s"[][][][][][][] Current Selected ${groupToSelectedEsOsAndBenchmarks.toString()}")
+        Dynamic.global.console.log(s"[][][][][][][] Current Complete ${groupToCompletedEsOsAndBenchmarks.toString()}")
       })
 
       index = index + 1
@@ -755,7 +755,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
       val addActivityButton = addActivityButtons(index).asInstanceOf[HTMLButtonElement]
 
       addActivityButton.addEventListener("click", (e: dom.Event) => {
-        global.console.log(s"groups: ${
+        Dynamic.global.console.log(s"groups: ${
           groupIdsToName.keys.toString()
         }")
 
@@ -1005,14 +1005,14 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
         val weeklyPlanOfSubject = fullWeeklyPlanOfLessons.subjectToWeeklyPlanOfSubject(subjectName)
         for (groupId <- weeklyPlanOfSubject.groupToEsOsBenchmarks.keys) {
           val groupIdWithSubject = s"${subjectName}___$groupId"
-          global.console.log(s"populateSelectedEsOsAndBenchmarksFromSaved -> groupId: $groupIdWithSubject")
+          Dynamic.global.console.log(s"populateSelectedEsOsAndBenchmarksFromSaved -> groupId: $groupIdWithSubject")
           val esOsAndBenchies = weeklyPlanOfSubject.groupToEsOsBenchmarks(groupId)
           for (section <- esOsAndBenchies.setSectionNameToSubSections.keys) {
             val subSectionToEsOsBenchies = esOsAndBenchies.setSectionNameToSubSections(section)
             for (subsection <- subSectionToEsOsBenchies.keys) {
               val eAndOSecSubection = subSectionToEsOsBenchies(subsection)
               for (eAndO <- eAndOSecSubection.eAndOs) {
-                global.console.log(s"populateSelectedEsOsAndBenchmarksFromSaved() Adding ${eAndO.code}")
+                Dynamic.global.console.log(s"populateSelectedEsOsAndBenchmarksFromSaved() Adding ${eAndO.code}")
                 selectEAndOCode(groupIdWithSubject, eAndO.code, section, subsection)
               }
               for (benchmark <- eAndOSecSubection.benchmarks) {
@@ -1038,8 +1038,8 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     val startedEsOsBenchies: StartedEsAndOsByGroupBySubject = read[StartedEsAndOsByGroupBySubject](PlanningHelper.decodeAnyNonFriendlyCharacters(startedEsAndOsBenchmarksPickled))
     val startedEsOsBenchiesMap = startedEsOsBenchies.startedEsAndOsByGroupBySubject
 
-    global.console.log(s"completedEsOsBenchiesMap : ${completedEsOsBenchiesMap.toString()}")
-    global.console.log(s"startedEsOsBenchiesMap : ${startedEsOsBenchiesMap.toString()}")
+    Dynamic.global.console.log(s"completedEsOsBenchiesMap : ${completedEsOsBenchiesMap.toString()}")
+    Dynamic.global.console.log(s"startedEsOsBenchiesMap : ${startedEsOsBenchiesMap.toString()}")
 
     val allEAndORows = dom.document.getElementsByClassName("create-weekly-plans-es-and-os-row")
     val nodeListSize = allEAndORows.length
@@ -1133,7 +1133,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     val $ = js.Dynamic.global.$
     $("a[data-toggle=\"tab\"]").on("shown.bs.tab", (e: dom.Event) => {
       resetAllValuesToSaved()
-      global.console.log(s"The groups are ... ${groupIdsToName.toString()}")
+      Dynamic.global.console.log(s"The groups are ... ${groupIdsToName.toString()}")
     })
   }
 
@@ -1153,7 +1153,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     currentlySelectedLessonSummariesThisWeek = None
 
     val maybeSelectedTab = getSelectedTab
-    global.console.log(s"Selected tab = ${maybeSelectedTab.toString}")
+    Dynamic.global.console.log(s"Selected tab = ${maybeSelectedTab.toString}")
     maybeSelectedTab match {
       case Some(element) =>
         currentlySelectedPlanningArea = Some(element.getAttribute("data-subject-area"))
@@ -1312,7 +1312,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
             val groupInputElement = theNode.asInstanceOf[HTMLInputElement]
             if (groupInputElement.checked) {
               val groupId = groupInputElement.getAttribute("data-group-id")
-              global.console.log(s"Adding group id $groupId")
+              Dynamic.global.console.log(s"Adding group id $groupId")
               groupIds += groupId
             }
           }
@@ -1379,7 +1379,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
       nodeIndex = nodeIndex + 1
     }
 
-    global.console.log(s"Text Values for ${attributeType} Map == ${activityToGroups.toString}")
+    Dynamic.global.console.log(s"Text Values for ${attributeType} Map == ${activityToGroups.toString}")
     activityToGroups.toMap
   }
 
@@ -1396,7 +1396,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
       case "FRIDAY" =>
         jsDate.setDate(jsDate.getDate() + 4)
       case somethingElse =>
-        global.console.log(s"ERROR: Do not recognise day '$dayOfWeek'")
+        Dynamic.global.console.log(s"ERROR: Do not recognise day '$dayOfWeek'")
         jsDate
     }
     jsDate.toISOString().split("T")(0)
@@ -1450,7 +1450,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
       index = index + 1
     }
 
-    global.console.log(s"Lesson plans to save ... ${lessonPlansForTheWeek.toString}")
+    Dynamic.global.console.log(s"Lesson plans to save ... ${lessonPlansForTheWeek.toString}")
     lessonPlansForTheWeek.toList
   }
 
@@ -1463,17 +1463,17 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
         val classId = dom.window.localStorage.getItem("classId")
         val tttUserId = dom.window.localStorage.getItem("tttUserId")
         val weekBeginningIsoDate = currentlySelectMondayStartOfWeekDate.getOrElse("1970-01-01")
-        global.console.log(s"Subject == $subject")
-        global.console.log(s"classId == $classId")
-        global.console.log(s"tttUserId == $tttUserId")
-        global.console.log(s"weekBeginningIsoDate == $weekBeginningIsoDate")
-        global.console.log(s"groupToSelectedEsOsAndBenchmarks == ${groupToSelectedEsOsAndBenchmarks.toString}")
+        Dynamic.global.console.log(s"Subject == $subject")
+        Dynamic.global.console.log(s"classId == $classId")
+        Dynamic.global.console.log(s"tttUserId == $tttUserId")
+        Dynamic.global.console.log(s"weekBeginningIsoDate == $weekBeginningIsoDate")
+        Dynamic.global.console.log(s"groupToSelectedEsOsAndBenchmarks == ${groupToSelectedEsOsAndBenchmarks.toString}")
 
         val groupToEsOsBenchmarks: Map[String, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel] = populateGroupToEsOsBenchmarks()
-        global.console.log(s"groupToEsOsBenchmarks == ${groupToEsOsBenchmarks.toString}")
+        Dynamic.global.console.log(s"groupToEsOsBenchmarks == ${groupToEsOsBenchmarks.toString}")
 
         val lessons: List[LessonPlan] = createOneWeekLessonSummary(weekBeginningIsoDate)
-        global.console.log(s"lessonSummary == ${lessons.toString}")
+        Dynamic.global.console.log(s"lessonSummary == ${lessons.toString}")
 
         postSave(
           WeeklyPlanOfOneSubject(
@@ -1490,17 +1490,24 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     }
   }
 
+  private def getCurrentTabIdString() : String  = {
+    getSelectedTab match {
+      case Some(currentTab) => s"#${currentTab.id}"
+      case None => ""
+    }
+  }
+
   private def postSave(subjectWeeklyPlan: WeeklyPlanOfOneSubject, classId: String): Unit = {
     val subjectWeeklyPlansPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[WeeklyPlanOfOneSubject](subjectWeeklyPlan))
     val completedEsOsBenchiesPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[CompletedEsAndOsByGroup](createCompletedEsAndOsByGroup()))
     val notStartedEsOsBenchiesPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[NotStartedEsAndOsByGroup](createNotStartedEsAndOsByGroup()))
 
-    global.console.log(s"Not Started: ${groupToNotStartedEsOsAndBenchmarks.toString()}")
-    global.console.log(s"Selected: ${groupToSelectedEsOsAndBenchmarks.toString()}")
-    global.console.log(s"Completed: ${groupToCompletedEsOsAndBenchmarks.toString()}")
-    global.console.log(s"Pickled, this == $subjectWeeklyPlansPickled")
-    global.console.log(s"Pickled Completed, this == $completedEsOsBenchiesPickled")
-    global.console.log(s"Pickled NotStarted, this == $notStartedEsOsBenchiesPickled")
+    Dynamic.global.console.log(s"Not Started: ${groupToNotStartedEsOsAndBenchmarks.toString()}")
+    Dynamic.global.console.log(s"Selected: ${groupToSelectedEsOsAndBenchmarks.toString()}")
+    Dynamic.global.console.log(s"Completed: ${groupToCompletedEsOsAndBenchmarks.toString()}")
+    Dynamic.global.console.log(s"Pickled, this == $subjectWeeklyPlansPickled")
+    Dynamic.global.console.log(s"Pickled Completed, this == $completedEsOsBenchiesPickled")
+    Dynamic.global.console.log(s"Pickled NotStarted, this == $notStartedEsOsBenchiesPickled")
 
     import scala.concurrent.ExecutionContext.Implicits.global
     val theUrl = s"/savePlanForTheWeek/$classId"
@@ -1524,7 +1531,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
           $("#create-weekly-plans-lesson-modal").modal("hide")
           currentlySelectMondayStartOfWeekDate match {
             case Some(mondayIsoDate) =>
-              dom.window.location.href = s"/createPlanForTheWeek/$classId/$mondayIsoDate"
+              dom.window.location.href = s"/createPlanForTheWeek/$classId/$mondayIsoDate${getCurrentTabIdString()}"
             case None =>
               dom.window.location.href = s"/createPlanForTheWeek/$classId"
           }
@@ -1587,12 +1594,12 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     val completedEsOsBenchiesPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[CompletedEsAndOsByGroup](createCompletedEsAndOsByGroup()))
     val notStartedEsOsBenchiesPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[NotStartedEsAndOsByGroup](createNotStartedEsAndOsByGroup()))
 
-    global.console.log(s"Not Started: ${groupToNotStartedEsOsAndBenchmarks.toString()}")
-    global.console.log(s"Selected: ${groupToSelectedEsOsAndBenchmarks.toString()}")
-    global.console.log(s"Completed: ${groupToCompletedEsOsAndBenchmarks.toString()}")
-    global.console.log(s"Pickled, this == $subjectWeeklyPlansPickled")
-    global.console.log(s"Pickled Completed, this == $completedEsOsBenchiesPickled")
-    global.console.log(s"Pickled NotStarted, this == $notStartedEsOsBenchiesPickled")
+    Dynamic.global.console.log(s"Not Started: ${groupToNotStartedEsOsAndBenchmarks.toString()}")
+    Dynamic.global.console.log(s"Selected: ${groupToSelectedEsOsAndBenchmarks.toString()}")
+    Dynamic.global.console.log(s"Completed: ${groupToCompletedEsOsAndBenchmarks.toString()}")
+    Dynamic.global.console.log(s"Pickled, this == $subjectWeeklyPlansPickled")
+    Dynamic.global.console.log(s"Pickled Completed, this == $completedEsOsBenchiesPickled")
+    Dynamic.global.console.log(s"Pickled NotStarted, this == $notStartedEsOsBenchiesPickled")
 
     val theUrl = s"/saveEsOsBenchiesForTheWeek/$classId"
     val theHeaders = Map(
