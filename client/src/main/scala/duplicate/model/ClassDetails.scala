@@ -14,6 +14,14 @@ case class ClassDetails(
   if (classTeachersWithWriteAccess.isEmpty) throw new IllegalArgumentException(
     "Must have at least 1 teacher with write access"
   )
+
+  def findGroupName(groupIdToSearch: String): String = {
+    val filteredGroups =  groups.filter(elem => elem.groupId.id == groupIdToSearch)
+    filteredGroups.headOption match {
+      case Some(group) => group.groupName.name
+      case None => ""
+    }
+  }
 }
 
 object ClassDetails {
@@ -139,7 +147,9 @@ object CurriculumLevel {
   implicit def rw: RW[CurriculumLevel] = macroRW
 
   def createCurriculumLevelFromEAndOCode(eAndOCode: String): CurriculumLevel = {
-    if (!eAndOCode.contains(" ") && !eAndOCode.contains("-")) EarlyLevel else {
+    if (!eAndOCode.contains(" ")) {
+      EarlyLevel
+    } else {
       val code2ndPart = eAndOCode.split(" ")(1)
       val levelAsString = code2ndPart.split("-")(0)
       levelAsString match {
@@ -152,6 +162,7 @@ object CurriculumLevel {
       }
     }
   }
+
 }
 
 case object EarlyLevel extends CurriculumLevel {

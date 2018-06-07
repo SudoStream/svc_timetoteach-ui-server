@@ -77,7 +77,7 @@
     font-weight: bold;
 }
 
-.weekly-plan-subject-es-and-os-header {
+.weekly-plan-subject-activties-header {
     font-weight: bold;
     margin-top: 1rem;
     color: rgba(15, 15, 15, 0.82);
@@ -91,7 +91,34 @@
     font-size: 0.8rem;
 }
 
-.weekly-plan-subject-es-and-os {
+ul {
+    list-style-type: none;
+    margin: 0 0 0 0.05rem;
+    padding: 0;
+}
+
+.weekly-planning-individual-activity-wrapper{
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+    padding-top: 0.15rem;
+    padding-left: 0.1rem;
+    padding-bottom: 0.15rem;
+    border: 1px solid #93b2cd;
+    border-radius: 5px;
+
+}
+
+.weekly-planning-group-for-activity{
+    margin-left: 0.15rem;
+    margin-right: 0.15rem;
+}
+
+.weekly-planning-groups-for-activity {
+    margin-top: 0.4rem;
+    margin-left: 0.15rem;
+}
+
+.weekly-plan-subject-activities {
     color: rgba(15, 15, 15, 0.82);
     padding-left: 0.5rem;
     padding-right: 0.5rem;
@@ -138,7 +165,7 @@
         font-size: 0.7rem;
     }
 
-    .weekly-plan-subject-es-and-os-header {
+    .weekly-plan-subject-activties-header {
         font-size: 0.8rem;
     }
 
@@ -160,7 +187,7 @@
         word-wrap: break-word;
     }
 
-    .weekly-plan-subject-es-and-os-header {
+    .weekly-plan-subject-activties-header {
         word-wrap: break-word;
     }
 

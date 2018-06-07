@@ -123,8 +123,8 @@ class WeeklyPlanningController @Inject()(
         ClassId(classId),
         mondayDateOfWeekIso
       )
-      fullWeeklyPlanOfLessons <- futureMaybefullWeeklyPlanOfLessons
-      fullWeeklyPlanOfLessonsPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[FullWeeklyPlanOfLessons](fullWeeklyPlanOfLessons))
+      fullWeeklyPlanOfLessons: FullWeeklyPlanOfLessons <- futureMaybefullWeeklyPlanOfLessons
+//      fullWeeklyPlanOfLessonsPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[FullWeeklyPlanOfLessons](fullWeeklyPlanOfLessons))
     } yield Ok(views.html.planning.weekly.weeklyView(
       new MyDeadboltHandler(userReader),
       userPictureUri,
@@ -135,7 +135,8 @@ class WeeklyPlanningController @Inject()(
       maybeAvroClassTimetable.get,
       maybeSchoolTerm.get,
       maybeSchoolTerm.get.weekNumberForGivenDate(LocalDate.parse(mondayDateOfWeekIso)),
-      todaysDate
+      todaysDate,
+      fullWeeklyPlanOfLessons
     ))
   }
 

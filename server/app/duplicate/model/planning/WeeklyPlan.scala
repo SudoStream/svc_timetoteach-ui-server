@@ -1,5 +1,7 @@
 package duplicate.model.planning
 
+import java.time.LocalDate
+
 import duplicate.model.esandos.EsAndOsPlusBenchmarksForCurriculumAreaAndLevel
 import upickle.default.{macroRW, ReadWriter => RW}
 
@@ -10,7 +12,25 @@ case class WeeklyPlanOfOneSubject(
                                    weekBeginningIsoDate: String,
                                    groupToEsOsBenchmarks: Map[String, EsAndOsPlusBenchmarksForCurriculumAreaAndLevel],
                                    lessons: List[LessonPlan]
-                                 )
+                                 ) {
+
+  def findLessonPlan(startTimeIsoToCheck: String, dayOfTheWeekToCheck: String) : Option[LessonPlan] = {
+    val filteredLessons = for {
+      lesson <- lessons
+      if lesson.startTimeIso == startTimeIsoToCheck
+      lessonDate = LocalDate.parse(lesson.lessonDateIso)
+      lessonDay = lessonDate.getDayOfWeek.toString
+      if lessonDay == dayOfTheWeekToCheck
+    } yield lesson
+
+    if (filteredLessons.size == 1) {
+     Some(filteredLessons.head)
+    } else {
+      None
+    }
+  }
+
+}
 
 object WeeklyPlanOfOneSubject {
   implicit def rw: RW[WeeklyPlanOfOneSubject] = macroRW

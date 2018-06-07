@@ -14,6 +14,14 @@ case class ClassDetails(
   if (classTeachersWithWriteAccess.isEmpty) throw new IllegalArgumentException(
     "Must have at least 1 teacher with write access"
   )
+
+  def findGroupName(groupIdToSearch: String): String = {
+    val filteredGroups =  groups.filter(elem => elem.groupId.id == groupIdToSearch)
+    filteredGroups.headOption match {
+      case Some(group) => group.groupName.name
+      case None => ""
+    }
+  }
 }
 
 object ClassDetails {

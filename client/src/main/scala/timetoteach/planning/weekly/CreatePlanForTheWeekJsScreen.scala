@@ -1531,7 +1531,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
           $("#create-weekly-plans-lesson-modal").modal("hide")
           currentlySelectMondayStartOfWeekDate match {
             case Some(mondayIsoDate) =>
-              dom.window.location.href = s"/createPlanForTheWeek/$classId/$mondayIsoDate${getCurrentTabIdString()}"
+              dom.window.location.href = s"/createPlanForTheWeek/$classId/$mondayIsoDate"
             case None =>
               dom.window.location.href = s"/createPlanForTheWeek/$classId"
           }
