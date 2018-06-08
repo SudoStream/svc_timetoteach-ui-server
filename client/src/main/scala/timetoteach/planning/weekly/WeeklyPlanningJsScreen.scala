@@ -13,7 +13,7 @@ object WeeklyPlanningJsScreen extends WeeklyPlansCommon {
     setMondayDateToCurrentlySelectedWeek()
     clickingAMondayWeekButtonUpdatesDates()
     planThisWeekButton()
-    toShowOrNotShowPlanThisWeekButtonGivenTheWeekSelected()
+//    toShowOrNotShowPlanThisWeekButtonGivenTheWeekSelected()
   }
 
   override private[weekly] def toShowOrNotShowPlanThisWeekButtonGivenTheWeekSelected(): Unit = {

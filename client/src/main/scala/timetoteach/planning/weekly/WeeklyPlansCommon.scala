@@ -138,7 +138,7 @@ trait WeeklyPlansCommon {
         setAllWeeklyMondayButtonsToDefault()
         setSelectedButton(buttonElement)
         setMondayDateToCurrentlySelectedWeek()
-        toShowOrNotShowPlanThisWeekButtonGivenTheWeekSelected()
+//        toShowOrNotShowPlanThisWeekButtonGivenTheWeekSelected()
 
         val currentPathname = dom.document.location.pathname.toString
         currentlySelectMondayStartOfWeekDate match {

@@ -71,6 +71,7 @@ class WeeklyPlanningController @Inject()(
   def weeklyViewOfWeeklyPlanningWithNoMondayDate(classId: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest =>
     val tttUserId = getCookieStringFromRequest(CookieNames.timetoteachId, authRequest).getOrElse("NO ID")
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
+    val eventualToday = systemTime.getToday
 
     val route = for {
       classes <- eventualClasses
@@ -83,7 +84,9 @@ class WeeklyPlanningController @Inject()(
       maybeSchoolTerm <- futureMaybeSchoolTerm
       if maybeSchoolTerm.isDefined
       schoolTerm = maybeSchoolTerm.get
-    } yield Redirect(routes.WeeklyPlanningController.weeklyViewOfWeeklyPlanning(classId, schoolTerm.termFirstDay.toString))
+      today <- eventualToday
+
+    } yield Redirect(routes.WeeklyPlanningController.weeklyViewOfWeeklyPlanning(classId, today.toString))
 
     route
   }

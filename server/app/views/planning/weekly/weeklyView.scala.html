@@ -84,7 +84,7 @@
 
     <div class="row d-flex justify-content-around">
         <button id="weekly-planning-plan-this-week-button" type="button" class="btn btn-primary btn-lg">
-            Plan This Week
+            Planning View
         </button>
     </div>
 
@@ -154,7 +154,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div class="text-center weekly-plan-subject-name text-dark">
+                                                    <div class="text-center weekly-plan-subject-name text-muted">
                                                         <u>@{
                                                             val subjectName = subject.subjectDetail.subjectName.toString.toLowerCase.split("_").toList.map(word => word.capitalize).mkString(" ")
                                                             if(subjectName == "Other") {
