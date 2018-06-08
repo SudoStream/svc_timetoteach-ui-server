@@ -88,10 +88,6 @@
         </button>
     </div>
 
-    <div id="weekly-planning-plan-status">
-        Plan Status: <span class="badge badge-pill badge-danger">Not Started</span>
-    </div>
-
 
     <section id="class-timetable-section">
 
@@ -158,13 +154,13 @@
                                                         </div>
                                                     </div>
 
-                                                    <div class="text-center weekly-plan-subject-name ">
+                                                    <div class="text-center weekly-plan-subject-name text-dark">
                                                         <u>@{
                                                             val subjectName = subject.subjectDetail.subjectName.toString.toLowerCase.split("_").toList.map(word => word.capitalize).mkString(" ")
                                                             if(subjectName == "Other") {
                                                                 subject.subjectDetail.additionalInfo.value
                                                             } else {
-                                                                subjectName
+                                                                subjectName.toUpperCase
                                                             }
                                                         }
                                                         </u>

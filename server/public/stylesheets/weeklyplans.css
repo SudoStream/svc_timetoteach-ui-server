@@ -46,7 +46,8 @@
     margin-left: 2px;
     margin-right: 2px;
     background: white;
-    padding: 2px;
+    padding-left: 2px;
+    padding-right: 2px;
     border: 1px solid #d3d3d3;
     border-radius: 15%;
     font-size: xx-small;
@@ -66,10 +67,8 @@
 }
 
 .weekly-plan-subject-name {
-    font-size: 0.9rem;
+    font-size: 1.1rem;
     font-weight: bold;
-    padding-top: 0.2rem;
-    color: black;
 }
 
 .weekly-plan-subject-additional-info {
