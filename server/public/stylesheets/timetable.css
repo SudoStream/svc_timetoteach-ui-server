@@ -2,9 +2,14 @@
     padding-bottom: 10rem;
 }
 
+.class-timetable-section-planning {
+    margin-left: 2rem;
+    margin-right: 2rem;
+}
+
 #class-timetable-section {
     margin-top: 1.5rem;
-    padding-bottom: 3rem;
+    padding-bottom: 10rem;
 }
 
 #class-timetable-subject-nav {
@@ -125,7 +130,7 @@
     }
 
     #class-timetable-section .dayoftheweek-row {
-        background: rgba(0, 0, 0, 0.05);
+        /*background: rgba(0, 0, 0, 0.05);*/
         text-align: center;
         min-height: 6rem;
     }

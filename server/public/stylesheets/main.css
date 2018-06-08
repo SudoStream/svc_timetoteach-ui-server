@@ -595,15 +595,17 @@ img {
 
 .subject-main-header {
     line-height: 1rem;
+    font-weight: bold;
 }
 
 .subject-additional-info {
     font-weight: normal;
     text-shadow: 0 0;
-    color: black;
-    background-color: #e3e3df;
+    background-color: #ffee74;
+    color: #4f504f;
     line-height: 1rem;
     font-size: smaller;
+    font-style: italic;
     width: 90%;
 
     margin: auto;

@@ -37,7 +37,7 @@ trait ClassTimetableScreenHtmlGenerator {
           val endTime = entry._1.timeSlot.endTime.toString
           val smallEndTime = small(`class` := "lesson-end-time align-text-top")(endTime)
 
-          button(`class` := "col-" + entry._2 + " rounded subject non-empty-subject " + subjectCode,
+          button(`class` := "col-" + entry._2 + " rounded subject non-empty-subject " + s"weekly-plan-$subjectCode",
             attr("data-timetable-session") := sessionType,
             attr("data-day-of-the-week") := dayOfWeek,
             attr("data-subject-code") := subjectCode,
@@ -47,7 +47,7 @@ trait ClassTimetableScreenHtmlGenerator {
             attr("data-target") := "#subject-summary-in-timetable",
             attr("aria-expanded") := "false",
             attr("aria-controls") := "subject-summary-in-timetable"
-          )(smallStartTime, smallEndTime, p(`class` := "clear-both subject-main-header", entry._1.subject.niceValue),
+          )(smallStartTime, smallEndTime, p(`class` := "clear-both subject-main-header text-dark", entry._1.subject.niceValue.toUpperCase),
             p(`class` := "subject-additional-info rounded mx-auto text-center", entry._1.lessonAdditionalInfo)
           )
         }
