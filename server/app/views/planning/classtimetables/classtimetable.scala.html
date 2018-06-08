@@ -37,9 +37,19 @@
     <li></li>
 } {
 
+    <div class="align-items-center">
+        <div id="hide-subjects-div">
+            <button id="hide-subjects-btn" type="button" class="btn btn-success btn-sm mx-auto">Hide Subjects</button>
+        </div>
+        <div id="show-subjects-div">
+            <button id="show-subjects-btn" type="button" class="btn btn-success btn-sm mx-auto">Show Subjects</button>
+        </div>
+    </div>
+
     <div class="container">
         <aside id="class-timetable-subject-aside">
             <div class="text-center class-timetable-subject-nav-background justify-content-center">
+
                 <span>
                     <h2>
                         Subjects
@@ -63,7 +73,9 @@
                             <span aria-hidden="true"><img src="@routes.Assets.versioned("icons/everWonder.png")" alt="Info Help" height="32px"></span>
                         </button>
 
+
                     </h2>
+
                 </span>
 
                 <div class="row justify-content-center class-timetable-subject-row">
@@ -182,10 +194,9 @@
 
     </div>
 
-        <div id="show-subjects-button-div" class="container text-center justify-content-center">
-            <button id="show-subjects-button" class="rounded btn btn-secondary">&plus;</button>
-        </div>
-
+    <div id="show-subjects-button-div" class="container text-center justify-content-center">
+        <button id="show-subjects-button" class="rounded btn btn-secondary">&plus;</button>
+    </div>
 
 
     <section id="class-timetable-section" class="class-timetable-section-planning">

@@ -720,6 +720,37 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator with Class
 
   }
 
+  def showSubjects() : Unit = {
+
+    val showSubjectsButton = dom.document.getElementById("show-subjects-btn").asInstanceOf[HTMLButtonElement]
+    showSubjectsButton.addEventListener("click", (e: dom.Event) => {
+      global.console.log("show subjects 1 ...")
+      val showSubjectsDiv = dom.document.getElementById("show-subjects-div").asInstanceOf[HTMLDivElement]
+      showSubjectsDiv.style.display = "none"
+      val timetableAside = dom.document.getElementById("class-timetable-subject-aside").asInstanceOf[HTMLElement]
+      timetableAside.style.display = "block"
+      val hideSubjectsDiv = dom.document.getElementById("hide-subjects-div").asInstanceOf[HTMLDivElement]
+      hideSubjectsDiv.style.display = "block"
+      global.console.log(s"show subjects 2 ... ${hideSubjectsDiv.style.display} | ")
+    })
+
+  }
+
+  def hideSubjectsToSelect(): Unit = {
+    val hideSubjectsButton = dom.document.getElementById("hide-subjects-btn").asInstanceOf[HTMLButtonElement]
+    hideSubjectsButton.addEventListener("click", (e: dom.Event) => {
+      global.console.log("hide subjects 1 ...")
+      val showSubjectsDiv = dom.document.getElementById("show-subjects-div").asInstanceOf[HTMLDivElement]
+      val timetableAside = dom.document.getElementById("class-timetable-subject-aside").asInstanceOf[HTMLElement]
+      val hideSubjectsDiv = dom.document.getElementById("hide-subjects-div").asInstanceOf[HTMLDivElement]
+      showSubjectsDiv.style.display = "block"
+      hideSubjectsDiv.style.display = "none"
+      timetableAside.style.display = "none"
+      global.console.log("hide subjects 2 ...")
+    })
+
+  }
+
   def loadClassTimetableJavascript(): Unit = {
     calculateDurationFromNewEndTime()
     calculateEndTimeFromNewStartTime()
@@ -731,6 +762,8 @@ object ClassTimetableScreen extends ClassTimetableScreenHtmlGenerator with Class
     modalButtonsBehaviour()
     saveCancelClearBehaviour()
     submitLessonDuration()
+    hideSubjectsToSelect()
+    showSubjects()
   }
 
 }

@@ -29,15 +29,18 @@
     padding-top: 5rem;
 }
 
-.this-is-a-for-larger-screens-alert{
+.this-is-a-for-larger-screens-alert {
     margin-top: 3rem;
 }
-.wee-margin-top{
+
+.wee-margin-top {
     margin-top: 3rem;
 }
-.smiley-face{
+
+.smiley-face {
     margin-top: 5rem;
 }
+
 #mission-statement {
 
 }
@@ -650,6 +653,17 @@ img {
     margin-bottom: 1.5rem;
 }
 
+#hide-subjects-div {
+    margin-bottom: 2rem;
+    display: block;
+}
+
+#show-subjects-div {
+    margin-bottom: 2rem;
+    display: none;
+}
+
+
 #class-timetable-subject-aside {
     margin-top: 1rem;
 }
@@ -726,9 +740,10 @@ img {
     margin-top: 2rem;
 }
 
-.smiley-face{
+.smiley-face {
     margin-top: 5rem;
 }
+
 #class-timetable-clear-cancel-save-buttons {
     display: none;
 }
@@ -751,7 +766,6 @@ img {
 }
 
 @media screen and ( min-width: 991px) {
-
 
     #the-evidence-section {
         display: block;
