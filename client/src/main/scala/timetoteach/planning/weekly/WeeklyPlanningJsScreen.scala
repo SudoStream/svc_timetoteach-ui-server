@@ -1,7 +1,7 @@
 package timetoteach.planning.weekly
 
 import org.scalajs.dom
-import org.scalajs.dom.raw.HTMLButtonElement
+import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement}
 
 import scala.scalajs.js
 import scala.scalajs.js.Dynamic.global
@@ -13,7 +13,30 @@ object WeeklyPlanningJsScreen extends WeeklyPlansCommon {
     setMondayDateToCurrentlySelectedWeek()
     clickingAMondayWeekButtonUpdatesDates()
     planThisWeekButton()
-//    toShowOrNotShowPlanThisWeekButtonGivenTheWeekSelected()
+    showLessonPlanDetail()
+  }
+
+  def showLessonPlanDetail(): Unit = {
+    val allLessonsPlans = dom.document.getElementsByClassName("weekly-plan-subject-extent")
+    val nodeListSize = allLessonsPlans.length
+    var index = 0
+    while (index < nodeListSize) {
+      val lessonPlanDiv = allLessonsPlans(index).asInstanceOf[HTMLDivElement]
+      lessonPlanDiv.addEventListener("click", (e: dom.Event) => {
+        val $ = js.Dynamic.global.$
+        $("#view-single-lesson-plan-modal").modal("show", "backdrop: static", "keyboard : false")
+      })
+
+      lessonPlanDiv.addEventListener("mouseover", (e: dom.Event) => {
+        lessonPlanDiv.style.boxShadow = "3px 3px #3e81ee"
+      })
+
+      lessonPlanDiv.addEventListener("mouseleave", (e: dom.Event) => {
+        lessonPlanDiv.style.boxShadow = ""
+      })
+
+      index = index + 1
+    }
   }
 
   override private[weekly] def toShowOrNotShowPlanThisWeekButtonGivenTheWeekSelected(): Unit = {
