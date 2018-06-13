@@ -1,9 +1,9 @@
-package utils
+package tttutils
 
 import duplicate.model._
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumLevel
 import org.scalatest._
-import utils.ClassDetailsAvroConverter.convertPickledClassToAvro
+import tttutils.ClassDetailsAvroConverter.convertPickledClassToAvro
 
 class ClassDetailsAvroConverterTest extends FunSpec {
 

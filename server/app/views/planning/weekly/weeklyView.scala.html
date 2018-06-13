@@ -10,17 +10,21 @@
 @import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.subjectdetail.SubjectDetailWrapper
 @import duplicate.model.planning.LessonPlan
 @import duplicate.model.planning.AttributeRowKey
+@import models.timetoteach.TimeToTeachUserId
+@import tttutils.CurriculumConverterUtil
 @(handler: be.objectify.deadbolt.scala.DeadboltHandler,
         userPictureUri: Option[String],
         userFirstName: Option[String],
         userFamilyName: Option[String],
+        tttUserId: TimeToTeachUserId,
         classDetails: ClassDetails,
         schoolDayTimes: SchoolDayTimes,
         classTimetable: ClassTimetable,
         currentTerm: SchoolTerm,
         weekNumber: Int,
         todaysDate: java.time.LocalDate,
-        fullWeeklyPlanOfLessons : FullWeeklyPlanOfLessons
+        fullWeeklyPlanOfLessons: FullWeeklyPlanOfLessons,
+        fullWeeklyPlanOfLessonsPickled: String
 )
 
 @splitCamel(s: String) = {
@@ -39,16 +43,16 @@
 }
 
 
-@buildListFromNewLines(elem: AttributeRowKey,lessonPlan: LessonPlan) = {
+@buildListFromNewLines(elem: AttributeRowKey, lessonPlan: LessonPlan) = {
     <div class="weekly-planning-individual-activity-wrapper">
         <ul>
-        @for(line <- elem.attributeValue.split("\n")){
+        @for(line <- elem.attributeValue.split("\n")) {
             <li class="text-dark">@line</li>
         }
         </ul>
         <div class="weekly-planning-groups-for-activity">
             @*<span class="text-muted">Groups: </span>*@
-            @for(groupId <- lessonPlan.activitiesPerGroup(elem)){
+            @for(groupId <- lessonPlan.activitiesPerGroup(elem)) {
                 <span class="weekly-planning-group-for-activity text-info">@classDetails.findGroupName(groupId)</span>
             }
         </div>
@@ -57,26 +61,26 @@
 
 @buildHtmlList(elements: List[AttributeRowKey], lessonPlan: LessonPlan) = {
     <ul>
-        @for(elem <- elements.sortBy(key => key.attributeOrderNumber)) {
-            <li>
-            @buildListFromNewLines(elem, lessonPlan)
-            </li>
-        }
+    @for(elem <- elements.sortBy(key => key.attributeOrderNumber)) {
+        <li>
+        @buildListFromNewLines(elem, lessonPlan)
+        </li>
+    }
     </ul>
 }
 
 @buildActivitiesOutput(subjectName: String, subjectInstance: SubjectDetailWrapper, dayOfTheWeek: String) = {
     <div>
-        @if(fullWeeklyPlanOfLessons.subjectToWeeklyPlanOfSubject.isDefinedAt(subjectName)) {
-            @if(fullWeeklyPlanOfLessons.subjectToWeeklyPlanOfSubject(subjectName).findLessonPlan(subjectInstance.subjectDetail.startTime.timeIso8601, dayOfTheWeek).isDefined){
-                @buildHtmlList(fullWeeklyPlanOfLessons.subjectToWeeklyPlanOfSubject(subjectName).findLessonPlan(subjectInstance.subjectDetail.startTime.timeIso8601, dayOfTheWeek).get.activitiesPerGroup.keys.toList,
-                    fullWeeklyPlanOfLessons.subjectToWeeklyPlanOfSubject(subjectName).findLessonPlan(subjectInstance.subjectDetail.startTime.timeIso8601, dayOfTheWeek).get)
-            } else {
-                <div class="text-muted">None yet</div>
-            }
+    @if(fullWeeklyPlanOfLessons.subjectToWeeklyPlanOfSubject.isDefinedAt(subjectName)) {
+        @if(fullWeeklyPlanOfLessons.subjectToWeeklyPlanOfSubject(subjectName).findLessonPlan(subjectInstance.subjectDetail.startTime.timeIso8601, dayOfTheWeek).isDefined) {
+            @buildHtmlList(fullWeeklyPlanOfLessons.subjectToWeeklyPlanOfSubject(subjectName).findLessonPlan(subjectInstance.subjectDetail.startTime.timeIso8601, dayOfTheWeek).get.activitiesPerGroup.keys.toList,
+                fullWeeklyPlanOfLessons.subjectToWeeklyPlanOfSubject(subjectName).findLessonPlan(subjectInstance.subjectDetail.startTime.timeIso8601, dayOfTheWeek).get)
         } else {
             <div class="text-muted">None yet</div>
         }
+    } else {
+        <div class="text-muted">None yet</div>
+    }
     </div>
 }
 
@@ -84,7 +88,7 @@
 
     <div class="row d-flex justify-content-around">
         <button id="weekly-planning-plan-this-week-button" type="button" class="btn btn-primary btn-lg">
-            Planning View
+            Switch to Planning View
         </button>
     </div>
 
@@ -143,7 +147,12 @@
                                             calculateColumnBootstrapWidth(session.subjects.size)
                                         }" >
                                             <div class="weekly-plan-subject">
-                                                <div class="rounded weekly-plan-subject-extent weekly-plan-subject-@subject.subjectDetail.subjectName.toString.toLowerCase.replace("_", "-")">
+                                                <div class="rounded weekly-plan-subject-extent weekly-plan-subject-@subject.subjectDetail.subjectName.toString.toLowerCase.replace("_", "-")"
+                                                data-plabbing-area="@CurriculumConverterUtil.convertSubjectToScottishCurriculumPlanningAreaWrapper(subject.subjectDetail.subjectName.toString).value.toString"
+                                                data-subject-name="@subject.subjectDetail.subjectName.toString"
+                                                data-lesson-start-time="@subject.subjectDetail.startTime.timeIso8601"
+                                                data-lesson-day-of-the-week="@dayOfTheWeek"
+                                                >
 
                                                     <div class="d-flex justify-content-between">
                                                         <div>
@@ -181,15 +190,16 @@
                                                         <div class="weekly-plan-subject-activties-header text-dark">
                                                         Activities
                                                         </div>
-                                                        @{buildActivitiesOutput(SubjectsToPlanAreaUtil.convertSubjectNameToPlanAreaName(subject.subjectDetail.subjectName.toString), subject, dayOfTheWeek)}
+                                                        @{
+                                                            buildActivitiesOutput(SubjectsToPlanAreaUtil.convertSubjectNameToPlanAreaName(subject.subjectDetail.subjectName.toString), subject, dayOfTheWeek)
+                                                        }
                                                     </div>
-
                                                     @*<div class="weekly-plan-subject-benchmarks">*@
-                                                        @*<div class="weekly-plan-subject-benchmarks-header  text-dark">*@
-                                                        @*Benchmarks*@
-                                                        @*</div>*@
-                                                        @*<div class="single-eo-or-benchmark">Some benchmark one</div>*@
-                                                        @*<div class="single-eo-or-benchmark">Some benchmark two</div>*@
+                                                    @*<div class="weekly-plan-subject-benchmarks-header text-dark">*@
+                                                    @*Benchmarks*@
+                                                    @*</div>*@
+                                                    @*<div class="single-eo-or-benchmark">Some benchmark one</div>*@
+                                                    @*<div class="single-eo-or-benchmark">Some benchmark two</div>*@
                                                     @*</div>*@
                                                 </div>
                                             </div>
@@ -247,7 +257,12 @@
 
 
     <script>
-            localStorage.setItem("classId", "@classDetails.id.id");
+    localStorage.setItem("classId", "@classDetails.id.id");
+    localStorage.setItem("tttUserId", "@tttUserId.value");
+    localStorage.setItem("fullWeeklyPlanOfLessonsPickled", "@fullWeeklyPlanOfLessonsPickled");
+    @for(group <- classDetails.groups) {
+    localStorage.setItem("@group.groupId.id", "@group.groupName.name");
+    }
     </script>
 
     @scalajs.html.scripts("client", routes.Assets.versioned(_).toString, name => getClass.getResource(s"/public/$name") != null)

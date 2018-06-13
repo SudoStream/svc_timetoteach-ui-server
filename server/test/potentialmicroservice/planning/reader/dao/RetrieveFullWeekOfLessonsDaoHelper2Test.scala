@@ -85,7 +85,7 @@ class RetrieveFullWeekOfLessonsDaoHelper2Test extends FunSpec with RetrieveFullW
 
   describe("Given a list of 3 items, with 2 COMPLETES in it, filterForCompleted()"){
     val allEAndOBenchmarksStatuses = dao.latestVersionOfEachEandOBenchmark(create3ArtEAndOsStatusesWithVariousVersions(), TEST_LOCALDATE_WEEK1)
-    val completes = dao.filterForCompleted(allEAndOBenchmarksStatuses)
+    val completes = dao.filterEsAndOs(allEAndOBenchmarksStatuses, List("COMPLETE"))
 
     it("should have a list of 2 items"){
       assert(completes.size === 2)

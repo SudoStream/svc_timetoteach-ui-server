@@ -12,8 +12,8 @@ import javax.inject.{Inject, Singleton}
 import models.timetoteach.planning.pdf.CurriculumAreaTermlyPlanForPdfBuilder
 import models.timetoteach.{ClassId, CookieNames, TimeToTeachUserId}
 import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}
-import utils.SchoolConverter
-import utils.TemplateUtils.getCookieStringFromRequest
+import tttutils.SchoolConverter
+import tttutils.TemplateUtils.getCookieStringFromRequest
 
 import scala.concurrent.ExecutionContext.Implicits.global
 

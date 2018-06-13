@@ -19,7 +19,7 @@ import security.MyDeadboltHandler
 import shared.SharedMessages
 import shared.model.classtimetable.WwwClassId
 import shared.util.LocalTimeUtil
-import utils.TemplateUtils.getCookieStringFromRequest
+import tttutils.TemplateUtils.getCookieStringFromRequest
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._

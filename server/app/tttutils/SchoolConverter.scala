@@ -1,4 +1,4 @@
-package utils
+package tttutils
 
 import io.sudostream.timetoteach.messages.systemwide.model
 import models.timetoteach.{Country, LocalAuthority, School}

@@ -10,8 +10,8 @@ import models.timetoteach._
 import play.api.Logger
 import play.api.data.Form
 import play.api.mvc._
-import utils.StringUtils.noWhiteSpaceAtAll
-import utils.TemplateUtils.getCookieStringFromRequest
+import tttutils.StringUtils.noWhiteSpaceAtAll
+import tttutils.TemplateUtils.getCookieStringFromRequest
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

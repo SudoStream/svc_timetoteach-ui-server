@@ -11,7 +11,7 @@ import models.timetoteach.term.SchoolTerm
 import models.timetoteach.{ClassId, TimeToTeachUserId}
 import play.api.Logger
 import potentialmicroservice.planning.reader.PlanningReaderService
-import utils.SchoolConverter
+import tttutils.SchoolConverter
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

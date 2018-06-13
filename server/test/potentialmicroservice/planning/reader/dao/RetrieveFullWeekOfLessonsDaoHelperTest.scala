@@ -7,7 +7,7 @@ import duplicate.model.planning.AttributeRowKey
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
 import models.timetoteach.planning.ScottishCurriculumPlanningAreaWrapper
 import org.scalatest.FunSpec
-import utils.mongodb.MongoDbSafety
+import tttutils.mongodb.MongoDbSafety
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global

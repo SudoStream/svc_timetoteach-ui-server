@@ -13,7 +13,7 @@ import org.mongodb.scala.Document
 import org.mongodb.scala.bson.BsonValue
 import play.api.Logger
 import potentialmicroservice.planning.sharedschema.TermlyPlanningSchema
-import utils.mongodb.MongoDbSafety._
+import tttutils.mongodb.MongoDbSafety._
 
 import scala.annotation.tailrec
 

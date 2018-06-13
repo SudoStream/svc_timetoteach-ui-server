@@ -23,9 +23,9 @@ import play.api.mvc._
 import security.MyDeadboltHandler
 import shared.model.classtimetable.WwwClassId
 import shared.util.{LocalTimeUtil, PlanningHelper}
-import utils.ClassTimetableConverterToAvro.convertJsonClassTimetableToWwwClassTimetable
-import utils.SchoolConverter
-import utils.TemplateUtils.getCookieStringFromRequest
+import tttutils.ClassTimetableConverterToAvro.convertJsonClassTimetableToWwwClassTimetable
+import tttutils.SchoolConverter
+import tttutils.TemplateUtils.getCookieStringFromRequest
 
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContextExecutor, Future}

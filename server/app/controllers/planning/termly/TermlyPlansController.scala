@@ -21,8 +21,8 @@ import play.api.data.Forms.{mapping, _}
 import play.api.mvc._
 import security.MyDeadboltHandler
 import shared.util.PlanningHelper
-import utils.SchoolConverter
-import utils.TemplateUtils.getCookieStringFromRequest
+import tttutils.SchoolConverter
+import tttutils.TemplateUtils.getCookieStringFromRequest
 
 import scala.annotation.tailrec
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -213,7 +213,7 @@ class TermlyPlansController @Inject()(
   }
 
   def termlyPlansClassLevel_SelectEsOsBenchmarksForCurriculumArea(classId: String, curriculumArea: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest: AuthenticatedRequest[AnyContent] =>
-    import utils.CurriculumConverterUtil._
+    import tttutils.CurriculumConverterUtil._
     logger.debug(s"Will be selecting es, os and benchmarks for class($classId) and curriculumArea ($curriculumArea)")
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
@@ -280,7 +280,7 @@ class TermlyPlansController @Inject()(
 
   def termlyPlansGroupLevel_SelectEsOsBenchmarksForCurriculumArea(classId: String, curriculumArea: String, groupId: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest: AuthenticatedRequest[AnyContent] =>
     logger.debug(s"termlyPlansGroupLevel_SelectEsOsBenchmarksForCurriculumArea() - ${classId} ${curriculumArea} ${groupId}")
-    import utils.CurriculumConverterUtil._
+    import tttutils.CurriculumConverterUtil._
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
     val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
@@ -437,7 +437,7 @@ class TermlyPlansController @Inject()(
     val futureMaybeCurriculumAreaTermlyPlanForClassLevel = findAnyCurrentTermlyPlanForCurriculumAreaAtClassLevel(classId, curriculumArea, tttUserId)
     val eventualTodaysDate = systemTime.getToday
 
-    import utils.CurriculumConverterUtil.convertSubjectToScottishCurriculumPlanningAreaWrapper
+    import tttutils.CurriculumConverterUtil.convertSubjectToScottishCurriculumPlanningAreaWrapper
     for {
       classes <- eventualClasses
       esAndOsCodeToDetailMap <- eventualEsAndOsToDetailMap

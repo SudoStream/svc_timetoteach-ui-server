@@ -12,8 +12,8 @@ import org.mongodb.scala.Document
 import org.mongodb.scala.bson.{BsonArray, BsonDocument}
 import play.api.Logger
 import potentialmicroservice.planning.sharedschema.{EsAndOsStatusSchema, SingleLessonPlanSchema, WeeklyPlanningSchema}
-import utils.CurriculumConverterUtil
-import utils.mongodb.MongoDbSafety
+import tttutils.CurriculumConverterUtil
+import tttutils.mongodb.MongoDbSafety
 
 import scala.annotation.tailrec
 import scala.concurrent.ExecutionContext.Implicits.global

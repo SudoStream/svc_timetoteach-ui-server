@@ -14,8 +14,8 @@ import io.sudostream.timetoteach.kafka.serializing.systemwide.classtimetable.Cla
 import models.timetoteach.TimeToTeachUserId
 import play.api.Logger
 import shared.model.classtimetable.{WWWClassTimetable, WwwClassId}
-import utils.ClassDetailsAvroConverter.convertPickledClassToAvro
-import utils.ClassTimetableConverterToAvro.convertWwwClassTimeTableToAvro
+import tttutils.ClassDetailsAvroConverter.convertPickledClassToAvro
+import tttutils.ClassTimetableConverterToAvro.convertWwwClassTimeTableToAvro
 
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContextExecutor, Future}

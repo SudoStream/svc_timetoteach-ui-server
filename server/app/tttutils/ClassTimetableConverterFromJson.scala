@@ -1,11 +1,11 @@
-package utils
+package tttutils
 
 import java.time.LocalTime
 
 import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.time.DayOfTheWeek
 import play.api.libs.json.{JsArray, JsObject, JsString, JsValue}
 import shared.model.classtimetable._
-import utils.ClassTimetableConverterToAvro.convertSchoolDayTimeBoundaryToStartTimeTuplesToMap
+import tttutils.ClassTimetableConverterToAvro.convertSchoolDayTimeBoundaryToStartTimeTuplesToMap
 
 trait ClassTimetableConverterFromJson {
 
@@ -27,7 +27,7 @@ trait ClassTimetableConverterFromJson {
     schoolDayTimeBoundaryToStartTime
   }
 
-  private[utils] def convertSchoolDayTimeBoundaryToStartTimeTuplesToMap(incomingTuples: List[(SchoolDayTimeBoundary, String)]): Map[SchoolDayTimeBoundary, String] = {
+  private[tttutils] def convertSchoolDayTimeBoundaryToStartTimeTuplesToMap(incomingTuples: List[(SchoolDayTimeBoundary, String)]): Map[SchoolDayTimeBoundary, String] = {
     def loop(currentMap: Map[SchoolDayTimeBoundary, String],
              tupleToAdd: (SchoolDayTimeBoundary, String),
              remainingTuples: List[(SchoolDayTimeBoundary, String)]): Map[SchoolDayTimeBoundary, String] = {

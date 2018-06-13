@@ -20,7 +20,7 @@ import javax.inject.Inject
 import models.timetoteach.TimeToTeachUserId
 import play.api.Logger
 import shared.model.classtimetable.{WWWClassTimetable, WwwClassId}
-import utils.{ClassDetailsAvroConverter, ClassTimetableConverterToAvro}
+import tttutils.{ClassDetailsAvroConverter, ClassTimetableConverterToAvro}
 
 import scala.annotation.tailrec
 import scala.concurrent.duration._

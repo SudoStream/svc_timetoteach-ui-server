@@ -1,4 +1,4 @@
-package utils
+package tttutils
 
 import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.sessions._
 import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.subjectdetail.{SubjectDetail, SubjectDetailAdditionalInfo, SubjectDetailWrapper, SubjectName}
@@ -41,7 +41,7 @@ trait ClassTimetableConverterHelperToAvro {
   }
 
   ////////
-  private[utils] def convertWwwSubjectDetailsToAvro(wwwSubjectDetails: List[WwwSubjectDetail]): List[SubjectDetailWrapper] = {
+  private[tttutils] def convertWwwSubjectDetailsToAvro(wwwSubjectDetails: List[WwwSubjectDetail]): List[SubjectDetailWrapper] = {
     for {
       wwwSubjectDetail <- wwwSubjectDetails
       subjectName = wwwSubjectDetail.subject.value match {
@@ -80,7 +80,7 @@ trait ClassTimetableConverterHelperToAvro {
     ))
   }
 
-  private[utils] def createSessionBoundaries(schoolDayTimes: Map[SchoolDayTimeBoundary, String]): List[SessionBoundaryWrapper] = {
+  private[tttutils] def createSessionBoundaries(schoolDayTimes: Map[SchoolDayTimeBoundary, String]): List[SessionBoundaryWrapper] = {
     for {
       boundaryTimesTuple <- schoolDayTimes.toList
       boundaryType: SessionBoundaryType = boundaryTimesTuple._1.value match {

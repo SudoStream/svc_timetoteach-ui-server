@@ -11,7 +11,7 @@ import org.mongodb.scala.Document
 import org.mongodb.scala.bson.BsonArray
 import play.api.Logger
 import potentialmicroservice.planning.sharedschema.TermlyCurriculumSelectionSchema
-import utils.mongodb.MongoDbSafety.{safelyGetString, safelyGetStringNoneIfBlank}
+import tttutils.mongodb.MongoDbSafety.{safelyGetString, safelyGetStringNoneIfBlank}
 
 import scala.annotation.tailrec
 

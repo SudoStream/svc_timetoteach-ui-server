@@ -1,4 +1,4 @@
-package utils
+package tttutils
 
 import be.objectify.deadbolt.scala.models.Subject
 import be.objectify.deadbolt.scala.{AuthenticatedRequest, DeadboltHandler}

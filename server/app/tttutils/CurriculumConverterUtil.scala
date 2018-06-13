@@ -1,4 +1,4 @@
-package utils
+package tttutils
 
 import duplicate.model.esandos._
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea

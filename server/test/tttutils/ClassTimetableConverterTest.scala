@@ -1,4 +1,4 @@
-package utils
+package tttutils
 
 import org.specs2.matcher.MatchResult
 import org.specs2.mutable.Specification

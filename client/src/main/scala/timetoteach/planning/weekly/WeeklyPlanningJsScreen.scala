@@ -1,12 +1,19 @@
 package timetoteach.planning.weekly
 
+import duplicate.model.planning.FullWeeklyPlanOfLessons
 import org.scalajs.dom
 import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement}
+import shared.util.PlanningHelper
 
 import scala.scalajs.js
 import scala.scalajs.js.Dynamic.global
 
 object WeeklyPlanningJsScreen extends WeeklyPlansCommon {
+
+  private var maybeSelectedSubject: Option[String] = None
+  private var maybeSelectedSubjectStartTimeIso: Option[String] = None
+  private var maybeSelectedSubjectDayOfTheWeek: Option[String] = None
+
 
   def loadJavascript(): Unit = {
     global.console.log("Loading Weekly Planning Javascript")
@@ -23,12 +30,30 @@ object WeeklyPlanningJsScreen extends WeeklyPlansCommon {
     while (index < nodeListSize) {
       val lessonPlanDiv = allLessonsPlans(index).asInstanceOf[HTMLDivElement]
       lessonPlanDiv.addEventListener("click", (e: dom.Event) => {
+        maybeSelectedSubject = None
+        maybeSelectedSubjectStartTimeIso = None
+        maybeSelectedSubjectDayOfTheWeek = None
+        maybeSelectedSubject = Some(lessonPlanDiv.getAttribute("data-subject-name"))
+        global.console.log(s"MaybeSubject : ${maybeSelectedSubject.toString}")
+        maybeSelectedSubjectStartTimeIso = Some(lessonPlanDiv.getAttribute("data-lesson-start-time"))
+        global.console.log(s"maybeSelectedSubjectStartTimeIso  : ${maybeSelectedSubjectStartTimeIso .toString}")
+        maybeSelectedSubjectDayOfTheWeek = Some(lessonPlanDiv.getAttribute("data-lesson-day-of-the-week"))
+        global.console.log(s"maybeSelectedSubjectDayOfTheWeek   : ${maybeSelectedSubjectDayOfTheWeek.toString}")
+
+        val fullWeeklyPlanOfLessonsPickled = dom.window.localStorage.getItem("fullWeeklyPlanOfLessonsPickled")
+        import upickle.default._
+        val fullWeeklyPlanOfLessons: FullWeeklyPlanOfLessons = read[FullWeeklyPlanOfLessons](PlanningHelper.decodeAnyNonFriendlyCharacters(fullWeeklyPlanOfLessonsPickled))
+
+        for (subject <- fullWeeklyPlanOfLessons.subjectToWeeklyPlanOfSubject.keys) {
+          global.console.log(s"Subject : ${subject}")
+        }
+
         val $ = js.Dynamic.global.$
         $("#view-single-lesson-plan-modal").modal("show", "backdrop: static", "keyboard : false")
       })
 
       lessonPlanDiv.addEventListener("mouseover", (e: dom.Event) => {
-        lessonPlanDiv.style.boxShadow = "3px 3px #3e81ee"
+        lessonPlanDiv.style.boxShadow = "2px 2px #3e81ee"
       })
 
       lessonPlanDiv.addEventListener("mouseleave", (e: dom.Event) => {

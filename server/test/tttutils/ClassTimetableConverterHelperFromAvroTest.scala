@@ -1,4 +1,4 @@
-package utils
+package tttutils
 
 import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.sessions._
 import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.subjectdetail.{SubjectDetail, SubjectDetailAdditionalInfo, SubjectDetailWrapper, SubjectName}

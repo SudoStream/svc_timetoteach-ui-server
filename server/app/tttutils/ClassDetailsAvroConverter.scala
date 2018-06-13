@@ -1,4 +1,4 @@
-package utils
+package tttutils
 
 import duplicate.model.Group
 import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumLevel

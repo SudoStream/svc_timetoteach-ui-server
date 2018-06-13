@@ -32,7 +32,7 @@ import play.api.mvc.{Cookie, _}
 
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContextExecutor, Future}
-import utils.StringUtils.noWhiteSpaceAtAll
+import tttutils.StringUtils.noWhiteSpaceAtAll
 class SecurityController @Inject()(ws: WSClient,
                                    deadbolt: DeadboltActions,
                                    handlers: HandlerCache,

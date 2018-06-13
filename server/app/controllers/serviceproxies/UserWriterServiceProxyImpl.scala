@@ -16,7 +16,7 @@ import io.sudostream.timetoteach.messages.systemwide.model._
 import models.timetoteach
 import models.timetoteach.{InitialUserPreferences, TimeToTeachUser, TimeToTeachUserId}
 import play.api.Logger
-import utils.SchoolConverter.convertLocalSchoolToMessageSchool
+import tttutils.SchoolConverter.convertLocalSchoolToMessageSchool
 
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContextExecutor, Future}

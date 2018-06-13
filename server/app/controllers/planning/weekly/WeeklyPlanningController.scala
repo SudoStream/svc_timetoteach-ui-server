@@ -22,8 +22,8 @@ import security.MyDeadboltHandler
 import shared.model.classtimetable.WwwClassId
 import shared.util.{LocalTimeUtil, PlanningHelper}
 import upickle.default.write
-import utils.SchoolConverter
-import utils.TemplateUtils.getCookieStringFromRequest
+import tttutils.SchoolConverter
+import tttutils.TemplateUtils.getCookieStringFromRequest
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -127,19 +127,21 @@ class WeeklyPlanningController @Inject()(
         mondayDateOfWeekIso
       )
       fullWeeklyPlanOfLessons: FullWeeklyPlanOfLessons <- futureMaybefullWeeklyPlanOfLessons
-//      fullWeeklyPlanOfLessonsPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[FullWeeklyPlanOfLessons](fullWeeklyPlanOfLessons))
+      fullWeeklyPlanOfLessonsPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[FullWeeklyPlanOfLessons](fullWeeklyPlanOfLessons))
     } yield Ok(views.html.planning.weekly.weeklyView(
       new MyDeadboltHandler(userReader),
       userPictureUri,
       userFirstName,
       userFamilyName,
+      TimeToTeachUserId(tttUserId),
       classDetails,
       schoolDayTimes,
       maybeAvroClassTimetable.get,
       maybeSchoolTerm.get,
       maybeSchoolTerm.get.weekNumberForGivenDate(LocalDate.parse(mondayDateOfWeekIso)),
       todaysDate,
-      fullWeeklyPlanOfLessons
+      fullWeeklyPlanOfLessons,
+      fullWeeklyPlanOfLessonsPickled
     ))
   }
 

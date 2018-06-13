@@ -6,7 +6,7 @@ import models.timetoteach.term.{SchoolTerm, SchoolTermName, SchoolYear}
 import org.bson.BsonArray
 import org.mongodb.scala.bson.BsonValue
 import potentialmicroservice.planning.sharedschema.TermlyPlanningSchema
-import utils.mongodb.MongoDbSafety.safelyGetStringNoneIfBlank
+import tttutils.mongodb.MongoDbSafety.safelyGetStringNoneIfBlank
 
 trait PlanReaderDaoCommonHelper
 {
