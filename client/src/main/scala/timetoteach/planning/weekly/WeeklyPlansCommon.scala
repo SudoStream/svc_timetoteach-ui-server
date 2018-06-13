@@ -37,6 +37,19 @@ trait WeeklyPlansCommon {
     }
   }
 
+  def getDayOfWeek(date: js.Date): String = {
+    date.getDay() match {
+      case 1 => "MONDAY"
+      case 2 => "TUESDAY"
+      case 3 => "WEDNESDAY"
+      case 4 => "THURSDAY"
+      case 5 => "FRIDAY"
+      case 6 => "SATURDAY"
+      case 0 => "SUNDAY"
+      case _ => "MONDAY"
+    }
+  }
+
   private def setSelectedButton(buttonElement: HTMLButtonElement) = {
     buttonElement.setAttribute("data-is-currently-selected", "true")
     buttonElement.style.backgroundColor = "white"

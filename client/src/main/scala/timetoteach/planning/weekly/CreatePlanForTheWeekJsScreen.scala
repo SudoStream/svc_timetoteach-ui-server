@@ -209,20 +209,6 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     }
   }
 
-  def getDayOfWeek(date: js.Date): String = {
-    date.getDay() match {
-      case 1 => "MONDAY"
-      case 2 => "TUESDAY"
-      case 3 => "WEDNESDAY"
-      case 4 => "THURSDAY"
-      case 5 => "FRIDAY"
-      case 6 => "SATURDAY"
-      case 0 => "SUNDAY"
-      case _ => "MONDAY"
-    }
-  }
-
-
   def buttonElementClassType(buttonType: String): String = {
     buttonType match {
       case "Activity" => "create-weekly-plans-add-to-lesson-button-add-activity"

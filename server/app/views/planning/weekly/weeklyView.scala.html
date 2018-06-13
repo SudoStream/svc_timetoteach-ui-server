@@ -148,9 +148,10 @@
                                         }" >
                                             <div class="weekly-plan-subject">
                                                 <div class="rounded weekly-plan-subject-extent weekly-plan-subject-@subject.subjectDetail.subjectName.toString.toLowerCase.replace("_", "-")"
-                                                data-plabbing-area="@CurriculumConverterUtil.convertSubjectToScottishCurriculumPlanningAreaWrapper(subject.subjectDetail.subjectName.toString).value.toString"
+                                                data-planning-area="@CurriculumConverterUtil.convertSubjectToScottishCurriculumPlanningAreaWrapper(subject.subjectDetail.subjectName.toString).value.toString"
                                                 data-subject-name="@subject.subjectDetail.subjectName.toString"
                                                 data-lesson-start-time="@subject.subjectDetail.startTime.timeIso8601"
+                                                data-lesson-end-time="@subject.subjectDetail.endTime.timeIso8601"
                                                 data-lesson-day-of-the-week="@dayOfTheWeek"
                                                 >
 
@@ -234,7 +235,13 @@
                 <div class="modal-header">
                     <h5 class="modal-title">
                         <span data-subject-name="" id="view-single-lesson-plan-subject-name" class="text-success"></span>
-                        Plan
+                        Lesson
+                        <br>
+                        <small>
+                            <span id="view-single-lesson-plan-day-of-week"></span>
+                            <span id="view-single-lesson-plan-start-time"></span> -
+                            <span id="view-single-lesson-plan-end-time"></span>
+                        </small>
                     </h5>
 
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">

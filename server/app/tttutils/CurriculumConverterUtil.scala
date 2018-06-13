@@ -5,12 +5,10 @@ import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningAre
 import models.timetoteach.planning.ScottishCurriculumPlanningAreaWrapper
 import play.api.Logger
 
-object CurriculumConverterUtil
-{
+object CurriculumConverterUtil {
   private val logger: Logger = Logger
 
-  implicit def convertCurriculumAreaToModel(curriculumArea: String): CurriculumArea =
-  {
+  implicit def convertCurriculumAreaToModel(curriculumArea: String): CurriculumArea = {
     curriculumArea.toUpperCase match {
       case "MATHS" | "MATHEMATICS" => Mathematics
       case "EXPRESSIVE_ARTS" => ExpressiveArts__Only
@@ -18,7 +16,7 @@ object CurriculumConverterUtil
       case "EXPRESSIVE_ARTS__DRAMA" => ExpressiveArts__Drama
       case "EXPRESSIVE_ARTS__DANCE" => ExpressiveArts__Dance
       case "EXPRESSIVE_ARTS__MUSIC" => ExpressiveArts__Music
-      case "HEALTH_AND_WELLBEING" | "HEALTH_AND_WELLBEING__PHYSICAL_EDUCATION" => HealthAndWellbeing
+      case "HEALTH_AND_WELLBEING" | "HEALTH_AND_WELLBEING__PHYSICAL_EDUCATION" | "PHYSICAL_EDUCATION" => HealthAndWellbeing
       case "WRITING" | "LITERACY__WRITING" => Literacy_Writing
       case "READING" | "LITERACY__READING" => Literacy_Reading
       case "LITERACY__LISTENING_AND_TALKING" => Literacy_ListeningAndTalking
@@ -26,30 +24,29 @@ object CurriculumConverterUtil
       case "LITERACY__GAELIC_LEARNERS" => Languages_Gaelic
       case "LITERACY__LITERACY_AND_GAIDLIG" => Languages_LiteracyAndGaidhlig
       case "LITERACY__MODERN_LANGUAGES" => Languages_ModernLanguages
-      case "RME__STANDARD" => ReligionAndMoralEducationStandard
+      case "RME" | "RME__STANDARD" => ReligionAndMoralEducationStandard
       case "RME__CATHOLIC" => ReligionAndMoralEducationCatholic
       case "SCIENCE" => Sciences
       case "SOCIAL_STUDIES" | "TOPIC" => SocialStudies
-      case "TECHNOLOGIES" => Technologies
+      case "ICT" | "TECHNOLOGIES" => Technologies
       case "TOPIC" => SocialStudies
       case somethingElse =>
-        logger.error(s"While convertSubjectToCurriculumArea did not recognise $somethingElse to convert to curriculum area")
+        logger.warn(s"While convertSubjectToCurriculumArea did not recognise $somethingElse to convert to curriculum area")
         NotDefined
     }
   }
 
-  implicit def convertSubjectToScottishCurriculumPlanningAreaWrapper(curriculumArea: String): ScottishCurriculumPlanningAreaWrapper =
-  {
+  implicit def convertSubjectToScottishCurriculumPlanningAreaWrapper(curriculumArea: String): ScottishCurriculumPlanningAreaWrapper = {
     val theScottishCurriculumPlanningArea: ScottishCurriculumPlanningArea = curriculumArea.toUpperCase match {
       case "MATHS" | "MATHEMATICS" => ScottishCurriculumPlanningArea.MATHEMATICS
       case "EXPRESSIVE_ARTS" => ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS
-      case "EXPRESSIVE_ARTS__ART" => ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__ART
-      case "EXPRESSIVE_ARTS__DRAMA" => ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__DRAMA
-      case "EXPRESSIVE_ARTS__DANCE" => ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__DANCE
-      case "EXPRESSIVE_ARTS__MUSIC" => ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__MUSIC
+      case "EXPRESSIVE_ARTS__ART" | "ART" => ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__ART
+      case "EXPRESSIVE_ARTS__DRAMA" | "DRAMA" => ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__DRAMA
+      case "EXPRESSIVE_ARTS__DANCE" | "DANCE" => ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__DANCE
+      case "EXPRESSIVE_ARTS__MUSIC" | "MUSIC" => ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__MUSIC
       case "HEALTH_AND_WELLBEING" => ScottishCurriculumPlanningArea.HEALTH_AND_WELLBEING
-      case "HEALTH_AND_WELLBEING__PHYSICAL_EDUCATION" => ScottishCurriculumPlanningArea.HEALTH_AND_WELLBEING__PHYSICAL_EDUCATION
-      case "WRITING" | "LITERACY__WRITING" => ScottishCurriculumPlanningArea.LITERACY__WRITING
+      case "HEALTH_AND_WELLBEING__PHYSICAL_EDUCATION" | "PHYSICAL_EDUCATION" | "HEALTH" => ScottishCurriculumPlanningArea.HEALTH_AND_WELLBEING__PHYSICAL_EDUCATION
+      case "WRITING" | "LITERACY__WRITING" | "SPELLING" => ScottishCurriculumPlanningArea.LITERACY__WRITING
       case "READING" | "LITERACY__READING" => ScottishCurriculumPlanningArea.LITERACY__READING
       case "LITERACY__LISTENING_AND_TALKING" => ScottishCurriculumPlanningArea.LITERACY__LISTENING_AND_TALKING
       case "LITERACY__LITERACY_AND_ENGLISH" => ScottishCurriculumPlanningArea.LITERACY__WRITING
@@ -57,14 +54,14 @@ object CurriculumConverterUtil
       case "LITERACY__GAELIC_LEARNERS" => ScottishCurriculumPlanningArea.LITERACY__GAELIC_LEARNERS
       case "LITERACY__LITERACY_AND_GAIDLIG" => ScottishCurriculumPlanningArea.LITERACY__LITERACY_AND_GAIDLIG
       case "LITERACY__MODERN_LANGUAGES" => ScottishCurriculumPlanningArea.LITERACY__MODERN_LANGUAGES
-      case "RME__STANDARD" => ScottishCurriculumPlanningArea.RME__STANDARD
+      case "RME" | "RME__STANDARD" => ScottishCurriculumPlanningArea.RME__STANDARD
       case "RME__CATHOLIC" => ScottishCurriculumPlanningArea.RME__CATHOLIC
       case "SCIENCE" => ScottishCurriculumPlanningArea.SCIENCE
       case "SOCIAL_STUDIES" | "TOPIC" => ScottishCurriculumPlanningArea.SOCIAL_STUDIES
-      case "TECHNOLOGIES" => ScottishCurriculumPlanningArea.TECHNOLOGIES
+      case "ICT" | "TECHNOLOGIES" => ScottishCurriculumPlanningArea.TECHNOLOGIES
       case "TOPIC" => ScottishCurriculumPlanningArea.SOCIAL_STUDIES
       case somethingElse =>
-        logger.error(s"While convertSubjectToCurriculumArea did not recognise $somethingElse to convert to curriculum area")
+        logger.warn(s"While convertSubjectToCurriculumArea did not recognise $somethingElse to convert to curriculum area")
         ScottishCurriculumPlanningArea.NONE
     }
 

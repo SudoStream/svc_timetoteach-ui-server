@@ -1,6 +1,6 @@
 package timetoteach.planning.weekly
 
-import duplicate.model.planning.FullWeeklyPlanOfLessons
+import duplicate.model.planning.{FullWeeklyPlanOfLessons, LessonPlan, WeeklyPlanOfOneSubject}
 import org.scalajs.dom
 import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement}
 import shared.util.PlanningHelper
@@ -10,8 +10,10 @@ import scala.scalajs.js.Dynamic.global
 
 object WeeklyPlanningJsScreen extends WeeklyPlansCommon {
 
+  private var maybeSelectedPlanningArea: Option[String] = None
   private var maybeSelectedSubject: Option[String] = None
   private var maybeSelectedSubjectStartTimeIso: Option[String] = None
+  private var maybeSelectedSubjectEndTimeIso: Option[String] = None
   private var maybeSelectedSubjectDayOfTheWeek: Option[String] = None
 
 
@@ -23,6 +25,38 @@ object WeeklyPlanningJsScreen extends WeeklyPlansCommon {
     showLessonPlanDetail()
   }
 
+  def buildLessonModalHtml(maybeLessonPlan: Option[LessonPlan]): Unit = {
+    dom.document.getElementById("view-single-lesson-plan-modal-body").innerHTML = s"Will fill in " +
+      s"details for ${maybeLessonPlan.toString()}"
+  }
+
+  def buildNoLessonModalHtml(subject: String): Unit = {
+    dom.document.getElementById("view-single-lesson-plan-modal-body").innerHTML =
+      s"Looks like there is no plan currently for this $subject lesson."
+  }
+
+  def findSelectedLessonPlan(subject: WeeklyPlanOfOneSubject): Option[LessonPlan] = {
+    val selectedPlanningArea = maybeSelectedPlanningArea.getOrElse("NOPE")
+    val selectedLessonStartTime = maybeSelectedSubjectStartTimeIso.getOrElse("NOPE")
+    val selectedLessonDayOfWeek = maybeSelectedSubjectDayOfTheWeek.getOrElse("NOPE")
+
+    def loop(remainingLessons: List[LessonPlan]): Option[LessonPlan] = {
+      if (remainingLessons.isEmpty) None
+      else {
+        val nextLesson = remainingLessons.head
+        val jsLessonDate = new js.Date(nextLesson.lessonDateIso)
+        if (
+          nextLesson.subject == selectedPlanningArea &&
+            nextLesson.startTimeIso == selectedLessonStartTime &&
+            getDayOfWeek(jsLessonDate) == selectedLessonDayOfWeek
+        ) Some(nextLesson)
+        else loop(remainingLessons.tail)
+      }
+    }
+
+    loop(subject.lessons)
+  }
+
   def showLessonPlanDetail(): Unit = {
     val allLessonsPlans = dom.document.getElementsByClassName("weekly-plan-subject-extent")
     val nodeListSize = allLessonsPlans.length
@@ -30,22 +64,31 @@ object WeeklyPlanningJsScreen extends WeeklyPlansCommon {
     while (index < nodeListSize) {
       val lessonPlanDiv = allLessonsPlans(index).asInstanceOf[HTMLDivElement]
       lessonPlanDiv.addEventListener("click", (e: dom.Event) => {
+        maybeSelectedPlanningArea = None
         maybeSelectedSubject = None
         maybeSelectedSubjectStartTimeIso = None
         maybeSelectedSubjectDayOfTheWeek = None
+
+        maybeSelectedPlanningArea = Some(lessonPlanDiv.getAttribute("data-planning-area"))
         maybeSelectedSubject = Some(lessonPlanDiv.getAttribute("data-subject-name"))
-        global.console.log(s"MaybeSubject : ${maybeSelectedSubject.toString}")
         maybeSelectedSubjectStartTimeIso = Some(lessonPlanDiv.getAttribute("data-lesson-start-time"))
-        global.console.log(s"maybeSelectedSubjectStartTimeIso  : ${maybeSelectedSubjectStartTimeIso .toString}")
+        maybeSelectedSubjectEndTimeIso = Some(lessonPlanDiv.getAttribute("data-lesson-end-time"))
         maybeSelectedSubjectDayOfTheWeek = Some(lessonPlanDiv.getAttribute("data-lesson-day-of-the-week"))
-        global.console.log(s"maybeSelectedSubjectDayOfTheWeek   : ${maybeSelectedSubjectDayOfTheWeek.toString}")
 
         val fullWeeklyPlanOfLessonsPickled = dom.window.localStorage.getItem("fullWeeklyPlanOfLessonsPickled")
         import upickle.default._
         val fullWeeklyPlanOfLessons: FullWeeklyPlanOfLessons = read[FullWeeklyPlanOfLessons](PlanningHelper.decodeAnyNonFriendlyCharacters(fullWeeklyPlanOfLessonsPickled))
 
-        for (subject <- fullWeeklyPlanOfLessons.subjectToWeeklyPlanOfSubject.keys) {
-          global.console.log(s"Subject : ${subject}")
+        dom.document.getElementById("view-single-lesson-plan-subject-name").innerHTML = s"${maybeSelectedSubject.getOrElse("")}"
+        dom.document.getElementById("view-single-lesson-plan-day-of-week").innerHTML = s"${maybeSelectedSubjectDayOfTheWeek.getOrElse("").toLowerCase.capitalize},"
+        dom.document.getElementById("view-single-lesson-plan-start-time").innerHTML = s"${maybeSelectedSubjectStartTimeIso.getOrElse("")}"
+        dom.document.getElementById("view-single-lesson-plan-end-time").innerHTML = s"${maybeSelectedSubjectEndTimeIso.getOrElse("")}"
+
+        if (fullWeeklyPlanOfLessons.subjectToWeeklyPlanOfSubject.isDefinedAt(maybeSelectedPlanningArea.getOrElse("NO_PLANNING_AREA"))) {
+          val selectedLessonPlan = findSelectedLessonPlan(fullWeeklyPlanOfLessons.subjectToWeeklyPlanOfSubject(maybeSelectedPlanningArea.getOrElse("NO_PLANNING_AREA")))
+          buildLessonModalHtml(selectedLessonPlan)
+        } else {
+          buildNoLessonModalHtml(maybeSelectedPlanningArea.getOrElse("NO_PLANNING_AREA"))
         }
 
         val $ = js.Dynamic.global.$
