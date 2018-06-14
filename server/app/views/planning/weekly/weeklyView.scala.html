@@ -24,7 +24,8 @@
         weekNumber: Int,
         todaysDate: java.time.LocalDate,
         fullWeeklyPlanOfLessons: FullWeeklyPlanOfLessons,
-        fullWeeklyPlanOfLessonsPickled: String
+        fullWeeklyPlanOfLessonsPickled: String,
+        classDetailsPickled: String
 )
 
 @splitCamel(s: String) = {
@@ -150,6 +151,7 @@
                                                 <div class="rounded weekly-plan-subject-extent weekly-plan-subject-@subject.subjectDetail.subjectName.toString.toLowerCase.replace("_", "-")"
                                                 data-planning-area="@CurriculumConverterUtil.convertSubjectToScottishCurriculumPlanningAreaWrapper(subject.subjectDetail.subjectName.toString).value.toString"
                                                 data-subject-name="@subject.subjectDetail.subjectName.toString"
+                                                data-subject-additional-info="@subject.subjectDetail.additionalInfo.value"
                                                 data-lesson-start-time="@subject.subjectDetail.startTime.timeIso8601"
                                                 data-lesson-end-time="@subject.subjectDetail.endTime.timeIso8601"
                                                 data-lesson-day-of-the-week="@dayOfTheWeek"
@@ -234,10 +236,11 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">
-                        <span data-subject-name="" id="view-single-lesson-plan-subject-name" class="text-success"></span>
-                        Lesson
-                        <br>
-                        <small>
+                        <div>
+                            <div id="view-single-lesson-plan-subject-name" class="text-success"></div>
+                            <div id="view-single-lesson-plan-subject-additional-info" class="text-primary"></div>
+                        </div>
+                        <small class="text-muted">
                             <span id="view-single-lesson-plan-day-of-week"></span>
                             <span id="view-single-lesson-plan-start-time"></span> -
                             <span id="view-single-lesson-plan-end-time"></span>
@@ -248,6 +251,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
+
                 <div class="modal-body">
 
                     <div id="view-single-lesson-plan-modal-body"></div>
@@ -267,6 +271,7 @@
     localStorage.setItem("classId", "@classDetails.id.id");
     localStorage.setItem("tttUserId", "@tttUserId.value");
     localStorage.setItem("fullWeeklyPlanOfLessonsPickled", "@fullWeeklyPlanOfLessonsPickled");
+    localStorage.setItem("classDetailsPickled", "@classDetailsPickled");
     @for(group <- classDetails.groups) {
     localStorage.setItem("@group.groupId.id", "@group.groupName.name");
     }

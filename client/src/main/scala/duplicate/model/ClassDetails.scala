@@ -16,11 +16,16 @@ case class ClassDetails(
   )
 
   def findGroupName(groupIdToSearch: String): String = {
-    val filteredGroups =  groups.filter(elem => elem.groupId.id == groupIdToSearch)
+    val filteredGroups = groups.filter(elem => elem.groupId.id == groupIdToSearch)
     filteredGroups.headOption match {
       case Some(group) => group.groupName.name
       case None => ""
     }
+  }
+
+  def getSubjectGroups(subjectToSearchFor: String): List[Group] = {
+    val groupTypeToSearchFor = GroupType.createGroupTypeFromName(subjectToSearchFor)
+    groups.filter(group => group.groupType == groupTypeToSearchFor)
   }
 }
 
@@ -101,6 +106,15 @@ sealed trait GroupType {
 
 object GroupType {
   implicit def rw: RW[GroupType] = macroRW
+
+  def createGroupTypeFromName(name: String): GroupType = {
+    val nameLowerCase = name.toLowerCase
+    if (nameLowerCase.contains("math")) MathsGroupType
+    else if (nameLowerCase.contains("reading")) ReadingGroupType
+    else if (nameLowerCase.contains("writing")) WritingGroupType
+    else if (nameLowerCase.contains("spelling")) SpellingGroupType
+    else OtherGroupType
+  }
 }
 
 case object MathsGroupType extends GroupType {

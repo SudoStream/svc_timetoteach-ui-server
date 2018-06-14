@@ -35,7 +35,6 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
   private var currentlySelectedPlanningAreaNice: Option[String] = None
   private var currentlySelectedLessonSummariesThisWeek: Option[List[LessonSummary]] = None
 
-  private var groupIdsToName: scala.collection.mutable.Map[String, String] = scala.collection.mutable.Map.empty
 
   def loadJavascript(): Unit = {
     Dynamic.global.console.log("Loading Create Plan For The Week Javascript")
@@ -106,33 +105,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     )
   }
 
-  private def createAddButton(buttonIdRoot: String, buttonDescription: String, index: Int, lessonSummary: LessonSummary): List[JsDom.TypedTag[Div]] = {
-    val addDetailsDiv = div(`id` := s"$buttonIdRoot-div-$index", `class` := s"$buttonIdRoot-div")
-    val buttonDiv = div(`class` := "row")(
-      button(id := s"$buttonIdRoot-$index", `class` := s"$buttonIdRoot btn btn-sm btn-success create-weekly-plans-add-to-lesson-button",
-        attr("data-subject-name") := lessonSummary.subject,
-        attr("data-lesson-start-time") := lessonSummary.startTimeIso,
-        attr("data-lesson-day-of-the-week") := lessonSummary.dayOfWeek,
-        attr("data-attribute-type") := buttonDescription,
-        attr("data-tab-index") := index)(
-        s"+ $buttonDescription"
-      )
-    )
 
-    List(addDetailsDiv, buttonDiv)
-  }
-
-  private def createLessonDataDiv(lessonSummary: LessonSummary, tabIndex: Int): JsDom.TypedTag[Div] = {
-    div(
-      `class` := "data-lesson-summary-for-lesson-div",
-      attr("data-tab-index") := tabIndex,
-      attr("data-lesson-summary-subject") := lessonSummary.subject,
-      attr("data-lesson-summary-subject-additional-info") := lessonSummary.subjectAdditionalInfo,
-      attr("data-lesson-summary-day") := lessonSummary.dayOfWeek,
-      attr("data-lesson-summary-start-time") := lessonSummary.startTimeIso,
-      attr("data-lesson-summary-end-time") := lessonSummary.endTimeIso
-    )()
-  }
 
   private def createTabbedContent(): JsDom.TypedTag[Div] = {
     val innerTabbedContent = for {
@@ -704,54 +677,6 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     groupToSelectedEsOsAndBenchmarks(groupIdOrNot)(curriculumSection)(curriculumSubSection)._2.add(benchmarkValue)
   }
 
-  private def clickingOnAddToLessonsButtons(): Unit = {
-    addButtonClickBehaviour("create-weekly-plans-add-to-lesson-button-add-activity", "Activity", true)
-    addButtonClickBehaviour("create-weekly-plans-add-to-lesson-button-add-resource", "Resource", false)
-    addButtonClickBehaviour("create-weekly-plans-add-to-lesson-button-add-learning-intention", "Learning Intention", true)
-    addButtonClickBehaviour("create-weekly-plans-add-to-lesson-button-add-success-criteria", "Success Criteria", true)
-    addButtonClickBehaviour("create-weekly-plans-add-to-lesson-button-add-plenary", "Plenary", false)
-    addButtonClickBehaviour("create-weekly-plans-add-to-lesson-button-add-formative-assessment", "Formative Assessment", false)
-    addButtonClickBehaviour("create-weekly-plans-add-to-lesson-button-add-note", "Note", false)
-  }
-
-
-  private def cleanupModalAdds(): Unit = {
-    cleanupActivity("create-weekly-plans-add-to-lesson-button-add-activity-div")
-    cleanupActivity("create-weekly-plans-add-to-lesson-button-add-resource-div")
-    cleanupActivity("create-weekly-plans-add-to-lesson-button-add-learning-intention-div")
-    cleanupActivity("create-weekly-plans-add-to-lesson-button-add-success-criteria-div")
-    cleanupActivity("create-weekly-plans-add-to-lesson-button-add-plenary-div")
-    cleanupActivity("create-weekly-plans-add-to-lesson-button-add-formative-assessment-div")
-    cleanupActivity("create-weekly-plans-add-to-lesson-button-add-note-div")
-  }
-
-  private def cleanupActivity(elementId: String): Unit = {
-    val activityDiv = dom.document.getElementById(elementId).asInstanceOf[HTMLDivElement]
-    while (activityDiv != null && activityDiv.hasChildNodes()) {
-      activityDiv.removeChild(activityDiv.lastChild)
-    }
-  }
-
-  private def addButtonClickBehaviour(buttonElementId: String, buttonNameType: String, applyToGroups: Boolean): Unit = {
-    val addActivityButtons = dom.document.getElementsByClassName(buttonElementId)
-    val nodeListSize = addActivityButtons.length
-
-    var index = 0
-    while (index < nodeListSize) {
-      val addActivityButton = addActivityButtons(index).asInstanceOf[HTMLButtonElement]
-
-      addActivityButton.addEventListener("click", (e: dom.Event) => {
-        Dynamic.global.console.log(s"groups: ${
-          groupIdsToName.keys.toString()
-        }")
-
-        val tabIndex = addActivityButton.getAttribute("data-tab-index")
-        addAttributeRow(buttonElementId, buttonNameType, applyToGroups, tabIndex, None, None, None)
-      })
-
-      index = index + 1
-    }
-  }
 
   def generateOrderNumber(tabIndexToSearch: Int,
                           inputAttributeClass: String): Int = {
@@ -775,163 +700,7 @@ object CreatePlanForTheWeekJsScreen extends WeeklyPlansCommon {
     currentOrderNumMax + 1
   }
 
-  private def getOrderNumber(maybeOrderNumber: Option[Int],
-                             tabIndex: Int,
-                             inputAttributeClass: String
-                            ): Int = {
-    maybeOrderNumber match {
-      case Some(orderNumber) => orderNumber
-      case None => generateOrderNumber(tabIndex, inputAttributeClass)
-    }
-  }
 
-  private def addAttributeRow(buttonElementId: String,
-                              buttonNameType: String,
-                              applyToGroups: Boolean,
-                              tabIndex: String,
-                              attributeText: Option[String],
-                              maybeGroupIds: Option[List[String]],
-                              maybeOrderNumber: Option[Int]
-                             ): Unit = {
-
-    val groupNamesToGroupIds = for {
-      groupId <- groupIdsToName.keys
-      groupName = groupIdsToName(groupId)
-      if groupName != null
-      uniqIdForRow = java.util.UUID.randomUUID().toString
-    } yield (groupName, groupId, uniqIdForRow)
-
-
-    def createGroupInputDiv(groupNameToGroupId: (String, String, String)): TypedTag[Div] = {
-      val groupId = groupNameToGroupId._2
-
-      val realInput: TypedTag[Input] = if (maybeGroupIds.isDefined && maybeGroupIds.get.contains(groupId)) {
-        input(`id` := s"group-checkbox-${
-          groupNameToGroupId._2
-        }-${
-          groupNameToGroupId._3
-        }", `name` := s"group-checkbox-${
-          groupNameToGroupId._2
-        }-${
-          groupNameToGroupId._3
-        }",
-          `type` := "checkbox",
-          attr("data-group-id") := groupNameToGroupId._2,
-          `class` := "custom-control-input group-on-off", `value` := "On", checked := true)
-      } else {
-        input(`id` := s"group-checkbox-${
-          groupNameToGroupId._2
-        }-${
-          groupNameToGroupId._3
-        }", `name` := s"group-checkbox-${
-          groupNameToGroupId._2
-        }-${
-          groupNameToGroupId._3
-        }",
-          `type` := "checkbox",
-          attr("data-group-id") := groupNameToGroupId._2,
-          `class` := "custom-control-input group-on-off", `value` := "On")
-      }
-
-      div(`class` :=
-        "custom-control custom-checkbox create-weekly-plans-lesson-modal-select-groups")(
-        realInput,
-
-        input(`name` := s"group-checkbox-${
-          groupNameToGroupId._2
-        }-${
-          groupNameToGroupId._3
-        }", `type` := "hidden", `value` := "Off"),
-
-        label(`class` := "custom-control-label", `for` := s"group-checkbox-${
-          groupNameToGroupId._2
-        }-${
-          groupNameToGroupId._3
-        }"),
-
-        span(`class` := "custom-control-description")(s"${
-          groupNameToGroupId._1
-        }")
-      )
-
-    }
-
-    val groupsAsCheckboxes: Seq[TypedTag[Div]] = {
-      for (groupNameToGroupId <- groupNamesToGroupIds) yield createGroupInputDiv(groupNameToGroupId)
-    }.toSeq
-
-    val groupsAsCheckboxesInContainer = if (groupNamesToGroupIds.nonEmpty && applyToGroups) {
-      div(`class` := "form-row")(
-        span(`class` := "create-weekly-plans-lesson-modal-span-select-groups")(small("Applies to which groups: ")),
-        groupsAsCheckboxes
-      )
-    } else {
-      div()
-    }
-
-    val inputAttributeClass = s"input-attribute-${buttonNameType.replace(" ", "")}"
-    val theInput = attributeText match {
-      case Some(inputText) =>
-        if (buttonNameType == "Activity") {
-          textarea(`type` := "text", `class` := s"form-control form-control-sm $inputAttributeClass", rows := "5",
-            attr("data-tab-index") := tabIndex, attr("data-attribute-order-value") := getOrderNumber(maybeOrderNumber, tabIndex.toInt, inputAttributeClass),
-            placeholder := s"Enter $buttonNameType - '${attributeText.toString}' ", value := s"${attributeText.getOrElse("")}")(s"${attributeText.getOrElse(s"Enter $buttonNameType")}")
-        } else {
-          input(`type` := "text", `class` := s"form-control form-control-sm $inputAttributeClass",
-            attr("data-tab-index") := tabIndex, attr("data-attribute-order-value") := getOrderNumber(maybeOrderNumber, tabIndex.toInt, inputAttributeClass),
-            placeholder := s"Enter $buttonNameType", value := s"${attributeText.getOrElse("")}")
-        }
-      case None =>
-        if (buttonNameType == "Activity") {
-          textarea(`type` := "text", `class` := s"form-control form-control-sm $inputAttributeClass", rows := "5",
-            attr("data-tab-index") := tabIndex, attr("data-attribute-order-value") := getOrderNumber(maybeOrderNumber, tabIndex.toInt, inputAttributeClass),
-            placeholder := s"Enter $buttonNameType")
-        } else {
-          input(`type` := "text", `class` := s"form-control form-control-sm $inputAttributeClass",
-            attr("data-tab-index") := tabIndex, attr("data-attribute-order-value") := getOrderNumber(maybeOrderNumber, tabIndex.toInt, inputAttributeClass),
-            placeholder := s"Enter $buttonNameType")
-        }
-    }
-
-    val newAttributeRow = form()(
-      div(`class` := "form-group")(
-        button(`class` := "close create-weekly-plans-lesson-modal-delete-this-row", attr("aria-label") := "Close")(
-          span(attr("aria-hidden") := "true")(raw("&times;"))
-        ),
-        fieldset()(
-          legend(buttonNameType), theInput, groupsAsCheckboxesInContainer
-        )
-      )
-    )
-
-    val child = dom.document.createElement("div")
-    child.innerHTML = newAttributeRow.toString
-
-    val newGroupsDiv = dom.document.getElementById(s"$buttonElementId-div-$tabIndex").asInstanceOf[Div]
-    newGroupsDiv.appendChild(child)
-
-    deleteSingleRowFromClassPlan()
-  }
-
-  private def deleteSingleRowFromClassPlan(): Unit = {
-    val deleteThisGroupButton = dom.document.getElementsByClassName("create-weekly-plans-lesson-modal-delete-this-row")
-    val nodeListSize = deleteThisGroupButton.length
-    var index = 0
-    while (index < nodeListSize) {
-      val theDeleteButton = deleteThisGroupButton(index).asInstanceOf[HTMLButtonElement]
-
-      theDeleteButton.addEventListener("click", (e: dom.Event) => {
-        val theRowDiv = theDeleteButton.parentNode.parentNode.parentNode.asInstanceOf[HTMLElement]
-        val theParent = theRowDiv.parentNode
-        if (theRowDiv != null && theParent != null) {
-          theParent.removeChild(theRowDiv)
-        }
-      })
-
-      index = index + 1
-    }
-
-  }
 
   private def isActive(element: HTMLElement): Boolean = element.classList.contains("active")
 

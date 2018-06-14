@@ -1,9 +1,12 @@
 package timetoteach.planning.weekly
 
-import duplicate.model.planning.{FullWeeklyPlanOfLessons, LessonPlan, WeeklyPlanOfOneSubject}
+import duplicate.model.ClassDetails
+import duplicate.model.planning.{FullWeeklyPlanOfLessons, LessonPlan, LessonSummary, WeeklyPlanOfOneSubject}
 import org.scalajs.dom
-import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement}
+import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement, HTMLElement}
+import scalatags.JsDom.all.{div, id, _}
 import shared.util.PlanningHelper
+import timetoteach.planning.weekly.CreatePlanForTheWeekJsScreen.{addLessonPlanDetailsFromSavedStatus, groupIdsToName, isActive}
 
 import scala.scalajs.js
 import scala.scalajs.js.Dynamic.global
@@ -12,6 +15,7 @@ object WeeklyPlanningJsScreen extends WeeklyPlansCommon {
 
   private var maybeSelectedPlanningArea: Option[String] = None
   private var maybeSelectedSubject: Option[String] = None
+  private var maybeSelectedSubjectAdditionalInfo: Option[String] = None
   private var maybeSelectedSubjectStartTimeIso: Option[String] = None
   private var maybeSelectedSubjectEndTimeIso: Option[String] = None
   private var maybeSelectedSubjectDayOfTheWeek: Option[String] = None
@@ -25,9 +29,59 @@ object WeeklyPlanningJsScreen extends WeeklyPlansCommon {
     showLessonPlanDetail()
   }
 
+  private def buildLessonSummary(maybePlan: Option[LessonPlan]): LessonSummary = {
+    maybePlan match {
+      case Some(lessonPlan) =>
+        LessonSummary(
+          lessonPlan.subject,
+          lessonPlan.subjectAdditionalInfo,
+          Some(lessonPlan.lessonDateIso),
+          getDayOfWeek(new js.Date(lessonPlan.lessonDateIso)),
+          lessonPlan.startTimeIso,
+          lessonPlan.endTimeIso
+        )
+      case None => LessonSummary("", "", None, "", "", "")
+    }
+  }
+
   def buildLessonModalHtml(maybeLessonPlan: Option[LessonPlan]): Unit = {
-    dom.document.getElementById("view-single-lesson-plan-modal-body").innerHTML = s"Will fill in " +
-      s"details for ${maybeLessonPlan.toString()}"
+    cleanupActivity("view-single-lesson-plan-modal-body")
+    cleanupModalAdds()
+
+    val index = 0
+    val lessonSummary = buildLessonSummary(maybeLessonPlan)
+
+    val theDiv = div(id := s"view-single-lesson-plan-main-lesson-container")(
+      createLessonDataDiv(lessonSummary, index),
+      createAddButton("create-weekly-plans-add-to-lesson-button-add-activity", "Activity", index, lessonSummary),
+      createAddButton("create-weekly-plans-add-to-lesson-button-add-resource", "Resource", index, lessonSummary),
+      createAddButton("create-weekly-plans-add-to-lesson-button-add-learning-intention", "Learning Intention", index, lessonSummary),
+      createAddButton("create-weekly-plans-add-to-lesson-button-add-success-criteria", "Success Criteria", index, lessonSummary),
+      createAddButton("create-weekly-plans-add-to-lesson-button-add-plenary", "Plenary", index, lessonSummary),
+      createAddButton("create-weekly-plans-add-to-lesson-button-add-formative-assessment", "Formative Assessment", index, lessonSummary),
+      createAddButton("create-weekly-plans-add-to-lesson-button-add-note", "Note", index, lessonSummary)
+    )
+
+    val child = dom.document.createElement("div")
+    child.innerHTML = theDiv.toString()
+    dom.document.getElementById("view-single-lesson-plan-modal-body").appendChild(child)
+    clickingOnAddToLessonsButtons()
+    addLessonPlanDetailsFromSavedStatus()
+  }
+
+
+  private def buildGroupsMapForSubject(): Unit = {
+    groupIdsToName.clear()
+
+    val classDetailsPickled = dom.window.localStorage.getItem("classDetailsPickled")
+    import upickle.default._
+    val classDetails: ClassDetails = read[ClassDetails](PlanningHelper.decodeAnyNonFriendlyCharacters(classDetailsPickled))
+
+    for (group <- classDetails.getSubjectGroups(maybeSelectedSubject.getOrElse("NO_SUBJECT"))) {
+        groupIdsToName = groupIdsToName + (group.groupId.id  -> group.groupName.name)
+    }
+
+    global.console.log(s"Groups for subject built : ${groupIdsToName.toString}")
   }
 
   def buildNoLessonModalHtml(subject: String): Unit = {
@@ -66,11 +120,13 @@ object WeeklyPlanningJsScreen extends WeeklyPlansCommon {
       lessonPlanDiv.addEventListener("click", (e: dom.Event) => {
         maybeSelectedPlanningArea = None
         maybeSelectedSubject = None
+        maybeSelectedSubjectAdditionalInfo = None
         maybeSelectedSubjectStartTimeIso = None
         maybeSelectedSubjectDayOfTheWeek = None
 
         maybeSelectedPlanningArea = Some(lessonPlanDiv.getAttribute("data-planning-area"))
         maybeSelectedSubject = Some(lessonPlanDiv.getAttribute("data-subject-name"))
+        maybeSelectedSubjectAdditionalInfo = Some(lessonPlanDiv.getAttribute("data-subject-additional-info"))
         maybeSelectedSubjectStartTimeIso = Some(lessonPlanDiv.getAttribute("data-lesson-start-time"))
         maybeSelectedSubjectEndTimeIso = Some(lessonPlanDiv.getAttribute("data-lesson-end-time"))
         maybeSelectedSubjectDayOfTheWeek = Some(lessonPlanDiv.getAttribute("data-lesson-day-of-the-week"))
@@ -80,12 +136,14 @@ object WeeklyPlanningJsScreen extends WeeklyPlansCommon {
         val fullWeeklyPlanOfLessons: FullWeeklyPlanOfLessons = read[FullWeeklyPlanOfLessons](PlanningHelper.decodeAnyNonFriendlyCharacters(fullWeeklyPlanOfLessonsPickled))
 
         dom.document.getElementById("view-single-lesson-plan-subject-name").innerHTML = s"${maybeSelectedSubject.getOrElse("")}"
+        dom.document.getElementById("view-single-lesson-plan-subject-additional-info").innerHTML = s"${maybeSelectedSubjectAdditionalInfo.getOrElse("")}"
         dom.document.getElementById("view-single-lesson-plan-day-of-week").innerHTML = s"${maybeSelectedSubjectDayOfTheWeek.getOrElse("").toLowerCase.capitalize},"
         dom.document.getElementById("view-single-lesson-plan-start-time").innerHTML = s"${maybeSelectedSubjectStartTimeIso.getOrElse("")}"
         dom.document.getElementById("view-single-lesson-plan-end-time").innerHTML = s"${maybeSelectedSubjectEndTimeIso.getOrElse("")}"
 
         if (fullWeeklyPlanOfLessons.subjectToWeeklyPlanOfSubject.isDefinedAt(maybeSelectedPlanningArea.getOrElse("NO_PLANNING_AREA"))) {
           val selectedLessonPlan = findSelectedLessonPlan(fullWeeklyPlanOfLessons.subjectToWeeklyPlanOfSubject(maybeSelectedPlanningArea.getOrElse("NO_PLANNING_AREA")))
+          buildGroupsMapForSubject()
           buildLessonModalHtml(selectedLessonPlan)
         } else {
           buildNoLessonModalHtml(maybeSelectedPlanningArea.getOrElse("NO_PLANNING_AREA"))

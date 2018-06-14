@@ -185,6 +185,29 @@ ul {
     height: 90%;
 }
 
+#view-single-lesson-plan-subject-name {
+    margin-right: 4rem;
+}
+
+#view-single-lesson-plan-subject-additional-info {
+    font-size: smaller;
+    font-style: italic;
+}
+
+#view-single-lesson-plan-modal-body fieldset {
+    padding-top: 0.5rem;
+    padding-bottom: 1rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    border: 1px solid #3c7b9b;
+}
+
+#view-single-lesson-plan-modal-body  legend {
+    font-size: smaller;
+    color: #3c7b9b;
+}
+
+
 @media (max-width: 990px) {
     .weekly-plan-dayoftheweek {
         word-wrap: break-word;
