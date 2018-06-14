@@ -1,25 +1,34 @@
 package timetoteach.planning.weekly
 
-import duplicate.model.planning.LessonSummary
+import duplicate.model.planning.{AttributeRowKey, FullWeeklyPlanOfLessons, LessonPlan, LessonSummary}
 import org.scalajs.dom
 import org.scalajs.dom.html.{Div, Input}
 import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement, HTMLElement}
 import scalatags.JsDom
 import scalatags.JsDom.TypedTag
 import scalatags.JsDom.all.{`class`, attr, div, _}
-import timetoteach.planning.weekly.CreatePlanForTheWeekJsScreen._
+import shared.util.PlanningHelper
+import timetoteach.planning.weekly.CreatePlanForTheWeekJsScreen.{addAttributeRow, buttonElementClassType, getDayOfWeek}
 
 import scala.scalajs.js
 import scala.scalajs.js.Dynamic
-import scala.scalajs.js.Dynamic.global
 
 trait WeeklyPlansCommon {
+
+  private[weekly] var maybeSelectedPlanningArea: Option[String] = None
+  private[weekly] var maybeSelectedSubject: Option[String] = None
+  private[weekly] var maybeSelectedSubjectAdditionalInfo: Option[String] = None
+  private[weekly] var maybeSelectedSubjectStartTimeIso: Option[String] = None
+  private[weekly] var maybeSelectedSubjectEndTimeIso: Option[String] = None
+  private[weekly] var maybeSelectedSubjectDayOfTheWeek: Option[String] = None
+
   var defaultBackgroundColorOfWeekMondayButton = "ghostwhite"
   var defaultBorderColorOfWeekMondayButton = "grey"
   var defaultColorOfWeekMondayButton = "grey"
   var defaultFontSize = "0.7rem"
 
   private[weekly] var groupIdsToName: scala.collection.mutable.Map[String, String] = scala.collection.mutable.Map.empty
+  def getGroupIdsToName: scala.collection.mutable.Map[String, String]
 
   private[weekly] var currentlySelectMondayStartOfWeekDate: Option[String] = None
 
@@ -39,25 +48,27 @@ trait WeeklyPlansCommon {
       index = index + 1
     }
     if (currentlySelectMondayStartOfWeekDate.isDefined) {
-      global.console.log(s"Setting current Monday to ${currentlySelectMondayStartOfWeekDate.get}")
+      Dynamic.global.console.log(s"Setting current Monday to ${currentlySelectMondayStartOfWeekDate.get}")
       updateDaysOfTheWeeksDate()
     } else {
-      global.console.log(s"ERROR: There looks to be no Monday set!")
+      Dynamic.global.console.log(s"ERROR: There looks to be no Monday set!")
     }
   }
 
   private[weekly] def addAttributeRow(buttonElementId: String,
-                              buttonNameType: String,
-                              applyToGroups: Boolean,
-                              tabIndex: String,
-                              attributeText: Option[String],
-                              maybeGroupIds: Option[List[String]],
-                              maybeOrderNumber: Option[Int]
-                             ): Unit = {
+                                      buttonNameType: String,
+                                      applyToGroups: Boolean,
+                                      tabIndex: String,
+                                      attributeText: Option[String],
+                                      maybeGroupIds: Option[List[String]],
+                                      maybeOrderNumber: Option[Int]
+                                     ): Unit = {
+
+    Dynamic.global.console.log(s"<><> groupIdsToName : ${getGroupIdsToName.toString()}")
 
     val groupNamesToGroupIds = for {
-      groupId <- groupIdsToName.keys
-      groupName = groupIdsToName(groupId)
+      groupId <- getGroupIdsToName.keys
+      groupName = getGroupIdsToName(groupId)
       if groupName != null
       uniqIdForRow = java.util.UUID.randomUUID().toString
     } yield (groupName, groupId, uniqIdForRow)
@@ -117,6 +128,8 @@ trait WeeklyPlansCommon {
 
     }
 
+    Dynamic.global.console.log(s"groupNamesToGroupIds : ${groupNamesToGroupIds.toString()}")
+
     val groupsAsCheckboxes: Seq[TypedTag[Div]] = {
       for (groupNameToGroupId <- groupNamesToGroupIds) yield createGroupInputDiv(groupNameToGroupId)
     }.toSeq
@@ -174,7 +187,7 @@ trait WeeklyPlansCommon {
     deleteSingleRowFromClassPlan()
   }
 
-  private [weekly] def deleteSingleRowFromClassPlan(): Unit = {
+  private[weekly] def deleteSingleRowFromClassPlan(): Unit = {
     val deleteThisGroupButton = dom.document.getElementsByClassName("create-weekly-plans-lesson-modal-delete-this-row")
     val nodeListSize = deleteThisGroupButton.length
     var index = 0
@@ -196,13 +209,35 @@ trait WeeklyPlansCommon {
 
 
   private[weekly] def getOrderNumber(maybeOrderNumber: Option[Int],
-                             tabIndex: Int,
-                             inputAttributeClass: String
-                            ): Int = {
+                                     tabIndex: Int,
+                                     inputAttributeClass: String
+                                    ): Int = {
     maybeOrderNumber match {
       case Some(orderNumber) => orderNumber
       case None => generateOrderNumber(tabIndex, inputAttributeClass)
     }
+  }
+
+  def generateOrderNumber(tabIndexToSearch: Int,
+                          inputAttributeClass: String): Int = {
+    val attributeClassInputs = dom.document.getElementsByClassName(inputAttributeClass)
+    val nodeListSize = attributeClassInputs.length
+
+    var currentOrderNumMax = 0
+    var index = 0
+    while (index < nodeListSize) {
+      val element = attributeClassInputs(index).asInstanceOf[HTMLElement]
+      val tabIndexOnElement = element.getAttribute("data-tab-index").toInt
+      if (tabIndexOnElement == tabIndexToSearch) {
+        val orderNum = element.getAttribute("data-attribute-order-value").toInt
+        if (orderNum > currentOrderNumMax) {
+          currentOrderNumMax = orderNum
+        }
+      }
+      index = index + 1
+    }
+
+    currentOrderNumMax + 1
   }
 
 
@@ -284,7 +319,7 @@ trait WeeklyPlansCommon {
 
       addActivityButton.addEventListener("click", (e: dom.Event) => {
         Dynamic.global.console.log(s"groups: ${
-          groupIdsToName.keys.toString()
+          getGroupIdsToName.keys.toString()
         }")
 
         val tabIndex = addActivityButton.getAttribute("data-tab-index")
@@ -339,7 +374,7 @@ trait WeeklyPlansCommon {
         jsDateOfMonday.setDate(jsDateOfMonday.getDate() + 4)
         s"${jsDateOfMonday.getDate()} ${getMonthFromNumber(jsDateOfMonday.getMonth())}"
       case somethingElse =>
-        global.console.log(s"ERROR: Do not recognise day '$dayOfWeek'")
+        Dynamic.global.console.log(s"ERROR: Do not recognise day '$dayOfWeek'")
         ""
     }
   }
@@ -359,7 +394,7 @@ trait WeeklyPlansCommon {
       case 10 => "November"
       case 11 => "December"
       case somethingElse =>
-        global.console.log(s"ERROR: Do not recognise month code '${month}'")
+        Dynamic.global.console.log(s"ERROR: Do not recognise month code '${month}'")
         ""
     }
   }
@@ -427,6 +462,100 @@ trait WeeklyPlansCommon {
       buttonElement.style.color = defaultBorderColorOfWeekMondayButton
       buttonElement.style.fontSize = defaultFontSize
       buttonElement.style.fontWeight = "normal"
+      index = index + 1
+    }
+  }
+
+  private[weekly] def addLessonPlanDetailsFromSavedStatus(): Unit = {
+    val fullWeeklyPlanOfLessonsPickled = dom.window.localStorage.getItem("fullWeeklyPlanOfLessonsPickled")
+    Dynamic.global.console.log("addLessonPlanDetailsFromSavedStatus 1")
+    import upickle.default._
+    Dynamic.global.console.log("addLessonPlanDetailsFromSavedStatus 2")
+    val fullWeeklyPlanOfLessons: FullWeeklyPlanOfLessons = read[FullWeeklyPlanOfLessons](PlanningHelper.decodeAnyNonFriendlyCharacters(fullWeeklyPlanOfLessonsPickled))
+    Dynamic.global.console.log(s"addLessonPlanDetailsFromSavedStatus 3a : ${fullWeeklyPlanOfLessons.subjectToWeeklyPlanOfSubject.keys.toString()}")
+    Dynamic.global.console.log(s"addLessonPlanDetailsFromSavedStatus 3b : ${maybeSelectedPlanningArea.getOrElse("Nope")}")
+
+    if (fullWeeklyPlanOfLessons.subjectToWeeklyPlanOfSubject.isDefinedAt(maybeSelectedPlanningArea.getOrElse("Nope"))) {
+      Dynamic.global.console.log("addLessonPlanDetailsFromSavedStatus 4")
+      val weeklyPlanOfSubject = fullWeeklyPlanOfLessons.subjectToWeeklyPlanOfSubject(maybeSelectedPlanningArea.getOrElse("Nope"))
+      for (lesson: LessonPlan <- weeklyPlanOfSubject.lessons) {
+        addAttributeDetailsForGroup(lesson.subject, lesson.lessonDateIso, lesson.startTimeIso, "Activity", lesson.activitiesPerGroup)
+        addAttributeDetails(lesson.subject, lesson.lessonDateIso, lesson.startTimeIso, "Resource", lesson.resources)
+        addAttributeDetailsForGroup(lesson.subject, lesson.lessonDateIso, lesson.startTimeIso, "Learning Intention", lesson.learningIntentionsPerGroup)
+        addAttributeDetailsForGroup(lesson.subject, lesson.lessonDateIso, lesson.startTimeIso, "Success Criteria", lesson.successCriteriaPerGroup)
+        addAttributeDetails(lesson.subject, lesson.lessonDateIso, lesson.startTimeIso, "Plenary", lesson.plenary)
+        addAttributeDetailsForGroup(lesson.subject, lesson.lessonDateIso, lesson.startTimeIso, "Formative Assessment", lesson.formativeAssessmentPerGroup)
+        addAttributeDetails(lesson.subject, lesson.lessonDateIso, lesson.startTimeIso, "Note", lesson.notesBefore)
+      }
+    }
+  }
+
+  def addAttributeDetailsForGroup(subject: String, lessonDate: String, lessonStartTime: String, attributeType: String,
+                                  attributesPerGroup: Map[AttributeRowKey, List[String]]): Unit = {
+    val allPlanLessonsButtons = dom.document.getElementsByClassName("create-weekly-plans-add-to-lesson-button")
+    val nodeListSize = allPlanLessonsButtons.length
+    var index = 0
+    while (index < nodeListSize) {
+      val buttonElement = allPlanLessonsButtons(index).asInstanceOf[HTMLButtonElement]
+      val dataSubject = buttonElement.getAttribute("data-subject-name")
+      val dataLessonStartTime = buttonElement.getAttribute("data-lesson-start-time")
+      val dataLessonDayOfWeek = buttonElement.getAttribute("data-lesson-day-of-the-week")
+      val dataAttributeType = buttonElement.getAttribute("data-attribute-type")
+      val jsLessonDate = new js.Date(lessonDate)
+
+      if (dataSubject == subject &&
+        dataLessonStartTime == lessonStartTime &&
+        dataLessonDayOfWeek == getDayOfWeek(jsLessonDate) &&
+        dataAttributeType == attributeType &&
+        attributesPerGroup.nonEmpty
+      ) {
+
+        for (attrValue <- attributesPerGroup.keys.toList.sortBy(elem => elem.attributeOrderNumber)) {
+          val tabIndex = buttonElement.getAttribute("data-tab-index")
+          if(attributeType == "Activity"){
+            Dynamic.global.console.log(s"addAttributeDetailsForGroup 3 : ${tabIndex}")
+          }
+
+          addAttributeRow(
+            buttonElementClassType(dataAttributeType),
+            dataAttributeType,
+            true,
+            tabIndex,
+            Some(attrValue.attributeValue),
+            Some(attributesPerGroup(attrValue)),
+            Some(attrValue.attributeOrderNumber)
+          )
+        }
+      }
+
+      index = index + 1
+    }
+  }
+
+  def addAttributeDetails(subject: String, lessonDate: String, lessonStartTime: String, attributeType: String, attributeValues: List[AttributeRowKey]): Unit = {
+    val allPlanLessonsButtons = dom.document.getElementsByClassName("create-weekly-plans-add-to-lesson-button")
+    val nodeListSize = allPlanLessonsButtons.length
+    var index = 0
+    while (index < nodeListSize) {
+      val buttonElement = allPlanLessonsButtons(index).asInstanceOf[HTMLButtonElement]
+      val dataSubject = buttonElement.getAttribute("data-subject-name")
+      val dataLessonStartTime = buttonElement.getAttribute("data-lesson-start-time")
+      val dataLessonDayOfWeek = buttonElement.getAttribute("data-lesson-day-of-the-week")
+      val dataAttributeType = buttonElement.getAttribute("data-attribute-type")
+      val jsLessonDate = new js.Date(lessonDate)
+
+      if (dataSubject == subject &&
+        dataLessonStartTime == lessonStartTime &&
+        dataLessonDayOfWeek == getDayOfWeek(jsLessonDate) &&
+        dataAttributeType == attributeType &&
+        attributeValues.nonEmpty
+      ) {
+        for (attrValue <- attributeValues.sortBy(elem => elem.attributeOrderNumber)) {
+          val tabIndex = buttonElement.getAttribute("data-tab-index")
+          addAttributeRow(buttonElementClassType(dataAttributeType), dataAttributeType, false, tabIndex, Some(attrValue.attributeValue), None, Some(attrValue.attributeOrderNumber))
+        }
+      }
+
       index = index + 1
     }
   }

@@ -3,23 +3,15 @@ package timetoteach.planning.weekly
 import duplicate.model.ClassDetails
 import duplicate.model.planning.{FullWeeklyPlanOfLessons, LessonPlan, LessonSummary, WeeklyPlanOfOneSubject}
 import org.scalajs.dom
-import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement, HTMLElement}
+import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement}
 import scalatags.JsDom.all.{div, id, _}
 import shared.util.PlanningHelper
-import timetoteach.planning.weekly.CreatePlanForTheWeekJsScreen.{addLessonPlanDetailsFromSavedStatus, groupIdsToName, isActive}
 
 import scala.scalajs.js
+import scala.scalajs.js.Dynamic
 import scala.scalajs.js.Dynamic.global
 
 object WeeklyPlanningJsScreen extends WeeklyPlansCommon {
-
-  private var maybeSelectedPlanningArea: Option[String] = None
-  private var maybeSelectedSubject: Option[String] = None
-  private var maybeSelectedSubjectAdditionalInfo: Option[String] = None
-  private var maybeSelectedSubjectStartTimeIso: Option[String] = None
-  private var maybeSelectedSubjectEndTimeIso: Option[String] = None
-  private var maybeSelectedSubjectDayOfTheWeek: Option[String] = None
-
 
   def loadJavascript(): Unit = {
     global.console.log("Loading Weekly Planning Javascript")
@@ -51,6 +43,7 @@ object WeeklyPlanningJsScreen extends WeeklyPlansCommon {
     val index = 0
     val lessonSummary = buildLessonSummary(maybeLessonPlan)
 
+
     val theDiv = div(id := s"view-single-lesson-plan-main-lesson-container")(
       createLessonDataDiv(lessonSummary, index),
       createAddButton("create-weekly-plans-add-to-lesson-button-add-activity", "Activity", index, lessonSummary),
@@ -66,9 +59,15 @@ object WeeklyPlanningJsScreen extends WeeklyPlansCommon {
     child.innerHTML = theDiv.toString()
     dom.document.getElementById("view-single-lesson-plan-modal-body").appendChild(child)
     clickingOnAddToLessonsButtons()
+    Dynamic.global.console.log(s"[][a] ${groupIdsToName.toString()}")
     addLessonPlanDetailsFromSavedStatus()
+    Dynamic.global.console.log(s"[][b] ${groupIdsToName.toString()}")
   }
 
+  override def getGroupIdsToName : scala.collection.mutable.Map[String, String] = {
+    global.console.log(s"!!!!!!!!!!!!!!!! Groups for subject built from Weekly Plan : ${groupIdsToName.toString}")
+    groupIdsToName
+  }
 
   private def buildGroupsMapForSubject(): Unit = {
     groupIdsToName.clear()
@@ -78,7 +77,7 @@ object WeeklyPlanningJsScreen extends WeeklyPlansCommon {
     val classDetails: ClassDetails = read[ClassDetails](PlanningHelper.decodeAnyNonFriendlyCharacters(classDetailsPickled))
 
     for (group <- classDetails.getSubjectGroups(maybeSelectedSubject.getOrElse("NO_SUBJECT"))) {
-        groupIdsToName = groupIdsToName + (group.groupId.id  -> group.groupName.name)
+      groupIdsToName = groupIdsToName + (group.groupId.id -> group.groupName.name)
     }
 
     global.console.log(s"Groups for subject built : ${groupIdsToName.toString}")
@@ -130,6 +129,7 @@ object WeeklyPlanningJsScreen extends WeeklyPlansCommon {
         maybeSelectedSubjectStartTimeIso = Some(lessonPlanDiv.getAttribute("data-lesson-start-time"))
         maybeSelectedSubjectEndTimeIso = Some(lessonPlanDiv.getAttribute("data-lesson-end-time"))
         maybeSelectedSubjectDayOfTheWeek = Some(lessonPlanDiv.getAttribute("data-lesson-day-of-the-week"))
+        buildGroupsMapForSubject()
 
         val fullWeeklyPlanOfLessonsPickled = dom.window.localStorage.getItem("fullWeeklyPlanOfLessonsPickled")
         import upickle.default._
@@ -143,7 +143,6 @@ object WeeklyPlanningJsScreen extends WeeklyPlansCommon {
 
         if (fullWeeklyPlanOfLessons.subjectToWeeklyPlanOfSubject.isDefinedAt(maybeSelectedPlanningArea.getOrElse("NO_PLANNING_AREA"))) {
           val selectedLessonPlan = findSelectedLessonPlan(fullWeeklyPlanOfLessons.subjectToWeeklyPlanOfSubject(maybeSelectedPlanningArea.getOrElse("NO_PLANNING_AREA")))
-          buildGroupsMapForSubject()
           buildLessonModalHtml(selectedLessonPlan)
         } else {
           buildNoLessonModalHtml(maybeSelectedPlanningArea.getOrElse("NO_PLANNING_AREA"))
