@@ -146,7 +146,7 @@ trait PlanWriterDaoTermlyCurriculumSelectionHelper {
 
   //////////// Implementation ///////////////
 
-  private def createDocumentFromLessonPlan(tttUserId: String,
+  private[dao] def createDocumentFromLessonPlan(tttUserId: String,
                                            classId: String,
                                            lessonPlan: LessonPlan,
                                            today: LocalDate

@@ -3,13 +3,13 @@ package timetoteach.planning.weekly
 import duplicate.model.planning.{AttributeRowKey, FullWeeklyPlanOfLessons, LessonPlan, LessonSummary}
 import org.scalajs.dom
 import org.scalajs.dom.html.{Div, Input}
-import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement, HTMLElement}
+import org.scalajs.dom.raw.{HTMLButtonElement, HTMLDivElement, HTMLElement, HTMLInputElement}
 import scalatags.JsDom
 import scalatags.JsDom.TypedTag
 import scalatags.JsDom.all.{`class`, attr, div, _}
 import shared.util.PlanningHelper
-import timetoteach.planning.weekly.CreatePlanForTheWeekJsScreen.{addAttributeRow, buttonElementClassType, getDayOfWeek}
 
+import scala.collection.mutable.ListBuffer
 import scala.scalajs.js
 import scala.scalajs.js.Dynamic
 
@@ -26,6 +26,26 @@ trait WeeklyPlansCommon {
   var defaultBorderColorOfWeekMondayButton = "grey"
   var defaultColorOfWeekMondayButton = "grey"
   var defaultFontSize = "0.7rem"
+
+  private[weekly] def getIsoDate(weekStartIsoDate: String, dayOfWeek: String): String = {
+    val jsDate = new js.Date(weekStartIsoDate)
+    val date = dayOfWeek.toUpperCase match {
+      case "MONDAY" => jsDate
+      case "TUESDAY" =>
+        jsDate.setDate(jsDate.getDate() + 1)
+      case "WEDNESDAY" =>
+        jsDate.setDate(jsDate.getDate() + 2)
+      case "THURSDAY" =>
+        jsDate.setDate(jsDate.getDate() + 3)
+      case "FRIDAY" =>
+        jsDate.setDate(jsDate.getDate() + 4)
+      case somethingElse =>
+        Dynamic.global.console.log(s"ERROR: Do not recognise day '$dayOfWeek'")
+        jsDate
+    }
+    jsDate.toISOString().split("T")(0)
+  }
+
 
   private[weekly] var groupIdsToName: scala.collection.mutable.Map[String, String] = scala.collection.mutable.Map.empty
   def getGroupIdsToName: scala.collection.mutable.Map[String, String]
@@ -532,6 +552,19 @@ trait WeeklyPlansCommon {
     }
   }
 
+  def buttonElementClassType(buttonType: String): String = {
+    buttonType match {
+      case "Activity" => "create-weekly-plans-add-to-lesson-button-add-activity"
+      case "Resource" => "create-weekly-plans-add-to-lesson-button-add-resource"
+      case "Learning Intention" => "create-weekly-plans-add-to-lesson-button-add-learning-intention"
+      case "Success Criteria" => "create-weekly-plans-add-to-lesson-button-add-success-criteria"
+      case "Plenary" => "create-weekly-plans-add-to-lesson-button-add-plenary"
+      case "Formative Assessment" => "create-weekly-plans-add-to-lesson-button-add-formative-assessment"
+      case "Note" => "create-weekly-plans-add-to-lesson-button-add-note"
+      case _ => ""
+    }
+  }
+
   def addAttributeDetails(subject: String, lessonDate: String, lessonStartTime: String, attributeType: String, attributeValues: List[AttributeRowKey]): Unit = {
     val allPlanLessonsButtons = dom.document.getElementsByClassName("create-weekly-plans-add-to-lesson-button")
     val nodeListSize = allPlanLessonsButtons.length
@@ -560,5 +593,96 @@ trait WeeklyPlansCommon {
     }
   }
 
+  private[weekly] def extractLessonAttributesWithGroups(attributeType: String, tabIndexToLookFor: Int): Map[AttributeRowKey, List[String]] = {
+    var activityToGroups = scala.collection.mutable.Map[AttributeRowKey, List[String]]()
+
+    val inputAttributes = dom.document.getElementsByClassName(s"input-attribute-${attributeType.replace(" ", "")}")
+    val nodeListSize = inputAttributes.length
+    var nodeIndex = 0
+    while (nodeIndex < nodeListSize) {
+      val inputLessonAttributes = inputAttributes(nodeIndex).asInstanceOf[HTMLInputElement]
+      val tabIndex = inputLessonAttributes.getAttribute("data-tab-index").toInt
+      if (tabIndex == tabIndexToLookFor) {
+        val activityText = inputLessonAttributes.value
+        val attributeOrderValue = inputLessonAttributes.getAttribute("data-attribute-order-value").toInt
+
+        val peerNodes = inputLessonAttributes.parentNode.childNodes
+        val peerNodeSize = peerNodes.length
+        var peerNodeIndex = 0
+        while (peerNodeIndex < peerNodeSize) {
+          val peerNode = peerNodes(peerNodeIndex).asInstanceOf[HTMLElement]
+          if (peerNode != null && peerNode.toString != "undefined" && peerNode.className.contains("form-row")) {
+            val groupIds: List[String] = extractGroupIds(peerNode)
+            activityToGroups += (
+              AttributeRowKey(activityText, attributeOrderValue) ->
+                groupIds)
+          } else {
+            activityToGroups += (AttributeRowKey(activityText, attributeOrderValue) -> Nil)
+          }
+          peerNodeIndex = peerNodeIndex + 1
+        }
+      }
+      nodeIndex = nodeIndex + 1
+    }
+
+    Dynamic.global.console.log(s"Text Values for ${attributeType} Map == ${activityToGroups.toString}")
+    activityToGroups.toMap
+  }
+
+  private def extractGroupIds(peerNode: HTMLElement): List[String] = {
+    var groupIds = new ListBuffer[String]()
+
+    val divLevelNodes = peerNode.childNodes
+    val divLevelNodesSize = divLevelNodes.length
+    var divLevelNodeIdx = 0
+    while (divLevelNodeIdx < divLevelNodesSize) {
+      val theNode = divLevelNodes(divLevelNodeIdx).asInstanceOf[HTMLElement]
+      if (theNode.className.contains("create-weekly-plans-lesson-modal-select-groups")) {
+
+        ////////////////////////////////////////////////////////////////////////////////
+        val inputLevelNodes = theNode.childNodes
+        val inputLevelNodesSize = inputLevelNodes.length
+        var inputLevelNodeIdx = 0
+        while (inputLevelNodeIdx < inputLevelNodesSize) {
+          val theNode = inputLevelNodes(inputLevelNodeIdx).asInstanceOf[HTMLElement]
+          if (theNode.className.contains("group-on-off")) {
+            val groupInputElement = theNode.asInstanceOf[HTMLInputElement]
+            if (groupInputElement.checked) {
+              val groupId = groupInputElement.getAttribute("data-group-id")
+              Dynamic.global.console.log(s"Adding group id $groupId")
+              groupIds += groupId
+            }
+          }
+          inputLevelNodeIdx = inputLevelNodeIdx + 1
+        }
+        ////////////////////////////////////////////////////////////////////////////////
+
+      }
+      divLevelNodeIdx = divLevelNodeIdx + 1
+    }
+
+    groupIds.toList
+  }
+
+
+  private[weekly] def extractLessonAttributes(attributeType: String, tabIndexToLookFor: Int): List[AttributeRowKey] = {
+    var lessonAttributes = new ListBuffer[AttributeRowKey]()
+
+    val inputAttributes = dom.document.getElementsByClassName(s"input-attribute-${attributeType.replace(" ", "")}")
+    val nodeListSize = inputAttributes.length
+    var nodeIndex = 0
+    while (nodeIndex < nodeListSize) {
+      val inputLessonAttributes = inputAttributes(nodeIndex).asInstanceOf[HTMLInputElement]
+      val tabIndex = inputLessonAttributes.getAttribute("data-tab-index").toInt
+      if (tabIndex == tabIndexToLookFor) {
+        val attributeText = inputLessonAttributes.value
+        val attributeOrderValue = inputLessonAttributes.getAttribute("data-attribute-order-value").toInt
+        lessonAttributes += AttributeRowKey(attributeText, attributeOrderValue)
+      }
+      nodeIndex = nodeIndex + 1
+    }
+
+    lessonAttributes.toList
+  }
 
 }

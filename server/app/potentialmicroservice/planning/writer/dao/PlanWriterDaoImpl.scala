@@ -5,8 +5,9 @@ import java.time.LocalDate
 import controllers.time.SystemTime
 import dao.MongoDbConnection
 import duplicate.model.esandos.{CompletedEsAndOsByGroup, NotStartedEsAndOsByGroup}
-import duplicate.model.planning.WeeklyPlanOfOneSubject
+import duplicate.model.planning.{LessonPlan, WeeklyPlanOfOneSubject}
 import javax.inject.{Inject, Singleton}
+import models.timetoteach.TimeToTeachUserId
 import models.timetoteach.planning.{CurriculumAreaTermlyPlan, TermlyCurriculumSelection}
 import org.mongodb.scala.{Completed, Document, MongoCollection}
 import play.api.Logger
@@ -99,7 +100,7 @@ class PlanWriterDaoImpl @Inject()(
         s"${completedEsOsBenchiesAsDocument.toString()} :: " +
         s"${notStartedEsOsBenchiesAsDocument.toString()} :: " +
         s"${selectedEsOsBenchiesAsDocument.toString} ")
-    } yield (completedEsOsBenchiesAsDocument, notStartedEsOsBenchiesAsDocument, selectedEsOsBenchiesAsDocument )
+    } yield (completedEsOsBenchiesAsDocument, notStartedEsOsBenchiesAsDocument, selectedEsOsBenchiesAsDocument)
 
     val futureCompletesAndNotStartedInserts = {
       for {
@@ -111,6 +112,28 @@ class PlanWriterDaoImpl @Inject()(
       futures1 <- eventualInserts
       futures2 <- futureCompletesAndNotStartedInserts
     } yield futures1 ::: futures2
+  }
+
+  override def saveSingleLessonPlan(
+                                     lessonPlan: LessonPlan,
+                                     tttUserId: TimeToTeachUserId,
+                                     classId: String
+                                   ): Future[List[Completed]] = {
+    val eventualInserts = for {
+      today <- getSystemDate
+      lessonPlanDoc = createDocumentFromLessonPlan(
+        tttUserId.value,
+        classId,
+        lessonPlan,
+        today
+      )
+      eventualLessonPlanInsert = insertWeeklyLessonsDocs(List(lessonPlanDoc))
+      lessonPlanInserts <- eventualLessonPlanInsert
+    } yield lessonPlanInserts
+
+    for {
+      futures1 <- eventualInserts
+    } yield futures1
   }
 
 }

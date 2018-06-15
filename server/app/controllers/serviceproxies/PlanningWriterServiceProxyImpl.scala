@@ -1,8 +1,9 @@
 package controllers.serviceproxies
 
 import duplicate.model.esandos.{CompletedEsAndOsByGroup, NotStartedEsAndOsByGroup}
-import duplicate.model.planning.WeeklyPlanOfOneSubject
+import duplicate.model.planning.{LessonPlan, WeeklyPlanOfOneSubject}
 import javax.inject.{Inject, Singleton}
+import models.timetoteach.TimeToTeachUserId
 import models.timetoteach.planning.{CurriculumAreaTermlyPlan, TermlyCurriculumSelection}
 import org.mongodb.scala.Completed
 import potentialmicroservice.planning.writer.PlanningWriterService
@@ -31,5 +32,14 @@ class PlanningWriterServiceProxyImpl @Inject()(planningWriterService: PlanningWr
       notStartedEsOsBenchies
     )
   }
+
+  override def saveSingleLessonPlan(
+                            lessonPlan: LessonPlan,
+                            tttUserId: TimeToTeachUserId,
+                            classId: String
+                          ): Future[List[Completed]] = {
+    planningWriterService.saveSingleLessonPlan(lessonPlan, tttUserId, classId)
+  }
+
 
 }

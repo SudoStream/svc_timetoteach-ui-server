@@ -8,7 +8,7 @@ import controllers.time.SystemTime
 import curriculum.scotland.EsOsAndBenchmarksBuilderImpl
 import duplicate.model.ClassDetails
 import duplicate.model.esandos.{CompletedEsAndOsByGroup, CompletedEsAndOsByGroupBySubject, NotStartedEsAndOsByGroup, StartedEsAndOsByGroupBySubject}
-import duplicate.model.planning.{FullWeeklyPlanOfLessons, LessonsThisWeek, WeeklyPlanOfOneSubject}
+import duplicate.model.planning.{FullWeeklyPlanOfLessons, LessonPlan, LessonsThisWeek, WeeklyPlanOfOneSubject}
 import io.sudostream.timetoteach.messages.systemwide.model.UserPreferences
 import javax.inject.{Inject, Singleton}
 import models.timetoteach.classtimetable.SchoolDayTimes
@@ -52,6 +52,17 @@ class WeeklyPlanningController @Inject()(
     schoolDayEnds = LocalTime.of(15, 0)
   )
 
+  val singleLessonPlanForm = Form(
+    mapping(
+      "singleLessonPlanPickled" -> text,
+      "tttUserId" -> text
+    )(SingleLessonPlanJson.apply)(SingleLessonPlanJson.unapply)
+  )
+
+  case class SingleLessonPlanJson(
+                                   singleLessonPlanPickled: String,
+                                   tttUserId: String
+                                 )
 
   val subjectWeeklyPlansToSaveForm = Form(
     mapping(
@@ -251,7 +262,6 @@ class WeeklyPlanningController @Inject()(
     ))
   }
 
-
   def savePlanForTheWeek(classId: String): Action[AnyContent] = Action.async { implicit request =>
     logger.debug(s"savePlanForTheWeek1 : ${subjectWeeklyPlansToSaveForm.bindFromRequest.toString}")
     val subjectWeeklyPlans = subjectWeeklyPlansToSaveForm.bindFromRequest.get
@@ -286,6 +296,31 @@ class WeeklyPlanningController @Inject()(
       )
       theFutures <- savedPlanFutures
     } yield Ok("Saved Weekly Plan Ok")
+  }
+
+  def saveSingleLessonPlan(classId: String): Action[AnyContent] = Action.async { implicit request =>
+    logger.debug(s"saveSingleLessonPlan 1 : ${singleLessonPlanForm.bindFromRequest.toString}")
+    val singleLessonPlanFromRequest = singleLessonPlanForm.bindFromRequest.get
+    logger.debug("saveSingleLessonPlan 2")
+
+    import upickle.default._
+    val lessonPlan: LessonPlan = read[LessonPlan](
+      PlanningHelper.decodeAnyNonFriendlyCharacters(singleLessonPlanFromRequest.singleLessonPlanPickled))
+    logger.debug(s"Lesson Plan Unpickled = ${lessonPlan.toString}")
+
+    val tttUserId = TimeToTeachUserId(singleLessonPlanFromRequest.tttUserId)
+
+    val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(tttUserId)
+
+    for {
+      classes <- eventualClasses
+      classDetailsList = classes.filter(theClass => theClass.id.id == classId)
+      maybeClassDetails: Option[ClassDetails] = classDetailsList.headOption
+      if maybeClassDetails.isDefined
+      classDetails = maybeClassDetails.get
+      savedPlanFutures = planningWriterService.saveSingleLessonPlan(lessonPlan, tttUserId, classId)
+      theFutures <- savedPlanFutures
+    } yield Ok("Saved Single Lesson Plan Ok")
   }
 
 
