@@ -13,6 +13,7 @@ import io.sudostream.timetoteach.messages.systemwide.model.UserPreferences
 import javax.inject.{Inject, Singleton}
 import models.timetoteach.classtimetable.SchoolDayTimes
 import models.timetoteach.planning.pdf.CurriculumAreaTermlyPlanForPdfBuilder
+import models.timetoteach.term.SchoolTerm
 import models.timetoteach.{ClassId, CookieNames, TimeToTeachUserId}
 import play.api.Logger
 import play.api.data.Form
@@ -102,7 +103,7 @@ class WeeklyPlanningController @Inject()(
     route
   }
 
-  def weeklyViewOfWeeklyPlanning(classId: String, mondayDateOfWeekIso: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest =>
+  def weeklyViewOfWeeklyPlanning(classId: String, dateToViewIso: String): Action[AnyContent] = deadbolt.SubjectPresent()() { authRequest =>
     val userPictureUri = getCookieStringFromRequest(CookieNames.socialNetworkPicture, authRequest)
     val userFirstName = getCookieStringFromRequest(CookieNames.socialNetworkGivenName, authRequest)
     val userFamilyName = getCookieStringFromRequest(CookieNames.socialNetworkFamilyName, authRequest)
@@ -110,6 +111,8 @@ class WeeklyPlanningController @Inject()(
     val eventualClasses = classTimetableReaderProxy.extractClassesAssociatedWithTeacher(TimeToTeachUserId(tttUserId))
     val futureSchoolDayTimes: Future[SchoolDayTimes] = getSchoolDayTimes(tttUserId)
     val eventualTodaysDate = systemTime.getToday
+
+    val mondayStartOfWeekDateIso = SchoolTerm.findNearestPreviousMonday(LocalDate.parse(dateToViewIso))
 
     for {
       classes <- eventualClasses
@@ -135,7 +138,7 @@ class WeeklyPlanningController @Inject()(
       futureMaybefullWeeklyPlanOfLessons = planningReaderService.retrieveFullWeekOfLessons(
         TimeToTeachUserId(tttUserId),
         ClassId(classId),
-        mondayDateOfWeekIso
+        mondayStartOfWeekDateIso.toString
       )
       fullWeeklyPlanOfLessons: FullWeeklyPlanOfLessons <- futureMaybefullWeeklyPlanOfLessons
       fullWeeklyPlanOfLessonsPickled = PlanningHelper.encodeAnyJawnNonFriendlyCharacters(write[FullWeeklyPlanOfLessons](fullWeeklyPlanOfLessons))
@@ -150,7 +153,7 @@ class WeeklyPlanningController @Inject()(
       schoolDayTimes,
       maybeAvroClassTimetable.get,
       maybeSchoolTerm.get,
-      maybeSchoolTerm.get.weekNumberForGivenDate(LocalDate.parse(mondayDateOfWeekIso)),
+      maybeSchoolTerm.get.weekNumberForGivenDate(LocalDate.parse(dateToViewIso)),
       todaysDate,
       fullWeeklyPlanOfLessons,
       fullWeeklyPlanOfLessonsPickled,

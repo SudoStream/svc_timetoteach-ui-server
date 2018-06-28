@@ -1,0 +1,205 @@
+@import curriculum.scotland.EsOsAndBenchmarksBuilderImpl
+@import io.sudostream.timetoteach.messages.scottish.ScottishCurriculumPlanningArea
+@import io.sudostream.timetoteach.messages.systemwide.model.User
+@import models.timetoteach.planning.ScottishCurriculumPlanningAreaWrapper
+@import models.timetoteach.planning.pdf.CurriculumAreaTermlyPlanForPdfWrapper
+@import models.timetoteach.term.{SchoolTerm, SchoolTermName}
+@import duplicate.model.planning.FullWeeklyPlanOfLessons
+@import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.ClassTimetable
+@import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.sessions.SessionBoundaryType
+@import io.sudostream.timetoteach.messages.systemwide.model.classtimetable.sessions.SessionName
+
+@(classDetails: duplicate.model.ClassDetails,
+        schoolTerm: SchoolTerm,
+        todaysDatePretty: String,
+        teachers: List[User],
+        thisWeekIsoDate: String,
+        fullWeeklyPlanOfLessons: FullWeeklyPlanOfLessons,
+        classTimetable: ClassTimetable
+)
+
+@splitCamel(s: String) = {
+@s.replaceAll(
+    String.format("%s|%s|%s",
+        "(?<=[A-Z])(?=[A-Z][a-z])",
+        "(?<=[^A-Z])(?=[A-Z])",
+        "(?<=[A-Za-z])(?=[^A-Za-z])"
+    ),
+    " "
+).replaceAll("  ", " ").replace("Session", "")
+}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>View Weekly Plan</title>
+        <meta charset="utf-8">
+        <style type="text/css">
+                @@page {
+                    size: A3 landscape;
+                }
+
+                li {
+                    list-style-type: none;
+                }
+
+                body {
+                    font-size: 10px;
+                }
+
+                table {
+                    border-collapse: collapse;
+                    width: 100%;
+                }
+
+                .main-table th, .main-table td {
+                    text-align: left;
+                    padding: 8px;
+                }
+
+                .main-table th {
+                    background-color: #718FA9;
+                    color: #f7f7f7;
+                }
+
+                .main-table tr:nth-child(even) {
+                    background-color: #f2f2f2;
+                }
+
+                .main-table tr:nth-child(odd) {
+                    background-color: #f7f7f7;
+                }
+
+                #view-class-plans-termly-plan-header {
+                    margin-top: 15px;
+                    font-size: 12px;
+                }
+
+                .the-class-name {
+                    font-size: larger;
+                }
+
+                .ttt-owl-image {
+                    padding-left: 3px;
+                    padding-right: 3px;
+                }
+
+                .make-float-right {
+                    display: inline-flex;
+                    float: right;
+                }
+
+                .make-float-left {
+                    display: inline-flex;
+                    float: left;
+                }
+
+                .message {
+                    margin-top: 25px;
+                    margin-bottom: 25px;
+                }
+
+                .new-curriculum-area {
+                    padding: 5px;
+                    margin-bottom: 80px;
+                    margin-top: 40px;
+                }
+
+                .single-benchmark {
+                    margin-top: 8px;
+                    margin-bottom: 8px;
+                }
+
+                .single-benchmark-ul li {
+                    list-style-type: disc;
+                }
+
+                .single-eando-code {
+                    margin-top: 8px;
+                    margin-bottom: 8px;
+                }
+
+                .new-group {
+                    margin-top: 40px;
+                }
+
+                footer {
+                    page-break-after: always;
+                }
+
+                .subsection-header {
+                    background-color: white;
+                    /*font-weight: bold;*/
+                }
+
+                #subsection-header-div {
+                    padding-top: 20px;
+                }
+
+                .the-main-termly-plan-header {
+                    font-size: larger;
+                }
+
+                .new-curriculum-area-header {
+                    /*font-size: larger;*/
+                }
+
+                .date-stamp {
+                    font-size: xx-small;
+                }
+        </style>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+    </head>
+
+    <h6 class="text-muted">
+        <span class="make-float-left">
+            Time To Teach
+            <img class="ttt-owl-image" src="public/icons/ttt_owl.png" alt="ttt owl" height="16">
+            <span class="ttt-url"><small>www.timetoteach.zone</small></span>
+        </span>
+        <div class="text-center text-primary the-main-termly-plan-header">
+            <h1>Weekly Plan for @thisWeekIsoDate
+                <span class="text-muted make-float-right">
+                    <div class="date-stamp">
+                        <small>created : @{
+                            todaysDatePretty
+                        }</small>
+                    </div>
+                </span>
+            </h1>
+        </div>
+    </h6>
+
+    @for((schoolTimeBoundary, index) <- classTimetable.schoolTimes.schoolSessionBoundaries.sortBy(time => time.sessionBoundary.boundaryStartTime.timeIso8601).zipWithIndex) {
+        @if(schoolTimeBoundary.sessionBoundary.boundaryType == SessionBoundaryType.START_OF_TEACHING_SESSION) {
+            <th scope="col" >
+                <div class="text-center">@splitCamel(schoolTimeBoundary.sessionBoundary.sessionName.getOrElse(SessionName("")).value)</div>
+                <div class="row">
+                    <div class="col-auto mr-auto">
+                        <small class="weekly-planning-lesson-start-time">@schoolTimeBoundary.sessionBoundary.boundaryStartTime.timeIso8601</small>
+                    </div>
+
+                    <div class="col-auto ml-auto">
+                        <small class="weekly-planning-lesson-end-time">
+                        @{
+                            classTimetable.schoolTimes.schoolSessionBoundaries.sortBy(time => time.sessionBoundary.boundaryStartTime.timeIso8601).toList(index + 1).sessionBoundary.boundaryStartTime.timeIso8601
+                        }
+                        </small>
+                    </div>
+                </div>
+            </th>
+            @if((index + 2) < classTimetable.schoolTimes.schoolSessionBoundaries.size) {
+                <th scope="col" ></th>
+            }
+        }
+    }
+
+
+@*//    @for(thing <- fullWeeklyPlanOfLessons.) {
+
+} *@
+
+
+
+
+</html>

@@ -91,6 +91,9 @@
         <button id="weekly-planning-plan-this-week-button" type="button" class="btn btn-primary btn-lg">
             Switch to Planning View
         </button>
+        <a id="download-weekly-plan-pdf" class="btn btn-lg btn-danger" role="button" target="_blank"
+        href="@controllers.planning.termly.routes.DownloadPdfController.downloadWeeklyPlanPdf(fullWeeklyPlanOfLessons.weekBeginningIsoDate, classDetails.id.id)">
+            Create Weekly Plan PDF</a>
     </div>
 
 

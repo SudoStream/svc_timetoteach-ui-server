@@ -7,7 +7,9 @@ case class FullWeeklyPlanOfLessons(
                                     classId: String,
                                     weekBeginningIsoDate: String,
                                     subjectToWeeklyPlanOfSubject: Map[String, WeeklyPlanOfOneSubject]
-                                  )
+                                  ) {
+
+}
 
 object FullWeeklyPlanOfLessons {
   implicit def rw: RW[FullWeeklyPlanOfLessons] = macroRW
