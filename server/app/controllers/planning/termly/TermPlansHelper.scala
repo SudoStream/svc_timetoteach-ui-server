@@ -66,7 +66,7 @@ object TermPlansHelper
       case "empty" => ScottishCurriculumPlanningArea.NONE
       case "golden-time"|"golden_time" => ScottishCurriculumPlanningArea.NONE
       case "other" => ScottishCurriculumPlanningArea.NONE
-      case "ict" => ScottishCurriculumPlanningArea.TECHNOLOGIES
+      case "ict" | "technologies" => ScottishCurriculumPlanningArea.TECHNOLOGIES
       case "music" | "expressive_arts__music" => ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__MUSIC
       case "drama" | "expressive_arts__drama" => ScottishCurriculumPlanningArea.EXPRESSIVE_ARTS__DRAMA
       case "health" => ScottishCurriculumPlanningArea.HEALTH_AND_WELLBEING
@@ -88,6 +88,7 @@ object TermPlansHelper
       case "hand-writing"|"hand_writing" => ScottishCurriculumPlanningArea.NONE
       case "geography" => ScottishCurriculumPlanningArea.SOCIAL_STUDIES
       case "history" => ScottishCurriculumPlanningArea.SOCIAL_STUDIES
+      case "social_studies" => ScottishCurriculumPlanningArea.SOCIAL_STUDIES
     }
   }
 

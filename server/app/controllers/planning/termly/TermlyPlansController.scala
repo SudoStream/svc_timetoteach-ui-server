@@ -396,7 +396,7 @@ class TermlyPlansController @Inject()(
 
   def savePlansForClass(classId: String, curriculumArea: String): Action[AnyContent] = Action.async { implicit request =>
     val termlyPlansForGroup = termlyPlansToSaveForm.bindFromRequest.get
-    logger.debug(s"Termly Plans Pickled = #${termlyPlansForGroup.groupTermlyPlansPickled}#")
+    logger.debug(s"   {{{savePlansForClass}}} Termly Plans Pickled = #${termlyPlansForGroup.groupTermlyPlansPickled}#")
 
     import upickle.default._
     val termlyPlansToSave: TermlyPlansToSave = read[TermlyPlansToSave](PlanningHelper.decodeAnyNonFriendlyCharacters(termlyPlansForGroup.groupTermlyPlansPickled))
