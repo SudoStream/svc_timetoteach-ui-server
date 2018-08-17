@@ -218,12 +218,13 @@
                             <div class="col-md-12 d-flex justify-content-center ">
                                 <ul class="navbar-nav mx-auto">
                                     @for((planningArea, planningAreaIndex) <- maybeCurrentTermlyCurriculumSelection.get._1.planningAreas.map(area => ScottishCurriculumPlanningAreaWrapper(area)).zipWithIndex) {
+                                        @if(planningAreaIndex < 6) {
                                         @if(planningArea.planAtGroupLevel) {
                                             @if(planningArea.value.toString == maybeCurrentTermlyCurriculumSelection.get._2) {
                                                 <li class="nav-item">
                                                     <a role="button" class="btn btn-warning btn-sm btn-block curriculum-area-button"
                                                     href="@controllers.planning.termly.routes.TermlyPlansController.termlyOverviewForCurriculumAreaAtGroupLevelWithNoGroupId(maybeClassDetails.get.id.id, planningArea.value.toString)">
-                                                        @planningArea.niceSpecificValueIfPresent().getOrElse(planningArea.niceValue())
+                                                        @planningArea.niceSpecificValueIfPresent().getOrElse(planningArea.shortValue())
                                                         <span class="termly-plan-done-check-black ">
                                                         @if(maybePlanProgress.isDefined && maybePlanProgress.get.curriculumProgressMap.isDefinedAt(planningArea) && maybePlanProgress.get.curriculumProgressMap(planningArea)._1.percentValue == 100) {
                                                             <svg version="1.1" width="16" height="16" viewBox="0 0 12 16" class="octicon octicon-check float-right" aria-hidden="true">
@@ -238,7 +239,7 @@
                                                 <li class="nav-item">
                                                     <a role="button" class="btn btn-outline-light bg-secondary btn-sm btn-block curriculum-area-button"
                                                     href="@controllers.planning.termly.routes.TermlyPlansController.termlyOverviewForCurriculumAreaAtGroupLevelWithNoGroupId(maybeClassDetails.get.id.id, planningArea.value.toString)">
-                                                        @planningArea.niceSpecificValueIfPresent().getOrElse(planningArea.niceValue())
+                                                        @planningArea.niceSpecificValueIfPresent().getOrElse(planningArea.shortValue())
                                                         <span class="termly-plan-done-check-green ">
                                                         @if(maybePlanProgress.isDefined && maybePlanProgress.get.curriculumProgressMap.isDefinedAt(planningArea) && maybePlanProgress.get.curriculumProgressMap(planningArea)._1.percentValue == 100) {
                                                             <svg version="1.1" width="16" height="16" viewBox="0 0 12 16" class="octicon octicon-check float-right" aria-hidden="true">
@@ -256,7 +257,7 @@
                                                 <li class="nav-item">
                                                     <a role="button" class="btn btn-warning btn-sm btn-block curriculum-area-button"
                                                     href="@controllers.planning.termly.routes.TermlyPlansController.termlyOverviewForCurriculumAreaAtClassLevel(maybeClassDetails.get.id.id, planningArea.value.toString)">
-                                                        @planningArea.niceSpecificValueIfPresent().getOrElse(planningArea.niceValue())
+                                                        @planningArea.niceSpecificValueIfPresent().getOrElse(planningArea.shortValue())
                                                         <span class="termly-plan-done-check-black ">
                                                         @if(maybePlanProgress.isDefined && maybePlanProgress.get.curriculumProgressMap.isDefinedAt(planningArea) && maybePlanProgress.get.curriculumProgressMap(planningArea)._1.percentValue == 100) {
                                                             <svg version="1.1" width="16" height="16" viewBox="0 0 12 16" class="octicon octicon-check float-right" aria-hidden="true">
@@ -271,7 +272,7 @@
                                                 <li class="nav-item">
                                                     <a role="button" class="btn btn-outline-light bg-secondary btn-sm btn-block curriculum-area-button"
                                                     href="@controllers.planning.termly.routes.TermlyPlansController.termlyOverviewForCurriculumAreaAtClassLevel(maybeClassDetails.get.id.id, planningArea.value.toString)">
-                                                        @planningArea.niceSpecificValueIfPresent().getOrElse(planningArea.niceValue())
+                                                        @planningArea.niceSpecificValueIfPresent().getOrElse(planningArea.shortValue())
                                                         <span class="termly-plan-done-check-green ">
                                                         @if(maybePlanProgress.isDefined && maybePlanProgress.get.curriculumProgressMap.isDefinedAt(planningArea) && maybePlanProgress.get.curriculumProgressMap(planningArea)._1.percentValue == 100) {
                                                             <svg version="1.1" width="16" height="16" viewBox="0 0 12 16" class="octicon octicon-check float-right" aria-hidden="true">
@@ -284,23 +285,184 @@
                                                 </li>
                                             }
                                         }
-
+                                        }
                                     }
-                                    <li class="nav-item">
-                                        <a id="download-termly-plan-pdf" class="btn btn-sm btn-danger btn-block" role="button" target="_blank"
-                                        href="@controllers.planning.termly.routes.DownloadPdfController.downloadClassPdf(maybeClassDetails.get.id.id)">
-                                            Create Termly Plan PDF</a>
-                                    </li>
                                 </ul>
                             </div>
                         </nav>
+                    }
 
+                    @if(maybeCurrentTermlyCurriculumSelection.isDefined && maybeCurrentTermlyCurriculumSelection.get._1.planningAreas.nonEmpty) {
+                        <nav id="dashboard-nav-3" class="navbar navbar-primary bg-dark navbar-expand-lg">
+                            <div class="col-md-12 d-flex justify-content-center ">
+                                <ul class="navbar-nav mx-auto">
+                                @for((planningArea, planningAreaIndex) <- maybeCurrentTermlyCurriculumSelection.get._1.planningAreas.map(area => ScottishCurriculumPlanningAreaWrapper(area)).zipWithIndex) {
+                                    @if(planningAreaIndex >= 6 && planningAreaIndex < 12) {
+                                        @if(planningArea.planAtGroupLevel) {
+                                            @if(planningArea.value.toString == maybeCurrentTermlyCurriculumSelection.get._2) {
+                                                <li class="nav-item">
+                                                    <a role="button" class="btn btn-warning btn-sm btn-block curriculum-area-button"
+                                                    href="@controllers.planning.termly.routes.TermlyPlansController.termlyOverviewForCurriculumAreaAtGroupLevelWithNoGroupId(maybeClassDetails.get.id.id, planningArea.value.toString)">
+                                                        @planningArea.niceSpecificValueIfPresent().getOrElse(planningArea.shortValue())
+                                                        <span class="termly-plan-done-check-black ">
+                                                        @if(maybePlanProgress.isDefined && maybePlanProgress.get.curriculumProgressMap.isDefinedAt(planningArea) && maybePlanProgress.get.curriculumProgressMap(planningArea)._1.percentValue == 100) {
+                                                            <svg version="1.1" width="16" height="16" viewBox="0 0 12 16" class="octicon octicon-check float-right" aria-hidden="true">
+                                                                <use xlink:href="#check" /></svg>
+                                                        } else {
+                                                            <div></div>
+                                                        }
+                                                        </span>
+                                                    </a>
+                                                </li>
+                                            } else {
+                                                <li class="nav-item">
+                                                    <a role="button" class="btn btn-outline-light bg-secondary btn-sm btn-block curriculum-area-button"
+                                                    href="@controllers.planning.termly.routes.TermlyPlansController.termlyOverviewForCurriculumAreaAtGroupLevelWithNoGroupId(maybeClassDetails.get.id.id, planningArea.value.toString)">
+                                                        @planningArea.niceSpecificValueIfPresent().getOrElse(planningArea.shortValue())
+                                                        <span class="termly-plan-done-check-green ">
+                                                        @if(maybePlanProgress.isDefined && maybePlanProgress.get.curriculumProgressMap.isDefinedAt(planningArea) && maybePlanProgress.get.curriculumProgressMap(planningArea)._1.percentValue == 100) {
+                                                            <svg version="1.1" width="16" height="16" viewBox="0 0 12 16" class="octicon octicon-check float-right" aria-hidden="true">
+                                                                <use xlink:href="#check" /></svg>
+                                                        } else {
+                                                            <div></div>
+                                                        }
+                                                        </span>
+                                                    </a>
+                                                </li>
+                                            }
+
+                                        } else {
+                                            @if(planningArea.value.toString == maybeCurrentTermlyCurriculumSelection.get._2) {
+                                                <li class="nav-item">
+                                                    <a role="button" class="btn btn-warning btn-sm btn-block curriculum-area-button"
+                                                    href="@controllers.planning.termly.routes.TermlyPlansController.termlyOverviewForCurriculumAreaAtClassLevel(maybeClassDetails.get.id.id, planningArea.value.toString)">
+                                                        @planningArea.niceSpecificValueIfPresent().getOrElse(planningArea.shortValue())
+                                                        <span class="termly-plan-done-check-black ">
+                                                        @if(maybePlanProgress.isDefined && maybePlanProgress.get.curriculumProgressMap.isDefinedAt(planningArea) && maybePlanProgress.get.curriculumProgressMap(planningArea)._1.percentValue == 100) {
+                                                            <svg version="1.1" width="16" height="16" viewBox="0 0 12 16" class="octicon octicon-check float-right" aria-hidden="true">
+                                                                <use xlink:href="#check" /></svg>
+                                                        } else {
+                                                            <div></div>
+                                                        }
+                                                        </span>
+                                                    </a>
+                                                </li>
+                                            } else {
+                                                <li class="nav-item">
+                                                    <a role="button" class="btn btn-outline-light bg-secondary btn-sm btn-block curriculum-area-button"
+                                                    href="@controllers.planning.termly.routes.TermlyPlansController.termlyOverviewForCurriculumAreaAtClassLevel(maybeClassDetails.get.id.id, planningArea.value.toString)">
+                                                        @planningArea.niceSpecificValueIfPresent().getOrElse(planningArea.shortValue())
+                                                        <span class="termly-plan-done-check-green ">
+                                                        @if(maybePlanProgress.isDefined && maybePlanProgress.get.curriculumProgressMap.isDefinedAt(planningArea) && maybePlanProgress.get.curriculumProgressMap(planningArea)._1.percentValue == 100) {
+                                                            <svg version="1.1" width="16" height="16" viewBox="0 0 12 16" class="octicon octicon-check float-right" aria-hidden="true">
+                                                                <use xlink:href="#check" /></svg>
+                                                        } else {
+                                                            <div></div>
+                                                        }
+                                                        </span>
+                                                    </a>
+                                                </li>
+                                            }
+                                        }
+                                    }
+                                }
+                                </ul>
+                            </div>
+                        </nav>
+                    }
+
+                    @if(maybeCurrentTermlyCurriculumSelection.isDefined && maybeCurrentTermlyCurriculumSelection.get._1.planningAreas.nonEmpty) {
+                        <nav id="dashboard-nav-3" class="navbar navbar-primary bg-dark navbar-expand-lg">
+                            <div class="col-md-12 d-flex justify-content-center ">
+                                <ul class="navbar-nav mx-auto">
+                                @for((planningArea, planningAreaIndex) <- maybeCurrentTermlyCurriculumSelection.get._1.planningAreas.map(area => ScottishCurriculumPlanningAreaWrapper(area)).zipWithIndex) {
+                                    @if(planningAreaIndex >= 12) {
+                                        @if(planningArea.planAtGroupLevel) {
+                                            @if(planningArea.value.toString == maybeCurrentTermlyCurriculumSelection.get._2) {
+                                                <li class="nav-item">
+                                                    <a role="button" class="btn btn-warning btn-sm btn-block curriculum-area-button"
+                                                    href="@controllers.planning.termly.routes.TermlyPlansController.termlyOverviewForCurriculumAreaAtGroupLevelWithNoGroupId(maybeClassDetails.get.id.id, planningArea.value.toString)">
+                                                        @planningArea.niceSpecificValueIfPresent().getOrElse(planningArea.shortValue())
+                                                        <span class="termly-plan-done-check-black ">
+                                                        @if(maybePlanProgress.isDefined && maybePlanProgress.get.curriculumProgressMap.isDefinedAt(planningArea) && maybePlanProgress.get.curriculumProgressMap(planningArea)._1.percentValue == 100) {
+                                                            <svg version="1.1" width="16" height="16" viewBox="0 0 12 16" class="octicon octicon-check float-right" aria-hidden="true">
+                                                                <use xlink:href="#check" /></svg>
+                                                        } else {
+                                                            <div></div>
+                                                        }
+                                                        </span>
+                                                    </a>
+                                                </li>
+                                            } else {
+                                                <li class="nav-item">
+                                                    <a role="button" class="btn btn-outline-light bg-secondary btn-sm btn-block curriculum-area-button"
+                                                    href="@controllers.planning.termly.routes.TermlyPlansController.termlyOverviewForCurriculumAreaAtGroupLevelWithNoGroupId(maybeClassDetails.get.id.id, planningArea.value.toString)">
+                                                        @planningArea.niceSpecificValueIfPresent().getOrElse(planningArea.shortValue())
+                                                        <span class="termly-plan-done-check-green ">
+                                                        @if(maybePlanProgress.isDefined && maybePlanProgress.get.curriculumProgressMap.isDefinedAt(planningArea) && maybePlanProgress.get.curriculumProgressMap(planningArea)._1.percentValue == 100) {
+                                                            <svg version="1.1" width="16" height="16" viewBox="0 0 12 16" class="octicon octicon-check float-right" aria-hidden="true">
+                                                                <use xlink:href="#check" /></svg>
+                                                        } else {
+                                                            <div></div>
+                                                        }
+                                                        </span>
+                                                    </a>
+                                                </li>
+                                            }
+
+                                        } else {
+                                            @if(planningArea.value.toString == maybeCurrentTermlyCurriculumSelection.get._2) {
+                                                <li class="nav-item">
+                                                    <a role="button" class="btn btn-warning btn-sm btn-block curriculum-area-button"
+                                                    href="@controllers.planning.termly.routes.TermlyPlansController.termlyOverviewForCurriculumAreaAtClassLevel(maybeClassDetails.get.id.id, planningArea.value.toString)">
+                                                        @planningArea.niceSpecificValueIfPresent().getOrElse(planningArea.shortValue())
+                                                        <span class="termly-plan-done-check-black ">
+                                                        @if(maybePlanProgress.isDefined && maybePlanProgress.get.curriculumProgressMap.isDefinedAt(planningArea) && maybePlanProgress.get.curriculumProgressMap(planningArea)._1.percentValue == 100) {
+                                                            <svg version="1.1" width="16" height="16" viewBox="0 0 12 16" class="octicon octicon-check float-right" aria-hidden="true">
+                                                                <use xlink:href="#check" /></svg>
+                                                        } else {
+                                                            <div></div>
+                                                        }
+                                                        </span>
+                                                    </a>
+                                                </li>
+                                            } else {
+                                                <li class="nav-item">
+                                                    <a role="button" class="btn btn-outline-light bg-secondary btn-sm btn-block curriculum-area-button"
+                                                    href="@controllers.planning.termly.routes.TermlyPlansController.termlyOverviewForCurriculumAreaAtClassLevel(maybeClassDetails.get.id.id, planningArea.value.toString)">
+                                                        @planningArea.niceSpecificValueIfPresent().getOrElse(planningArea.shortValue())
+                                                        <span class="termly-plan-done-check-green ">
+                                                        @if(maybePlanProgress.isDefined && maybePlanProgress.get.curriculumProgressMap.isDefinedAt(planningArea) && maybePlanProgress.get.curriculumProgressMap(planningArea)._1.percentValue == 100) {
+                                                            <svg version="1.1" width="16" height="16" viewBox="0 0 12 16" class="octicon octicon-check float-right" aria-hidden="true">
+                                                                <use xlink:href="#check" /></svg>
+                                                        } else {
+                                                            <div></div>
+                                                        }
+                                                        </span>
+                                                    </a>
+                                                </li>
+                                            }
+                                        }
+                                    }
+                                }
+                                </ul>
+                            </div>
+                        </nav>
                     }
 
                 </div>
             }
 
-        <div id="mainAppTopMargin"></div>
+
+
+            <div class="row d-flex justify-content-around">
+                <a id="download-termly-plan-pdf" class="btn btn btn-danger" role="button" target="_blank"
+                href="@controllers.planning.termly.routes.DownloadPdfController.downloadClassPdf(maybeClassDetails.get.id.id)">
+                    Create Termly Plan PDF</a>
+            </div>
+
+
+            <div id="mainAppTopMargin"></div>
 
         <div class="container">
             <div class="in-app-menu-small-devices alert alert-info alert-dismissible fade show this-is-a-for-larger-screens-alert " role="alert" >

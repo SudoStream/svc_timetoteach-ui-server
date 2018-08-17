@@ -39,7 +39,7 @@ trait EsOsAndBenchmarksBuilderHelper
       case ScottishCurriculumPlanningArea.LITERACY__MODERN_LANGUAGES => Languages_ModernLanguages
       case ScottishCurriculumPlanningArea.MATHEMATICS => Mathematics
       case ScottishCurriculumPlanningArea.RME__STANDARD => ReligionAndMoralEducationStandard
-      case ScottishCurriculumPlanningArea.RME__CATHOLIC => ReligionAndMoralEducationStandard
+      case ScottishCurriculumPlanningArea.RME__CATHOLIC => ReligionAndMoralEducationCatholic
       case ScottishCurriculumPlanningArea.SCIENCE => Sciences
       case ScottishCurriculumPlanningArea.SOCIAL_STUDIES => SocialStudies
       case ScottishCurriculumPlanningArea.TECHNOLOGIES => Technologies

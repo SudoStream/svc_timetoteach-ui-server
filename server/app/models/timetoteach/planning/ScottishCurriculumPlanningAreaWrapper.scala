@@ -18,14 +18,30 @@ case class ScottishCurriculumPlanningAreaWrapper(
     value.toString.contains("__")
   }
 
+  def shortValue(): String = {
+    niceValue()
+      .toLowerCase
+      .replace("health and wellbeing", "health")
+      .replace("physical education", "PE")
+      .replace("mathematics", "maths")
+      .replace("rme","RME")
+      .replace("modern","mod.")
+      .replace(" and "," & ")
+      .replace("languages","langs.")
+      .split(" ")
+      .toList
+      .map(word => word.capitalize)
+      .mkString(" ")
+  }
+
   def niceValue(): String = {
     value
       .toString
       .replace("__", " : ")
       .toLowerCase.replace("_", " ")
       .replace("rme", "RME")
-      .replace("standard", "Religious & Moral Education")
-      .replace("catholic", "Religious & Moral Education (Catholic)")
+      .replace("standard", "RME")
+      .replace("catholic", "RME Catholic")
       .split(" ")
       .toList
       .map(word => word.capitalize)
@@ -42,7 +58,7 @@ case class ScottishCurriculumPlanningAreaWrapper(
 
   def niceSpecificValueIfPresent(): Option[String] = {
     if (isCompositeValue) {
-      val values = niceValue().split(" : ")
+      val values = shortValue().split(" : ")
       if (values.size > 1) {
         Some(values(1))
       } else {

@@ -24,7 +24,7 @@ object CurriculumConverterUtil {
       case "LITERACY__GAELIC_LEARNERS" => Languages_Gaelic
       case "LITERACY__LITERACY_AND_GAIDLIG" => Languages_LiteracyAndGaidhlig
       case "LITERACY__MODERN_LANGUAGES" => Languages_ModernLanguages
-      case "RME" | "RME__STANDARD" => ReligionAndMoralEducationStandard
+      case "RME__STANDARD" => ReligionAndMoralEducationStandard
       case "RME__CATHOLIC" => ReligionAndMoralEducationCatholic
       case "SCIENCE" => Sciences
       case "SOCIAL_STUDIES" | "TOPIC" => SocialStudies
@@ -54,7 +54,7 @@ object CurriculumConverterUtil {
       case "LITERACY__GAELIC_LEARNERS" => ScottishCurriculumPlanningArea.LITERACY__GAELIC_LEARNERS
       case "LITERACY__LITERACY_AND_GAIDLIG" => ScottishCurriculumPlanningArea.LITERACY__LITERACY_AND_GAIDLIG
       case "LITERACY__MODERN_LANGUAGES" => ScottishCurriculumPlanningArea.LITERACY__MODERN_LANGUAGES
-      case "RME" | "RME__STANDARD" => ScottishCurriculumPlanningArea.RME__STANDARD
+      case "RME__STANDARD" => ScottishCurriculumPlanningArea.RME__STANDARD
       case "RME__CATHOLIC" => ScottishCurriculumPlanningArea.RME__CATHOLIC
       case "SCIENCE" => ScottishCurriculumPlanningArea.SCIENCE
       case "SOCIAL_STUDIES" | "TOPIC" => ScottishCurriculumPlanningArea.SOCIAL_STUDIES

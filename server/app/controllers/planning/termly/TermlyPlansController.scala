@@ -513,7 +513,12 @@ class TermlyPlansController @Inject()(
       maybeClassDetails: Option[ClassDetails] = classDetailsList.headOption
       if maybeClassDetails.isDefined
       classDetails = maybeClassDetails.get
-      maybeGroup = classDetails.groups.filter(elem => elem.groupType.value.toLowerCase == curriculumArea.split("__").toList.last.toLowerCase).sortBy(aGroup => aGroup.groupLevel.order).headOption
+      curriculumAreaLowerCase = curriculumArea.split("__").toList.last.toLowerCase
+      groupTypeSearchValue = if (curriculumAreaLowerCase.contains("classical")) "reading"
+      else if (curriculumAreaLowerCase.contains("gaelic") && curriculumAreaLowerCase.contains("learners")) "reading"
+      else if (curriculumAreaLowerCase.contains("modern") && curriculumAreaLowerCase.contains("languages")) "reading"
+      else curriculumAreaLowerCase
+      maybeGroup = classDetails.groups.filter(elem => elem.groupType.value.toLowerCase == groupTypeSearchValue).sortBy(aGroup => aGroup.groupLevel.order).headOption
       route = maybeGroup match {
         case Some(group) => Redirect(routes.TermlyPlansController.termlyOverviewForCurriculumAreaAtGroupLevel(
           classId,

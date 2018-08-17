@@ -161,7 +161,12 @@ class Application @Inject()(userReader: UserReaderServiceProxyImpl,
 
             for {
               maybeWwwClassTimetable <- wwwClassTimetableFuture
-            } yield Redirect(controllers.planning.weekly.routes.WeeklyPlanningController.weeklyViewOfWeeklyPlanningWithNoMondayDate(theOneClass.id.id))
+              classOrWeeklyRoute = if (maybeWwwClassTimetable.isDefined) {
+                Redirect(controllers.planning.weekly.routes.WeeklyPlanningController.weeklyViewOfWeeklyPlanningWithNoMondayDate(theOneClass.id.id))
+              } else {
+                Redirect(controllers.planning.classtimetable.routes.ClassTimetableController.gotoClass(theOneClass.id.id))
+              }
+            } yield classOrWeeklyRoute
           }
         } else {
           val userSchoolsWrappers = userInfo.schools

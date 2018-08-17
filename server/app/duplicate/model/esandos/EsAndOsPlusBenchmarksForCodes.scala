@@ -85,7 +85,7 @@ object CurriculumArea {
       case "LITERACY__MODERN_LANGUAGES" => Languages_ModernLanguages
       case "MATHEMATICS" => Mathematics
       case "RME__STANDARD" => ReligionAndMoralEducationStandard
-      case "RME__CATHOLIC" => ReligionAndMoralEducationStandard
+      case "RME__CATHOLIC" => ReligionAndMoralEducationCatholic
       case "SCIENCE" => Sciences
       case "SOCIAL_STUDIES" => SocialStudies
       case "TECHNOLOGIES" => Technologies

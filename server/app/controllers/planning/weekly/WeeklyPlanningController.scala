@@ -2,6 +2,7 @@ package controllers.planning.weekly
 
 import java.time.{LocalDate, LocalTime}
 
+import akka.http.scaladsl.model.HttpHeader.ParsingResult.Ok
 import be.objectify.deadbolt.scala.DeadboltActions
 import controllers.serviceproxies._
 import controllers.time.SystemTime
@@ -126,8 +127,8 @@ class WeeklyPlanningController @Inject()(
       schoolDayTimes <- futureSchoolDayTimes
       maybeAvroClassTimetable <- avroClassTimetableFuture
       log2 = logger.debug(s"maybeAvroClassTimetable : ${maybeAvroClassTimetable.toString}")
-      if maybeAvroClassTimetable.isDefined
 
+      if maybeAvroClassTimetable.isDefined
       futureMaybeSchoolTerm = termService.currentSchoolTerm(SchoolConverter.convertLocalAuthorityStringToAvroVersion(classDetails.schoolDetails.localAuthority))
       maybeSchoolTerm <- futureMaybeSchoolTerm
       log3 = logger.debug(s"maybeSchoolTerm : ${maybeSchoolTerm.toString}")
@@ -159,6 +160,7 @@ class WeeklyPlanningController @Inject()(
       fullWeeklyPlanOfLessonsPickled,
       classDetailsPickled
     ))
+
   }
 
 
