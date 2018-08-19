@@ -79,13 +79,14 @@ object TermPlansHelper {
       case "rme" | "rme__standard" => ScottishCurriculumPlanningArea.RME__STANDARD
       case "rme__catholic" => ScottishCurriculumPlanningArea.RME__CATHOLIC
       case "play" => ScottishCurriculumPlanningArea.NONE
-      case "modern-languages" | "modern_languages" => ScottishCurriculumPlanningArea.LITERACY__MODERN_LANGUAGES
+      case "modern-languages" | "modern_languages" | "literacy__modern_languages" => ScottishCurriculumPlanningArea.LITERACY__MODERN_LANGUAGES
       case "science" => ScottishCurriculumPlanningArea.SCIENCE
       case "hand-writing" | "hand_writing" => ScottishCurriculumPlanningArea.NONE
       case "geography" => ScottishCurriculumPlanningArea.SOCIAL_STUDIES
       case "history" => ScottishCurriculumPlanningArea.SOCIAL_STUDIES
       case "social_studies" => ScottishCurriculumPlanningArea.SOCIAL_STUDIES
       case "literacy__gaelic_learners" => ScottishCurriculumPlanningArea.LITERACY__GAELIC_LEARNERS
+      case "literacy__literacy_and_gaidlig" => ScottishCurriculumPlanningArea.LITERACY__LITERACY_AND_GAIDLIG
     }
   }
 

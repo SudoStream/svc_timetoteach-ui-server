@@ -88,12 +88,12 @@ case class ScottishCurriculumPlanningAreaWrapper(
 
   def planAtGroupLevel: Boolean = {
     value match {
-      case ScottishCurriculumPlanningArea.LITERACY__CLASSICAL_LANGUAGES |
-           ScottishCurriculumPlanningArea.LITERACY__GAELIC_LEARNERS |
-           ScottishCurriculumPlanningArea.LITERACY__LITERACY_AND_ENGLISH |
-           ScottishCurriculumPlanningArea.LITERACY__LITERACY_AND_GAIDLIG |
-           ScottishCurriculumPlanningArea.LITERACY__MODERN_LANGUAGES |
-           ScottishCurriculumPlanningArea.LITERACY__READING |
+//      case ScottishCurriculumPlanningArea.LITERACY__CLASSICAL_LANGUAGES |
+//           ScottishCurriculumPlanningArea.LITERACY__GAELIC_LEARNERS |
+//           ScottishCurriculumPlanningArea.LITERACY__LITERACY_AND_ENGLISH |
+//           ScottishCurriculumPlanningArea.LITERACY__LITERACY_AND_GAIDLIG |
+//           ScottishCurriculumPlanningArea.LITERACY__MODERN_LANGUAGES |
+      case ScottishCurriculumPlanningArea.LITERACY__READING |
            ScottishCurriculumPlanningArea.LITERACY__WRITING |
            ScottishCurriculumPlanningArea.MATHEMATICS => true
       case _ => false
@@ -102,12 +102,12 @@ case class ScottishCurriculumPlanningAreaWrapper(
 
   def groupType: GroupType = {
     value match {
-      case ScottishCurriculumPlanningArea.LITERACY__CLASSICAL_LANGUAGES |
-           ScottishCurriculumPlanningArea.LITERACY__GAELIC_LEARNERS |
-           ScottishCurriculumPlanningArea.LITERACY__LITERACY_AND_ENGLISH |
-           ScottishCurriculumPlanningArea.LITERACY__LITERACY_AND_GAIDLIG |
-           ScottishCurriculumPlanningArea.LITERACY__MODERN_LANGUAGES |
-           ScottishCurriculumPlanningArea.LITERACY__READING => ReadingGroupType
+//      case ScottishCurriculumPlanningArea.LITERACY__CLASSICAL_LANGUAGES |
+//           ScottishCurriculumPlanningArea.LITERACY__GAELIC_LEARNERS |
+//           ScottishCurriculumPlanningArea.LITERACY__LITERACY_AND_ENGLISH |
+//           ScottishCurriculumPlanningArea.LITERACY__LITERACY_AND_GAIDLIG |
+//           ScottishCurriculumPlanningArea.LITERACY__MODERN_LANGUAGES |
+      case ScottishCurriculumPlanningArea.LITERACY__READING => ReadingGroupType
       case ScottishCurriculumPlanningArea.LITERACY__WRITING => WritingGroupType
       case ScottishCurriculumPlanningArea.MATHEMATICS => MathsGroupType
       case _ => OtherGroupType
